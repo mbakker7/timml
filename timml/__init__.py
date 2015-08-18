@@ -11,7 +11,7 @@ library of Python scripts and FORTRAN extensions.
 #--version number
 __name__='timml'
 __author__='Mark Bakker'
-from version import __version__, __build__
+from version import __version__
 
 # Import all classes and functions
 from ml import Model, Model3D

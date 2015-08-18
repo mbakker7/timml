@@ -12,7 +12,7 @@ TimML is coded in Python; use is made of FORTRAN extensions to improve performan
 
 ## TimML Changes
 
-### Version 4.0.1
+### Version 4.0
 In version 4.0, the numbering of the layers in TimML has changed. Layers are numbered from the top down starting at number 0.
 (in TimML versions prior to 4.0, layer numbers started at 1).
 
