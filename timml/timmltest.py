@@ -33,3 +33,12 @@ def trace_example1():
     timtracelines(ml,w2.xw+cos(an),w2.yw+sin(an),30*ones(len(an)),-100,Nmax=500)
     timtracelines(ml,w3.xw+cos(an),w3.yw+sin(an),100*ones(len(an)),-100,tmax=200*365,Nmax=200)
 
+try:
+    # equivalent to %matplotlib in IPython
+    get_ipython().magic('matplotlib')
+except:
+    pass
+# Solve model
+ml.solve()
+# Contour results
+timcontour(ml, 0, 20000, 50, 0, 20000, 50, 3, 20)
