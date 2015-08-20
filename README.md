@@ -27,7 +27,7 @@ for both Windows and MaxOS.
 
 **Dependencies:**
 
-TimML requires **NumPy** 1.9 (or higher) and **matplotlib** 1.4 (or higher). T
+TimML requires **NumPy** 1.9 (or higher) and **matplotlib** 1.4 (or higher). 
 
 **For base Python distributions:**
 
@@ -42,8 +42,16 @@ To update TimML type:
 To uninstall TimML type:
 
     pip uninstall timml
+    
+**Testing installation:**
+
+    ipython
+    import timml.timmltest
+    
+An example model is imported and a contour plot is shown. When this is run from the regular Python prompt (not IPython), the
+contour plot does not appear. 
 
 ## Documentation
 
-* The manual is available from the docs directory.
+* The manual is available from the docs directory or can be viewed [here](https://github.com/mbakker7/timml/blob/master/docs/timml.pdf)
 * Example Notebooks are available from the notebooks directory
