@@ -53,5 +53,6 @@ contour plot does not appear.
 
 ## Documentation
 
-* The manual is available from the docs directory or can be viewed [here](https://github.com/mbakker7/timml/blob/master/docs/timml.pdf)
+* The manual is available from the docs directory or can be viewed [here](https://github.com/mbakker7/timml/blob/master/docs/timml.pdf).
+Once you click on this link, you can click on the [Raw] button to download the pdf file if you so wish. 
 * Example Notebooks are available from the notebooks directory
