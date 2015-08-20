@@ -49,10 +49,10 @@ To uninstall TimML type:
     import timml.timmltest
     
 An example model is imported and a contour plot is shown. When this is run from the regular Python prompt (not IPython), the
-contour plot does not appear. 
+model is created and solved but the contour plot is probably not shown (depending on your default settings of matplotlib). 
 
 ## Documentation
 
 * The manual is available from the docs directory or can be viewed [here](https://github.com/mbakker7/timml/blob/master/docs/timml.pdf).
-Once you click on this link, you can click on the [Raw] button to download the pdf file if you so wish. 
-* Example Notebooks are available from the notebooks directory
+Once you click on this link, you can click on the [Raw] button to download the pdf file. 
+* Example Notebooks are available from the git repository.
