@@ -255,6 +255,10 @@ class Element:
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         pot = np.sum(self.potential(x, y, aq) * aq.eigvec, 1 )
         return pot[pylayers]
+    def disvec(self, x, y, aq = None):
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        qx, qy = self.disinf(x, y, aq)
+        return np.sum(self.parameters * qx, 0), np.sum(self.parameters * qy, 0)
     def setparams(self, sol):
         raise Exception('Must overload Element.setparams()')
     def storeinput(self,frame):
@@ -380,6 +384,23 @@ class LineSinkBase(Element):
                                aq.Naq, aq.lab, 0, pot)
             rv[:] = self.aq.coef[self.pylayers] * pot
         return rv
+    def disinf(self, x, y, aq = None):
+        '''Can be called with only one x,y value'''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rvx = np.zeros((self.Nparam,aq.Naq))
+        rvy = np.zeros((self.Nparam,aq.Naq))
+        if aq == self.aq:
+            qx = np.zeros(aq.Naq)
+            qy = np.zeros(aq.Naq)
+            if aq.ltype[0] == 'a':
+                disbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
+                           aq.Naq, aq.zeropluslab, 0, qx, qy)
+            else:
+                disbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
+                               aq.Naq, aq.lab, 0, qx, qy)
+            rvx[:] = self.aq.coef[self.pylayers] * qx
+            rvy[:] = self.aq.coef[self.pylayers] * qy
+        return rvx,rvy
     
 class HeadLineSink(LineSinkBase, HeadEquationNores):
     def __init__(self, model, x1 = -1, y1 = 0, x2 = 1, y2 = 0, \
