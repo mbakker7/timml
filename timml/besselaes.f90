@@ -1026,6 +1026,91 @@ subroutine dislapldho(x,y,x1in,y1in,x2in,y2in,order,rvx,rvy)
 
 end subroutine dislapldho
 
+subroutine omegalapldho(x,y,x1in,y1in,x2in,y2in,order,rv,rvpsi)
+
+    ! Input:
+    !   x,y: Point where potential is computed
+    !   x1in,y1in: Begin point of line-doublet
+    !   x2in,y2in: End point of line-doublet
+    !   order: Order of the line-doublet
+    !   rv(order+1): Array to store return value
+    ! Output:
+    !   rv(order+1): Return values
+
+    implicit none
+
+    ! Input / Output
+    real*8, intent(in) :: x,y,x1in,y1in,x2in,y2in
+    integer, intent(in) :: order
+    real*8,intent(inout) :: rv(*), rvpsi(*)
+
+    ! Locals
+    real*8, parameter :: rZERO=0.d0, rONE=1.d0, rTWO=2.d0, rFOUR=4.d0
+    real*8, parameter :: pi=3.1415926535897931d0, tiny = 1.d-8
+    integer, parameter :: Nfarfield = 8 ! means minimally 8/2 = 4 non-zero terms
+    complex*16, parameter :: cZERO=(0.d0,0.d0), cTWO = (2.d0,0.d0), ci = (0.d0,1.d0)
+
+    integer :: power, n, m, i
+    real*8 :: Lin, pot, biglab, del0, ra, Rfarfield
+    complex*16 :: zin, z1in, z2in, z, zplus1, zmin1
+    complex*16 :: z1, z2, oneoverZsq, oneoverZpower, Zpower
+    complex*16, dimension(order+1) :: comega, qm, qmnew
+    complex*16, dimension(0:order+Nfarfield) :: series
+
+    Rfarfield = 5.0d0 
+    zin = cmplx(x,y,8); z1in = cmplx(x1in,y1in,8); z2in = cmplx(x2in,y2in,8)
+    z = ( rTWO*zin - (z1in + z2in) ) / (z2in - z1in)
+
+    if ( abs(z) < Rfarfield ) then
+
+        zplus1 = z + rONE; zmin1 = z - rONE
+
+        ! If at cornerpoint, move slightly
+        Lin = abs(z2in-z1in)
+        if  (abs(zplus1) < tiny*rTWO/Lin) zplus1 = zplus1 + tiny
+        if  (abs(zmin1) < tiny*rTWO/Lin) zmin1 = zmin1 + tiny
+
+        comega(1) = log(zmin1/zplus1)
+        do n=1,order
+            comega(n+1) = z * comega(n)
+        end do
+        
+        qmnew(1) = cZERO
+        if (order > 0) qmnew(2) = cTWO
+        do m=3,order,2
+            qmnew(m+1) = qmnew(m-1) * z * z + cTWO / float(m)
+        end do
+        do m=2,order,2
+            qmnew(m+1) = qmnew(m) * z 
+        end do
+
+        comega = rONE/(rTWO*pi*ci) * ( comega + qmnew )
+
+    else
+
+        series = cZERO
+        oneoverZsq = 1.0d0/ ( z * z )
+        oneoverZpower = 1.0 / z
+        do i = 1, order + Nfarfield, 2
+            series(i) = oneoverZpower / float(i)
+            oneoverZpower = oneoverZpower * oneoverZsq
+        end do
+        Zpower = 1.0
+        do i = 0, order
+            comega(i+1) = sum( series(i:order+Nfarfield) ) * Zpower
+            Zpower = Zpower * z
+        end do
+        comega = -rONE / ( pi * ci ) * comega
+
+    end if
+
+    do i = 1, order+1
+        rv(i) = real( comega(i) )
+        rvpsi(i) = aimag(comega(i))
+    end do
+
+end subroutine omegalapldho
+
 subroutine IntegralF(zin,z1in,z2in,Lin,lambda,order,Nterms,ac,bc,Rconv,rbinom,pot)
 
     implicit none
