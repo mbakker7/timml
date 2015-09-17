@@ -35,6 +35,13 @@ class ModelBase:
             pot += e.potential(x, y, aq)
         rv = np.sum(pot * aq.eigvec, 1)
         return rv
+    def potentialnew(self, x, y, aq = None):
+        if aq is None: aq = self.aq.find_aquifer_data(x,y)
+        pot = np.zeros(aq.Naq)
+        for e in aq.elementlist:
+            pot += e.potential(x, y, aq)
+        rv = np.sum(pot * aq.eigvec, 1)
+        return rv
     def disvec(self, x, y, pylayers = None, aq = None):
         if aq is None: aq = self.aq.find_aquifer_data(x,y)
         rv = np.zeros((2, aq.Naq))
@@ -640,10 +647,10 @@ class HeadWell(WellBase, HeadEquation):
         self.parameters[:,0] = sol
         
 class Constant(Element, HeadEquation):
-    def __init__(self, model, xr = 0, yr = 0, hr = 0.0, \
-                 layer = 0, label = None):
-        Element.__init__(self, model, Nparam = 1, Nunknowns = 1, layers = layer,\
-                         name = 'Constant', label = label)
+    def __init__(self, model, xr=0, yr=0, hr = 0.0, layer=0,\
+                 label = None):
+        Element.__init__(self, model, Nparam=1, Nunknowns=1, layers=layer,\
+                         name ='Constant', label=label)
         self.Nunknowns = 1
         self.xr = xr
         self.yr = yr
@@ -672,38 +679,75 @@ class Constant(Element, HeadEquation):
     def setparams(self, sol):
         self.parameters[:,0] = sol
         
-#class Constant2(Element, HeadEquationSpecial):
-#    def __init__(self, model, xr=0, yr=0, ls=None, hr=0.0, \
-#                 layer=0, label=None):
-#        Element.__init__(self, model, Nparam=1, Nunknowns=1, layers=layer,\
-#                         name='Constant', label=label)
-#        self.Nunknowns = 1
-#        self.xr = xr
-#        self.yr = yr
-#        self.hr = hr
-#        self.model.add_element(self)
-#    def initialize(self):
-#        self.aq = self.model.aq.find_aquifer_data(self.xr, self.yr)
-#        self.aq.add_element(self)
-#        self.Ncp = 1
-#        self.xc = np.array([self.xr])
-#        self.yc = np.array([self.yr])
-#        self.pc = self.hr * self.aq.T[self.pylayers]
-#        self.parameters = np.empty((1, 1))
-#    def potinf(self, x, y, aq = None):
-#        '''Can be called with only one x,y value'''
-#        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-#        rv = np.zeros((1, aq.Naq))
-#        if aq == self.aq:
-#            rv[0,0] = 1
-#        return rv
-#    def disinf(self, x, y, aq = None):
-#        '''Can be called with only one x,y value'''
-#        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-#        rv = np.zeros((2, 1, aq.Naq))
-#        return rv
-#    def setparams(self, sol):
-#        self.parameters[:,0] = sol
+class ConstantInside(Element):
+    # Sets constant on inside equal to the average of the potential of all elements at points xc, yc
+    def __init__(self, model, xc=0, yc=0, label=None):
+        Element.__init__(self, model, Nparam=1, Nunknowns=1, layers=range(model.aq.Naq),\
+                         name='ConstantInside', label=label)
+        self.xc = np.atleast_1d(xc)
+        self.yc = np.atleast_1d(yc)
+        self.parameters = np.zeros((1,1))
+        self.model.add_element(self)
+    def initialize(self):
+        self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
+        self.aq.add_element(self)
+        self.Ncp = len(self.xc)
+    def potinf(self, x, y, aq = None):
+        '''Can be called with only one x,y value'''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((1, aq.Naq))
+        if aq == self.aq:
+            rv[0,0] = 1
+        return rv
+    def disinf(self, x, y, aq = None):
+        '''Can be called with only one x,y value'''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, 1, aq.Naq))
+        return rv
+    def equation(self):
+        mat = np.zeros((1, self.model.Neq))
+        rhs = np.zeros(1)  # Needs to be initialized to zero
+        for icp in range(self.Ncp):
+            ieq = 0
+            for e in self.model.elementlist:
+                if e.Nunknowns > 0:
+                    if e != self:
+                        mat[0:, ieq:ieq+e.Nunknowns] += \
+                        e.potinflayers(self.xc[icp], self.yc[icp], self.pylayers).sum(0)
+                        ieq += e.Nunknowns
+                    #else:
+                    #    mat[0, ieq:ieq+e.Nunknowns] += -1
+                else:
+                    rhs[0] -= \
+                    e.potentiallayers(self.xc[icp], self.yc[icp], self.pylayers).sum(0)
+        return mat, rhs
+    def setparams(self, sol):
+        self.parameters[:,0] = sol
+        
+class ConstantGiven(Element):
+    def __init__(self, model, xr=0, yr=0, p=0, \
+                 layer=0, label=None):
+        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layer,\
+                         name='Constant', label=label)
+        self.xr = xr
+        self.yr = yr
+        self.parameters = p * np.ones((1,1))
+        self.model.add_element(self)
+    def initialize(self):
+        self.aq = self.model.aq.find_aquifer_data(self.xr, self.yr)
+        self.aq.add_element(self)
+    def potinf(self, x, y, aq = None):
+        '''Can be called with only one x,y value'''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((1, aq.Naq))
+        if aq == self.aq:
+            rv[0,0] = 1
+        return rv
+    def disinf(self, x, y, aq = None):
+        '''Can be called with only one x,y value'''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, 1, aq.Naq))
+        return rv
         
 class LineSinkBase(Element):
     def __init__(self, model, x1 = -1, y1 = 0, x2 = 1, y2 = 0, \
@@ -782,7 +826,7 @@ class HeadLineSink(LineSinkBase, HeadEquation):
         
 class LineSinkHoBase(Element):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 Qls= 0.0, layers=0, order=0, name='LineSinkHoBase', \
+                 Qls= 0.0, layers=0, order=0, addconstant=False, name='LineSinkHoBase', \
                  label=None, addtomodel=True, aq=None, zcinout=None):
         Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers,\
                          name=name, label=label)
@@ -792,7 +836,9 @@ class LineSinkHoBase(Element):
         self.y2 = float(y2)
         self.Qls = np.atleast_1d(Qls)
         self.order = order
+        self.addconstant = addconstant
         self.Nparam = self.Nlayers * (self.order + 1)
+        if self.addconstant: self.Nparam += 1
         self.addtomodel = addtomodel
         if addtomodel: self.model.add_element(self)
         self.aq = aq
@@ -801,6 +847,7 @@ class LineSinkHoBase(Element):
         return self.name + ' from ' + str((self.x1, self.y1)) +' to '+str((self.x2, self.y2))
     def initialize(self):
         self.Ncp = self.order + 1
+        if self.addconstant: self.Ncp += 1
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
@@ -834,19 +881,23 @@ class LineSinkHoBase(Element):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.Nparam, aq.Naq))
         if aq == self.aq:
-            rv.shape = (self.order+1, self.Nlayers, aq.Naq)
+            if self.addconstant:
+                potrv = rv[:-1,:].reshape((self.order+1, self.Nlayers, aq.Naq))
+            else:
+                potrv = rv.reshape((self.order+1, self.Nlayers, aq.Naq))
             pot = np.zeros(aq.Naq)
             if aq.ltype[0] == 'a':
                 for i in range(self.order+1): # This should be done inside FORTRAN extension
                     potbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
                                aq.Naq, aq.zeropluslab, i, pot)  # Call FORTRAN extension
-                    rv[i] = self.aq.coef[self.pylayers] * pot
+                    potrv[i] = self.aq.coef[self.pylayers] * pot
+                if self.addconstant:
+                    rv[-1,0] = 1.0
             else:
                 for i in range(self.order+1):
                     potbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
                                    aq.Naq + 1, aq.lab, i, pot)  # Need to specify aq.Naq + 1 (bug in besselaes)
-                    rv[i] = self.aq.coef[self.pylayers] * pot
-            rv.shape = (self.Nparam, aq.Naq)
+                    potrv[i] = self.aq.coef[self.pylayers] * pot
         return rv
     def disinf(self, x, y, aq = None):
         '''Can be called with only one x,y value
@@ -877,6 +928,9 @@ class LineSinkHoBase(Element):
                     rv[0, i] = self.aq.coef[self.pylayers] * qx
                     rv[1, i] = self.aq.coef[self.pylayers] * qy
             rv.shape = (2, self.Nparam, aq.Naq)
+        if self.addconstant:  # This is ugly here. Maybe I can find a better way
+            rvnew = np.zeros((2, self.Nparam, aq.Naq))
+            rv = np.vstack((rv, pot))
         return rv
     def disinfold(self, x, y, aq = None):
         '''Can be called with only one x,y value
@@ -1021,7 +1075,8 @@ class HeadDiffLineSink(LineSinkHoBase, HeadDiffEquation):
                  order=0, layers=0, label=None, addtomodel=True, aq=None):
         self.storeinput(inspect.currentframe())
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-                 layers=range(model.aq.Naq), order=order, name='HeadDiffLineSink', label=label, \
+                 layers=range(model.aq.Naq), order=order, addconstant=False, \
+                 name='HeadDiffLineSink', label=label, \
                  addtomodel=addtomodel, aq=aq)
         self.Nunknowns = self.Nparam
     def initialize(self):
@@ -1058,33 +1113,32 @@ class DisvecDiffLineSinkString(LineSinkStringBase, DisvecDiffEquation):
         self.parameters[:,0] = sol
         
 def PolygonalInhomogeneity(model, xy, order=0):
-        x1, y1 = xy[0]
-        x2, y2 = xy[1]
-        z1 = x1 + y1 * 1j
-        z2 = x2 + y2 * 1j
-        Zin = 1e-6j
-        Zout = -1e-6j
-        zin = 0.5 * (z2 - z1) * Zin + 0.5 * (z1 + z2)
-        zout = 0.5 * (z2 - z1) * Zout + 0.5 * (z1 + z2)
-        aqin = model.aq.find_aquifer_data(zin.real, zin.imag)
-        aqout = model.aq.find_aquifer_data(zout.real, zout.imag)
-        # 
-        #ls_in = HeadDiffLineSinkString(model, xy=xy, closed=True, layers=range(model.aq.Naq), \
-        #                               order=order, label=None, aq=aqin)
-        #ls_out = DisvecDiffLineSinkString(model, xy=xy, closed=True, layers=range(model.aq.Naq), \
-        #                                  order=order, label=None, aq=aqout)
-        lsin = []
-        lsout = []
-        xy.append(xy[0])
-        x,y = zip(*xy)
-        for i in range(len(xy)-1):
-            ls = HeadDiffLineSink(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
-                                  order=order, label=None, addtomodel=True, aq=aqin)
-            lsin.append(ls)
-            ls = IntfluxLineSinkHo(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
-                 order=order, label=None, addtomodel=True, aq=aqout)
-            lsout.append(ls)
-        return lsin, lsout
+    x1, y1 = xy[0]
+    x2, y2 = xy[1]
+    z1 = x1 + y1 * 1j
+    z2 = x2 + y2 * 1j
+    Zin = 1e-6j
+    Zout = -1e-6j
+    zin = 0.5 * (z2 - z1) * Zin + 0.5 * (z1 + z2)
+    zout = 0.5 * (z2 - z1) * Zout + 0.5 * (z1 + z2)
+    aqin = model.aq.find_aquifer_data(zin.real, zin.imag)
+    aqout = model.aq.find_aquifer_data(zout.real, zout.imag)
+    #
+    lsin = []
+    lsout = []
+    xy.append(xy[0])
+    x,y = zip(*xy)
+    for i in range(len(xy)-1):
+        ls = HeadDiffLineSink(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
+                              order=order, label=None, addtomodel=True, aq=aqin)
+        lsin.append(ls)
+        ls = IntfluxLineSinkHo(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
+             order=order, label=None, addtomodel=True, aq=aqout)
+        lsout.append(ls)
+    zc = np.array(x) + 1j * np.array(y)
+    zcp = 1e-6j * (zc[1:] - zc[:-1]) / 2.0 + 0.5 * (zc[:-1] + zc[1:])
+    rfin = ConstantInside(model, zcp.real, zcp.imag)
+    return lsin, lsout, rfin
 
 def PolygonalInhomogeneity_OK(model, xy, order=0):
         # Uses HeadDiffLineSinkString for inside
@@ -1562,32 +1616,30 @@ def intflux(func, x1, y1, x2, y2, ndeg=8, aq=None):
 ##ls1 = IntfluxLineSinkHo(ml, -2, 0, 2, 0, order=4, aq=ml.aq)
 #ml.solve()
 #
+## Working inhomogeneity 1 layer
 #ml = ModelMaq(kaq = [1], z = [1,0])
 #xy = [(-5,0), (5,0), (5,8), (-5,8)]
 #p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2], z = [1,0])
 #lsin, lsout = PolygonalInhomogeneity(ml, xy=xy, order=6)
-###pi = PolygonInhomMaq(ml, xy = [(0,0), (10,0), (5,5)], kaq = 10, z = [5,4,3,2,1,0], c = 5000, npor = 0.3, top = 'conf')
 #w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 0)
-#rf = Constant(ml, xr = 0, yr = -100, hr=20)
-##ls1 = IntfluxLineSinkHo(ml, -2, 0, 2, 0, order=4, aq=ml.aq)
+#rf = Constant(ml, xr = 0, yr = -100, hr=2)
+##rf2 = ConstantGiven(ml,0,5,-5.42)
+#rf2 = ConstantInside(ml, [0,4.99999,0,-4.99999], [1e-6, 4, 8-1e-6,4]) 
 #ml.solve()
 
-#ml = ModelMaq(kaq = [1,2], z = [10,5,4,0], c=20)
-#xy = [(-5,0), (5,0), (5,8), (-5,8)]
-#p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2,8], z = [10,5,4,0], c=20)
-#lsin, lsout = PolygonalInhomogeneity(ml, xy=xy, order=7)
-###pi = PolygonInhomMaq(ml, xy = [(0,0), (10,0), (5,5)], kaq = 10, z = [5,4,3,2,1,0], c = 5000, npor = 0.3, top = 'conf')
-#w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 0)
-#rf = Constant(ml, xr = 0, yr = -100, hr=20)
-##ls1 = IntfluxLineSinkHo(ml, -2, 0, 2, 0, order=4, aq=ml.aq)
-#ml.solve()
-
-ml = ModelMaq(kaq = [1], z = [1,0])
-xy = [(-3,0), (5,0), (5,8), (-5,8)]
-p = PolygonInhomMaq(ml, xy=xy, kaq = [0.1], z = [2,1,0], c = 100, top = 'semi')
-lsin, lsout = PolygonalInhomogeneity(ml, xy=xy, order=6)
-##pi = PolygonInhomMaq(ml, xy = [(0,0), (10,0), (5,5)], kaq = 10, z = [5,4,3,2,1,0], c = 5000, npor = 0.3, top = 'conf')
+ml = ModelMaq(kaq = [1,2], z = [10,5,4,0], c=20)
+xy = [(-5,0), (5,0), (5,8), (-5,8)]
+p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2, 8], z = [10,5,4,0], c=2)
+lsin, lsout, rfin = PolygonalInhomogeneity(ml, xy=xy, order=6)
 w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 0)
 rf = Constant(ml, xr = 0, yr = -100, hr=2)
-#ls1 = IntfluxLineSinkHo(ml, -2, 0, 2, 0, order=4, aq=ml.aq)
 ml.solve()
+
+# Working lake 1 layer
+#ml = ModelMaq(kaq = [1], z = [1,0])
+#xy = [(-4,0), (5,0), (5,8), (-5,8)]
+#p = PolygonInhomMaq(ml, xy=xy, kaq = [0.1], z = [2,1,0], c = 100, top = 'semi')
+#lsin, lsout = PolygonalInhomogeneity(ml, xy=xy, order=6)
+#w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 0)
+#rf = Constant(ml, xr = 0, yr = -100, hr=2)
+#ml.solve()
