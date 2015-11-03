@@ -1,0 +1,77 @@
+import numpy as np
+import inspect # Used for storing the input
+from aquifer_parameters import param_maq
+
+class AquiferData:
+    def __init__(self, model, kaq, Haq, c, z, npor, ltype):
+        # All input variables except model should be numpy arrays
+        # That should be checked outside this function
+        self.model = model
+        # Needed for heads
+        self.kaq = kaq
+        self.Naq = len(kaq)
+        self.Haq = Haq
+        self.T = self.kaq * self.Haq
+        self.Tcol = self.T[:,np.newaxis]
+        self.c = c
+        # Needed for tracing
+        self.z = z
+        self.npor = npor
+        self.ltype = ltype
+        #
+        self.area = 1e200 # Smaller than default of ml.aq so that inhom is found
+    def initialize(self):
+        self.elementlist = []  # Elementlist of aquifer
+        d0 = 1.0 / (self.c * self.T)
+        d0[:-1] += 1.0 / (self.c[1:] * self.T[:-1])
+        dp1 = -1.0 / (self.c[1:] * self.T[1:])
+        dm1 = -1.0 / (self.c[1:] * self.T[:-1])
+        A = np.diag(dm1,-1) + np.diag(d0,0) + np.diag(dp1,1)
+        w,v = np.linalg.eig(A)
+        # sort lab in ascending order, hence lab in descending order
+        index = np.argsort( abs(w) )
+        w = w[index]; v = v[:,index]
+        if self.ltype[0] == 'a':
+            self.lab = 1.0 / np.sqrt(w[1:])
+            self.zeropluslab = np.zeros(self.Naq)
+            self.zeropluslab[1:] = self.lab
+            v[:,0] = self.T / np.sum(self.T) # first column is normalized T
+        else:
+            self.lab = 1.0 / np.sqrt(w)
+        self.eigvec = v
+        self.coef = np.linalg.solve(v, np.diag(np.ones(self.Naq))).T
+    def add_element(self, e):
+        self.elementlist.append(e)
+    def isinside(self, x, y):
+        raise Exception('Must overload AquiferData.isinside()')
+    def storeinput(self, frame):
+        self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
+
+class Aquifer(AquiferData):
+    def __init__(self, model, kaq, Haq, c, z, npor, ltype):
+        AquiferData.__init__(self, model, kaq, Haq, c, z, npor, ltype)
+        self.inhomlist = []
+        self.area = 1e300 # Needed to find smallest inhom
+    def initialize(self):
+        AquiferData.initialize(self)  # cause we are going to call initialize for inhoms
+        for inhom in self.inhomlist:
+            inhom.initialize()
+        for inhom in self.inhomlist:
+            inhom.create_elements()
+    def add_inhom(self, inhom):
+        self.inhomlist.append(inhom)
+        return len(self.inhomlist) - 1 # returns number in the list
+    def find_aquifer_data(self, x, y):
+        rv = self
+        for inhom in self.inhomlist:
+            if inhom.isinside(x, y):
+                if inhom.area < rv.area:
+                    rv = inhom
+        return rv
+    def find_aquifer_number(self, x, y):
+        rv = -1
+        for i,inhom in enumerate(self.inhomlist):
+            if inhom.isinside(x, y):
+                if inhom.area < rv.area:
+                    rv = i
+        return rv

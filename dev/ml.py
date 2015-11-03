@@ -1,6 +1,6 @@
 '''
 Copyright (C), 2015, Mark Bakker.
-TTim is distributed under the MIT license
+TimML is distributed under the MIT license
 '''
 
 import numpy as np
@@ -47,7 +47,7 @@ class ModelBase:
         rv = np.zeros((2, aq.Naq))
         for e in self.elementlist:
             rv += e.disvec(x, y, aq)
-        rv = np.sum(rv[:,np.newaxis,:] * self.aq.eigvec, 2)
+        rv = np.sum(rv[:,np.newaxis,:] * aq.eigvec, 2)
         return rv
     def disvecnorm(self, x, y, cosnorm, sinnorm):
         qxqy = self.disvec(x, y)
@@ -62,6 +62,19 @@ class ModelBase:
     def headgrid(self, x1, x2, nx, y1, y2, ny, layers=None, printrow=False):
         '''Returns h[Nlayers,Ny,Nx]. If layers is None, all layers are returned'''
         xg, yg = np.linspace(x1,x2,nx), np.linspace(y1,y2,ny)
+        if layers is None:
+            Nlayers = self.aq.find_aquifer_data(xg[0],yg[0]).Naq
+        else:
+            Nlayers = len(np.atleast_1d(layers))
+        h = np.empty((Nlayers, ny, nx))
+        for j in range(ny):
+            if printrow: print str(j)+' '
+            for i in range(nx):
+                h[:,j,i] = self.head(xg[i], yg[j], layers)
+        return h
+    def headgrid2(self, xg, yg, layers=None, printrow=False):
+        '''Returns h[Nlayers,Ny,Nx]. If layers is None, all layers are returned'''
+        nx, ny = len(xg), len(yg)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0],yg[0]).Naq
         else:
@@ -365,7 +378,6 @@ class HeadDiffEquation:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    qx, qy = e.disinflayers(self.xcout[icp], self.ycout[icp], self.pylayers)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     e.potinflayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aqin) / self.aqin.Tcol - \
                     e.potinflayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aqout) / self.aqout.Tcol
@@ -377,12 +389,14 @@ class HeadDiffEquation:
         return mat, rhs
     
 class HeadDiffEquation2:
+    # Integrated head inside and outside are equal
     def equation(self):
         '''Mix-in class that returns matrix rows for difference in head between inside and
         outside equals zeros
         Returns matrix part (Nunknowns,Neq)
         Returns rhs part Nunknowns
         '''
+        ndeg = 3
         mat = np.empty((self.Nunknowns, self.model.Neq))
         rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
         for icp in range(self.Ncp):
@@ -390,15 +404,22 @@ class HeadDiffEquation2:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    qx, qy = e.disinflayers(self.xcout[icp], self.ycout[icp], self.pylayers)
-                    mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
-                    e.potinflayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aqin) / self.aqin.Tcol - \
-                    e.potinflayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aqout) / self.aqout.Tcol
+                    headin = self.intpot(e.potinflayers, self.xcin[icp], self.ycin[icp], \
+                                        self.xcin[icp+1], self.ycin[icp+1], self.pylayers, \
+                                        ndeg=ndeg, aq=self.aqin) / self.aqin.Tcol
+                    headout = self.intpot(e.potinflayers, self.xcout[icp], self.ycout[icp], \
+                                         self.xcout[icp+1], self.ycout[icp+1], self.pylayers, \
+                                         ndeg=ndeg, aq=self.aqout) / self.aqout.Tcol
+                    mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = headin - headout
                     ieq += e.Nunknowns
                 else:
-                    rhs[istart:istart+self.Nlayers] -= \
-                    e.potentiallayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aqin) / self.aqin.T - \
-                    e.potentiallayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aqout) / self.aqout.T
+                    headin = self.intpot(e.potentiallayers, self.xcin[icp], self.ycin[icp], \
+                                         self.xcin[icp+1], self.ycin[icp+1], self.pylayers, \
+                                         ndeg=ndeg, aq=self.aqin) / self.aqin.T
+                    headout = self.intpot(e.potentiallayers, self.xcout[icp], self.ycout[icp], \
+                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, \
+                                          ndeg=ndeg, aq=self.aqout) / self.aqout.T
+                    rhs[istart:istart+self.Nlayers] -= headin - headout
         return mat, rhs
     
 class DisvecDiffEquation:
@@ -433,6 +454,7 @@ class DisvecDiffEquation2:
         Returns matrix part (Nunknowns,Neq)
         Returns rhs part Nunknowns
         '''
+        ndeg = 3
         mat = np.empty((self.Nunknowns, self.model.Neq))
         rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
         for icp in range(self.Ncp):
@@ -441,16 +463,16 @@ class DisvecDiffEquation2:
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
                     fluxin = self.intflux(e.disinflayers, self.xcin[icp], self.ycin[icp], \
-                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, ndeg=8, aq=self.aqin)
+                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, ndeg=ndeg, aq=self.aqin)
                     fluxout = self.intflux(e.disinflayers, self.xcout[icp], self.ycout[icp], \
-                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, ndeg=8, aq=self.aqout)
+                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, ndeg=ndeg, aq=self.aqout)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = fluxin - fluxout
                     ieq += e.Nunknowns
                 else:
                     fluxin = self.intflux(e.disveclayers, self.xcin[icp], self.ycin[icp], \
-                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, ndeg=8, aq=self.aqin)
+                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, ndeg=ndeg, aq=self.aqin)
                     fluxout = self.intflux(e.disveclayers, self.xcout[icp], self.ycout[icp], \
-                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, ndeg=8, aq=self.aqout)                    
+                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, ndeg=ndeg, aq=self.aqout)                    
                     rhs[istart:istart+self.Nlayers] -= fluxin - fluxout
         return mat, rhs
     
@@ -514,6 +536,18 @@ class Element:
         qxqy = self.disvec(x, y, aq)
         rv = np.sum(qxqy[:,np.newaxis,:] * aq.eigvec, 2)
         return rv[:,pylayers]
+    def intpot(self, func, x1, y1, x2, y2, pylayers, ndeg=8, aq=None):
+        if aq is None: print 'error, aquifer needs to be given'
+        z1 = x1 + 1j * y1
+        z2 = x2 + 1j * y2
+        Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
+        z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
+        x = z.real
+        y = z.imag
+        pot = 0.0
+        for i in range(ndeg):
+            pot += wleg[i] * func(x=x[i], y=y[i], pylayers=pylayers, aq=aq)
+        return pot
     def intflux(self, func, x1, y1, x2, y2, pylayers, ndeg=8, aq=None):
         if aq is None: print 'error, aquifer needs to be given'
         thetaNormOut = np.arctan2(y2 - y1, x2 - x1) - np.pi/2.0
@@ -530,6 +564,23 @@ class Element:
             qxqy = func(x=x[i], y=y[i], pylayers=pylayers, aq=aq)
             qtot += wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
         return qtot
+    
+#def intflux(func, x1, y1, x2, y2, ndeg=8, aq=None):
+#    thetaNormOut = np.arctan2(y2 - y1, x2 - x1) - np.pi/2.0
+#    cosnorm = np.cos(thetaNormOut)
+#    sinnorm = np.sin(thetaNormOut)
+#    z1 = x1 + 1j * y1
+#    z2 = x2 + 1j * y2
+#    Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
+#    z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
+#    x = z.real
+#    y = z.imag
+#    qtot = 0.0
+#    for i in range(ndeg):
+#        qxqy = func(x=x[i], y=y[i], aq=aq)
+#        qtot += wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
+#    return qtot #* np.sqrt((x2 - x1) **2 + (y2 - y1) **2) / 2.0
+
     def setparams(self, sol):
         raise Exception('Must overload Element.setparams()')
     def storeinput(self,frame):
@@ -656,6 +707,8 @@ class Constant(Element, HeadEquation):
         self.yr = yr
         self.hr = hr
         self.model.add_element(self)
+    def __repr__(self):
+        return self.name + ' at ' + str((self.xr, self.yr)) + ' with head  ' + str(self.hr)
     def initialize(self):
         self.aq = self.model.aq.find_aquifer_data(self.xr, self.yr)
         self.aq.add_element(self)
@@ -688,6 +741,8 @@ class ConstantInside(Element):
         self.yc = np.atleast_1d(yc)
         self.parameters = np.zeros((1,1))
         self.model.add_element(self)
+    def __repr__(self):
+        return self.name
     def initialize(self):
         self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         self.aq.add_element(self)
@@ -997,6 +1052,24 @@ class IntfluxLineSinkHo(LineSinkHoBase, DisvecDiffEquation2):
         self.aqout = self.model.aq.find_aquifer_data(self.xcout[0], self.ycout[0])
     def setparams(self, sol):
         self.parameters[:,0] = sol
+        
+class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
+                 order=0, layers=0, label=None, addtomodel=True, aq=None):
+        self.storeinput(inspect.currentframe())
+        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
+                 layers=range(model.aq.Naq), order=order, addconstant=False, \
+                 name='IntHeadDiffLineSink', label=label, \
+                 addtomodel=addtomodel, aq=aq)
+        self.Nunknowns = self.Nparam
+    def initialize(self):
+        LineSinkHoBase.initialize(self)
+        self.xcin, self.ycin = controlpoints(self.Ncp-1, self.z1, self.z2, eps=1e-6, include_ends=True)
+        self.xcout, self.ycout = controlpoints(self.Ncp-1, self.z1, self.z2, eps=-1e-6, include_ends=True)
+        self.aqin = self.model.aq.find_aquifer_data(self.xcin[0], self.ycin[0])
+        self.aqout = self.model.aq.find_aquifer_data(self.xcout[0], self.ycout[0])
+    def setparams(self, sol):
+        self.parameters[:,0] = sol
     
 class LineSinkStringBase(Element):
     def __init__(self, model, xy, closed=False, layers=0, order=0, name='LineSinkStringBase', label=None, aq=None):
@@ -1112,7 +1185,40 @@ class DisvecDiffLineSinkString(LineSinkStringBase, DisvecDiffEquation):
     def setparams(self, sol):
         self.parameters[:,0] = sol
         
-def PolygonalInhomogeneity(model, xy, order=0):
+def PolygonalInhomogeneity(model, xy, order=0, closed=True):
+    x1, y1 = xy[0]
+    x2, y2 = xy[1]
+    z1 = x1 + y1 * 1j
+    z2 = x2 + y2 * 1j
+    Zin = 1e-6j
+    Zout = -1e-6j
+    zin = 0.5 * (z2 - z1) * Zin + 0.5 * (z1 + z2)
+    zout = 0.5 * (z2 - z1) * Zout + 0.5 * (z1 + z2)
+    aqin = model.aq.find_aquifer_data(zin.real, zin.imag)
+    aqout = model.aq.find_aquifer_data(zout.real, zout.imag)
+    #
+    lsin = []
+    lsout = []
+    if closed:
+        xy.append(xy[0])
+    x,y = zip(*xy)
+    for i in range(len(xy)-1):
+        ls = HeadDiffLineSink(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
+                              order=order, label=None, addtomodel=True, aq=aqin)
+        lsin.append(ls)
+        ls = IntfluxLineSinkHo(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
+             order=order, label=None, addtomodel=True, aq=aqout)
+        lsout.append(ls)
+    zc = np.array(x) + 1j * np.array(y)
+    zcp = 1e-6j * (zc[1:] - zc[:-1]) / 2.0 + 0.5 * (zc[:-1] + zc[1:])
+    if aqin.ltype[0] == 'a':
+        rfin = ConstantInside(model, zcp.real, zcp.imag)
+    else:
+        rfin = None
+    return lsin, lsout, rfin
+
+def PolygonalInhomogeneity2(model, xy, order=0):
+    # Uses integrated head across line-sink
     x1, y1 = xy[0]
     x2, y2 = xy[1]
     z1 = x1 + y1 * 1j
@@ -1129,7 +1235,7 @@ def PolygonalInhomogeneity(model, xy, order=0):
     xy.append(xy[0])
     x,y = zip(*xy)
     for i in range(len(xy)-1):
-        ls = HeadDiffLineSink(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
+        ls = IntHeadDiffLineSink(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
                               order=order, label=None, addtomodel=True, aq=aqin)
         lsin.append(ls)
         ls = IntfluxLineSinkHo(model, x1=x[i], y1=y[i], x2=x[i+1], y2=y[i+1], \
@@ -1604,7 +1710,7 @@ def intflux(func, x1, y1, x2, y2, ndeg=8, aq=None):
     for i in range(ndeg):
         qxqy = func(x=x[i], y=y[i], aq=aq)
         qtot += wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
-    return qtot * np.sqrt((x2 - x1) **2 + (y2 - y1) **2) / 2.0
+    return qtot #* np.sqrt((x2 - x1) **2 + (y2 - y1) **2) / 2.0
 
 #ml = ModelMaq(kaq = [1], z = [1,0])
 #xy = [(-5,0), (5,0), (5,8), (-5,8)]
@@ -1627,13 +1733,25 @@ def intflux(func, x1, y1, x2, y2, ndeg=8, aq=None):
 #rf2 = ConstantInside(ml, [0,4.99999,0,-4.99999], [1e-6, 4, 8-1e-6,4]) 
 #ml.solve()
 
-ml = ModelMaq(kaq = [1,2], z = [10,5,4,0], c=20)
+##Working 2 layer model with lake
+#ml = ModelMaq(kaq = [1,2], z = [10,5,4,0], c=20)
+#xy = [(-5,0), (5,0), (5,8), (-2,8)]
+#p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2, 8], z = [12,10,5,4,0], c=[2, 20], top = 'semi')
+## Confined rather than lake
+##p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2, 8], z = [10,5,4,0], c=[20], top = 'conf')
+#lsin, lsout, rfin = PolygonalInhomogeneity(ml, xy=xy, order=5)
+#w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 1)
+#rf = Constant(ml, xr = 0, yr = -100, hr=2)
+#ml.solve()
+
+#Working 2 layer model
+ml1 = ModelMaq(kaq = [1,2], z = [10,5,4,0], c=20)
 xy = [(-5,0), (5,0), (5,8), (-5,8)]
-p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2, 8], z = [10,5,4,0], c=2)
-lsin, lsout, rfin = PolygonalInhomogeneity(ml, xy=xy, order=6)
-w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 0)
-rf = Constant(ml, xr = 0, yr = -100, hr=2)
-ml.solve()
+p = PolygonInhomMaq(ml1, xy=xy, kaq = [0.2, 8], z = [10,5,4,0], c=[20], top = 'conf')
+lsin, lsout, rfin = PolygonalInhomogeneity(ml1, xy=xy, order=3)
+w = WellBase(ml1, xw = 0, yw = -10, Qw = 100, layers = 1)
+rf = Constant(ml1, xr = 0, yr = -100, hr=2)
+ml1.solve()
 
 # Working lake 1 layer
 #ml = ModelMaq(kaq = [1], z = [1,0])
@@ -1643,3 +1761,25 @@ ml.solve()
 #w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 0)
 #rf = Constant(ml, xr = 0, yr = -100, hr=2)
 #ml.solve()
+
+#Working 2 layer model
+ml = ModelMaq(kaq = [1,2], z = [10,5,4,0], c=20)
+xy = [(-5,0), (5,0), (5,8), (-5,8)]
+p = PolygonInhomMaq(ml, xy=xy, kaq = [0.2, 8], z = [10,5,4,0], c=[20], top = 'conf')
+lsin, lsout, rfin = PolygonalInhomogeneity2(ml, xy=xy, order=3)
+w = WellBase(ml, xw = 0, yw = -10, Qw = 100, layers = 1)
+rf = Constant(ml, xr = 0, yr = -100, hr=2)
+ml.solve()
+#def pot(x, y, pylayers, aq):
+#    return ml.potential(x, y, aq)
+#ls1 = ml.elementlist[0]
+#x1, y1, x2, y2, = ls1.xcin[0], ls1.ycin[0], ls1.xcin[1], ls1.ycin[1]
+#aqin = ml.aq.find_aquifer_data(x1,y1)
+#print intflux(ml.disvec, x1, y1, x2, y2, 3, aqin)
+#x1, y1, x2, y2, = ls1.xcout[0], ls1.ycout[0], ls1.xcout[1], ls1.ycout[1]
+#print intflux(ml.disvec, x1, y1, x2, y2, 3, ml.aq)
+#x1, y1, x2, y2, = ls1.xcin[0], ls1.ycin[0], ls1.xcin[1], ls1.ycin[1]
+#aqin = ml.aq.find_aquifer_data(x1,y1)
+#print ls1.intpot(pot, x1, y1, x2, y2, range(2), ndeg=3, aq=aqin) / aqin.T
+#x1, y1, x2, y2, = ls1.xcout[0], ls1.ycout[0], ls1.xcout[1], ls1.ycout[1]
+#print ls1.intpot(pot, x1, y1, x2, y2, range(2), ndeg=3, aq=ml.aq) / ml.aq.T
