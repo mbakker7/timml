@@ -15,7 +15,7 @@ from version import __version__
 
 # Import all classes and functions
 from model import ModelMaq
-from well import WellBase, HeadWell
+from well import WellBase, Well, HeadWell
 from constant import Constant
 from linesink import HeadLineSink, HeadLineSinkHo, HeadLineSinkString
 from inhomogeneity import PolygonInhomMaq

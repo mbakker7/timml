@@ -14,7 +14,7 @@ class Element:
         if self.label is not None:
             assert self.label not in self.model.elementdict.keys(),\
             "TTim error: label " + self.label + " already exists"
-    def initialzie(self):
+    def initialize(self):
         # must be overloaded
         pass
     def potinf(self, x, y, aq=None):

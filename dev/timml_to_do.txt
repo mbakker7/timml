@@ -7,3 +7,5 @@ Check if all equations in equation.py are used
 Move setparams function to HeadEquation?
 
 Specify head h* for semi-confined flow in both model and in inhomogeneities
+
+run ml.solve() twice when inhomogeneity is included

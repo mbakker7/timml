@@ -4,9 +4,10 @@ import numpy as np
 ml = ModelMaq(kaq=[2,6,4], z= [165, 140, 120, 80, 60, 0], c = [2000, 20000], npor=0.3)
 rf = Constant(ml, xr=20000, yr=20000, hr=175, layer=0)
 #p=CircAreaSink(ml,10000,10000,15000,0.0002,[0])
-w1 = WellBase(ml, xw=10000, yw=8000, Qw=3000, rw=0.3, layers=1, label='well 1')
+w1 = Well(ml, xw=10000, yw=8000, Qw=3000, rw=0.3, res = 0.2, layers=[1], label='well 1')
+#w1 = WellBase(ml, xw=10000, yw=8000, Qw=[3000,2000], rw=0.3, res = 0.2, layers=[1,2], label='well 1')
 w2 = WellBase(ml, xw=12000, yw=8000, Qw=5000, rw=0.3, layers=2, label='well 2')
-#w3 = Well(ml, 10000, 4600, 5000, .3,[1,2],'maq well')
+w3 = Well(ml, xw=10000, yw=4600, Qw=5000, rw=0.3, layers=[1,2], label='maq well')
 #
 HeadLineSink(ml, 9510,  19466, 12620, 17376, 170, 0)
 HeadLineSink(ml, 12620, 17376, 12753, 14976, 168, 0)

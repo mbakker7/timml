@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 import inspect # Used for storing the input
 from aquifer import Aquifer
 from aquifer_parameters import param_maq
@@ -29,6 +30,8 @@ class ModelBase:
         for e in aq.elementlist:
             pot += e.potential(x, y, aq)
         rv = np.sum(pot * aq.eigvec, 1)
+        if aq.ltype[0] == 'l':
+            rv += aq.constantstar.potstar  # potential for head above leaky layer
         return rv
     def disvec(self, x, y, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x,y)
@@ -90,7 +93,7 @@ class ModelBase:
         self.Neq = np.sum([e.Nunknowns for e in self.elementlist])
         if self.Neq == 0: return
         if silent is False:
-            print 'self.Neq ',self.Neq
+            print 'Number of elements, Number of equations:', len(self.elementlist), ',', self.Neq
         if self.Neq == 0:
             if silent is False: print 'No unknowns. Solution complete'
             return
@@ -101,6 +104,8 @@ class ModelBase:
             if e.Nunknowns > 0:
                 mat[ieq:ieq+e.Nunknowns, :], rhs[ieq:ieq+e.Nunknowns] = e.equation()
                 ieq += e.Nunknowns
+            if silent is False: print '.',
+            sys.stdout.flush()  # Can be replaced with print with flush in Python 3.3
         if printmat:
             return mat,rhs
         sol = np.linalg.solve(mat, rhs)
@@ -110,6 +115,7 @@ class ModelBase:
                 e.setparams(sol[icount:icount + e.Nunknowns])
                 icount += e.Nunknowns
         if silent is False:
+            print  # needed cause the dots are printed
             print 'solution complete'
         elif (silent == 'dot') or (silent == '.'):
             print '.',

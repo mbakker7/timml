@@ -1,7 +1,7 @@
 import numpy as np
 import inspect # Used for storing the input
 from element import Element
-from equation import HeadEquation
+from equation import HeadEquation, MscreenWellEquation
 from scipy.special import k0, k1
 
 class WellBase(Element):
@@ -25,7 +25,8 @@ class WellBase(Element):
         self.aq = self.model.aq.find_aquifer_data(self.xw, self.yw)
         self.aq.add_element(self)
         self.parameters = np.empty((self.Nparam, 1))
-        self.parameters[:,0] = self.Qw  # Not sure if that needs to be here
+        self.parameters[:,0] = self.Qw
+        self.resfac = self.res / (2 * np.pi * self.rw * self.aq.Haq[self.pylayers])
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.Nparam, aq.Naq))
@@ -68,13 +69,32 @@ class WellBase(Element):
             rv[0] = self.aq.coef[self.pylayers] * qx
             rv[1] = self.aq.coef[self.pylayers] * qy   
         return rv
+    def headinside(self):
+        h = self.model.head(self.xw + self.rw, self.yw, layers=self.pylayers)
+        return h - self.resfac * self.parameters[:,0]
+    
+class Well(WellBase, MscreenWellEquation):
+    def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
+                 res=0.0, layers=0, label=None):
+        self.storeinput(inspect.currentframe())
+        WellBase.__init__(self, model, xw, yw, 0.0, rw, res,\
+                          layers=layers, name='Well', label=label)
+        self.Qc = float(Qw)
+        if self.Nlayers == 1:
+            self.Nunknowns = 0
+        else:
+            self.Nunknowns = self.Nparam
+    def initialize(self):
+        WellBase.initialize(self)
+    def setparams(self, sol):
+        self.parameters[:,0] = sol
     
 class HeadWell(WellBase, HeadEquation):
     def __init__(self, model, xw=0, yw=0, hw=10.0, rw=0.1, \
-                 layers=0, label=None):
+                 res=0.0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
-        WellBase.__init__(self, model, xw, yw, 0.0, rw,\
-                          layers = layers, name='HeadWell', label=label)
+        WellBase.__init__(self, model, xw, yw, 0.0, rw, res,\
+                          layers=layers, name='HeadWell', label=label)
         self.hc = hw
         self.Nunknowns = self.Nparam
     def initialize(self):

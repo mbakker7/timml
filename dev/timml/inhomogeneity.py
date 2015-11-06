@@ -60,7 +60,7 @@ class PolygonInhom(AquiferData):
         
 class PolygonInhomMaq(PolygonInhom):
     tiny = 1e-8
-    def __init__(self, model, xy, kaq = 1, z = [1,0], c = [], npor = 0.3, top = 'conf', order=3, ndeg=3):
+    def __init__(self, model, xy, kaq=1, z=[1,0], c=[], npor=0.3, top='conf', order=3, ndeg=3):
         self.storeinput(inspect.currentframe())
         kaq, Haq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
         PolygonInhom.__init__(self, model, xy, kaq, Haq, c, z, npor, ltype, order, ndeg)

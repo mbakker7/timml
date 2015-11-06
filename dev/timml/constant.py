@@ -3,27 +3,30 @@ import inspect # Used for storing the input
 from element import Element
 from equation import HeadEquation
 
-class Constant(Element, HeadEquation):
+class ConstantBase(Element, HeadEquation):
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0,\
-                 label=None):
+                 name='ConstantBase', label=None, aq=None):
         self.storeinput(inspect.currentframe())
         Element.__init__(self, model, Nparam=1, Nunknowns=1, layers=layer,\
-                         name='Constant', label=label)
-        self.Nunknowns = 1
+                         name=name, label=label)
+        self.Nparam = 1 # Defined here and not in Element as other elements can have multiple parameters per layers
+        self.Nunknowns = 0
         self.xr = xr
         self.yr = yr
         self.hr = hr
+        self.aq = aq
         self.model.add_element(self)
     def __repr__(self):
         return self.name + ' at ' + str((self.xr, self.yr)) + ' with head  ' + str(self.hr)
     def initialize(self):
-        self.aq = self.model.aq.find_aquifer_data(self.xr, self.yr)
+        if self.aq is None:
+            self.aq = self.model.aq.find_aquifer_data(self.xr, self.yr)
         self.aq.add_element(self)
         self.Ncp = 1
         self.xc = np.array([self.xr])
         self.yc = np.array([self.yr])
         self.pc = self.hr * self.aq.T[self.pylayers]
-        self.parameters = np.empty((1, 1))
+        self.parameters = np.atleast_2d(self.pc)
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((1, aq.Naq))
@@ -34,6 +37,16 @@ class Constant(Element, HeadEquation):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, 1, aq.Naq))
         return rv
+
+class Constant(ConstantBase, HeadEquation):
+    def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, label=None):
+        self.storeinput(inspect.currentframe())
+        ConstantBase.__init__(self, model, xr=xr, yr=yr, hr=hr, layer=layer, \
+                              name='Constant', label=label)
+        self.Nunknowns = 1
+    def initialize(self):
+        ConstantBase.initialize(self)
+        self.resfac = 0.0  # required for HeadEquation
     def setparams(self, sol):
         self.parameters[:,0] = sol
         
@@ -84,3 +97,35 @@ class ConstantInside(Element):
         return mat, rhs
     def setparams(self, sol):
         self.parameters[:,0] = sol
+        
+class ConstantStar(Element, HeadEquation):
+    def __init__(self, model, hstar=0.0, label=None, aq=None):
+        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=0,\
+                         name='ConstantStar', label=label)
+        self.hstar = hstar
+        self.aq = aq
+        self.model.add_element(self)
+    def __repr__(self):
+        return self.name + ' with head  ' + str(self.hstar)
+    def initialize(self):
+        self.aq.add_element(self)
+        self.aq.constantstar = self
+        self.parameters = np.zeros((1,1))
+        self.potstar = self.hstar * self.aq.T
+    def potinf(self, x, y, aq=None):
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((1, aq.Naq))
+        return rv
+    def potentiallayers(self, x, y, pylayers, aq=None):
+        '''Returns array of size len(pylayers) only used in building equations
+        Defined here as it is the particular solution inside a semi-confined aquifer
+        and cannot be added by using eigen vectors'''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        pot = np.zeros(len(pylayers))
+        if aq == self.aq:
+            pot[:] = self.potstar
+        return pot[pylayers]
+    def disinf(self, x, y, aq=None):
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, 1, aq.Naq))
+        return rv

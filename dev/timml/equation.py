@@ -16,10 +16,61 @@ class HeadEquation:
                 if e.Nunknowns > 0:
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     e.potinflayers(self.xc[icp], self.yc[icp], self.pylayers)
+                    if e == self:
+                        mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] -= self.resfac
                     ieq += e.Nunknowns
                 else:
                     rhs[istart:istart+self.Nlayers] -= \
                     e.potentiallayers(self.xc[icp], self.yc[icp], self.pylayers)  # Pretty cool that this works, really
+        return mat, rhs
+    
+class HeadEquationNoRes:  # This class can be deleted when HeadEquation works with zero resistance
+    def equation(self):
+        '''Mix-in class that returns matrix rows for head-specified conditions. (really written as constant potential element)
+        Returns matrix part (Nunknowns,Neq)
+        Returns rhs part Nunknowns
+        '''
+        mat = np.empty((self.Nunknowns, self.model.Neq))
+        rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        for icp in range(self.Ncp):
+            istart = icp * self.Nlayers
+            rhs[istart:istart+self.Nlayers] = self.pc
+            ieq = 0
+            for e in self.model.elementlist:
+                if e.Nunknowns > 0:
+                    mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
+                    e.potinflayers(self.xc[icp], self.yc[icp], self.pylayers)
+                    ieq += e.Nunknowns
+                else:
+                    rhs[istart:istart+self.Nlayers] -= \
+                    e.potentiallayers(self.xc[icp], self.yc[icp], self.pylayers)  # Pretty cool that this works, really
+        return mat, rhs
+    
+class MscreenWellEquation:
+    def equation(self):
+        '''Mix-in class that returns matrix rows for mscreen condition.
+        Mscreen condition applied at each control point separately (so not like in ditch).
+        Returns matrix part (Nunknowns,Neq)
+        Returns rhs part (Nunknowns)
+        '''
+        mat = np.zeros((self.Nunknowns, self.model.Neq))
+        rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        rhs[0:self.Nlayers - 1] = 0.0
+        rhs[self.Nlayers - 1] = self.Qc
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.Nunknowns > 0:
+                head = e.potinflayers(self.xc, self.yc, self.pylayers) / self.aq.Tcol[self.pylayers,:]
+                mat[0:self.Nlayers - 1, ieq:ieq + e.Nunknowns] = head[:-1] - head[1:]
+                if e == self:
+                    for i in range(self.Nlayers - 1):
+                        mat[i, ieq + i] -= self.resfac[i]
+                        mat[i, ieq + i + 1] += self.resfac[i+1]
+                    mat[self.Nlayers - 1, ieq:ieq + self.Nlayers] = 1.0
+                ieq += e.Nunknowns
+            else:
+                head = e.potentiallayers(self.xc, self.yc, self.pylayers) / self.aq.T[self.pylayers]
+                rhs[0:self.Nlayers - 1] -= head[:-1] - head[1:]
         return mat, rhs
     
 class DisvecEquation:

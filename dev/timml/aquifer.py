@@ -15,7 +15,7 @@ class AquiferData:
         self.Tcol = self.T[:,np.newaxis]
         self.c = c
         # Needed for tracing
-        self.z = z
+        self.z = np.atleast_1d(z)
         self.npor = npor
         self.ltype = ltype
         #
@@ -68,10 +68,11 @@ class Aquifer(AquiferData):
                 if inhom.area < rv.area:
                     rv = inhom
         return rv
-    def find_aquifer_number(self, x, y):
-        rv = -1
-        for i,inhom in enumerate(self.inhomlist):
-            if inhom.isinside(x, y):
-                if inhom.area < rv.area:
-                    rv = i
-        return rv
+    # Not used anymore I think 5 Nov 2015
+    #def find_aquifer_number(self, x, y):
+    #    rv = -1
+    #    for i,inhom in enumerate(self.inhomlist):
+    #        if inhom.isinside(x, y):
+    #            if inhom.area < rv.area:
+    #                rv = i
+    #    return rv

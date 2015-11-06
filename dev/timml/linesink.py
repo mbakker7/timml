@@ -6,8 +6,8 @@ from besselaes import potbeslsho, potbesonlylsho, disbeslsho, disbesonlylsho
 from controlpoints import controlpoints
 
 class LineSinkBase(Element):
-    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 Qls=100.0, layers=0, name='LineSinkBase', label=None, \
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, Qls=100.0, \
+                 res=0, wh=1, layers=0, name='LineSinkBase', label=None, \
                  addtomodel=True):
         Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers,\
                          name=name, label=label)
@@ -17,6 +17,8 @@ class LineSinkBase(Element):
         self.x2 = float(x2)
         self.y2 = float(y2)
         self.Qls = np.atleast_1d(Qls)
+        self.res = float(res)
+        self.wh = wh
         self.addtomodel = addtomodel
         if self.addtomodel: self.model.add_element(self)
         #self.xa,self.ya,self.xb,self.yb,self.np = np.zeros(1),np.zeros(1),np.zeros(1),np.zeros(1),np.zeros(1,'i')  # needed to call bessel.circle_line_intersection
@@ -33,7 +35,14 @@ class LineSinkBase(Element):
         self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
         if self.addtomodel: self.aq.add_element(self)
         self.parameters = np.empty((self.Nparam, 1))
-        self.parameters[:,0] = self.Qls / self.L  # Not sure if that needs to be here
+        self.parameters[:,0] = self.Qls / self.L
+        if self.wh == 'H':
+            self.wh = self.aq.Haq[self.pylayers]
+        elif self.wh == '2H':
+            self.wh = 2.0 * self.aq.Haq[self.pylayers]
+        elif np.isscalar(self.wh):
+            self.wh = self.wh * np.ones(self.Nlayers)
+        self.resfac = self.aq.T[self.pylayers] * self.res / self.wh
     def potinf(self, x, y, aq = None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
@@ -51,7 +60,7 @@ class LineSinkBase(Element):
     def disinf(self, x, y, aq = None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rvx = np.zeros((2, self.Nparam, aq.Naq))
+        rv = np.zeros((2, self.Nparam, aq.Naq))
         if aq == self.aq:
             qx = np.zeros(aq.Naq)
             qy = np.zeros(aq.Naq)
@@ -66,11 +75,11 @@ class LineSinkBase(Element):
         return rv
     
 class HeadLineSink(LineSinkBase, HeadEquation):
-    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 hls=1.0, layers=0, label=None, addtomodel=True):
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, hls=1.0, \
+                 res=0, wh=1, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
         LineSinkBase.__init__(self, model, x1, y1, x2, y2, Qls=0,\
-                 layers=layers, name='HeadLineSink', label=label, \
+                 res=res, wh=wh, layers=layers, name='HeadLineSink', label=label, \
                  addtomodel=addtomodel)
         self.hc = hls
         self.Nunknowns = self.Nparam
