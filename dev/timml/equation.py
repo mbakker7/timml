@@ -158,19 +158,19 @@ class HeadDiffEquation2:
                 if e.Nunknowns > 0:
                     headin = self.intpot(e.potinflayers, self.xcin[icp], self.ycin[icp], \
                                         self.xcin[icp+1], self.ycin[icp+1], self.pylayers, \
-                                        ndeg=self.ndeg, aq=self.aqin) / self.aqin.Tcol
+                                        aq=self.aqin) / self.aqin.Tcol
                     headout = self.intpot(e.potinflayers, self.xcout[icp], self.ycout[icp], \
                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, \
-                                         ndeg=self.ndeg, aq=self.aqout) / self.aqout.Tcol
+                                         aq=self.aqout) / self.aqout.Tcol
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = headin - headout
                     ieq += e.Nunknowns
                 else:
                     headin = self.intpot(e.potentiallayers, self.xcin[icp], self.ycin[icp], \
                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, \
-                                         ndeg=self.ndeg, aq=self.aqin) / self.aqin.T
+                                         aq=self.aqin) / self.aqin.T
                     headout = self.intpot(e.potentiallayers, self.xcout[icp], self.ycout[icp], \
                                           self.xcout[icp+1], self.ycout[icp+1], self.pylayers, \
-                                          ndeg=self.ndeg, aq=self.aqout) / self.aqout.T
+                                          aq=self.aqout) / self.aqout.T
                     rhs[istart:istart+self.Nlayers] -= headin - headout
         return mat, rhs
     
@@ -214,15 +214,15 @@ class DisvecDiffEquation2:
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
                     fluxin = self.intflux(e.disinflayers, self.xcin[icp], self.ycin[icp], \
-                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, ndeg=self.ndeg, aq=self.aqin)
+                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, aq=self.aqin)
                     fluxout = self.intflux(e.disinflayers, self.xcout[icp], self.ycout[icp], \
-                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, ndeg=self.ndeg, aq=self.aqout)
+                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, aq=self.aqout)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = fluxin - fluxout
                     ieq += e.Nunknowns
                 else:
                     fluxin = self.intflux(e.disveclayers, self.xcin[icp], self.ycin[icp], \
-                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, ndeg=self.ndeg, aq=self.aqin)
+                                          self.xcin[icp+1], self.ycin[icp+1], self.pylayers, aq=self.aqin)
                     fluxout = self.intflux(e.disveclayers, self.xcout[icp], self.ycout[icp], \
-                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, ndeg=self.ndeg, aq=self.aqout)                    
+                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, aq=self.aqout)                    
                     rhs[istart:istart+self.Nlayers] -= fluxin - fluxout
         return mat, rhs

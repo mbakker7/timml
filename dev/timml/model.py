@@ -13,6 +13,8 @@ class ModelBase:
         self.aq = Aquifer(self, kaq, Haq, c, z, npor, ltype)
         self.modelname = 'ml' # Used for writing out input
     def initialize(self):
+        # remove inhomogeneity elements (they are added again)
+        self.elementlist = [e for e in self.elementlist if not e.inhomelement]
         self.aq.initialize()
         for e in self.elementlist:
             e.initialize()

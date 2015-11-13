@@ -36,9 +36,9 @@ class WellBase(Element):
             if r < self.rw: r = self.rw  # If at well, set to at radius
             if aq.ltype[0] == 'a':
                 pot[0] = np.log(r / self.rw) / (2 * np.pi)
-                pot[1:] = -k0(r / aq.lab) / (2 * np.pi)
+                pot[1:] = -k0(r / aq.lab[1:]) / (2 * np.pi)
             else:
-                pot[:] = k0(r / aq/lab) / (2 * np.pi)
+                pot[:] = -k0(r / aq/lab) / (2 * np.pi)
             rv[:] = self.aq.coef[self.pylayers] * pot
         return rv
     def disinf(self, x, y, aq=None):
@@ -59,9 +59,9 @@ class WellBase(Element):
             if aq.ltype[0] == 'a':
                 qx[0] = -1 / (2 * np.pi) * xminxw / rsq
                 qy[0] = -1 / (2 * np.pi) * yminyw / rsq 
-                kone = k1(r / aq.lab)
-                qx[1:] = -kone * xminxw / (r * aq.lab) / (2 * np.pi)
-                qy[1:] = -kone * yminyw / (r * aq.lab) / (2 * np.pi)
+                kone = k1(r / aq.lab[1:])
+                qx[1:] = -kone * xminxw / (r * aq.lab[1:]) / (2 * np.pi)
+                qy[1:] = -kone * yminyw / (r * aq.lab[1:]) / (2 * np.pi)
             else:
                 kone = k1(r / aq.lab)
                 qx[:] = -kone * xminxw / (r * aq.lab) / (2 * np.pi)

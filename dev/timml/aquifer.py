@@ -28,13 +28,15 @@ class AquiferData:
         dm1 = -1.0 / (self.c[1:] * self.T[:-1])
         A = np.diag(dm1,-1) + np.diag(d0,0) + np.diag(dp1,1)
         w,v = np.linalg.eig(A)
-        # sort lab in ascending order, hence lab in descending order
+        # sort lab in decending order, hence w in ascending order
         index = np.argsort( abs(w) )
         w = w[index]; v = v[:,index]
+        self.ilap = 0  # tag indicating whether an aquifer is Laplace (confined on top)
         if self.ltype[0] == 'a':
-            self.lab = 1.0 / np.sqrt(w[1:])
-            self.zeropluslab = np.zeros(self.Naq)
-            self.zeropluslab[1:] = self.lab
+            self.ilap = 1
+            self.lab = np.zeros(self.Naq)
+            self.lab[1:] = 1.0 / np.sqrt(w[1:])
+            self.zeropluslab = self.lab  # to be deprecated when new lambda is fully implemented
             v[:,0] = self.T / np.sum(self.T) # first column is normalized T
         else:
             self.lab = 1.0 / np.sqrt(w)

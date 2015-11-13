@@ -7,10 +7,12 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
                  order=0, ndeg=3, layers=0, label=None, addtomodel=True, aq=None, aqin=None, aqout=None):
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-                 layers=range(model.aq.Naq), order=order, addconstant=False, \
+                 layers=range(model.aq.Naq), order=order, \
                  name='IntHeadDiffLineSink', label=label, \
                  addtomodel=addtomodel, aq=aq)
+        self.inhomelement = True
         self.ndeg = ndeg
+        self.Xleg, self.wleg = np.polynomial.legendre.leggauss(self.ndeg)
         self.Nunknowns = self.Nparam
         self.aqin = aqin
         self.aqout = aqout
@@ -31,7 +33,9 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
                  layers=range(model.aq.Naq), order= order, name='IntFluxLineSink', label=label, \
                  addtomodel=addtomodel, aq=aq)
+        self.inhomelement = True
         self.ndeg = ndeg
+        self.Xleg, self.wleg = np.polynomial.legendre.leggauss(self.ndeg)
         self.Nunknowns = self.Nparam
         self.aqin = aqin
         self.aqout = aqout

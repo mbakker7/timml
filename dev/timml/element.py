@@ -11,6 +11,7 @@ class Element:
         self.Nlayers = len(self.pylayers)
         self.name = name
         self.label = label
+        self.inhomelement = False  # elements used as part of an inhom boundary are tagged
         if self.label is not None:
             assert self.label not in self.model.elementdict.keys(),\
             "TTim error: label " + self.label + " already exists"
@@ -58,33 +59,31 @@ class Element:
         qxqy = self.disvec(x, y, aq)
         rv = np.sum(qxqy[:,np.newaxis,:] * aq.eigvec, 2)
         return rv[:,pylayers]
-    def intpot(self, func, x1, y1, x2, y2, pylayers, ndeg=8, aq=None):
+    def intpot(self, func, x1, y1, x2, y2, pylayers, aq=None):
         if aq is None: print 'error, aquifer needs to be given'
         z1 = x1 + 1j * y1
         z2 = x2 + 1j * y2
-        Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
-        z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
+        z = 0.5 * self.Xleg * (z2 - z1) + 0.5 * (z1 + z2)
         x = z.real
         y = z.imag
         pot = 0.0
-        for i in range(ndeg):
-            pot += wleg[i] * func(x=x[i], y=y[i], pylayers=pylayers, aq=aq)
+        for i in range(self.ndeg):
+            pot += self.wleg[i] * func(x=x[i], y=y[i], pylayers=pylayers, aq=aq)
         return pot
-    def intflux(self, func, x1, y1, x2, y2, pylayers, ndeg=8, aq=None):
+    def intflux(self, func, x1, y1, x2, y2, pylayers, aq=None):
         if aq is None: print 'error, aquifer needs to be given'
         thetaNormOut = np.arctan2(y2 - y1, x2 - x1) - np.pi/2.0
         cosnorm = np.cos(thetaNormOut)
         sinnorm = np.sin(thetaNormOut)
         z1 = x1 + 1j * y1
         z2 = x2 + 1j * y2
-        Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
-        z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
+        z = 0.5 * self.Xleg * (z2 - z1) + 0.5 * (z1 + z2)
         x = z.real
         y = z.imag
         qtot = 0.0
-        for i in range(ndeg):
+        for i in range(self.ndeg):
             qxqy = func(x=x[i], y=y[i], pylayers=pylayers, aq=aq)
-            qtot += wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
+            qtot += self.wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
         return qtot
     def setparams(self, sol):
         raise Exception('Must overload Element.setparams()')

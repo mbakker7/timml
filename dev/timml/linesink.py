@@ -3,6 +3,8 @@ import inspect # Used for storing the input
 from element import Element
 from equation import HeadEquation
 from besselaes import potbeslsho, potbesonlylsho, disbeslsho, disbesonlylsho
+from besselaesnew import *
+besselaesnew.initialize()
 from controlpoints import controlpoints
 
 class LineSinkBase(Element):
@@ -49,12 +51,7 @@ class LineSinkBase(Element):
         rv = np.zeros((self.Nparam, aq.Naq))
         if aq == self.aq:
             pot = np.zeros(aq.Naq)
-            if aq.ltype[0] == 'a':
-                potbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                           aq.Naq, aq.zeropluslab, 0, pot)  # Call FORTRAN extension
-            else:
-                potbesonlylsho(x, y, self.x1, selr.y1, self.x2, self.y2, \
-                               aq.Naq, aq.lab, 0, pot)
+            pot[:] = besselaesnew.potbeslsho(x, y, self.z1, self.z2, aq.lab, 0, aq.ilap)
             rv[:] = self.aq.coef[self.pylayers] * pot
         return rv
     def disinf(self, x, y, aq = None):
@@ -62,16 +59,10 @@ class LineSinkBase(Element):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.Nparam, aq.Naq))
         if aq == self.aq:
-            qx = np.zeros(aq.Naq)
-            qy = np.zeros(aq.Naq)
-            if aq.ltype[0] == 'a':
-                disbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                           aq.Naq, aq.zeropluslab, 0, qx, qy)
-            else:
-                disbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                               aq.Naq, aq.lab, 0, qx, qy)
-            rv[0] = self.aq.coef[self.pylayers] * qx
-            rv[1] = self.aq.coef[self.pylayers] * qy
+            qxqy = np.zeros((2, aq.Naq))
+            qxqy[:,:] = besselaesnew.disbeslsho(x, y, self.z1, self.z2, aq.lab, 0, aq.ilap)
+            rv[0] = self.aq.coef[self.pylayers] * qxqy[0]
+            rv[1] = self.aq.coef[self.pylayers] * qxqy[1]
         return rv
     
 class HeadLineSink(LineSinkBase, HeadEquation):
@@ -91,7 +82,7 @@ class HeadLineSink(LineSinkBase, HeadEquation):
         
 class LineSinkHoBase(Element):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 Qls= 0.0, layers=0, order=0, addconstant=False, name='LineSinkHoBase', \
+                 Qls= 0.0, layers=0, order=0, name='LineSinkHoBase', \
                  label=None, addtomodel=True, aq=None, zcinout=None):
         Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers,\
                          name=name, label=label)
@@ -101,9 +92,7 @@ class LineSinkHoBase(Element):
         self.y2 = float(y2)
         self.Qls = np.atleast_1d(Qls)
         self.order = order
-        self.addconstant = addconstant
         self.Nparam = self.Nlayers * (self.order + 1)
-        if self.addconstant: self.Nparam += 1
         self.addtomodel = addtomodel
         if addtomodel: self.model.add_element(self)
         self.aq = aq
@@ -112,7 +101,6 @@ class LineSinkHoBase(Element):
         return self.name + ' from ' + str((self.x1, self.y1)) +' to '+str((self.x2, self.y2))
     def initialize(self):
         self.Ncp = self.order + 1
-        if self.addconstant: self.Ncp += 1
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
@@ -146,25 +134,57 @@ class LineSinkHoBase(Element):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.Nparam, aq.Naq))
         if aq == self.aq:
-            if self.addconstant:
-                potrv = rv[:-1,:].reshape((self.order+1, self.Nlayers, aq.Naq))
-            else:
-                potrv = rv.reshape((self.order+1, self.Nlayers, aq.Naq))
+            potrv = rv.reshape((self.order+1, self.Nlayers, aq.Naq))  # clever way of using a reshaped rv here
+            pot = np.zeros((self.order + 1, aq.Naq))
+            pot[:,:] = besselaesnew.potbeslsv(x, y, self.z1, self.z2, aq.lab, self.order, aq.ilap)
+            potrv[:] = self.aq.coef[self.pylayers] * pot[:, np.newaxis, :]
+        return rv
+    def disinf(self, x, y, aq = None):
+        '''Can be called with only one x,y value
+        Returns array(Nparam, self.aq.Naq) with order
+        order 0, layer[0]
+        order 0, layer[1]
+        ...
+        order 1, layer[0]
+        order 1, layer[1]
+        etc
+        '''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, self.Nparam, aq.Naq))
+        if aq == self.aq:
+            qxqyrv = rv.reshape((2, self.order+1, self.Nlayers, aq.Naq))  # clever way of using a reshaped rv here
+            qxqy = np.zeros((2*(self.order + 1), aq.Naq))
+            qxqy[:,:] = besselaesnew.disbeslsv(x, y, self.z1, self.z2, aq.lab, self.order, aq.ilap)
+            qxqyrv[0,:] = self.aq.coef[self.pylayers] * qxqy[:self.order+1, np.newaxis, :]
+            qxqyrv[1,:] = self.aq.coef[self.pylayers] * qxqy[self.order+1:, np.newaxis, :]
+        return rv
+    def potinfold(self, x, y, aq = None):
+        '''Can be called with only one x,y value
+        Returns array(Nparam, self.aq.Naq) with order
+        order 0, layer[0]
+        order 0, layer[1]
+        ...
+        order 1, layer[0]
+        order 1, layer[1]
+        etc
+        '''
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((self.Nparam, aq.Naq))
+        if aq == self.aq:
+            potrv = rv.reshape((self.order+1, self.Nlayers, aq.Naq))
             pot = np.zeros(aq.Naq)
             if aq.ltype[0] == 'a':
                 for i in range(self.order+1): # This should be done inside FORTRAN extension
                     potbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
                                aq.Naq, aq.zeropluslab, i, pot)  # Call FORTRAN extension
                     potrv[i] = self.aq.coef[self.pylayers] * pot
-                if self.addconstant:
-                    rv[-1,0] = 1.0
             else:
                 for i in range(self.order+1):
                     potbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
                                    aq.Naq + 1, aq.lab, i, pot)  # Need to specify aq.Naq + 1 (bug in besselaes)
                     potrv[i] = self.aq.coef[self.pylayers] * pot
         return rv
-    def disinf(self, x, y, aq = None):
+    def disinfold(self, x, y, aq = None):
         '''Can be called with only one x,y value
         Returns array(Nparam, self.aq.Naq) with order
         order 0, layer[0]
@@ -193,43 +213,7 @@ class LineSinkHoBase(Element):
                     rv[0, i] = self.aq.coef[self.pylayers] * qx
                     rv[1, i] = self.aq.coef[self.pylayers] * qy
             rv.shape = (2, self.Nparam, aq.Naq)
-        if self.addconstant:  # This is ugly here. Maybe I can find a better way
-            rvnew = np.zeros((2, self.Nparam, aq.Naq))
-            rv = np.vstack((rv, pot))
         return rv
-    def disinfold(self, x, y, aq = None):
-        '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.Naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
-        '''
-        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rvx = np.zeros((self.Nparam, aq.Naq))
-        rvy = np.zeros((self.Nparam, aq.Naq))
-        if aq == self.aq:
-            rvx.shape = (self.order+1, self.Nlayers, aq.Naq)
-            rvy.shape = (self.order+1, self.Nlayers, aq.Naq)
-            qx = np.zeros(aq.Naq)
-            qy = np.zeros(aq.Naq)
-            if aq.ltype[0] == 'a':
-                for i in range(self.order+1): # This should be done inside FORTRAN extension
-                    disbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                               aq.Naq, aq.zeropluslab, i, qx, qy)  # Call FORTRAN extension
-                    rvx[i] = self.aq.coef[self.pylayers] * qx
-                    rvy[i] = self.aq.coef[self.pylayers] * qy
-            else:
-                for i in range(self.order+1):
-                    disbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                                   aq.Naq, aq.lab, i, qx, qy)
-                    rvx[i] = self.aq.coef[self.pylayers] * qx
-                    rvy[i] = self.aq.coef[self.pylayers] * qy
-            rvx.shape = (self.Nparam, aq.Naq)
-            rvy.shape = (self.Nparam, aq.Naq)
-        return rvx, rvy
     
 class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
@@ -242,6 +226,7 @@ class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
         self.Nunknowns = self.Nparam
     def initialize(self):
         LineSinkHoBase.initialize(self)
+        self.resfac = 0.0 # Needs to be implemented
         self.pc = self.hc * self.aq.T[self.pylayers] # Needed in solving
     def setparams(self, sol):
         self.parameters[:,0] = sol
