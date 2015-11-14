@@ -3,6 +3,7 @@ import sys
 import inspect # Used for storing the input
 from aquifer import Aquifer
 from aquifer_parameters import param_maq
+from constant import ConstantStar
 
 class ModelBase:
     def __init__(self, kaq, Haq, c, z, npor, ltype):
@@ -127,8 +128,10 @@ class ModelBase:
         return
         
 class ModelMaq(ModelBase):
-    def __init__(self, kaq = 1, z = [1,0], c = [], npor = 0.3, top = 'conf'):
+    def __init__(self, kaq=1, z=[1,0], c=[], npor=0.3, top='conf', hstar=None):
         self.storeinput(inspect.currentframe())
         kaq, Haq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
         ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype)
         self.name = 'ModelMaq'
+        if self.aq.ltype[0] == 'l':
+            ConstantStar(self, hstar, aq=self.aq)

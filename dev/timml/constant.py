@@ -46,6 +46,7 @@ class Constant(ConstantBase, HeadEquation):
         self.Nunknowns = 1
     def initialize(self):
         ConstantBase.initialize(self)
+        assert self.aq.ltype[0] == 'a', 'Constant element added to area that is semi-confined'
         self.resfac = 0.0  # required for HeadEquation
     def setparams(self, sol):
         self.parameters[:,0] = sol

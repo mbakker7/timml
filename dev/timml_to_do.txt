@@ -1,11 +1,23 @@
-Add entry resistance to wells
+X Add entry resistance to wells
 
-Add headinside function to wells
+X Add headinside function to wells
+
+X Specify head h* for semi-confined flow in inhomogeneities
+
+X ability to run ml.solve() twice when inhomogeneity is included
 
 Check if all equations in equation.py are used
 
 Move setparams function to HeadEquation?
 
-Specify head h* for semi-confined flow in both model and in inhomogeneities
+Specify head h* for semi-confined flow in model
 
-run ml.solve() twice when inhomogeneity is included
+headlinesink string with resistance
+
+line-sink ditch with resitance and head inside
+
+circular area-sink
+
+remove all zeropluslab from all files
+
+replace if aq.ltype[0] == 'a' by if aq.ilap

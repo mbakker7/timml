@@ -38,7 +38,7 @@ class WellBase(Element):
                 pot[0] = np.log(r / self.rw) / (2 * np.pi)
                 pot[1:] = -k0(r / aq.lab[1:]) / (2 * np.pi)
             else:
-                pot[:] = -k0(r / aq/lab) / (2 * np.pi)
+                pot[:] = -k0(r / aq.lab) / (2 * np.pi)
             rv[:] = self.aq.coef[self.pylayers] * pot
         return rv
     def disinf(self, x, y, aq=None):
