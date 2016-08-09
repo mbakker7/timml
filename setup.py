@@ -1,5 +1,5 @@
-from timml import __version__
 from __future__ import division, absolute_import, print_function
+from timml import __version__
 from numpy.distutils.core import Extension
 
 ext = Extension(name = 'besselaes',
