@@ -9,9 +9,15 @@ def param_maq(kaq, z, c, npor, top):
     if top == 'conf':
         Naq = len(z) / 2
         ltype = np.array( list( (Naq-1) * 'al' + 'a' ) )
+        aqnumber = np.zeros(2 * Naq - 1, dtype='int')
+        aqnumber[1::2] = -np.arange(1, Naq)
+        aqnumber[2::2] = np.arange(1, Naq)
     else: # leaky layer on top
         Naq = (len(z) - 1) / 2
         ltype = np.array( list( Naq * 'la' ) )
+        aqnumber = np.zeros(2 * Naq, dtype='int')
+        aqnumber[2::2] = -np.arange(1, Naq)
+        aqnumber[3::2] = np.arange(1, Naq)
     if len(kaq) == 1: kaq = kaq * np.ones(Naq)
     assert len(kaq) == Naq, 'Error: length of kaq needs to be 1 or' + str(Naq)
     H = z[:-1] - z[1:]
@@ -29,4 +35,4 @@ def param_maq(kaq, z, c, npor, top):
         assert len(c) == Naq, 'Error: Length of c needs to be 1 or' + str(Naq)
         assert len(npor) == 2 * Naq, 'Error: Length of npor needs to be 1 or' + str(2*Naq)
         Haq = H[1::2]
-    return kaq, Haq, c, npor, ltype
+    return kaq, Haq, c, npor, ltype, aqnumber

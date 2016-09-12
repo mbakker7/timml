@@ -19,6 +19,8 @@ from well import WellBase, Well, HeadWell
 from constant import Constant
 from linesink import HeadLineSink, HeadLineSinkHo, HeadLineSinkString
 from inhomogeneity import PolygonInhomMaq
+from uflow import Uflow
+from util import timcontour
 
 
 

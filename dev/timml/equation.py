@@ -7,10 +7,11 @@ class HeadEquation:
         Returns rhs part Nunknowns
         '''
         mat = np.empty((self.Nunknowns, self.model.Neq))
-        rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        #rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        rhs = self.pc.copy()
         for icp in range(self.Ncp):
             istart = icp * self.Nlayers
-            rhs[istart:istart+self.Nlayers] = self.pc
+            #rhs[istart:istart+self.Nlayers] = self.pc[]
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
