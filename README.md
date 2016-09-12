@@ -54,5 +54,12 @@ model is created and solved but the contour plot is probably not shown (dependin
 ## Documentation
 
 * The manual is available from the docs directory or can be viewed [here](https://github.com/mbakker7/timml/blob/master/docs/timml.pdf).
-Once you click on this link, you can click on the [Raw] button to download the pdf file. 
+Once you click on this link, you can click on the [Download] button to download the pdf file. 
 * Example Notebooks are available from the git repository.
+
+## Citation
+
+Some of the papers that you may want to cite when using TimML are
+
+* Bakker, M., and O.D.L. Strack. 2003. Analytic Elements for Multiaquifer Flow. Journal of Hydrology, 271(1-4), 119-129.
+* Bakker, M. 2006. An analytic element approach for modeling polygonal inhomogeneities in multi-aquifer systems. Advances in Water Resources, 29(10), 1546-1555.
