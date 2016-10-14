@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import inspect  # Used for storing the input
 from aquifer import Aquifer
-from aquifer_parameters import param_maq
+from aquifer_parameters import param_maq, param_3d
 from constant import ConstantStar
 
 
@@ -163,3 +163,12 @@ class ModelMaq(ModelBase):
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)
+            
+class Model3D(ModelBase):
+    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3):
+        '''Model3D is, for now, constrained to one confined aquifer'''
+        self.storeinput(inspect.currentframe())
+        kaq, Haq, c, npor, ltype, aqnumber = param_3d(kaq, z, kzoverkh, npor)
+        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype, aqnumber)
+        self.name = 'Model3D'
+
