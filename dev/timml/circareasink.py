@@ -93,12 +93,12 @@ class CircAreaSink(Element):
     
     def dischargeInfluence(self,aq,x,y,z=0,t=0):
         rvx = zeros((1,aq.Naquifers),'d'); rvy = zeros((1,aq.Naquifers),'d')
-	rsq = (x-self.xp)**2 + (y-self.yp)**2
-	r = sqrt(rsq)
+        rsq = (x-self.xp)**2 + (y-self.yp)**2
+        r = sqrt(rsq)
         if r < 1e-6:  # Else evaluation at center blows up
             r = 1e-6
             rsq = r**2
-	if r <= self.Rp:
+        if r <= self.Rp:
             rvx[0,0] = (x - self.xp) / 2.0
             rvy[0,0] = (y - self.yp) / 2.0
         else:

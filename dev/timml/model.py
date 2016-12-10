@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy as np
 import sys
 import inspect  # Used for storing the input
@@ -7,12 +8,12 @@ from constant import ConstantStar
 
 
 class ModelBase:
-    def __init__(self, kaq, Haq, c, z, npor, ltype, aqnumber):
+    def __init__(self, kaq, Haq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
         self.elementlist = []
         self.elementdict = {}
-        self.aq = Aquifer(self, kaq, Haq, c, z, npor, ltype, aqnumber)
+        self.aq = Aquifer(self, kaq, Haq, c, z, npor, ltype)
         self.modelname = 'ml'  # Used for writing out input
 
     def initialize(self):
@@ -106,13 +107,24 @@ class ModelBase:
 
     def velocity(self, x, y, z, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
-        assert z < aq.z[0] and z > aq.z[-1], "z value not inside aquifer"
+        assert z <= aq.z[0] and z >= aq.z[-1], "z value not inside aquifer"
         h = self.head(x, y, aq=aq)
-        aqnumber = aq.findlayer(z)
-        if aqnumber >= 0:
-            # TO DO: aqnumber 0 is ambiguous
-            pass
-
+        qx, qy = self.disvec(x, y, aq=aq)
+        layer, ltype = aq.findlayer(z)
+        vx = qx[layer] / (aq.Haq[layer] * aq.nporaq[layer])
+        vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
+        # qz between aquifer layers
+        qzlayer = np.zeros(aq.Naq + 1)
+        qzlayer[1:-1] = (h[1:] - h[:-1]) / aq.c[1:]
+        if aq.ltype[0] == 'l':
+            qzlayer[0] = (h[0] - aq.hstar) / aq.c[0]
+        if ltype == 'l':
+            vz = qzlayer[layer] / aq.nporll[layer]
+        else:
+            vz = (qzlayer[layer + 1] + (z - aq.zaqbot[layer]) / aq.Haq[layer] * \
+                 (qzlayer[layer] - qzlayer[layer + 1])) / aq.nporaq[layer]
+        return vx, vy, vz
+               
     def solve(self, printmat=0, sendback=0, silent=False):
         '''Compute solution'''
         # Initialize elements
@@ -158,8 +170,8 @@ class ModelBase:
 class ModelMaq(ModelBase):
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf', hstar=None):
         self.storeinput(inspect.currentframe())
-        kaq, Haq, c, npor, ltype, aqnumber = param_maq(kaq, z, c, npor, top)
-        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype, aqnumber)
+        kaq, Haq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
+        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype)
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)
@@ -168,7 +180,7 @@ class Model3D(ModelBase):
     def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3):
         '''Model3D is, for now, constrained to one confined aquifer'''
         self.storeinput(inspect.currentframe())
-        kaq, Haq, c, npor, ltype, aqnumber = param_3d(kaq, z, kzoverkh, npor)
-        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype, aqnumber)
+        kaq, Haq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor)
+        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype)
         self.name = 'Model3D'
 

@@ -1,10 +1,10 @@
 import numpy as np
 import inspect  # Used for storing the input
 from aquifer_parameters import param_maq
-
+from constant import ConstantStar
 
 class AquiferData:
-    def __init__(self, model, kaq, Haq, c, z, npor, ltype, aqnumber):
+    def __init__(self, model, kaq, Haq, c, z, npor, ltype):
         # All input variables except model should be numpy arrays
         # That should be checked outside this function
         self.model = model
@@ -15,12 +15,12 @@ class AquiferData:
         self.T = self.kaq * self.Haq
         self.Tcol = self.T[:, np.newaxis]
         self.c = c
+        self.hstar = None
         # Needed for tracing
         self.z = np.atleast_1d(z)
         self.Nlayers = len(self.z) - 1
         self.npor = npor
         self.ltype = ltype
-        self.aqnumber = aqnumber
         # tag indicating whether an aquifer is Laplace (confined on top)
         if self.ltype[0] == 'a':
             self.ilap = 1
@@ -28,6 +28,18 @@ class AquiferData:
             self.ilap = 0
         #
         self.area = 1e200  # Smaller than default of ml.aq so that inhom is found
+        self.layernumber = np.zeros(self.Nlayers, dtype='int')
+        self.layernumber[self.ltype == 'a'] = np.arange(self.Naq)
+        self.layernumber[self.ltype == 'l'] = np.arange(self.Nlayers - self.Naq)
+        self.zaqtop = self.z[:-1][self.ltype == 'a']
+        self.zaqbot = self.z[1:][self.ltype == 'a']
+        self.Haq = self.zaqtop - self.zaqbot
+        self.nporaq = self.npor[self.ltype == 'a']
+        if self.ltype[0] == 'a':
+            self.nporll =  np.ones(len(self.npor[self.ltype == 'l']) + 1)
+            self.nporll[1:] = self.npor[self.ltype == 'l']
+        else:
+            self.nporll = self.npor[self.ltype == 'l']
 
     def initialize(self):
         self.elementlist = []  # Elementlist of aquifer
@@ -53,17 +65,31 @@ class AquiferData:
 
     def add_element(self, e):
         self.elementlist.append(e)
+        if isinstance(e, ConstantStar):
+            self.hstar = e.hstar
 
     def isinside(self, x, y):
         raise Exception('Must overload AquiferData.isinside()')
 
     def storeinput(self, frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
+        
+    def findlayer(self, z):
+        '''
+        Return layer type and layer number'''
+        if z > self.z[0]:
+            layer, ltype = -1, 'above'
+        elif z < self.z[-1]:
+            layer, ltype = -1, 'below'
+        else:
+            layer = np.argwhere((z <= self.z[:-1]) & (z >= self.z[1:]))[0, 0]
+            ltype = self.ltype[layer] 
+        return self.layernumber[layer], ltype
 
 
 class Aquifer(AquiferData):
-    def __init__(self, model, kaq, Haq, c, z, npor, ltype, aqnumber):
-        AquiferData.__init__(self, model, kaq, Haq, c, z, npor, ltype, aqnumber)
+    def __init__(self, model, kaq, Haq, c, z, npor, ltype):
+        AquiferData.__init__(self, model, kaq, Haq, c, z, npor, ltype)
         self.inhomlist = []
         self.area = 1e300  # Needed to find smallest inhom
 
@@ -95,10 +121,5 @@ class Aquifer(AquiferData):
         #                rv = i
         #    return rv
 
-    def find_layer(self, z):
-        '''
-        If z in aquifer layer, returns number of aquifer layer
-        If z in leaky layer, returns number of aquifer layer below it '''
-        for i in range(self.Nlayers):
-            if z > self.z[i + 1]:
-                return self.aqnumber[i]
+
+        
