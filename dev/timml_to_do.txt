@@ -6,17 +6,17 @@ X Specify head h* for semi-confined flow in inhomogeneities
 
 X ability to run ml.solve() twice when inhomogeneity is included
 
+X Specify head h* for semi-confined flow in model
+
 Check if all equations in equation.py are used
 
 Move setparams function to HeadEquation?
-
-Specify head h* for semi-confined flow in model
 
 headlinesink string with resistance
 
 line-sink ditch with resitance and head inside
 
-circular area-sink
+X circular area-sink
 
 remove all zeropluslab from all files
 

@@ -108,11 +108,8 @@ class ModelBase:
     def velocity(self, x, y, z, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
         assert z <= aq.z[0] and z >= aq.z[-1], "z value not inside aquifer"
+        layer, ltype, modellayer = aq.findlayer(z)
         h = self.head(x, y, aq=aq)
-        qx, qy = self.disvec(x, y, aq=aq)
-        layer, ltype = aq.findlayer(z)
-        vx = qx[layer] / (aq.Haq[layer] * aq.nporaq[layer])
-        vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
         # qz between aquifer layers
         qzlayer = np.zeros(aq.Naq + 1)
         qzlayer[1:-1] = (h[1:] - h[:-1]) / aq.c[1:]
@@ -120,10 +117,42 @@ class ModelBase:
             qzlayer[0] = (h[0] - aq.hstar) / aq.c[0]
         if ltype == 'l':
             vz = qzlayer[layer] / aq.nporll[layer]
+            vx = 0
+            vy = 0
         else:
             vz = (qzlayer[layer + 1] + (z - aq.zaqbot[layer]) / aq.Haq[layer] * \
-                 (qzlayer[layer] - qzlayer[layer + 1])) / aq.nporaq[layer]
-        return vx, vy, vz
+                 (qzlayer[layer] - qzlayer[layer + 1])) / aq.nporaq[layer]        
+            qx, qy = self.disvec(x, y, aq=aq)
+            vx = qx[layer] / (aq.Haq[layer] * aq.nporaq[layer])
+            vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
+        return np.array([vx, vy, vz])
+    
+    def velocitytrace(self, x, y, z, aq=None, layer=None, ltype=None):
+        # Velocity used for tracing
+        if aq is None: aq = self.aq.find_aquifer_data(x, y)
+        assert z <= aq.z[0] and z >= aq.z[-1], "z value not inside aquifer"
+        if layer is None: layer, ltype, modellayer = aq.findlayer(z)
+        h = self.head(x, y, aq=aq)
+        # qz between aquifer layers
+        qzlayer = np.zeros(aq.Naq + 1)
+        qzlayer[1:-1] = (h[1:] - h[:-1]) / aq.c[1:]
+        if aq.ltype[0] == 'l':
+            qzlayer[0] = (h[0] - aq.hstar) / aq.c[0]
+        if ltype == 'l':
+            vz = qzlayer[layer] / aq.nporll[layer]
+            vzbot = vz
+            vztop = vz
+            vx = 0
+            vy = 0
+        else:
+            vzbot = qzlayer[layer + 1] / aq.nporaq[layer]
+            vztop = qzlayer[layer] / aq.nporaq[layer]
+            vz = vzbot + (z - aq.zaqbot[layer]) / aq.Haq[layer] * \
+                 (vztop - vzbot)      
+            qx, qy = self.disvec(x, y, aq=aq)
+            vx = qx[layer] / (aq.Haq[layer] * aq.nporaq[layer])
+            vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
+        return np.array([vx, vy, vz]), vzbot, vztop
                
     def solve(self, printmat=0, sendback=0, silent=False):
         '''Compute solution'''

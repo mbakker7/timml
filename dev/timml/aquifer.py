@@ -31,9 +31,17 @@ class AquiferData:
         self.layernumber = np.zeros(self.Nlayers, dtype='int')
         self.layernumber[self.ltype == 'a'] = np.arange(self.Naq)
         self.layernumber[self.ltype == 'l'] = np.arange(self.Nlayers - self.Naq)
+        if self.ltype[0] == 'a':
+            self.layernumber[self.ltype == 'l'] += 1  # first leaky layer below first aquifer layer
         self.zaqtop = self.z[:-1][self.ltype == 'a']
         self.zaqbot = self.z[1:][self.ltype == 'a']
         self.Haq = self.zaqtop - self.zaqbot
+        self.zlltop = self.z[:-1][self.ltype == 'l']
+        self.zllbot = self.z[1:][self.ltype == 'l']
+        if self.ltype[0] == 'a':
+            self.zlltop = np.hstack((self.z[0], self.zlltop))
+            self.zllbot = np.hstack((self.z[0], self.zllbot))
+        self.Hll = self.zlltop - self.zllbot
         self.nporaq = self.npor[self.ltype == 'a']
         if self.ltype[0] == 'a':
             self.nporll =  np.ones(len(self.npor[self.ltype == 'l']) + 1)
@@ -76,15 +84,18 @@ class AquiferData:
         
     def findlayer(self, z):
         '''
-        Return layer type and layer number'''
+        Returns layer-number, layer-type and model-layer-number'''
         if z > self.z[0]:
-            layer, ltype = -1, 'above'
+            modellayer, ltype = -1, 'above'
+            layernumber = None
         elif z < self.z[-1]:
-            layer, ltype = -1, 'below'
+            modellayer, ltype = len(self.layernumber), 'below'
+            layernumber = None
         else:
-            layer = np.argwhere((z <= self.z[:-1]) & (z >= self.z[1:]))[0, 0]
-            ltype = self.ltype[layer] 
-        return self.layernumber[layer], ltype
+            modellayer = np.argwhere((z <= self.z[:-1]) & (z >= self.z[1:]))[0, 0]
+            layernumber = self.layernumber[modellayer]
+            ltype = self.ltype[modellayer] 
+        return layernumber, ltype, modellayer
 
 
 class Aquifer(AquiferData):
