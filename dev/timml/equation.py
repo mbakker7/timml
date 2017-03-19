@@ -7,10 +7,11 @@ class HeadEquation:
         Returns rhs part Nunknowns
         '''
         mat = np.empty((self.Nunknowns, self.model.Neq))
-        rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        #rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        rhs = self.pc.copy()
         for icp in range(self.Ncp):
             istart = icp * self.Nlayers
-            rhs[istart:istart+self.Nlayers] = self.pc
+            #rhs[istart:istart+self.Nlayers] = self.pc[]
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
@@ -75,7 +76,7 @@ class MscreenWellEquation:
     
 class DisvecEquation:
     def equation(self):
-        '''Mix-in class that returns matrix rows for head-specified conditions. (really written as constant potential element)
+        '''Mix-in class that returns matrix rows for zero normal flux conditions.
         Returns matrix part (Nunknowns,Neq)
         Returns rhs part Nunknowns
         '''
@@ -97,7 +98,8 @@ class DisvecEquation:
     
 class DisvecEquationOut:
     def equation(self):
-        '''Mix-in class that returns matrix rows for head-specified conditions. (really written as constant potential element)
+        '''Mix-in class that returns matrix rows for zero normal flux condition.
+        Using the control point on the outside
         Returns matrix part (Nunknowns,Neq)
         Returns rhs part Nunknowns
         '''
@@ -115,6 +117,33 @@ class DisvecEquationOut:
                 else:
                     qx, qy = e.disveclayers(self.xcout[icp], self.ycout[icp], self.pylayers)
                     rhs[istart:istart+self.Nlayers] -= qx * self.cosnorm[icp] + qy * self.sinnorm[icp]
+        return mat, rhs
+    
+class LeakyWallEquation:
+    def equation(self):
+        '''Mix-in class that returns matrix rows for leaky wall condition.
+        Qnormal = resfac * (headin - headout)
+        Returns matrix part (Nunknowns,Neq)
+        Returns rhs part Nunknowns
+        '''
+        mat = np.empty((self.Nunknowns, self.model.Neq))
+        rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        for icp in range(self.Ncp):
+            istart = icp * self.Nlayers
+            ieq = 0
+            for e in self.model.elementlist:
+                if e.Nunknowns > 0:
+                    qx, qy = e.disinflayers(self.xc[icp], self.yc[icp], self.pylayers)
+                    mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
+                    qx * self.cosnorm[icp] + qy * self.sinnorm[icp] - self.resfac[:, np.newaxis] * \
+                    (e.potinflayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aq) / self.aq.Tcol[self.pylayers] - \
+                    e.potinflayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aq) / self.aq.Tcol[self.pylayers])
+                    ieq += e.Nunknowns
+                else:
+                    qx, qy = e.disveclayers(self.xc[icp], self.yc[icp], self.pylayers)
+                    rhs[istart:istart+self.Nlayers] -= qx * self.cosnorm[icp] + qy * self.sinnorm[icp] + self.resfac * \
+                    (e.potentiallayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aq) / self.aq.T[self.pylayers] - \
+                    e.potentiallayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aq) / self.aq.T[self.pylayers])
         return mat, rhs
     
 class HeadDiffEquation:

@@ -21,14 +21,14 @@ c = 34
 ml = ModelMaq(kaq=24, z=[0, -15])
 w = WellBase(ml, xw=xw, yw=yw, Qw=3145, layers=0)
 rf = Constant(ml, xr=xw+1e6, yr=yw, hr=0)
-p = PolygonInhomMaq(ml, xy=xyriver, kaq=24, z=[1, 0, -15], c=c, top='semi', order=2, ndeg=3)
+p = PolygonInhomMaq(ml, xy=xyriver, kaq=24, z=[1, 0, -15], c=c, top='semi', order=2, ndeg=3, hstar=0)
 ml.solve()
 
-ml2 = ModelMaq(kaq=24, z=[0, -15])
-w = WellBase(ml2, xw=xw, yw=yw, Qw=3145, layers=0)
-rf = Constant(ml2, xr=xw+1e6, yr=yw, hr=0)
-for i in range(len(xyeast) - 1):
-    HeadLineSink(ml2, xyeast[i,0], xyeast[i,1], xyeast[i+1,0], xyeast[i+1,1], 0, res=c, wh=20)
-for i in range(len(xyeast) - 1):
-    HeadLineSink(ml2, xywest[i,0], xywest[i,1], xywest[i+1,0], xywest[i+1,1], 0, res=c, wh=20)
-ml2.solve()
+#ml2 = ModelMaq(kaq=24, z=[0, -15])
+#w = WellBase(ml2, xw=xw, yw=yw, Qw=3145, layers=0)
+#rf = Constant(ml2, xr=xw+1e6, yr=yw, hr=0)
+#for i in range(len(xyeast) - 1):
+#    HeadLineSink(ml2, xyeast[i,0], xyeast[i,1], xyeast[i+1,0], xyeast[i+1,1], 0, res=c, wh=20)
+#for i in range(len(xyeast) - 1):
+#    HeadLineSink(ml2, xywest[i,0], xywest[i,1], xywest[i+1,0], xywest[i+1,1], 0, res=c, wh=20)
+#ml2.solve()

@@ -85,6 +85,8 @@ class Element:
             qxqy = func(x=x[i], y=y[i], pylayers=pylayers, aq=aq)
             qtot += self.wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
         return qtot
+    def headinside(self):
+        print 'headinside not implemented for this element'
     def setparams(self, sol):
         raise Exception('Must overload Element.setparams()')
     def storeinput(self,frame):

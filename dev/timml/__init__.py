@@ -14,11 +14,15 @@ __author__='Mark Bakker'
 from version import __version__
 
 # Import all classes and functions
-from model import ModelMaq
+from model import ModelMaq, Model3D
 from well import WellBase, Well, HeadWell
 from constant import Constant
 from linesink import HeadLineSink, HeadLineSinkHo, HeadLineSinkString
+from linedoublet import ImpLineDoublet, ImpLineDoubletString, LeakyLineDoublet, LeakyLineDoubletString
+from circareasink import CircAreaSink
 from inhomogeneity import PolygonInhomMaq
+from uflow import Uflow
+from util import timcontour
 
 
 
