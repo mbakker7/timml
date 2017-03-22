@@ -1,3 +1,14 @@
+# Python files
+build
+dist
+*.egg-info
+.eggs
+.pypirc
+
+# Compiled source
+*.so
+*.py[ocd]
+=======
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
