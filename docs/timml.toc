@@ -1,0 +1,24 @@
+\contentsline {section}{\numberline {1}Introduction}{3}
+\contentsline {subsection}{\numberline {1.1}Approximations}{3}
+\contentsline {subsection}{\numberline {1.2}MIT License}{3}
+\contentsline {subsection}{\numberline {1.3}Introduction for MLAEM users}{4}
+\contentsline {subsection}{\numberline {1.4}Introduction for MATLAB users}{4}
+\contentsline {subsection}{\numberline {1.5}Introduction for MODFLOW users}{4}
+\contentsline {subsection}{\numberline {1.6}Differences with Version 3 and before}{4}
+\contentsline {subsection}{\numberline {1.7}Release History}{5}
+\contentsline {subsection}{\numberline {1.8}Acknowledgement}{6}
+\contentsline {subsection}{\numberline {1.9}Plans}{6}
+\contentsline {subsection}{\numberline {1.10}{\it Tim}$^{\text {ML}}$ website}{6}
+\contentsline {section}{\numberline {2}Installation}{7}
+\contentsline {section}{\numberline {3}Application}{8}
+\contentsline {subsection}{\numberline {3.1}Starting a model}{8}
+\contentsline {subsection}{\numberline {3.2}Adding analytic elements}{9}
+\contentsline {subsection}{\numberline {3.3}Inhomogeneous aquifer properties}{12}
+\contentsline {subsubsection}{\numberline {3.3.1}Multi-aquifer polygonal inhomogeneities}{13}
+\contentsline {subsubsection}{\numberline {3.3.2}Cylindrical inhomogeneities}{14}
+\contentsline {subsubsection}{\numberline {3.3.3}Aquifer system inhomogeneities}{15}
+\contentsline {subsection}{\numberline {3.4}Running the model}{17}
+\contentsline {subsubsection}{\numberline {3.4.1}Three-dimensional path line tracing}{17}
+\contentsline {subsection}{\numberline {3.5}Graphical output}{18}
+\contentsline {subsubsection}{\numberline {3.5.1}Export to Surfer}{20}
+\contentsline {subsubsection}{\numberline {3.5.2}Export to Matlab}{21}

@@ -87,6 +87,14 @@ class AquiferData:
             U = U[:,range(0,imin)+range(imin+1,self.Naquifers)]
             U = hstack(( self.Tcol/self.Tcomp, U ))         # Make first row nomalized transmissivity
         W = 1. / sqrt(W)
+	if W.dtype == 'complex128':
+	    if abs(W.imag).max() < 1e-12:  # Quick fix for possibly small imaginary parts
+		print 'Warning: tiny imaginary part of W neglected'
+	        W = W.real
+	if U.dtype == 'complex128':
+            if abs(U.imag).max() < 1e-12:
+		print 'Warning: tiny imaginary part of W neglected'
+	        U = U.real
         return (W,U)
 ##    def systemMatrixOld(self):
 ##        A = zeros((self.Naquifers,self.Naquifers),'d')

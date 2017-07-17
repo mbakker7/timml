@@ -30,14 +30,22 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, nstepmax=100):
                 frac = (ml.aq.z[modellayer] - z0) / (ztry - z0)
                 xtry, ytry, ztry = xyzt[-1, :3] + frac * direction * tstep * v0
             elif modellayertry > modellayer:  # stepping to layer below
-                frac = (z0 - ml.aq.z[modellayer + 1])
+                frac = (z0 - ml.aq.z[modellayer + 1]) / (ztry - z0)
                 xtry, ytry, ztry = xyzt[-1, :3] + frac * direction * tstep * v0
             vtry, vzbot, vztop = ml.velocitytrace(xtry, ytry, ztry, aq, layer, ltype)
             vavg = 0.5 * (v0 + vtry)
             tstep = hstepmax / np.sqrt(vavg[0] ** 2 + vavg[1] ** 2)
             xnew, ynew, znew = xyzt[-1, :3] + direction * tstep * vavg
             layernew, ltypenew, modellayernew = aq.findlayer(znew)
-                            
+            if modellayernew < modellayer:  # stepping to layer above
+                frac = (ml.aq.z[modellayer] - z0) / (znew - z0)
+                xnew, ynew, znew = xyzt[-1, :3] + frac * direction * tstep * vavg
+                modellayernew = modellayer - 1
+                layernew = aq.layernumber[modellayer]
+                ltypenew = aq.ltype[modellayer] 
+            elif modellayertry > modellayer:  # stepping to layer below
+                frac = (z0 - ml.aq.z[modellayer + 1]) / (znew - z0)
+                xnew, ynew, znew = xyzt[-1, :3] + frac * direction * tstep * vavg
             
 
                 

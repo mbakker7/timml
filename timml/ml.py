@@ -434,7 +434,7 @@ class Model:
         a,b,c,d = traceline(self,xstart,ystart,zstart,stepin,tmax,maxsteps,tstart,window,labfrac,Hfrac)
         return a,b,c,d
 
-    def solve(self,reInitializeAllElements=1,doIterations=False,maxIter=5,storematrix=False,conditionnumber=False):
+    def solve(self,reInitializeAllElements=1,doIterations=False,maxIter=5,storematrix=False,conditionnumber=False, silent=False):
         '''Compute solution
         reInitializeAllElements: Initializes all elements and aquifers (default is 1)
         doIterations: Iterates for non-linear conditions if present
@@ -442,15 +442,15 @@ class Model:
         storematrix: Logical to to indicate whether the matrix should remain stored. Only useful during development
         '''
         self.matrix = 0; self.rhs = 0; self.xsol = 0; self.eqlist = 0; self.eqcumlist = 0  # If not created (no unknowns) they need to exist to be deleted
-        print 'Starting solve'
-        newsolution = self.solveNonLinear( 1, reInitializeAllElements )
+        if not silent: print 'Starting solve'
+        newsolution = self.solveNonLinear( 1, reInitializeAllElements, silent=silent)
         lakechange = False  # Need to start with false in case there are no lakes
         if doIterations:
             i = 0
             while (newsolution or lakechange) and i < maxIter:
                 print 'Iteration ',i+1
                 if len(self.lakeList) == 0:
-                    newsolution = self.solveNonLinear( start=0 ) # Only reinitializes if start = 1
+                    newsolution = self.solveNonLinear(start=0, silent=silent) # Only reinitializes if start = 1
                 else:
                     # Make changes for lakes that percolate
                     lakechange = False
@@ -470,10 +470,10 @@ class Model:
             print 'Condition number: ',s[0]/s[-1]
         if not storematrix:
             del self.matrix; del self.rhs; del self.xsol; del self.eqlist; del self.eqcumlist
-        print 'Solution complete'
+        if not silent: print 'Solution complete'
         return
         
-    def solveNonLinear(self,start=1,reInitializeAllElements=1):
+    def solveNonLinear(self,start=1,reInitializeAllElements=1, silent=False):
         '''Do one iteration step
         When start=1 it solves in the old fashioned way
         When start=0 is will use the stored matrix and only adjust the rows that have changed
@@ -491,8 +491,9 @@ class Model:
                     e.setCoefs()
             matrix = []
             Nel = len(self.elementList)
-            print 'Number of elements: ',Nel
-            print 'Percent progress: ',
+	    if not silent:
+                print 'Number of elements: ',Nel
+                print 'Percent progress: ',
 	    stdout.flush()
             imilestone = (Nel-1)*arange(0,11,1,'i')/10
             icount = 0; iprog = 0
@@ -503,11 +504,12 @@ class Model:
                 eq_list.append( len(rows) )
                 matrix.extend( rows )
                 if icount == imilestone[iprog]:
-                    print int(10.0*iprog),
-		    stdout.flush()
+		    if not silent:
+                        print int(10.0*iprog),
+			stdout.flush()
                     iprog = iprog + 1
                 icount = icount + 1
-            print ' ' # Just to end the printing in a row
+            if not silent: print ' ' # Just to end the printing in a row
             eqcumlist = cumsum(eq_list)
             self.eqlist = eq_list
             self.eqcumlist = eqcumlist - 1
@@ -538,7 +540,7 @@ class Model:
             print 'Number of elements changed (such as percolating line-sinks): ',ichange
             if changed == False: return newsolution_computed
         size = shape(matrix)
-        print 'size of matrix '+str(size)
+        if not silent: print 'size of matrix '+str(size)
         if size[0] == size[1]:
             xsol = transpose( linalg.solve(matrix,rhs) )
         else:

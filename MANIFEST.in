@@ -1,0 +1,6 @@
+include timml/besselaes.f90
+include timml/besselaes.so
+include timml/besselaes.pyd
+include LICENSE
+include MANIFEST.in
+include README.md
