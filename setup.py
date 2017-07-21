@@ -11,7 +11,7 @@ def configuration(parent_package='', top_path=None):
 
     config = Configuration('timml', parent_package, top_path)
     config.add_extension('besselaesnew',
-                         sources = ['timml/besselaesnew.f95'])
+                         sources = ['timml/src/besselaesnew.f95'])
 
     config.get_version(os.path.join('timml', 'version.py'))
 
