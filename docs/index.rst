@@ -6,7 +6,7 @@
 ============
 TimML
 ============
-|Project| TimML is a computer program for the modeling of steady-state multi-layer flow with analytic elements
+TimML is a computer program for the modeling of steady-state multi-layer flow with analytic elements
 and consists of a library of Python scripts and FORTRAN extensions.
 TimML may be applied to an arbitrary number of aquifers and leaky layers.
 The head, flow, and leakage between aquifers may be computed analytically at any point in the aquifer system.
