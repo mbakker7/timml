@@ -14,7 +14,7 @@ TimML is coded in Python; use is made of FORTRAN extensions to improve performan
 
 TimML version 5 is a total rewrite and is not backwards compatible with previous TimML versions.
 TimML version 5 is intended to be compatible with TTim.
-TimML version 5 has many new features and elements, the code base if Python 3, and the object oriented design is much simpler.
+TimML version 5 has many new features and elements, the code base is Python 3, and the object oriented design is much simpler.
 TimML version 4 remains available through the timml4 branch.
 
 ## Release
