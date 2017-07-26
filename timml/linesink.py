@@ -172,13 +172,13 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         return rv
     
     def discharge(self):
-        # returns with the discharge in each layer
+        # returns the discharge in each layer
         Q = np.zeros(self.aq.Naq)
         Q[self.pylayers] = self.parameters[:, 0] * self.L
         return Q
     
     def plot(self):
-        plt.plot([self.x1, self.x1], [self.y1, self.y2], 'k')
+        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
 class HeadLineSink(LineSinkBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, hls=1.0, \
@@ -247,8 +247,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if self.addtomodel:
             self.aq.add_element(self)
         self.parameters = np.empty((self.Nparam, 1))
-        self.parameters[:,
-        0] = self.Qls / self.L  # Not sure if that needs to be here
+        # Not sure if that needs to be here
+        self.parameters[:, 0] = self.Qls / self.L  
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
@@ -360,6 +360,16 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
     
     def plot(self):
         plt.plot([self.x1, self.x1], [self.y1, self.y2], 'k')
+        
+    def discharge(self):
+        # returns the discharge in each layer
+        Q = np.zeros(self.aq.Naq)
+        Qdisinf = np.zeros((self.Nparam, self.aq.Naq))
+        for n in range(Nparam):
+            Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
+        
+        Q[self.pylayers] = self.parameters[:, 0] * self.L / 2
+        return Q
 
 class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
@@ -483,18 +493,17 @@ class HeadLineSinkString(LineSinkStringBase, HeadEquation):
             self.pc = self.hls * self.aq.T[self.pylayers] * np.ones(self.Nparam)
         elif len(self.hls) == self.Nls:  # head specified at centers
             self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.pylayers]).flatten()
+        elif len(self.hls) == 2:
+            L = np.array([ls.L for ls in self.lslist])
+            Ltot = np.sum(L)
+            xp = np.zeros(self.Nls)
+            xp[0] = 0.5 * L[0]
+            for i in range(1, self.Nls):
+                xp[i] = xp[i - 1] + 0.5 * (L[i - 1] + L[i])
+            self.hls = np.interp(xp, [0, Ltot], self.hls)
+            self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.pylayers]).flatten()
         else:
             print('Error: hls entry not supported')
-        #elif len(self.hls) == 2:
-        #    L = np.array([ls.L for ls in self.lslist])
-        #    Ltot = np.sum(L)
-        #    xp = np.zeros(self.Nls)
-        #    xp[0] = 0.5 * L[0]
-        #    for i in range(1, self.Nls):
-        #        xp[i] = xp[i - 1] + 0.5 * (L[i - 1] + L[i])
-        #    self.hls = np.interp(xp, [0, Ltot], self.hls)
-        #    self.pc = (
-        #    self.hls[:, np.newaxis] * self.aq.T[self.pylayers]).flatten()
         self.resfac = 0.0
 
     def setparams(self, sol):
