@@ -23,7 +23,7 @@ def setup_package():
     metadata = dict(
         name = 'timml',
         version="5.0.0",
-        install_requires = ['numpy>=1.9', 'scipy', 'matplotlib>=1.4'],
+        install_requires = ['numpy>=1.12', 'scipy>=0.19', 'matplotlib>=2.0'],
         description = "TimML, A Multi-Layer, Analytical Element Model",
         author = 'Mark Bakker',
         author_email = 'mark.bakker@tudelft.nl',
