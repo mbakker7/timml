@@ -106,7 +106,7 @@ class WellBase(Element):
         return terminate, 0
     
     def capzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100):
-        eps = 1e-6
+        eps = 1e-1
         angle = np.arange(eps, 2 * np.pi, 2 * np.pi / nt)
         xstart = self.xw + (1 + eps) * self.rw * np.cos(angle)
         ystart = self.yw + (1 + eps) * self.rw * np.sin(angle)
