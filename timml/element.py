@@ -7,8 +7,8 @@ class Element:
         self.aq = None # Set in the initialization function
         self.Nparam = Nparam
         self.Nunknowns = Nunknowns
-        self.pylayers = np.atleast_1d(layers)
-        self.Nlayers = len(self.pylayers)
+        self.layers = np.atleast_1d(layers)
+        self.Nlayers = len(self.layers)
         self.name = name
         self.label = label
         self.inhomelement = False  # elements used as part of an inhom boundary are tagged

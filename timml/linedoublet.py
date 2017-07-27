@@ -52,7 +52,7 @@ class LineDoubletHoBase(Element):
                                                    eps=-1e-6)
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
-        self.resfac = self.aq.T[self.pylayers] / self.res
+        self.resfac = self.aq.T[self.layers] / self.res
         if self.addtomodel:
             self.aq.add_element(self)
         self.parameters = np.empty((self.Nparam, 1))
@@ -77,7 +77,7 @@ class LineDoubletHoBase(Element):
             pot = np.zeros((self.order + 1, aq.Naq))
             pot[:, :] = besselaesnew.potbesldv(x, y, self.z1, self.z2, aq.lab,
                                                self.order, aq.ilap)
-            potrv[:] = self.aq.coef[self.pylayers] * pot[:, np.newaxis, :]
+            potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
         return rv
 
     def disvecinf(self, x, y, aq=None):
@@ -98,10 +98,10 @@ class LineDoubletHoBase(Element):
             qxqy = np.zeros((2 * (self.order + 1), aq.Naq))
             qxqy[:, :] = besselaesnew.disbesldv(x, y, self.z1, self.z2, aq.lab,
                                                 self.order, aq.ilap)
-            qxqyrv[0, :] = self.aq.coef[self.pylayers] * qxqy[:self.order + 1,
-                                                         np.newaxis, :]
-            qxqyrv[1, :] = self.aq.coef[self.pylayers] * qxqy[self.order + 1:,
-                                                         np.newaxis, :]
+            qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
+                                                       np.newaxis, :]
+            qxqyrv[1, :] = self.aq.coef[self.layers] * qxqy[self.order + 1:,
+                                                       np.newaxis, :]
         return rv
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):

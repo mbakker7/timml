@@ -29,7 +29,7 @@ class ConstantBase(Element, HeadEquation):
         self.Ncp = 1
         self.xc = np.array([self.xr])
         self.yc = np.array([self.yr])
-        self.pc = self.hr * self.aq.T[self.pylayers]
+        self.pc = self.hr * self.aq.T[self.layers]
         self.parameters = np.atleast_2d(self.pc)
 
     def potinf(self, x, y, aq=None):
@@ -106,14 +106,14 @@ class ConstantInside(Element):
                     if e != self:
                         mat[0:, ieq:ieq + e.Nunknowns] += \
                             e.potinflayers(self.xc[icp], self.yc[icp],
-                                           self.pylayers).sum(0)
+                                           self.layers).sum(0)
                         ieq += e.Nunknowns
                         # else:
                         #    mat[0, ieq:ieq+e.Nunknowns] += -1
                 else:
                     rhs[0] -= \
                         e.potentiallayers(self.xc[icp], self.yc[icp],
-                                          self.pylayers).sum(0)
+                                          self.layers).sum(0)
         return mat, rhs
 
     def setparams(self, sol):

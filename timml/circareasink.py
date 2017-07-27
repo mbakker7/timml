@@ -25,14 +25,14 @@ class CircAreaSink(Element):
         self.Rlarge = 500.0  # If R/lab > Rlarge, then we use asymptotic approximation to compute potential
         if self.aq.ilap:
             self.lab = self.aq.lab[1:]
-            self.A = -self.aq.coef[self.pylayers, 1:] * self.R * self.lab
-            self.B =  self.aq.coef[self.pylayers, 1:] * self.R * self.lab
-            self.C =  self.aq.coef[self.pylayers, 1:] * self.lab ** 2
+            self.A = -self.aq.coef[self.layers, 1:] * self.R * self.lab
+            self.B = self.aq.coef[self.layers, 1:] * self.R * self.lab
+            self.C = self.aq.coef[self.layers, 1:] * self.lab ** 2
         else:
             self.lab = self.aq.lab
-            self.A = -self.aq.coef[self.pylayers] * self.R * self.lab
-            self.B =  self.aq.coef[self.pylayers] * self.R * self.lab
-            self.C =  self.aq.coef[self.pylayers] * self.lab ** 2
+            self.A = -self.aq.coef[self.layers] * self.R * self.lab
+            self.B = self.aq.coef[self.layers] * self.R * self.lab
+            self.C = self.aq.coef[self.layers] * self.lab ** 2
         self.islarge = self.R / self.lab > self.Rlarge
         self.labsmall = self.lab[~self.islarge]
         self.labbig = self.lab[self.islarge]

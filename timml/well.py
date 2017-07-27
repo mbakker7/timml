@@ -14,7 +14,7 @@ class WellBase(Element):
                          name=name, label=label)
         # Defined here and not in Element as other elements can have multiple
         # parameters per layers
-        self.Nparam = len(self.pylayers)
+        self.Nparam = len(self.layers)
         self.xw = float(xw)
         self.yw = float(yw)
         self.Qw = np.atleast_1d(Qw)
@@ -34,7 +34,7 @@ class WellBase(Element):
         self.parameters = np.empty((self.Nparam, 1))
         self.parameters[:, 0] = self.Qw
         self.resfac = self.res / (
-        2 * np.pi * self.rw * self.aq.Haq[self.pylayers])
+        2 * np.pi * self.rw * self.aq.Haq[self.layers])
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
@@ -48,7 +48,7 @@ class WellBase(Element):
                 pot[1:] = -k0(r / aq.lab[1:]) / (2 * np.pi)
             else:
                 pot[:] = -k0(r / aq.lab) / (2 * np.pi)
-            rv[:] = self.aq.coef[self.pylayers] * pot
+            rv[:] = self.aq.coef[self.layers] * pot
         return rv
 
     def disvecinf(self, x, y, aq=None):
@@ -76,25 +76,25 @@ class WellBase(Element):
                 kone = k1(r / aq.lab)
                 qx[:] = -kone * xminxw / (r * aq.lab) / (2 * np.pi)
                 qy[:] = -kone * yminyw / (r * aq.lab) / (2 * np.pi)
-            rv[0] = self.aq.coef[self.pylayers] * qx
-            rv[1] = self.aq.coef[self.pylayers] * qy
+            rv[0] = self.aq.coef[self.layers] * qx
+            rv[1] = self.aq.coef[self.layers] * qy
         return rv
 
     def headinside(self):
-        h = self.model.head(self.xw + self.rw, self.yw, layers=self.pylayers)
+        h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
     
     def discharge(self):
         # returns with the discharge in each layer
         Q = np.zeros(self.aq.Naq)
-        Q[self.pylayers] = self.parameters[:, 0]
+        Q[self.layers] = self.parameters[:, 0]
         return Q
     
     def stoptrace(self, xyzt, layer, ltype, step, direction):
         terminate = False
         if np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) < (step + self.rw):
             if (ltype == 'a'):
-                if (layer == self.pylayers).any():  # in layer where well is screened
+                if (layer == self.layers).any():  # in layer where well is screened
                     if (self.discharge()[layer] > 0 and direction > 0) or (self.discharge()[layer] < 0 and direction < 0):
                         vx, vy, vz = self.model.velocity(*xyzt[:-1])
                         tstep = np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) / np.sqrt(vx ** 2 + vy ** 2)
@@ -111,7 +111,7 @@ class WellBase(Element):
         xstart = self.xw + (1 + eps) * self.rw * np.cos(angle)
         ystart = self.yw + (1 + eps) * self.rw * np.sin(angle)
         if zstart is None:
-            zstart = self.aq.zaqbot[self.pylayers[0]] + 0.5 * self.aq.Haq[self.pylayers[0]]
+            zstart = self.aq.zaqbot[self.layers[0]] + 0.5 * self.aq.Haq[self.layers[0]]
         zstart = zstart * np.ones(nt)
         xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \
                              vstepfrac=0.2, tmax=tmax, nstepmax=100, silent='.')
@@ -157,7 +157,7 @@ class HeadWell(WellBase, HeadEquation):
 
     def initialize(self):
         WellBase.initialize(self)
-        self.pc = self.hc * self.aq.T[self.pylayers]  # Needed in solving
+        self.pc = self.hc * self.aq.T[self.layers]  # Needed in solving
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
