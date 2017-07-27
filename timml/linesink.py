@@ -159,7 +159,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
             rv[:] = self.aq.coef[self.pylayers] * pot
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.Nparam, aq.Naq))
@@ -271,7 +271,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             potrv[:] = self.aq.coef[self.pylayers] * pot[:, np.newaxis, :]
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
         Returns array(Nparam, self.aq.Naq) with order
         order 0, layer[0]
@@ -293,83 +293,19 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             qxqyrv[1, :] = self.aq.coef[self.pylayers] * qxqy[self.order + 1:,
                                                          np.newaxis, :]
         return rv
-
-    def potinfold(self, x, y, aq=None):
-        '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.Naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
-        '''
-        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.Nparam, aq.Naq))
-        if aq == self.aq:
-            potrv = rv.reshape((self.order + 1, self.Nlayers, aq.Naq))
-            pot = np.zeros(aq.Naq)
-            if aq.ilap:
-                for i in range(
-                                self.order + 1):  # This should be done inside FORTRAN extension
-                    potbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                               aq.Naq, aq.zeropluslab, i,
-                               pot)  # Call FORTRAN extension
-                    potrv[i] = self.aq.coef[self.pylayers] * pot
-            else:
-                for i in range(self.order + 1):
-                    potbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                                   aq.Naq + 1, aq.lab, i,
-                                   pot)  # Need to specify aq.Naq + 1 (bug in besselaes)
-                    potrv[i] = self.aq.coef[self.pylayers] * pot
-        return rv
-
-    def disinfold(self, x, y, aq=None):
-        '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.Naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
-        '''
-        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.Nparam, aq.Naq))
-        if aq == self.aq:
-            rv.shape = (2, self.order + 1, self.Nlayers, aq.Naq)
-            qx = np.zeros(aq.Naq)
-            qy = np.zeros(aq.Naq)
-            if aq.ilap:
-                for i in range(
-                                self.order + 1):  # This should be done inside FORTRAN extension
-                    disbeslsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                               aq.Naq, aq.zeropluslab, i, qx,
-                               qy)  # Call FORTRAN extension
-                    rv[0, i] = self.aq.coef[self.pylayers] * qx
-                    rv[1, i] = self.aq.coef[self.pylayers] * qy
-            else:
-                for i in range(self.order + 1):
-                    disbesonlylsho(x, y, self.x1, self.y1, self.x2, self.y2, \
-                                   aq.Naq + 1, aq.lab, i, qx,
-                                   qy)  # Need to specify aq.Naq + 1 (bug in besselaes)
-                    rv[0, i] = self.aq.coef[self.pylayers] * qx
-                    rv[1, i] = self.aq.coef[self.pylayers] * qy
-            rv.shape = (2, self.Nparam, aq.Naq)
-        return rv
-    
+   
     def plot(self):
-        plt.plot([self.x1, self.x1], [self.y1, self.y2], 'k')
+        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')        
         
     def discharge(self):
         # returns the discharge in each layer
-        Q = np.zeros(self.aq.Naq)
-        Qdisinf = np.zeros((self.Nparam, self.aq.Naq))
-        for n in range(Nparam):
+        rv = np.zeros(self.aq.Naq)
+        Qdisinf = np.zeros((self.order + 1, self.Nlayers))
+        for n in range(self.order + 1):
             Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
-        
-        Q[self.pylayers] = self.parameters[:, 0] * self.L / 2
-        return Q
+        Qls = self.parameters[:, 0] * self.L / 2 * Qdisinf.ravel()
+        rv[self.pylayers] = np.sum(Qls.reshape(self.order + 1, self.Nlayers), 0)
+        return rv
 
 class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
@@ -446,6 +382,20 @@ class LineSinkStringBase(Element):
                                                      self.ycout[0])
 
     def potinf(self, x, y, aq=None):
+        '''
+        linesink 0, order 0, layer[0]
+                    order 0, layer[1]
+                    ...
+                    order 1, layer[0]
+                    order 1, layer[1]
+                    ...
+        linesink 1, order 0, layer[0]
+                    order 0, layer[1]
+                    ...
+                    order 1, layer[0]
+                    order 1, layer[1]
+                    ...
+        '''    
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.Nls, self.lslist[0].Nparam, aq.Naq))
         for i in range(self.Nls):
@@ -453,11 +403,11 @@ class LineSinkStringBase(Element):
         rv.shape = (self.Nparam, aq.Naq)
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.Nls, self.lslist[0].Nparam, aq.Naq))
         for i in range(self.Nls):
-            rv[:, i] = self.lslist[i].disinf(x, y, aq)
+            rv[:, i] = self.lslist[i].disvecinf(x, y, aq)
         rv.shape = (2, self.Nparam, aq.Naq)
         return rv
     
@@ -487,6 +437,131 @@ class HeadLineSinkString(LineSinkStringBase, HeadEquation):
 
     def initialize(self):
         LineSinkStringBase.initialize(self)
+        self.aq.add_element(self)
+        # self.pc = np.array([ls.pc for ls in self.lslist]).flatten()
+        if len(self.hls) == 1:
+            self.pc = self.hls * self.aq.T[self.pylayers] * np.ones(self.Nparam)
+        elif len(self.hls) == self.Nls:  # head specified at centers
+            self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.pylayers]).flatten()
+        elif len(self.hls) == 2:
+            L = np.array([ls.L for ls in self.lslist])
+            Ltot = np.sum(L)
+            xp = np.zeros(self.Nls)
+            xp[0] = 0.5 * L[0]
+            for i in range(1, self.Nls):
+                xp[i] = xp[i - 1] + 0.5 * (L[i - 1] + L[i])
+            self.hls = np.interp(xp, [0, Ltot], self.hls)
+            self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.pylayers]).flatten()
+        else:
+            print('Error: hls entry not supported')
+        self.resfac = 0.0
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        
+class LineSinkStringBase2(Element):
+    '''
+    Alternative implementation that loops through line-sinks to build equation
+    '''
+    def __init__(self, model, xy, closed=False, layers=0, order=0,
+                 name='LineSinkStringBase', label=None, aq=None):
+        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers, \
+                         name=name, label=label)
+        self.xy = np.atleast_2d(xy).astype('d')
+        if closed: self.xy = np.vstack((self.xy, self.xy[0]))
+        self.order = order
+        self.aq = aq
+        self.lslist = []
+        self.x, self.y = self.xy[:, 0], self.xy[:, 1]
+        self.Nls = len(self.x) - 1
+        for i in range(self.Nls):
+            self.lslist.append(LineSinkHoBase(model, \
+                                              x1=self.x[i], y1=self.y[i],
+                                              x2=self.x[i + 1],
+                                              y2=self.y[i + 1], \
+                                              Qls=0.0, layers=layers,
+                                              order=order, label=label,
+                                              addtomodel=False, aq=aq))
+
+    def __repr__(self):
+        return self.name + ' with nodes ' + str(self.xy)
+
+    def initialize(self):
+        for ls in self.lslist:
+            ls.initialize()
+        # Same order for all elements in string
+        self.Ncp = self.Nls * self.lslist[0].Ncp  
+        self.Nparam = self.Nls * self.lslist[0].Nparam
+        self.Nunknowns = self.Nparam
+        self.xls = np.empty((self.Nls, 2))
+        self.yls = np.empty((self.Nls, 2))
+        for i, ls in enumerate(self.lslist):
+            self.xls[i, :] = [ls.x1, ls.x2]
+            self.yls[i, :] = [ls.y1, ls.y2]
+        if self.aq is None:
+            self.aq = self.model.aq.find_aquifer_data(self.lslist[0].xc,
+                                                      self.lslist[0].yc)
+        self.parameters = np.zeros((self.Nparam, 1))
+
+    def potinf(self, x, y, aq=None):
+        '''
+        linesink 0, order 0, layer[0]
+                    order 0, layer[1]
+                    ...
+                    order 1, layer[0]
+                    order 1, layer[1]
+                    ...
+        linesink 1, order 0, layer[0]
+                    order 0, layer[1]
+                    ...
+                    order 1, layer[0]
+                    order 1, layer[1]
+                    ...
+        '''    
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((self.Nls, self.lslist[0].Nparam, aq.Naq))
+        for i in range(self.Nls):
+            rv[i] = self.lslist[i].potinf(x, y, aq)
+        rv.shape = (self.Nparam, aq.Naq)
+        return rv
+
+    def disvecinf(self, x, y, aq=None):
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, self.Nls, self.lslist[0].Nparam, aq.Naq))
+        for i in range(self.Nls):
+            rv[:, i] = self.lslist[i].disvecinf(x, y, aq)
+        rv.shape = (2, self.Nparam, aq.Naq)
+        return rv
+    
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+        changed = False
+        terminate = False
+        xyztnew = 0
+        for ls in self.lslist:
+            changed, terminate, xyztnew = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction)
+            if changed or terminate:
+                return changed, terminate, xyztnew
+        return changed, terminate, xyztnew
+    
+    def plot(self):
+        plt.plot(self.x, self.y, 'k')
+        
+class HeadLineSinkString2(LineSinkStringBase2):
+    '''
+    Not yet modified
+    '''
+    def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0.0, \
+                 layers=0, order=0, label=None):
+        self.storeinput(inspect.currentframe())
+        LineSinkStringBase2.__init__(self, model, xy, closed=False,
+                                    layers=layers, order=order, \
+                                    name='HeadLineSinkString', label=label,
+                                    aq=None)
+        self.hls = np.atleast_1d(hls)
+        self.model.add_element(self)
+
+    def initialize(self):
+        LineSinkStringBase2.initialize(self)
         self.aq.add_element(self)
         # self.pc = np.array([ls.pc for ls in self.lslist]).flatten()
         if len(self.hls) == 1:

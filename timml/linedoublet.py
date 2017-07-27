@@ -80,7 +80,7 @@ class LineDoubletHoBase(Element):
             potrv[:] = self.aq.coef[self.pylayers] * pot[:, np.newaxis, :]
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
         Returns array(Nparam, self.aq.Naq) with order
         order 0, layer[0]
@@ -196,11 +196,11 @@ class LineDoubletStringBase(Element):
         rv.shape = (self.Nparam, aq.Naq)
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.Nld, self.ldlist[0].Nparam, aq.Naq))
         for i in range(self.Nld):
-            rv[:, i] = self.ldlist[i].disinf(x, y, aq)
+            rv[:, i] = self.ldlist[i].disvecinf(x, y, aq)
         rv.shape = (2, self.Nparam, aq.Naq)
         return rv
 

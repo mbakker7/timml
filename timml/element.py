@@ -43,20 +43,20 @@ class Element:
         pot = np.sum(self.potential(x, y, aq) * aq.eigvec, 1 )
         return pot[pylayers]
     
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         '''Returns array of size (2, Nparam, Naq)'''
         raise Exception('Must overload Element.disinf()')
     
     def disvec(self, x, y, aq=None):
         '''Returns array of size (2, Nparam, Naq)'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        return np.sum(self.parameters * self.disinf(x, y, aq), 1)
+        return np.sum(self.parameters * self.disvecinf(x, y, aq), 1)
     
-    def disinflayers(self, x, y, pylayers, aq=None):
+    def disvecinflayers(self, x, y, pylayers, aq=None):
         '''Returns two arrays of size (len(pylayers),Nparam)
         only used in building equations'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        qxqy = self.disinf(x, y, aq)  # Nparam rows, Naq cols
+        qxqy = self.disvecinf(x, y, aq)  # Nparam rows, Naq cols
         qx = np.sum(qxqy[0,:,np.newaxis,:] * aq.eigvec, 2).T  # Transpose as the first axes needs to be the number of layers
         qy = np.sum(qxqy[1,:,np.newaxis,:] * aq.eigvec, 2).T
         return np.array((qx[pylayers], qy[pylayers]))

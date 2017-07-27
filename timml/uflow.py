@@ -27,7 +27,7 @@ class Uflow(Element):
             rv[0, 0] = -x
             rv[1, 0] = -y
         return rv
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, 2, aq.Naq))
         rv[0, 0, 0] = 1.0

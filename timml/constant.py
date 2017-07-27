@@ -39,7 +39,7 @@ class ConstantBase(Element, HeadEquation):
             rv[0, 0] = 1
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, 1, aq.Naq))
         return rv
@@ -90,7 +90,7 @@ class ConstantInside(Element):
             rv[0, 0] = 1
         return rv
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, 1, aq.Naq))
@@ -153,7 +153,7 @@ class ConstantStar(Element, HeadEquation):
             pot[:] = self.potstar[pylayers]
         return pot[pylayers]
 
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, 1, aq.Naq))
         return rv

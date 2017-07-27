@@ -58,7 +58,7 @@ class CircAreaSink(Element):
                     rv[0] = self.B * self.I1RK0r(r)
         return rv
     
-    def disinf(self, x, y, aq=None):
+    def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.Nparam, aq.Naq))
         if aq == self.aq:

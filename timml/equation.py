@@ -87,7 +87,7 @@ class DisvecEquation:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    qx, qy = e.disinflayers(self.xc[icp], self.yc[icp], self.pylayers)
+                    qx, qy = e.disvecinflayers(self.xc[icp], self.yc[icp], self.pylayers)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     qx * self.cosnorm[icp] + qy * self.sinnorm[icp]
                     ieq += e.Nunknowns
@@ -110,7 +110,7 @@ class DisvecEquationOut:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    qx, qy = e.disinflayers(self.xcout[icp], self.ycout[icp], self.pylayers)
+                    qx, qy = e.disvecinflayers(self.xcout[icp], self.ycout[icp], self.pylayers)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     qx * self.cosnorm[icp] + qy * self.sinnorm[icp]
                     ieq += e.Nunknowns
@@ -133,7 +133,7 @@ class LeakyWallEquation:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    qx, qy = e.disinflayers(self.xc[icp], self.yc[icp], self.pylayers)
+                    qx, qy = e.disvecinflayers(self.xc[icp], self.yc[icp], self.pylayers)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     qx * self.cosnorm[icp] + qy * self.sinnorm[icp] - self.resfac[:, np.newaxis] * \
                     (e.potinflayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aq) / self.aq.Tcol[self.pylayers] - \
@@ -217,8 +217,8 @@ class DisvecDiffEquation:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    qxin, qyin = e.disinflayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aqin)
-                    qxout, qyout = e.disinflayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aqout)
+                    qxin, qyin = e.disvecinflayers(self.xcin[icp], self.ycin[icp], self.pylayers, aq=self.aqin)
+                    qxout, qyout = e.disvecinflayers(self.xcout[icp], self.ycout[icp], self.pylayers, aq=self.aqout)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     (qxin - qxout) * self.cosnorm[icp] + (qyin - qyout) * self.sinnorm[icp]
                     ieq += e.Nunknowns
@@ -242,10 +242,10 @@ class DisvecDiffEquation2:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    fluxin = self.intflux(e.disinflayers, self.xcin[icp], self.ycin[icp], \
+                    fluxin = self.intflux(e.disvecinflayers, self.xcin[icp], self.ycin[icp], \
                                           self.xcin[icp+1], self.ycin[icp+1], self.pylayers, aq=self.aqin)
-                    fluxout = self.intflux(e.disinflayers, self.xcout[icp], self.ycout[icp], \
-                                          self.xcout[icp+1], self.ycout[icp+1], self.pylayers, aq=self.aqout)
+                    fluxout = self.intflux(e.disvecinflayers, self.xcout[icp], self.ycout[icp], \
+                                           self.xcout[icp+1], self.ycout[icp+1], self.pylayers, aq=self.aqout)
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = fluxin - fluxout
                     ieq += e.Nunknowns
                 else:
