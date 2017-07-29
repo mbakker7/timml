@@ -17,7 +17,7 @@ from .version import __version__
 from .model import ModelMaq, Model3D
 from .well import WellBase, Well, HeadWell
 from .constant import Constant
-from .linesink import HeadLineSink, HeadLineSinkHo, HeadLineSinkString, LineSinkBase
+from .linesink import HeadLineSink, HeadLineSinkHo, HeadLineSinkString, LineSinkBase, HeadLineSinkString2
 from .linedoublet import ImpLineDoublet, ImpLineDoubletString, LeakyLineDoublet, LeakyLineDoubletString
 from .circareasink import CircAreaSink
 from .inhomogeneity import PolygonInhomMaq

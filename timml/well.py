@@ -124,7 +124,6 @@ class WellBase(Element):
         xyztlist = self.capzone(hstepmax, nt, zstart, tmax, nstepmax)
         for xyzt in xyztlist:
             plt.plot(xyzt[:, 0], xyzt[:, 1], color=color)
-    
         
         
 class Well(WellBase, MscreenWellEquation):

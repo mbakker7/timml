@@ -6,7 +6,7 @@ from .equation import HeadEquation
 #from .besselaes import potbeslsho, potbesonlylsho, disbeslsho, disbesonlylsho
 from .besselaesnew import *
 besselaesnew.initialize()
-from .controlpoints import controlpoints
+from .controlpoints import controlpoints, strengthinf_controlpoints
 
 class LineSinkChangeTrace:
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, verbose=False):
@@ -147,7 +147,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         elif np.isscalar(self.wh):
             self.wh = self.wh * np.ones(self.Nlayers)
         self.resfac = self.aq.T[self.layers] * self.res / self.wh
-
+        
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
@@ -230,6 +230,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
                                        self.x2 - self.x1) + np.pi / 2.0  # changed minus to plus
         self.cosnorm = np.cos(self.theta_norm_out) * np.ones(self.Ncp)
         self.sinnorm = np.sin(self.theta_norm_out) * np.ones(self.Ncp)
+        self.strengthinf = strengthinf_controlpoints(self.Ncp, self.Nlayers) # array of Ncp by Nlayers * (order + 1)
         #
         self.xc, self.yc = controlpoints(self.Ncp, self.z1, self.z2, eps=0)
         if self.zcinout is not None:
@@ -306,22 +307,34 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         Qls = self.parameters[:, 0] * self.L / 2 * Qdisinf.ravel()
         rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.Nlayers), 0)
         return rv
+    
+    #def strength()
 
 class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 hls=1.0, order=0, layers=0, label=None, addtomodel=True):
+                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
                                 layers=layers, order=order,
                                 name='HeadLineSinkHo', label=label, \
                                 addtomodel=addtomodel)
         self.hc = hls
+        self.res = res
+        self.wh = wh
         self.Nunknowns = self.Nparam
 
     def initialize(self):
         LineSinkHoBase.initialize(self)
-        self.resfac = 0.0  # Needs to be implemented
-        self.pc = self.hc * self.aq.T[self.layers]  # Needed in solving
+        if self.wh == 'H':
+            self.wh = self.aq.Haq[self.layers]
+        elif self.wh == '2H':
+            self.wh = 2.0 * self.aq.Haq[self.layers]
+        elif np.isscalar(self.wh):
+            self.wh = self.wh * np.ones(self.Nlayers)
+        # needs to be modified for multiple layers
+        resfac = self.aq.T[self.layers] * self.res / self.wh
+        self.resfac = np.tile(resfac, self.Ncp) * self.strengthinf
+        self.pc = np.tile(self.hc * self.aq.T[self.layers], self.Ncp)  # Needed in solving
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
@@ -493,6 +506,7 @@ class LineSinkStringBase2(Element):
         self.Ncp = self.Nls * self.lslist[0].Ncp  
         self.Nparam = self.Nls * self.lslist[0].Nparam
         self.Nunknowns = self.Nparam
+        # where are self.xls and self.yls used?
         self.xls = np.empty((self.Nls, 2))
         self.yls = np.empty((self.Nls, 2))
         for i, ls in enumerate(self.lslist):
@@ -583,3 +597,15 @@ class HeadLineSinkString2(LineSinkStringBase2):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+        
+    def equation(self):
+        mat = np.empty((self.Nunknowns, self.model.Neq))
+        rhs = np.empty(self.Nunknowns)
+        ieq = 0
+        for ls in self.lslist:
+            matls, rhsls = ls.equation()
+            neq = len(rhsls)
+            matls[ieq: ieq + neq] = matls
+            rhs[ieq: ieq + neq] = rhsls
+        return mat, rhs
+

@@ -56,7 +56,8 @@ class Constant(ConstantBase, HeadEquation):
         ConstantBase.initialize(self)
         assert self.aq.ilap, 'Constant element added to area that is ' \
                              'semi-confined'
-        self.resfac = 0.0  # required for HeadEquation
+        self.resfac = np.zeros(1)  # required for HeadEquation
+        self.strengthinf = np.zeros(1)  # required for HeadEquation
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol

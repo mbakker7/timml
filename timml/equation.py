@@ -18,7 +18,7 @@ class HeadEquation:
                     mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
                     e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
                     if e == self:
-                        mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] -= self.resfac
+                        mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] -= self.resfac[icp]
                     ieq += e.Nunknowns
                 else:
                     rhs[istart:istart+self.Nlayers] -= \
