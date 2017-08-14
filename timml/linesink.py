@@ -334,6 +334,7 @@ class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
         # needs to be modified for multiple layers
         resfac = self.aq.T[self.layers] * self.res / self.wh
         self.resfac = np.tile(resfac, self.Ncp) * self.strengthinf
+        self.resfac.shape = (self.Ncp, self.Nlayers, self.Nunknowns)
         self.pc = np.tile(self.hc * self.aq.T[self.layers], self.Ncp)  # Needed in solving
 
     def setparams(self, sol):
@@ -483,7 +484,6 @@ class LineSinkStringBase2(Element):
         self.xy = np.atleast_2d(xy).astype('d')
         if closed: self.xy = np.vstack((self.xy, self.xy[0]))
         self.order = order
-        self.aq = aq
         self.lslist = []
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
         self.Nls = len(self.x) - 1
@@ -494,7 +494,10 @@ class LineSinkStringBase2(Element):
                                               y2=self.y[i + 1], \
                                               Qls=0.0, layers=layers,
                                               order=order, label=label,
-                                              addtomodel=False, aq=aq))
+                                              addtomodel=False))
+        self.aq = []
+        for ls in self.lslist:
+            if ls.aq not in self.aq: self.aq.append(ls.aq)
 
     def __repr__(self):
         return self.name + ' with nodes ' + str(self.xy)
@@ -506,12 +509,7 @@ class LineSinkStringBase2(Element):
         self.Ncp = self.Nls * self.lslist[0].Ncp  
         self.Nparam = self.Nls * self.lslist[0].Nparam
         self.Nunknowns = self.Nparam
-        # where are self.xls and self.yls used?
-        self.xls = np.empty((self.Nls, 2))
-        self.yls = np.empty((self.Nls, 2))
-        for i, ls in enumerate(self.lslist):
-            self.xls[i, :] = [ls.x1, ls.x2]
-            self.yls[i, :] = [ls.y1, ls.y2]
+        # where are self.xls and self.yls used? self.xls and self.yls removed
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.lslist[0].xc,
                                                       self.lslist[0].yc)
@@ -534,16 +532,16 @@ class LineSinkStringBase2(Element):
         '''    
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.Nls, self.lslist[0].Nparam, aq.Naq))
-        for i in range(self.Nls):
-            rv[i] = self.lslist[i].potinf(x, y, aq)
+        for i, ls in enumerate(self.lslist):
+            rv[i] = ls.potinf(x, y, aq)
         rv.shape = (self.Nparam, aq.Naq)
         return rv
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.Nls, self.lslist[0].Nparam, aq.Naq))
-        for i in range(self.Nls):
-            rv[:, i] = self.lslist[i].disvecinf(x, y, aq)
+        for i, ls in enumerate(self.lslist):
+            rv[:, i] = ls.disvecinf(x, y, aq)
         rv.shape = (2, self.Nparam, aq.Naq)
         return rv
     

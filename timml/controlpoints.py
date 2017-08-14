@@ -27,5 +27,5 @@ def strengthinf_controlpoints(Ncp, Nlayers):
     rv = np.zeros((Ncp * Nlayers, Ncp * Nlayers))
     for i in range(Ncp):
         for j in range(Nlayers):
-            rv[i * Nlayers + j, j::2] = s[i]
+            rv[i * Nlayers + j, j::Nlayers] = s[i]
     return rv

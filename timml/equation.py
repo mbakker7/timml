@@ -15,13 +15,13 @@ class HeadEquation:
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
-                    mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] = \
+                    mat[istart:istart + self.Nlayers, ieq:ieq + e.Nunknowns] = \
                     e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
                     if e == self:
-                        mat[istart:istart+self.Nlayers, ieq:ieq+e.Nunknowns] -= self.resfac[icp]
+                        mat[istart:istart + self.Nlayers, ieq:ieq + e.Nunknowns] -= self.resfac[icp]
                     ieq += e.Nunknowns
                 else:
-                    rhs[istart:istart+self.Nlayers] -= \
+                    rhs[istart:istart + self.Nlayers] -= \
                     e.potentiallayers(self.xc[icp], self.yc[icp], self.layers)  # Pretty cool that this works, really
         return mat, rhs
     
