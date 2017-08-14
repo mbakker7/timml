@@ -1,10 +1,10 @@
 import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
-from .equation import HeadEquation
+from .equation import PotentialEquation
 
 
-class ConstantBase(Element, HeadEquation):
+class ConstantBase(Element, PotentialEquation):
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, \
                  name='ConstantBase', label=None, aq=None):
         self.storeinput(inspect.currentframe())
@@ -45,7 +45,7 @@ class ConstantBase(Element, HeadEquation):
         return rv
 
 
-class Constant(ConstantBase, HeadEquation):
+class Constant(ConstantBase, PotentialEquation):
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, label=None):
         self.storeinput(inspect.currentframe())
         ConstantBase.__init__(self, model, xr=xr, yr=yr, hr=hr, layer=layer, \
@@ -121,7 +121,7 @@ class ConstantInside(Element):
         self.parameters[:, 0] = sol
 
 
-class ConstantStar(Element, HeadEquation):
+class ConstantStar(Element, PotentialEquation):
     def __init__(self, model, hstar=0.0, label=None, aq=None):
         Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=0, \
                          name='ConstantStar', label=label)

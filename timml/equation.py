@@ -1,8 +1,8 @@
 import numpy as np
 
-class HeadEquation:
+class PotentialEquation:
     def equation(self):
-        '''Mix-in class that returns matrix rows for head-specified conditions. (really written as constant potential element)
+        '''Mix-in class that returns matrix rows for potential-specified conditions.
         Returns matrix part (Nunknowns,Neq)
         Returns rhs part Nunknowns
         '''
@@ -22,7 +22,32 @@ class HeadEquation:
                     ieq += e.Nunknowns
                 else:
                     rhs[istart:istart + self.Nlayers] -= \
-                    e.potentiallayers(self.xc[icp], self.yc[icp], self.layers)  # Pretty cool that this works, really
+                    e.potentiallayers(self.xc[icp], self.yc[icp], self.layers)   # Pretty cool that this works, really
+        return mat, rhs
+    
+class HeadEquation:
+    def equation(self):
+        '''Mix-in class that returns matrix rows for head-specified conditions. (now written as heads)
+        Returns matrix part (Nunknowns,Neq)
+        Returns rhs part Nunknowns
+        '''
+        mat = np.empty((self.Nunknowns, self.model.Neq))
+        #rhs = np.zeros(self.Nunknowns)  # Needs to be initialized to zero
+        rhs = self.hc.copy()
+        for icp in range(self.Ncp):
+            istart = icp * self.Nlayers
+            #rhs[istart:istart+self.Nlayers] = self.pc[]
+            ieq = 0
+            for e in self.model.elementlist:
+                if e.Nunknowns > 0:
+                    mat[istart:istart + self.Nlayers, ieq:ieq + e.Nunknowns] = \
+                    e.potinflayers(self.xc[icp], self.yc[icp], self.layers) / self.aq.Tcol[self.layers]
+                    if e == self:
+                        mat[istart:istart + self.Nlayers, ieq:ieq + e.Nunknowns] -= self.resfac[icp]
+                    ieq += e.Nunknowns
+                else:
+                    rhs[istart:istart + self.Nlayers] -= \
+                    e.potentiallayers(self.xc[icp], self.yc[icp], self.layers) / self.aq.T[self.layers]   # Pretty cool that this works, really
         return mat, rhs
     
 class HeadEquationNoRes:  # This class can be deleted when HeadEquation works with zero resistance

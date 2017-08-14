@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
-from .equation import HeadEquation
+from .equation import HeadEquation, PotentialEquation
 #from .besselaes import potbeslsho, potbesonlylsho, disbeslsho, disbesonlylsho
 from .besselaesnew import *
 besselaesnew.initialize()
@@ -296,27 +296,44 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         return rv
    
     def plot(self):
-        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')        
+        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
         
-    def discharge(self):
-        # returns the discharge in each layer
+    def dischargeinf(self):
+        # returns the unit contribution to the discharge in each layer
+        # array of length Nunknowns
         rv = np.zeros(self.aq.Naq)
         Qdisinf = np.zeros((self.order + 1, self.Nlayers))
         for n in range(self.order + 1):
             Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
-        Qls = self.parameters[:, 0] * self.L / 2 * Qdisinf.ravel()
+        rv = self.L / 2 * Qdisinf.ravel()
+        return rv
+    
+    def discharge(self):
+        # returns the discharge in each layer
+        rv = np.zeros(self.aq.Naq)
+        Qls = self.parameters[:, 0] * self.dischargeinf()
         rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.Nlayers), 0)
         return rv
+        
+    #def discharge(self):
+    #    # returns the discharge in each layer
+    #    rv = np.zeros(self.aq.Naq)
+    #    Qdisinf = np.zeros((self.order + 1, self.Nlayers))
+    #    for n in range(self.order + 1):
+    #        Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
+    #    Qls = self.parameters[:, 0] * self.L / 2 * Qdisinf.ravel()
+    #    rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.Nlayers), 0)
+    #    return rv
     
     #def strength()
 
-class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
+class HeadLineSinkHoOld(LineSinkHoBase, PotentialEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, addtomodel=True):
+                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkHoOld', addtomodel=True):
         self.storeinput(inspect.currentframe())
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
                                 layers=layers, order=order,
-                                name='HeadLineSinkHo', label=label, \
+                                name='name', label=label, \
                                 addtomodel=addtomodel)
         self.hc = hls
         self.res = res
@@ -331,11 +348,71 @@ class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
             self.wh = 2.0 * self.aq.Haq[self.layers]
         elif np.isscalar(self.wh):
             self.wh = self.wh * np.ones(self.Nlayers)
-        # needs to be modified for multiple layers
         resfac = self.aq.T[self.layers] * self.res / self.wh
         self.resfac = np.tile(resfac, self.Ncp) * self.strengthinf
         self.resfac.shape = (self.Ncp, self.Nlayers, self.Nunknowns)
         self.pc = np.tile(self.hc * self.aq.T[self.layers], self.Ncp)  # Needed in solving
+        self.hc2 = self.hc * np.ones(self.Nlayers * self.Ncp)
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        
+class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
+                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkHo', addtomodel=True):
+        self.storeinput(inspect.currentframe())
+        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
+                                layers=layers, order=order,
+                                name='name', label=label, \
+                                addtomodel=addtomodel)
+        self.hls = hls
+        self.res = res
+        self.wh = wh
+        self.Nunknowns = self.Nparam
+
+    def initialize(self):
+        LineSinkHoBase.initialize(self)
+        if self.wh == 'H':
+            self.wh = self.aq.Haq[self.layers]
+        elif self.wh == '2H':
+            self.wh = 2.0 * self.aq.Haq[self.layers]
+        elif np.isscalar(self.wh):
+            self.wh = self.wh * np.ones(self.Nlayers)
+        self.resfac = np.tile(self.res / self.wh, self.Ncp) * self.strengthinf
+        self.resfac.shape = (self.Ncp, self.Nlayers, self.Nunknowns)
+        self.hc = self.hls * np.ones(self.Nlayers * self.Ncp)  # needed in solving
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        
+class LineSinkDitch(HeadLineSinkHo):
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
+                 Qls=1, res=0, wh=1, order=0, layers=0, label=None, addtomodel=True):
+        self.storeinput(inspect.currentframe())
+        HeadLineSinkHo.__init__(self, model, x1, y1, x2, y2, \
+                 hls=0, res=res, wh=wh, order=order, layers=layers, label=label,
+                 name='HeadLineSinkDitch', addtomodel=addtomodel)
+        self.Qls = Qls
+
+    def initialize(self):
+        HeadLineSinkHo.initialize(self)
+        
+    def equation(self):
+        mat, rhs = HeadLineSinkHo.equation(self)
+        for i in range(1, self.Nunknowns):
+            mat[i] -= mat[0]
+            rhs[i] -= rhs[0]
+        # first equation is sum of discharges equals Qls
+        mat[0] = 0
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.Nunknowns > 0:
+                if e == self:
+                    mat[0, ieq:ieq + e.Nunknowns] = self.dischargeinf()
+                    break
+                ieq += e.Nunknowns
+        rhs[0] = self.Qls
+        return mat, rhs
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol

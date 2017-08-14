@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
-from .equation import HeadEquation, MscreenWellEquation
+from .equation import PotentialEquation, MscreenWellEquation
 from .trace import timtracelines
 from scipy.special import k0, k1
 
@@ -145,7 +145,7 @@ class Well(WellBase, MscreenWellEquation):
         self.parameters[:, 0] = sol
 
 
-class HeadWell(WellBase, HeadEquation):
+class HeadWell(WellBase, PotentialEquation):
     def __init__(self, model, xw=0, yw=0, hw=10.0, rw=0.1, \
                  res=0.0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
