@@ -698,6 +698,22 @@ class HeadLineSinkString2(LineSinkStringBase2):
             mat[ieq:ieq + neq] = matls
             rhs[ieq:ieq + neq] = rhsls
             ieq += neq
+        # fix to include resistance
+        # this is not pretty but works
+        # not sure how to change the design to make this nicer
+        # I guess the additional matrix can be pre-computed and stored
+        jcol = 0
+        for e in self.model.elementlist:
+            if e == self:
+                break
+            elif e.Nunknowns > 0:
+                jcol += e.Nunknowns
+        irow = 0
+        for ls in self.lslist:
+            for icp in range(ls.Ncp):
+                mat[irow:irow+ ls.Nlayers, jcol:jcol + ls.Nunknowns] -= ls.resfac[icp]
+                irow += ls.Nlayers
+            jcol += ls.Nunknowns
         return mat, rhs
     
 class LineSinkDitchString(HeadLineSinkString2):
