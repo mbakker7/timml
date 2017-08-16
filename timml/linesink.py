@@ -426,6 +426,8 @@ class LineSinkDitch(HeadLineSinkHo):
 
 
 class LineSinkStringBase(Element):
+    '''Original implementation
+    Used for boundaries of inhomogenieities'''
     def __init__(self, model, xy, closed=False, layers=0, order=0,
                  name='LineSinkStringBase', label=None, aq=None):
         Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers, \
@@ -522,7 +524,7 @@ class LineSinkStringBase(Element):
     def plot(self):
         plt.plot(self.x, self.y, 'k')
         
-class HeadLineSinkString(LineSinkStringBase, HeadEquation):
+class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0.0, \
                  layers=0, order=0, label=None):
         self.storeinput(inspect.currentframe())
@@ -560,6 +562,7 @@ class HeadLineSinkString(LineSinkStringBase, HeadEquation):
 class LineSinkStringBase2(Element):
     '''
     Alternative implementation that loops through line-sinks to build equation
+    Has the advantage that it is easier to have different line-sinks in different layers and/or aquifers
     '''
     def __init__(self, model, xy, closed=False, layers=0, order=0,
                  name='LineSinkStringBase', label=None, aq=None):
@@ -649,16 +652,16 @@ class LineSinkStringBase2(Element):
     def plot(self):
         plt.plot(self.x, self.y, 'k')
         
-class HeadLineSinkString2(LineSinkStringBase2):
+class HeadLineSinkString(LineSinkStringBase2):
     '''
     Not yet modified
     '''
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0, \
-                 res=0, wh=1, order=0, layers=0, label=None):
+                 res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkString'):
         self.storeinput(inspect.currentframe())
         LineSinkStringBase2.__init__(self, model, xy, closed=False,
                                     layers=layers, order=order, \
-                                    name='HeadLineSinkString', label=label,
+                                    name=name, label=label,
                                     aq=None)
         self.hls = np.atleast_1d(hls)
         self.res = res
@@ -716,20 +719,20 @@ class HeadLineSinkString2(LineSinkStringBase2):
             jcol += ls.Nunknowns
         return mat, rhs
     
-class LineSinkDitchString(HeadLineSinkString2):
+class LineSinkDitchString(HeadLineSinkString):
     def __init__(self, model, xy=[(-1, 0), (1, 0)], \
-                 Qls=1, res=0, wh=1, order=0, layers=0, label=None, addtomodel=True):
+                 Qls=1, res=0, wh=1, order=0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
-        HeadLineSinkHo.__init__(self, model, x1, y1, x2, y2, \
-                 hls=0, res=res, wh=wh, order=order, layers=layers, label=label,
-                 name='HeadLineSinkDitch', addtomodel=addtomodel)
+        HeadLineSinkString.__init__(self, model, xy=xy, hls=0, \
+                 res=res, wh=wh, order=order, layers=layers, label=label,
+                 name='LineSinkDitchString')
         self.Qls = Qls
 
     def initialize(self):
-        HeadLineSinkHo.initialize(self)
+        HeadLineSinkString.initialize(self)
         
     def equation(self):
-        mat, rhs = HeadLineSinkHo.equation(self)
+        mat, rhs = HeadLineSinkString.equation(self)
         for i in range(1, self.Nunknowns):
             mat[i] -= mat[0]
             rhs[i] -= rhs[0]
@@ -739,7 +742,7 @@ class LineSinkDitchString(HeadLineSinkString2):
         for e in self.model.elementlist:
             if e.Nunknowns > 0:
                 if e == self:
-                    mat[0, ieq:ieq + e.Nunknowns] = self.dischargeinf()
+                    mat[0, ieq:ieq + self.Nunknowns] = self.dischargeinf()
                     break
                 ieq += e.Nunknowns
         rhs[0] = self.Qls
