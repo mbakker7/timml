@@ -574,6 +574,11 @@ class LineSinkStringBase2(Element):
         self.lslist = []
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
         self.Nls = len(self.x) - 1
+        if self.layers.ndim == 1:
+            self.layers = self.layers[:, np.newaxis]
+        if len(self.layers) != self.Nls:
+            self.layers = np.tile(self.layers, (self.Nls, 1))
+        self.Nlayers = len(self.layers[0])
 
     def __repr__(self):
         return self.name + ' with nodes ' + str(self.xy)
@@ -636,7 +641,11 @@ class LineSinkStringBase2(Element):
         # returns the discharge in each layer
         rv = np.zeros(self.aq[0].Naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
-        rv[self.layers] = np.sum(Qls.reshape(self.Nls * (self.order + 1), self.Nlayers), 0)
+        Qls.shape = (self.Nls, self.Nlayers, self.order + 1)
+        Qls = np.sum(Qls, 2)
+        for i, q in enumerate(Qls):
+            rv[self.layers[i]] += q
+            #rv[self.layers] = np.sum(Qls.reshape(self.Nls * (self.order + 1), self.Nlayers), 0)
         return rv
     
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
@@ -683,7 +692,7 @@ class HeadLineSinkString(LineSinkStringBase2):
                                               x2=self.x[i + 1],
                                               y2=self.y[i + 1], \
                                               hls=self.hls[i:i + 2], res=self.res,
-                                              wh=self.wh, layers=self.layers,
+                                              wh=self.wh, layers=self.layers[i],
                                               order=self.order, label=self.label,
                                               addtomodel=False))
         LineSinkStringBase2.initialize(self)

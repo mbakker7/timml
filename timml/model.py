@@ -192,10 +192,18 @@ class ModelMaq(ModelBase):
             ConstantStar(self, hstar, aq=self.aq)
             
 class Model3D(ModelBase):
-    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3):
-        '''Model3D is, for now, constrained to one confined aquifer'''
+    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, top='conf', topres=0, topthick=0, hstar=0):
+        '''Model3D
+        for semi-confined aquifers, set top equal to 'semi' and provide
+        topres: resistance of top
+        tophick: thickness of top
+        hstar: head above top'''
         self.storeinput(inspect.currentframe())
-        kaq, Haq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor)
+        kaq, Haq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, top, topres)
+        if top == 'semi':
+            z = np.hstack((z[0] + topthick, z))
         ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype)
         self.name = 'Model3D'
+        if self.aq.ltype[0] == 'l':
+            ConstantStar(self, hstar, aq=self.aq)
 

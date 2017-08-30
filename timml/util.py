@@ -22,6 +22,19 @@ class PlotTim:
         if layout: self.plot()
         #plt.show()
         
+    def vcontour(self, x1, x2, y1, y2, n, levels, labels=False, decimals=0, color=None, newfig=True):
+        h = self.headalongline(np.linspace(x1, x2, n), np.linspace(y1, y2, n))
+        L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        xg = np.linspace(0, L, n)
+        zg = 0.5 * (self.aq.zaqbot + self.aq.zaqtop)
+        zg = np.hstack((self.aq.zaqtop[0], zg, self.aq.zaqbot[-1]))
+        h = np.vstack((h[0], h, h[-1]))
+        if newfig: plt.figure()
+        cs = plt.contour(xg, zg, h, levels, colors=color)
+        if labels:
+            fmt = '%1.' + str(decimals) + 'f'
+            plt.clabel(cs, fmt=fmt)
+        
     def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100, silent='.', color=None, horizontal=True, win=[-1e30, 1e30, -1e30, 1e30]):
         xyztlist = timtracelines(self, xstart, ystart, zstart, hstepmax=hstepmax, vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent, win=win)
         if horizontal:
