@@ -144,15 +144,15 @@ class ConstantStar(Element, PotentialEquation):
         rv = np.zeros((1, aq.Naq))
         return rv
 
-    def potentiallayers(self, x, y, pylayers, aq=None):
-        '''Returns array of size len(pylayers) only used in building equations
+    def potentiallayers(self, x, y, layers, aq=None):
+        '''Returns array of size len(layers) only used in building equations
         Defined here as it is the particular solution inside a semi-confined aquifer
         and cannot be added by using eigen vectors'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        pot = np.zeros(len(pylayers))
+        pot = np.zeros(len(layers))
         if aq == self.aq:
-            pot[:] = self.potstar[pylayers]
-        return pot[pylayers]
+            pot[:] = self.potstar[layers]
+        return pot
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
