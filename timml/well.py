@@ -10,11 +10,11 @@ from scipy.special import k0, k1
 class WellBase(Element):
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
                  res=0.0, layers=0, name='WellBase', label=None):
-        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers, \
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers, \
                          name=name, label=label)
         # Defined here and not in Element as other elements can have multiple
         # parameters per layers
-        self.Nparam = len(self.layers)
+        self.nparam = len(self.layers)
         self.xw = float(xw)
         self.yw = float(yw)
         self.Qw = np.atleast_1d(Qw)
@@ -28,17 +28,17 @@ class WellBase(Element):
     def initialize(self):
         self.xc = np.array([self.xw + self.rw])
         self.yc = np.array([self.yw])
-        self.Ncp = 1
+        self.ncp = 1
         self.aq = self.model.aq.find_aquifer_data(self.xw, self.yw)
         self.aq.add_element(self)
-        self.parameters = np.empty((self.Nparam, 1))
+        self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.Qw
         self.resfac = self.res / (
         2 * np.pi * self.rw * self.aq.Haq[self.layers])
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.Nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.Naq))
         if aq == self.aq:
             pot = np.zeros(aq.Naq)
             r = np.sqrt((x - self.xw) ** 2 + (y - self.yw) ** 2)
@@ -53,7 +53,7 @@ class WellBase(Element):
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.Nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.Naq))
         if aq == self.aq:
             qx = np.zeros(aq.Naq)
             qy = np.zeros(aq.Naq)
@@ -133,10 +133,10 @@ class Well(WellBase, MscreenWellEquation):
         WellBase.__init__(self, model, xw, yw, Qw, rw, res, \
                           layers=layers, name='Well', label=label)
         self.Qc = float(Qw)
-        if self.Nlayers == 1:
-            self.Nunknowns = 0
+        if self.nlayers == 1:
+            self.nunknowns = 0
         else:
-            self.Nunknowns = self.Nparam
+            self.nunknowns = self.nparam
 
     def initialize(self):
         WellBase.initialize(self)
@@ -152,7 +152,7 @@ class HeadWell(WellBase, PotentialEquation):
         WellBase.__init__(self, model, xw, yw, 0.0, rw, res, \
                           layers=layers, name='HeadWell', label=label)
         self.hc = hw
-        self.Nunknowns = self.Nparam
+        self.nunknowns = self.nparam
 
     def initialize(self):
         WellBase.initialize(self)

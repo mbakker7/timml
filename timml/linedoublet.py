@@ -10,7 +10,7 @@ class LineDoubletHoBase(Element):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, delp=0.0, res=0.0, \
                  layers=0, order=0, name='LineDoubletHoBase', \
                  label=None, addtomodel=True, aq=None, zcinout=None):
-        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers, \
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers, \
                          name=name, label=label)
         self.x1 = float(x1)
         self.y1 = float(y1)
@@ -19,7 +19,7 @@ class LineDoubletHoBase(Element):
         self.delp = np.atleast_1d(delp).astype('d')
         self.res = np.atleast_1d(res).astype('d')
         self.order = order
-        self.Nparam = self.Nlayers * (self.order + 1)
+        self.nparam = self.nlayers * (self.order + 1)
         self.addtomodel = addtomodel
         if addtomodel: self.model.add_element(self)
         self.aq = aq
@@ -30,32 +30,32 @@ class LineDoubletHoBase(Element):
             (self.x2, self.y2))
 
     def initialize(self):
-        self.Ncp = self.order + 1
+        self.ncp = self.order + 1
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
         self.thetaNormOut = np.arctan2(self.y2 - self.y1,
                                        self.x2 - self.x1) - np.pi / 2.0
-        self.cosnorm = np.cos(self.thetaNormOut) * np.ones(self.Ncp)
-        self.sinnorm = np.sin(self.thetaNormOut) * np.ones(self.Ncp)
+        self.cosnorm = np.cos(self.thetaNormOut) * np.ones(self.ncp)
+        self.sinnorm = np.sin(self.thetaNormOut) * np.ones(self.ncp)
         #
-        self.xc, self.yc = controlpoints(self.Ncp, self.z1, self.z2, eps=0)
+        self.xc, self.yc = controlpoints(self.ncp, self.z1, self.z2, eps=0)
         if self.zcinout is not None:
-            self.xcin, self.ycin = controlpoints(self.Ncp, self.zcinout[0],
+            self.xcin, self.ycin = controlpoints(self.ncp, self.zcinout[0],
                                                  self.zcinout[1], eps=0)
-            self.xcout, self.ycout = controlpoints(self.Ncp, self.zcinout[2],
+            self.xcout, self.ycout = controlpoints(self.ncp, self.zcinout[2],
                                                    self.zcinout[3], eps=0)
         else:
-            self.xcin, self.ycin = controlpoints(self.Ncp, self.z1, self.z2,
+            self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2,
                                                  eps=1e-6)
-            self.xcout, self.ycout = controlpoints(self.Ncp, self.z1, self.z2,
+            self.xcout, self.ycout = controlpoints(self.ncp, self.z1, self.z2,
                                                    eps=-1e-6)
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
         self.resfac = self.aq.T[self.layers] / self.res
         if self.addtomodel:
             self.aq.add_element(self)
-        self.parameters = np.empty((self.Nparam, 1))
+        self.parameters = np.empty((self.nparam, 1))
         # Not sure if this needs to be here
         self.parameters[:, 0] = self.delp
 
@@ -70,9 +70,9 @@ class LineDoubletHoBase(Element):
         etc
         '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.Nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.Naq))
         if aq == self.aq:
-            potrv = rv.reshape((self.order + 1, self.Nlayers,
+            potrv = rv.reshape((self.order + 1, self.nlayers,
                                 aq.Naq))  # clever way of using a reshaped rv here
             pot = np.zeros((self.order + 1, aq.Naq))
             pot[:, :] = besselaesnew.potbesldv(x, y, self.z1, self.z2, aq.lab,
@@ -91,9 +91,9 @@ class LineDoubletHoBase(Element):
         etc
         '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.Nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.Naq))
         if aq == self.aq:
-            qxqyrv = rv.reshape((2, self.order + 1, self.Nlayers,
+            qxqyrv = rv.reshape((2, self.order + 1, self.nlayers,
                                  aq.Naq))  # clever way of using a reshaped rv here
             qxqy = np.zeros((2 * (self.order + 1), aq.Naq))
             qxqy[:, :] = besselaesnew.disbesldv(x, y, self.z1, self.z2, aq.lab,
@@ -112,7 +112,7 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
                                 layers=layers, order=order,
                                 name='ImpLineDoublet', label=label, \
                                 addtomodel=addtomodel)
-        self.Nunknowns = self.Nparam
+        self.nunknowns = self.nparam
 
     def initialize(self):
         LineDoubletHoBase.initialize(self)
@@ -128,7 +128,7 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
                                 res=res, layers=layers, order=order,
                                 name='ImpLineDoublet', label=label, \
                                 addtomodel=addtomodel)
-        self.Nunknowns = self.Nparam
+        self.nunknowns = self.nparam
 
     def initialize(self):
         LineDoubletHoBase.initialize(self)
@@ -140,7 +140,7 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
 class LineDoubletStringBase(Element):
     def __init__(self, model, xy, closed=False, layers=0, order=0, res=0,
                  name='LineDoubletStringBase', label=None, aq=None):
-        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layers, \
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers, \
                          name=name, label=label)
         self.xy = np.atleast_2d(xy).astype('d')
         if closed: self.xy = np.vstack((self.xy, self.xy[0]))
@@ -161,10 +161,10 @@ class LineDoubletStringBase(Element):
     def initialize(self):
         for ld in self.ldlist:
             ld.initialize()
-        self.Ncp = self.Nld * self.ldlist[
+        self.ncp = self.Nld * self.ldlist[
             0].Ncp  # Same order for all elements in string
-        self.Nparam = self.Nld * self.ldlist[0].Nparam
-        self.Nunknowns = self.Nparam
+        self.nparam = self.Nld * self.ldlist[0].Nparam
+        self.nunknowns = self.nparam
         self.xld = np.empty((self.Nld, 2))
         self.yld = np.empty((self.Nld, 2))
         for i, ld in enumerate(self.ldlist):
@@ -173,7 +173,7 @@ class LineDoubletStringBase(Element):
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.ldlist[0].xc,
                                                       self.ldlist[0].yc)
-        self.parameters = np.zeros((self.Nparam, 1))
+        self.parameters = np.zeros((self.nparam, 1))
         ## As parameters are only stored for the element not the list, we need to combine the following
         self.xc = np.array([ld.xc for ld in self.ldlist]).flatten()
         self.yc = np.array([ld.yc for ld in self.ldlist]).flatten()
@@ -193,7 +193,7 @@ class LineDoubletStringBase(Element):
         rv = np.zeros((self.Nld, self.ldlist[0].Nparam, aq.Naq))
         for i in range(self.Nld):
             rv[i] = self.ldlist[i].potinf(x, y, aq)
-        rv.shape = (self.Nparam, aq.Naq)
+        rv.shape = (self.nparam, aq.Naq)
         return rv
 
     def disvecinf(self, x, y, aq=None):
@@ -201,7 +201,7 @@ class LineDoubletStringBase(Element):
         rv = np.zeros((2, self.Nld, self.ldlist[0].Nparam, aq.Naq))
         for i in range(self.Nld):
             rv[:, i] = self.ldlist[i].disvecinf(x, y, aq)
-        rv.shape = (2, self.Nparam, aq.Naq)
+        rv.shape = (2, self.nparam, aq.Naq)
         return rv
 
 

@@ -6,7 +6,7 @@ from scipy.special import k0, k1, i0, i1
 
 class CircAreaSink(Element):
     def __init__(self, model, xc=0, yc=0, R=1, N=0.001, layer=0, name='CircAreasink', label=None):
-        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=layer, \
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \
                          name=name, label=label)
         self.xc = xc
         self.yc = yc
@@ -41,7 +41,7 @@ class CircAreaSink(Element):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.Nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.Naq))
         if aq == self.aq:
             r = np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2)
             if r <= self.R:
@@ -60,7 +60,7 @@ class CircAreaSink(Element):
     
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.Nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.Naq))
         if aq == self.aq:
             r = np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2)
             if r <= self.R:

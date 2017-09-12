@@ -2,13 +2,14 @@ import numpy as np
 import inspect # Used for storing the input
 
 class Element:
-    def __init__(self, model, Nparam, Nunknowns, layers, name, label):
+    def __init__(self, model, nparam, nunknowns, layers, name, label):
         self.model = model
         self.aq = None # Set in the initialization function
-        self.Nparam = Nparam
-        self.Nunknowns = Nunknowns
+        self.nparam = nparam
+        self.nunknowns = nunknowns
         self.layers = np.atleast_1d(layers)
-        self.Nlayers = len(self.layers)
+        self.nlayers = len(self.layers)
+        self.ncp = 0
         self.name = name
         self.label = label
         self.inhomelement = False  # elements used as part of an inhom boundary are tagged

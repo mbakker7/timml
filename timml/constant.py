@@ -8,10 +8,10 @@ class ConstantBase(Element, PotentialEquation):
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, \
                  name='ConstantBase', label=None, aq=None):
         self.storeinput(inspect.currentframe())
-        Element.__init__(self, model, Nparam=1, Nunknowns=1, layers=layer, \
+        Element.__init__(self, model, nparam=1, nunknowns=1, layers=layer, \
                          name=name, label=label)
-        self.Nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers
-        self.Nunknowns = 0
+        self.nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers
+        self.nunknowns = 0
         self.xr = xr
         self.yr = yr
         self.hr = hr
@@ -26,7 +26,7 @@ class ConstantBase(Element, PotentialEquation):
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xr, self.yr)
         self.aq.add_element(self)
-        self.Ncp = 1
+        self.ncp = 1
         self.xc = np.array([self.xr])
         self.yc = np.array([self.yr])
         self.pc = self.hr * self.aq.T[self.layers]
@@ -50,7 +50,7 @@ class Constant(ConstantBase, PotentialEquation):
         self.storeinput(inspect.currentframe())
         ConstantBase.__init__(self, model, xr=xr, yr=yr, hr=hr, layer=layer, \
                               name='Constant', label=label)
-        self.Nunknowns = 1
+        self.nunknowns = 1
 
     def initialize(self):
         ConstantBase.initialize(self)
@@ -67,7 +67,7 @@ class ConstantInside(Element):
     # Sets constant at points xc, yc equal to the average of the potential of all elements at points xc, yc
     # Used for the inside of an inhomogeneity
     def __init__(self, model, xc=0, yc=0, label=None):
-        Element.__init__(self, model, Nparam=1, Nunknowns=1,
+        Element.__init__(self, model, nparam=1, nunknowns=1,
                          layers=list(range(model.aq.Naq)), \
                          name='ConstantInside', label=label)
         self.xc = np.atleast_1d(xc)
@@ -81,7 +81,7 @@ class ConstantInside(Element):
     def initialize(self):
         self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         self.aq.add_element(self)
-        self.Ncp = len(self.xc)
+        self.ncp = len(self.xc)
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
@@ -100,7 +100,7 @@ class ConstantInside(Element):
     def equation(self):
         mat = np.zeros((1, self.model.Neq))
         rhs = np.zeros(1)  # Needs to be initialized to zero
-        for icp in range(self.Ncp):
+        for icp in range(self.ncp):
             ieq = 0
             for e in self.model.elementlist:
                 if e.Nunknowns > 0:
@@ -123,7 +123,7 @@ class ConstantInside(Element):
 
 class ConstantStar(Element, PotentialEquation):
     def __init__(self, model, hstar=0.0, label=None, aq=None):
-        Element.__init__(self, model, Nparam=1, Nunknowns=0, layers=0, \
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=0, \
                          name='ConstantStar', label=label)
         assert hstar is not None, 'a value for hstar needs to be specified'
         self.hstar = hstar

@@ -17,15 +17,15 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
         self.inhomelement = True
         self.ndeg = ndeg
         self.Xleg, self.wleg = np.polynomial.legendre.leggauss(self.ndeg)
-        self.Nunknowns = self.Nparam
+        self.nunknowns = self.nparam
         self.aqin = aqin
         self.aqout = aqout
 
     def initialize(self):
         LineSinkHoBase.initialize(self)
-        self.xcin, self.ycin = controlpoints(self.Ncp - 1, self.z1, self.z2,
+        self.xcin, self.ycin = controlpoints(self.ncp - 1, self.z1, self.z2,
                                              eps=1e-6, include_ends=True)
-        self.xcout, self.ycout = controlpoints(self.Ncp - 1, self.z1, self.z2,
+        self.xcout, self.ycout = controlpoints(self.ncp - 1, self.z1, self.z2,
                                                eps=-1e-6, include_ends=True)
         if self.aqin is None:
             self.aqin = self.model.aq.find_aquifer_data(self.xcin[1],
@@ -74,15 +74,15 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
         self.inhomelement = True
         self.ndeg = ndeg
         self.Xleg, self.wleg = np.polynomial.legendre.leggauss(self.ndeg)
-        self.Nunknowns = self.Nparam
+        self.nunknowns = self.nparam
         self.aqin = aqin
         self.aqout = aqout
 
     def initialize(self):
         LineSinkHoBase.initialize(self)
-        self.xcin, self.ycin = controlpoints(self.Ncp - 1, self.z1, self.z2,
+        self.xcin, self.ycin = controlpoints(self.ncp - 1, self.z1, self.z2,
                                              eps=1e-6, include_ends=True)
-        self.xcout, self.ycout = controlpoints(self.Ncp - 1, self.z1, self.z2,
+        self.xcout, self.ycout = controlpoints(self.ncp - 1, self.z1, self.z2,
                                                eps=-1e-6, include_ends=True)
         if self.aqin is None:
             self.aqin = self.model.aq.find_aquifer_data(self.xcin[0],

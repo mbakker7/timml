@@ -147,22 +147,22 @@ class ModelBase(PlotTim):
         # Initialize elements
         self.initialize()
         # Compute number of equations
-        self.Neq = np.sum([e.Nunknowns for e in self.elementlist])
-        if self.Neq == 0: return
+        self.neq = np.sum([e.nunknowns for e in self.elementlist])
+        if self.neq == 0: return
         if silent is False:
             print('Number of elements, Number of equations:', len(
-                self.elementlist), ',', self.Neq)
-        if self.Neq == 0:
+                self.elementlist), ',', self.neq)
+        if self.neq == 0:
             if silent is False: print('No unknowns. Solution complete')
             return
-        mat = np.empty((self.Neq, self.Neq))
-        rhs = np.empty(self.Neq)
+        mat = np.empty((self.neq, self.neq))
+        rhs = np.empty(self.neq)
         ieq = 0
         for e in self.elementlist:
-            if e.Nunknowns > 0:
-                mat[ieq:ieq + e.Nunknowns, :], rhs[ieq:ieq + e.Nunknowns] = \
+            if e.nunknowns > 0:
+                mat[ieq:ieq + e.nunknowns, :], rhs[ieq:ieq + e.nunknowns] = \
                 e.equation()
-                ieq += e.Nunknowns
+                ieq += e.nunknowns
             if silent is False:
                 print('.', end='', flush=True)
         if printmat:
@@ -170,9 +170,9 @@ class ModelBase(PlotTim):
         sol = np.linalg.solve(mat, rhs)
         icount = 0
         for e in self.elementlist:
-            if e.Nunknowns > 0:
-                e.setparams(sol[icount:icount + e.Nunknowns])
-                icount += e.Nunknowns
+            if e.nunknowns > 0:
+                e.setparams(sol[icount:icount + e.nunknowns])
+                icount += e.nunknowns
         if silent is False:
             print()  # needed cause the dots are printed
             print('solution complete')
