@@ -4,16 +4,16 @@ from .aquifer_parameters import param_maq
 from .constant import ConstantStar
 
 class AquiferData:
-    def __init__(self, model, kaq, Haq, c, z, npor, ltype):
+    def __init__(self, model, kaq, c, z, npor, ltype):
         # All input variables except model should be numpy arrays
         # That should be checked outside this function
         self.model = model
         # Needed for heads
         self.kaq = kaq
         self.Naq = len(kaq)
-        self.Haq = Haq
-        self.T = self.kaq * self.Haq
-        self.Tcol = self.T[:, np.newaxis]
+        #self.Haq = Haq
+        #self.T = self.kaq * self.Haq
+        #self.Tcol = self.T[:, np.newaxis]
         self.c = c
         self.hstar = None
         # Needed for tracing
@@ -37,6 +37,8 @@ class AquiferData:
         self.zaqtop = self.z[:-1][self.ltype == 'a']
         self.zaqbot = self.z[1:][self.ltype == 'a']
         self.Haq = self.zaqtop - self.zaqbot
+        self.T = self.kaq * self.Haq
+        self.Tcol = self.T[:, np.newaxis]
         self.zlltop = self.z[:-1][self.ltype == 'l']
         self.zllbot = self.z[1:][self.ltype == 'l']
         if self.ltype[0] == 'a':
@@ -100,8 +102,8 @@ class AquiferData:
 
 
 class Aquifer(AquiferData):
-    def __init__(self, model, kaq, Haq, c, z, npor, ltype):
-        AquiferData.__init__(self, model, kaq, Haq, c, z, npor, ltype)
+    def __init__(self, model, kaq, c, z, npor, ltype):
+        AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.inhomlist = []
         self.area = 1e300  # Needed to find smallest inhom
 

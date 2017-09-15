@@ -45,12 +45,12 @@ class ModelBase(PlotTim):
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
 
     """
-    def __init__(self, kaq, Haq, c, z, npor, ltype):
+    def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
-        self.aq = Aquifer(self, kaq, Haq, c, z, npor, ltype)
+        self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = 'ml'  # Used for writing out input
 
     def initialize(self):
@@ -255,8 +255,8 @@ class ModelMaq(ModelBase):
     """
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf', hstar=None):
         self.storeinput(inspect.currentframe())
-        kaq, Haq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
-        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype)
+        kaq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
+        ModelBase.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)
@@ -308,10 +308,10 @@ class Model3D(ModelBase):
         tophick: thickness of top
         hstar: head above top'''
         self.storeinput(inspect.currentframe())
-        kaq, Haq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, top, topres)
+        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, top, topres)
         if top == 'semi':
             z = np.hstack((z[0] + topthick, z))
-        ModelBase.__init__(self, kaq, Haq, c, z, npor, ltype)
+        ModelBase.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'Model3D'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)

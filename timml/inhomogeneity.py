@@ -9,11 +9,11 @@ from .intlinesink import IntHeadDiffLineSink, IntFluxDiffLineSink
 class PolygonInhom(AquiferData):
     tiny = 1e-8
 
-    def __init__(self, model, xy, kaq, Haq, c, z, npor, ltype, hstar,
+    def __init__(self, model, xy, kaq, c, z, npor, ltype, hstar,
                  order, ndeg):
         # All input variables except model should be numpy arrays
         # That should be checked outside this function):        
-        AquiferData.__init__(self, model, kaq, Haq, c, z, npor, ltype)
+        AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.order = order
         self.ndeg = ndeg
         self.hstar = hstar
@@ -87,8 +87,8 @@ class PolygonInhomMaq(PolygonInhom):
     def __init__(self, model, xy, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf',
                  hstar=None, order=3, ndeg=3):
         self.storeinput(inspect.currentframe())
-        kaq, Haq, c, npor, ltype, = param_maq(kaq, z, c, npor, top)
-        PolygonInhom.__init__(self, model, xy, kaq, Haq, c, z, npor, ltype,
+        kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, top)
+        PolygonInhom.__init__(self, model, xy, kaq, c, z, npor, ltype,
                               hstar, order, ndeg)
 
 
