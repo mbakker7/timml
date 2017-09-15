@@ -37,7 +37,8 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
         
-    def changetrace(self, xyzt1, xyzt2, layer, ltype):
+    #def changetrace(self, xyzt1, xyzt2, layer, ltype):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
         changed = False
         xyztnew = 0
         if (ltype == 'a'):
@@ -59,8 +60,8 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
                     znew = xyzt1[2] + dnew / dold * (xyzt2[2] - xyzt1[2])
                     tnew = xyzt1[3] + dnew / dold * (xyzt2[3] - xyzt1[3])
                     xyztnew = np.array([xnew, ynew, znew, tnew])
-                    return True, xyztnew
-        return changed, xyztnew
+                    changed = True
+        return changed, False, [xyztnew]
 
 
 class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
@@ -94,7 +95,8 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
         
-    def changetrace(self, xyzt1, xyzt2, layer, ltype):
+    #def changetrace(self, xyzt1, xyzt2, layer, ltype):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
         changed = False
         xyztnew = 0
         if (ltype == 'a'):
@@ -116,5 +118,6 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
                     znew = xyzt1[2] + dnew / dold * (xyzt2[2] - xyzt1[2])
                     tnew = xyzt1[3] + dnew / dold * (xyzt2[3] - xyzt1[3])
                     xyztnew = np.array([xnew, ynew, znew, tnew])
-                    return True, xyztnew
-        return changed, xyztnew
+                    changed = True
+                    #return True, False, xyztnew
+        return changed, False, [xyztnew]

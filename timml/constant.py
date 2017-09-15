@@ -98,19 +98,19 @@ class ConstantInside(Element):
         return rv
 
     def equation(self):
-        mat = np.zeros((1, self.model.Neq))
+        mat = np.zeros((1, self.model.neq))
         rhs = np.zeros(1)  # Needs to be initialized to zero
         for icp in range(self.ncp):
             ieq = 0
             for e in self.model.elementlist:
-                if e.Nunknowns > 0:
+                if e. nunknowns > 0:
                     if e != self:
-                        mat[0:, ieq:ieq + e.Nunknowns] += \
+                        mat[0:, ieq:ieq + e. nunknowns] += \
                             e.potinflayers(self.xc[icp], self.yc[icp],
                                            self.layers).sum(0)
-                        ieq += e.Nunknowns
+                        ieq += e. nunknowns
                         # else:
-                        #    mat[0, ieq:ieq+e.Nunknowns] += -1
+                        #    mat[0, ieq:ieq+e. nunknowns] += -1
                 else:
                     rhs[0] -= \
                         e.potentiallayers(self.xc[icp], self.yc[icp],
