@@ -14,7 +14,7 @@ __author__='Mark Bakker'
 from .version import __version__
 
 # Import all classes and functions
-from .model import ModelMaq, Model3D
+from .model import ModelMaq, Model3D, ModelBase
 from .well import WellBase, Well, HeadWell
 from .constant import Constant, ConstantStar
 from .linesink import LineSinkBase, HeadLineSink, HeadLineSinkHo, LineSinkDitch, HeadLineSinkString, LineSinkDitchString

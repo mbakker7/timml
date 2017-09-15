@@ -16,33 +16,27 @@ class ModelBase(PlotTim):
     ----------
     kaq : array
         hydraulic conductivity of each aquifer from the top down
-    z : array or list
-        elevation tops and bottoms of the aquifers from the top down
-        leaky layers may have zero thickness
-        if top='conf': length is 2 * number of aquifers
-        if top='semi': length is 2 * number of aquifers + 1 as top
-        of leaky layer on top of systems needs to be specified
-    c : float, array or list
-        resistance of leaky layers from the top down
-        if float, resistance is the same for all leaky layers
-        if top='conf': length is number of aquifers - 1
-        if top='semi': length is number of aquifers
-    npor : float, array or list
-        porosity of all aquifers and leaky layers from the top down
-        if float, porosity is the same for all layers
-        if top='conf': length is 2 * number of aquifers - 1
-        if top='semi': length is 2 * number of aquifers
-    top : string, 'conf' or 'semi' (default is 'conf')
-        indicating whether the top is confined ('conf') or
-        semi-confined ('semi')
-    hstar : float or None (default is None)
-        head value above semi-confining top, only read if top='semi'
+    z : array
+        elevation tops and bottoms of all layers
+        layers may have zero thickness
+    c : array
+        resistance between two consecutive aquifers
+        if ltype[0]='a': length is number of aquifers - 1
+        if ltype[0]='l': length is number of aquifers
+    npor : array
+        porosity of all layers from the top down
+    ltype : array of characters
+        array indicating for each layer whether it is
+        'a' aquifer layer
+        'l' leaky layer
         
     -----
     Examples
     --------
     >>> from timml import *
-    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+    >>> ml = ModelBase(kaq=array([10, 20, 10]), c=array([200, 2000]), \
+             z=array([20, 15, 10, 8, 0]), npor=0.3 * ones(4), \
+             ltype=array(['a', 'a', 'l', 'a']))
 
     """
     def __init__(self, kaq, c, z, npor, ltype):
