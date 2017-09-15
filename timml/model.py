@@ -1,4 +1,3 @@
-
 import numpy as np
 import sys
 import inspect  # Used for storing the input
@@ -9,6 +8,43 @@ from .util import PlotTim
 
 
 class ModelBase(PlotTim):
+    """
+    ModelBase Class to create a model object consisting of an arbitrary
+    sequence of aquifer layers and leaky layers.
+    Use ModelMaq for regular sequence of aquifer and leaky layers.
+    Use Model3D for multi-layer model of single aquifer
+    ----------
+    kaq : array
+        hydraulic conductivity of each aquifer from the top down
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if top='conf': length is 2 * number of aquifers
+        if top='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if top='conf': length is number of aquifers - 1
+        if top='semi': length is number of aquifers
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if top='conf': length is 2 * number of aquifers - 1
+        if top='semi': length is 2 * number of aquifers
+    top : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if top='semi'
+        
+    -----
+    Examples
+    --------
+    >>> from timml import *
+    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+
+    """
     def __init__(self, kaq, Haq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
@@ -183,6 +219,40 @@ class ModelBase(PlotTim):
         return            
         
 class ModelMaq(ModelBase):
+    """
+    ModelMaq Class to create a multi-aquifer model object
+    Parameters
+    ----------
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if top='conf': length is 2 * number of aquifers
+        if top='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if top='conf': length is number of aquifers - 1
+        if top='semi': length is number of aquifers
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if top='conf': length is 2 * number of aquifers - 1
+        if top='semi': length is 2 * number of aquifers
+    top : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if top='semi'
+
+    -----
+    Examples
+    --------
+    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+    """
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf', hstar=None):
         self.storeinput(inspect.currentframe())
         kaq, Haq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
@@ -192,6 +262,45 @@ class ModelMaq(ModelBase):
             ConstantStar(self, hstar, aq=self.aq)
             
 class Model3D(ModelBase):
+    """
+    Model3D Class to create a multi-layer model object consisting of
+    many aquifer layers. The resistance between the layers is computed
+    from the vertical hydraulic conductivity of the layers.
+    Parameters
+    ----------
+    kaq : float, array or list
+        hydraulic conductivity of each layer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    z : array or list
+        elevation of top of system followed by bottoms of all layers
+        from the top down
+        bottom of layer is automatically equal to top of layer below it
+        if top='conf': length is number of layers + 1
+        if top='semi': length is number of layers + 2 as top
+        of leaky layer on top of systems needs to be specified
+    kzoverkh : vertical anisotropy ratio vertical k divided by horizontal k
+        if float, value is the same for all layers
+        length is number of layers
+    npor : float, array or list
+        porosity of all aquifer layers from the top down
+        if float, porosity is the same for all layers
+        if top='conf': length is number of layers
+        if top='semi': length is number of layers + 1
+    top : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    topres : float
+        resistance of top semi-confining layer, only read if top='semi'
+    topthick: float
+        thickness of top semi-confining layer, only read if top='semi'
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if top='semi'
+
+    -----
+    Examples
+    --------
+    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    """
     def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, top='conf', topres=0, topthick=0, hstar=0):
         '''Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide
