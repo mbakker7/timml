@@ -90,20 +90,39 @@ class WellBase(Element):
         Q[self.layers] = self.parameters[:, 0]
         return Q
     
-    def stoptrace(self, xyzt, layer, ltype, step, direction):
+    #def stoptrace(self, xyzt, layer, ltype, step, direction):
+    #    terminate = False
+    #    if np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) < (step + self.rw):
+    #        if (ltype == 'a'):
+    #            if (layer == self.layers).any():  # in layer where well is screened
+    #                if (self.discharge()[layer] > 0 and direction > 0) or (self.discharge()[layer] < 0 and direction < 0):
+    #                    vx, vy, vz = self.model.velocity(*xyzt[:-1])
+    #                    tstep = np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) / np.sqrt(vx ** 2 + vy ** 2)
+    #                    xnew = self.xw
+    #                    ynew = self.yw
+    #                    znew = xyzt[2] + tstep * vz
+    #                    tnew = xyzt[3] + tstep
+    #                    return True, np.array([xnew, ynew, znew, tnew]), str(self)
+    #    return terminate, 0
+    
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
+        changed = False
         terminate = False
-        if np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) < (step + self.rw):
+        xyztnew = 0
+        if np.sqrt((xyzt2[0] - self.xw) ** 2 + (xyzt2[1] - self.yw) ** 2) < (hstepmax + self.rw):
             if (ltype == 'a'):
                 if (layer == self.layers).any():  # in layer where well is screened
                     if (self.discharge()[layer] > 0 and direction > 0) or (self.discharge()[layer] < 0 and direction < 0):
-                        vx, vy, vz = self.model.velocity(*xyzt[:-1])
-                        tstep = np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) / np.sqrt(vx ** 2 + vy ** 2)
+                        vx, vy, vz = self.model.velocity(*xyzt1[:-1])
+                        tstep = np.sqrt((xyzt1[0] - self.xw) ** 2 + (xyzt1[1] - self.yw) ** 2) / np.sqrt(vx ** 2 + vy ** 2)
                         xnew = self.xw
                         ynew = self.yw
-                        znew = xyzt[2] + tstep * vz
-                        tnew = xyzt[3] + tstep
-                        return True, np.array([xnew, ynew, znew, tnew]), str(self)
-        return terminate, 0
+                        znew = xyzt1[2] + tstep * vz * direction
+                        tnew = xyzt1[3] + tstep
+                        xyztnew = np.array([xnew, ynew, znew, tnew])
+                        changed = True
+                        terminate = True
+        return changed, terminate, [xyztnew]
     
     def capzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100):
         eps = 1e-1

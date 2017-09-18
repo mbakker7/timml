@@ -9,7 +9,7 @@ besselaesnew.initialize()
 from .controlpoints import controlpoints, strengthinf_controlpoints
 
 class LineSinkChangeTrace:
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, verbose=False):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax, verbose=False):
         changed = False
         terminate = False
         xyztnew = 0
@@ -511,7 +511,7 @@ class LineSinkStringBase(Element):
         rv.shape = (2, self.nparam, aq.Naq)
         return rv
     
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
@@ -648,12 +648,12 @@ class LineSinkStringBase2(Element):
             #rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1), self.nlayers), 0)
         return rv
     
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
         for ls in self.lslist:
-            changed, terminate, xyztnew = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction)
+            changed, terminate, xyztnew = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax)
             if changed or terminate:
                 return changed, terminate, xyztnew
         return changed, terminate, xyztnew

@@ -38,7 +38,7 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
         self.parameters[:, 0] = sol
         
     #def changetrace(self, xyzt1, xyzt2, layer, ltype):
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         xyztnew = 0
         if (ltype == 'a'):
@@ -96,7 +96,7 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
         self.parameters[:, 0] = sol
         
     #def changetrace(self, xyzt1, xyzt2, layer, ltype):
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         xyztnew = 0
         if (ltype == 'a'):

@@ -107,10 +107,10 @@ class Element:
     def storeinput(self,frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
     
-    def stoptrace(self, xyz, layer, ltype, step, direction):
-        return False, 0
+    #def stoptrace(self, xyz, layer, ltype, step, direction):
+    #    return False, 0
     
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         return False, False, 0
         
     def qztop(self, x, y):

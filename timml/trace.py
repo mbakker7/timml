@@ -15,6 +15,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
     layer, ltype, modellayer = aq.findlayer(zstart)
     # slightly alter starting location not to get stuck in surpring points
     xyzt = [np.array([xstart * (1 + eps), ystart * (1 + eps), zstart, 0])]  # starting at time 0
+    layerlist = []  # to keep track of layers for plotting with colors
     for i in range(nstepmax):
         if terminate: break
         x0, y0, z0, t0 = xyzt[-1]
@@ -77,7 +78,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
             # check if point needs to be changed
             correction = True
             for e in aq.elementlist:
-                changed, terminate, xyztnew = e.changetrace(xyzt[-1], xyzt1, aq, layer, ltype, modellayer, direction)
+                changed, terminate, xyztnew = e.changetrace(xyzt[-1], xyzt1, aq, layer, ltype, modellayer, direction, hstepmax)
                 if changed or terminate:
                     correction = False
                     break
@@ -128,7 +129,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                 xyztnew = [np.array([x1, y1, z1, t1])]
                 # check again if point needs to be changed
                 for e in aq.elementlist:
-                    changed, terminate, xyztchanged = e.changetrace(xyzt[-1], xyztnew[0], aq, layer, ltype, modellayer, direction)
+                    changed, terminate, xyztchanged = e.changetrace(xyzt[-1], xyztnew[0], aq, layer, ltype, modellayer, direction, hstepmax)
                     if changed or terminate:
                         xyztnew = xyztchanged
                         break
@@ -158,12 +159,12 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
         if frac > 0:  # at least one of the above 5 ifs was true 
             terminate = True
             xyztnew = [np.array([x1, y1, z1, t1])]
-        xyzt.extend(xyztnew)
         # check if element is reached
-        for e in aq.elementlist:
-            if e.stoptrace(xyzt[-1], layer, ltype, hstepmax, direction)[0]:
-                terminate, xyztnew, message = e.stoptrace(xyzt[-1], layer, ltype, hstepmax, direction)
-                xyzt.append(xyztnew)
+        #for e in aq.elementlist:
+        #    if e.stoptrace(xyzt[-1], layer, ltype, hstepmax, direction)[0]:
+        #        terminate, xyztnew, message = e.stoptrace(xyzt[-1], layer, ltype, hstepmax, direction)
+        #        xyztnew = [xyztnew]  # stoptrace returns array
+        xyzt.extend(xyztnew)
     if not silent:
         print(message)
     return np.array(xyzt)
