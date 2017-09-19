@@ -1,6 +1,6 @@
 import numpy as np
 
-def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100, win=[-1e30, 1e30, -1e30, 1e30], silent=False):
+def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100, win=[-1e30, 1e30, -1e30, 1e30], silent=False, returnlayers=False):
     # treating aquifer layers and leaky layers the same way
     xw1, xw2, yw1, yw2 = win
     terminate = False
@@ -21,6 +21,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
         x0, y0, z0, t0 = xyzt[-1]
         aq = ml.aq.find_aquifer_data(x0, y0)  # find new aquifer 
         layer, ltype, modellayer = aq.findlayer(z0)
+        layerlist.append(modellayer)
         v0 = ml.velocomp(x0, y0, z0, aq, [layer, ltype]) * direction  # wordt nog gebruikt
         vx, vy, vz = v0
         if ltype == 'l':  # in leaky layer
@@ -159,20 +160,26 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
         if frac > 0:  # at least one of the above 5 ifs was true 
             terminate = True
             xyztnew = [np.array([x1, y1, z1, t1])]
-        # check if element is reached
-        #for e in aq.elementlist:
-        #    if e.stoptrace(xyzt[-1], layer, ltype, hstepmax, direction)[0]:
-        #        terminate, xyztnew, message = e.stoptrace(xyzt[-1], layer, ltype, hstepmax, direction)
-        #        xyztnew = [xyztnew]  # stoptrace returns array
         xyzt.extend(xyztnew)
+        if len(xyztnew) == 2:
+            layerlist.append(modellayer)
+        elif len(xyztnew) > 3:
+            print('len(xyztnew > 3 !')
+            print(xyztnew)
     if not silent:
         print(message)
-    return np.array(xyzt)
+    if returnlayers:
+        return np.array(xyzt), layerlist
+    else:
+        return np.array(xyzt)
 
-def timtracelines(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100, silent='.', win=[-1e30, 1e30, -1e30, 1e30]):
+def timtracelines(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100,
+                  silent='.', win=[-1e30, 1e30, -1e30, 1e30]):
     xyztlist = []
     for i in range(len(xstart)):
-        xyztlist.append(timtraceline(ml, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax, vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent, win=win))
+        xyztlist.append(timtraceline(ml, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax,
+                                     vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax,
+                                     silent=silent, win=win))
         if silent == '.':
             print('.', end='', flush=True)
     if silent == '.':

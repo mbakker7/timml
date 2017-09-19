@@ -166,7 +166,7 @@ class CircAreaSink(Element):
             rv = -self.parameters[0, 0]  # minus cause the parameter is the infiltration rate
         return rv
 
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0

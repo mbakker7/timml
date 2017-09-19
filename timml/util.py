@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from .trace import timtracelines
+from matplotlib.collections import LineCollection
+from .trace import timtracelines, timtraceline
 
 class PlotTim:
     def plot(self, win=None, newfig=True, figsize=None, orientation='hor'):
@@ -73,6 +74,7 @@ class PlotTim:
     def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
                    tmax=1e12, nstepmax=100, silent='.', color=None, orientation='hor',
                    win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None):
+        c = plt.rcParams['axes.prop_cycle'].by_key()['color']
         fig = plt.gcf()
         assert len(fig.axes) > 0, 'Error: Need to specify axes in figure before invoking tracelines'
         ax1 = None
@@ -84,12 +86,25 @@ class PlotTim:
             ax1 = fig.axes[0]
         elif orientation[:3] == 'ver':
             ax2 = fig.axes[1]
-        xyztlist = timtracelines(self, xstart, ystart, zstart, hstepmax=hstepmax, vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent, win=win)
-        if ax1 is not None:
-            plt.axes(ax1)
-            for xyzt in xyztlist:
-                ax1.plot(xyzt[:, 0], xyzt[:, 1], color=color)
-        if ax2 is not None:
-            plt.axes(ax1)
-            for xyzt in xyztlist:
-                ax2.plot(xyzt[:, 0], xyzt[:, 2], color=color)
+            xyztlist = []
+        for i in range(len(xstart)):
+            xyzt, layerlist = timtraceline(self, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax,
+                                           vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax,
+                                           silent=silent, win=win, returnlayers=True)
+            if silent == '.':
+                print('.', end='', flush=True)
+            if ax1 is not None:
+                #plt.axes(ax1)
+                color = [c[self.aq.layernumber[i]] if self.aq.ltype[i] == 'a' else 'k' for i in layerlist]
+                points = np.array([xyzt[:,0], xyzt[:,1]]).T.reshape(-1, 1, 2)
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
+                lc = LineCollection(segments, colors=color)
+                ax1.add_collection(lc)
+                #ax1.plot(xyzt[:, 0], xyzt[:, 1], color=color)
+            if ax2 is not None:
+                color = [c[self.aq.layernumber[i]] if self.aq.ltype[i] == 'a' else 'k' for i in layerlist]
+                points = np.array([xyzt[:,0], xyzt[:,2]]).T.reshape(-1, 1, 2)
+                segments = np.concatenate([points[:-1], points[1:]], axis=1)
+                lc = LineCollection(segments, colors=color)
+                ax2.add_collection(lc)
+                ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
