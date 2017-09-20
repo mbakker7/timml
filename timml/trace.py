@@ -33,7 +33,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                     modellayer -= 1
                     z1 = aq.z[modellayer + 1] + eps * aq.Hlayer[modellayer]  # just above new bottom
             elif vz < 0:
-                if modellayer == aq.Nlayers - 1:  # steps out of bottom
+                if modellayer == aq.nlayers - 1:  # steps out of bottom
                     z1 = aq.z[modellayer + 1]
                     terminate = True
                 else:
@@ -114,7 +114,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                             z1 = z0 + thstep * vz
                     else:
                         if z0 - aq.z[modellayer + 1] < vstepfrac * aq.Haq[layer]:
-                            if modellayer == aq.Nlayers - 1:  # steps out of bottom
+                            if modellayer == aq.nlayers - 1:  # steps out of bottom
                                 z1 = aq.z[modellayer + 1]
                                 terminate = True
                                 message = 'flowed out of bottom'

@@ -61,7 +61,7 @@ class LineDoubletHoBase(Element):
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.Naq) with order
+        Returns array(Nparam, self.aq.naq) with order
         order 0, layer[0]
         order 0, layer[1]
         ...
@@ -70,11 +70,11 @@ class LineDoubletHoBase(Element):
         etc
         '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             potrv = rv.reshape((self.order + 1, self.nlayers,
-                                aq.Naq))  # clever way of using a reshaped rv here
-            pot = np.zeros((self.order + 1, aq.Naq))
+                                aq.naq))  # clever way of using a reshaped rv here
+            pot = np.zeros((self.order + 1, aq.naq))
             pot[:, :] = besselaesnew.potbesldv(x, y, self.z1, self.z2, aq.lab,
                                                self.order, aq.ilap)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
@@ -82,7 +82,7 @@ class LineDoubletHoBase(Element):
 
     def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.Naq) with order
+        Returns array(Nparam, self.aq.naq) with order
         order 0, layer[0]
         order 0, layer[1]
         ...
@@ -91,11 +91,11 @@ class LineDoubletHoBase(Element):
         etc
         '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers,
-                                 aq.Naq))  # clever way of using a reshaped rv here
-            qxqy = np.zeros((2 * (self.order + 1), aq.Naq))
+                                 aq.naq))  # clever way of using a reshaped rv here
+            qxqy = np.zeros((2 * (self.order + 1), aq.naq))
             qxqy[:, :] = besselaesnew.disbesldv(x, y, self.z1, self.z2, aq.lab,
                                                 self.order, aq.ilap)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
@@ -190,18 +190,18 @@ class LineDoubletStringBase(Element):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.Nld, self.ldlist[0].Nparam, aq.Naq))
+        rv = np.zeros((self.Nld, self.ldlist[0].Nparam, aq.naq))
         for i in range(self.Nld):
             rv[i] = self.ldlist[i].potinf(x, y, aq)
-        rv.shape = (self.nparam, aq.Naq)
+        rv.shape = (self.nparam, aq.naq)
         return rv
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.Nld, self.ldlist[0].Nparam, aq.Naq))
+        rv = np.zeros((2, self.Nld, self.ldlist[0].Nparam, aq.naq))
         for i in range(self.Nld):
             rv[:, i] = self.ldlist[i].disvecinf(x, y, aq)
-        rv.shape = (2, self.nparam, aq.Naq)
+        rv.shape = (2, self.nparam, aq.naq)
         return rv
 
 

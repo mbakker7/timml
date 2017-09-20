@@ -22,7 +22,7 @@ class Element:
         pass
     
     def potinf(self, x, y, aq=None):
-        '''Returns array of size (Nparam, Naq)'''
+        '''Returns array of size (nparam, naq)'''
         raise Exception('Must overload Element.potinf()')
     
     def potential(self, x, y, aq=None):
@@ -30,10 +30,10 @@ class Element:
         return np.sum(self.parameters * self.potinf(x, y, aq), 0)
     
     def potinflayers(self, x, y, layers, aq=None):
-        '''Returns array of size (len(layers),Nparam)
+        '''Returns array of size (len(layers),nparam)
         only used in building equations'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        pot = self.potinf(x, y, aq)  # Nparam rows, Naq cols
+        pot = self.potinf(x, y, aq)  # nparam rows, naq cols
         rv = np.sum(pot[:,np.newaxis,:] * aq.eigvec, 2).T  # Transopose as the first axes needs to be the number of layers
         return rv[layers,:]
     
@@ -45,19 +45,19 @@ class Element:
         return pot[layers]
     
     def disvecinf(self, x, y, aq=None):
-        '''Returns array of size (2, Nparam, Naq)'''
+        '''Returns array of size (2, nparam, naq)'''
         raise Exception('Must overload Element.disinf()')
     
     def disvec(self, x, y, aq=None):
-        '''Returns array of size (2, Nparam, Naq)'''
+        '''Returns array of size (2, nparam, naq)'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         return np.sum(self.parameters * self.disvecinf(x, y, aq), 1)
     
     def disvecinflayers(self, x, y, layers, aq=None):
-        '''Returns two arrays of size (len(layers),Nparam)
+        '''Returns two arrays of size (len(layers),nparam)
         only used in building equations'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        qxqy = self.disvecinf(x, y, aq)  # Nparam rows, Naq cols
+        qxqy = self.disvecinf(x, y, aq)  # nparam rows, naq cols
         qx = np.sum(qxqy[0,:,np.newaxis,:] * aq.eigvec, 2).T  # Transpose as the first axes needs to be the number of layers
         qy = np.sum(qxqy[1,:,np.newaxis,:] * aq.eigvec, 2).T
         return np.array((qx[layers], qy[layers]))

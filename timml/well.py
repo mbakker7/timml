@@ -38,9 +38,9 @@ class WellBase(Element):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
-            pot = np.zeros(aq.Naq)
+            pot = np.zeros(aq.naq)
             r = np.sqrt((x - self.xw) ** 2 + (y - self.yw) ** 2)
             if r < self.rw: r = self.rw  # If at well, set to at radius
             if aq.ilap:
@@ -53,10 +53,10 @@ class WellBase(Element):
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
-            qx = np.zeros(aq.Naq)
-            qy = np.zeros(aq.Naq)
+            qx = np.zeros(aq.naq)
+            qy = np.zeros(aq.naq)
             rsq = (x - self.xw) ** 2 + (y - self.yw) ** 2
             r = np.sqrt(rsq)
             xminxw = x - self.xw
@@ -86,7 +86,7 @@ class WellBase(Element):
     
     def discharge(self):
         # returns with the discharge in each layer
-        Q = np.zeros(self.aq.Naq)
+        Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0]
         return Q
     
@@ -125,6 +125,12 @@ class WellBase(Element):
         return changed, terminate, [xyztnew]
     
     def capzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100):
+        xstart, ystart, zstart = self.capzonestart(nt, zstart)
+        xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \
+                             vstepfrac=0.2, tmax=tmax, nstepmax=100, silent='.')
+        return xyzt
+    
+    def capzonestart(self, nt, zstart):
         eps = 1e-1
         angle = np.arange(eps, 2 * np.pi, 2 * np.pi / nt)
         xstart = self.xw + (1 + eps) * self.rw * np.cos(angle)
@@ -132,18 +138,19 @@ class WellBase(Element):
         if zstart is None:
             zstart = self.aq.zaqbot[self.layers[0]] + 0.5 * self.aq.Haq[self.layers[0]]
         zstart = zstart * np.ones(nt)
-        xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \
-                             vstepfrac=0.2, tmax=tmax, nstepmax=100, silent='.')
-        return xyzt
+        return xstart, ystart, zstart
+    
     
     def plot(self):
         plt.plot(self.xw, self.yw, 'k.')
         
-    def plotcapzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100, color=None):
-        xyztlist = self.capzone(hstepmax, nt, zstart, tmax, nstepmax)
-        for xyzt in xyztlist:
-            plt.plot(xyzt[:, 0], xyzt[:, 1], color=color)
-        
+    def plotcapzone(self, nt=10, zstart=None, hstepmax=20, vstepfrac=0.2,
+                    tmax=365, nstepmax=100, silent='.', color=None, orientation='hor',
+                   win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None):
+        xstart, ystart, zstart = self.capzonestart(nt, zstart)
+        self.model.tracelines(xstart, ystart, zstart, hstepmax=-abs(hstepmax), vstepfrac=vstepfrac,
+                   tmax=tmax, nstepmax=nstepmax, silent=silent, color=color, orientation=orientation,
+                   win=win, newfig=newfig, figsize=figsize)
         
 class Well(WellBase, MscreenWellEquation):
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \

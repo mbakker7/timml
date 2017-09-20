@@ -34,14 +34,14 @@ class ConstantBase(Element, PotentialEquation):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((1, aq.Naq))
+        rv = np.zeros((1, aq.naq))
         if aq == self.aq:
             rv[0, 0] = 1
         return rv
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, 1, aq.Naq))
+        rv = np.zeros((2, 1, aq.naq))
         return rv
 
 
@@ -68,7 +68,7 @@ class ConstantInside(Element):
     # Used for the inside of an inhomogeneity
     def __init__(self, model, xc=0, yc=0, label=None):
         Element.__init__(self, model, nparam=1, nunknowns=1,
-                         layers=list(range(model.aq.Naq)), \
+                         layers=list(range(model.aq.naq)), \
                          name='ConstantInside', label=label)
         self.xc = np.atleast_1d(xc)
         self.yc = np.atleast_1d(yc)
@@ -86,7 +86,7 @@ class ConstantInside(Element):
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((1, aq.Naq))
+        rv = np.zeros((1, aq.naq))
         if aq == self.aq:
             rv[0, 0] = 1
         return rv
@@ -94,7 +94,7 @@ class ConstantInside(Element):
     def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, 1, aq.Naq))
+        rv = np.zeros((2, 1, aq.naq))
         return rv
 
     def equation(self):
@@ -141,7 +141,7 @@ class ConstantStar(Element, PotentialEquation):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((1, aq.Naq))
+        rv = np.zeros((1, aq.naq))
         return rv
 
     def potentiallayers(self, x, y, layers, aq=None):
@@ -156,5 +156,5 @@ class ConstantStar(Element, PotentialEquation):
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, 1, aq.Naq))
+        rv = np.zeros((2, 1, aq.naq))
         return rv

@@ -10,7 +10,7 @@ class AquiferData:
         self.model = model
         # Needed for heads
         self.kaq = kaq
-        self.Naq = len(kaq)
+        self.naq = len(kaq)
         #self.Haq = Haq
         #self.T = self.kaq * self.Haq
         #self.Tcol = self.T[:, np.newaxis]
@@ -19,7 +19,7 @@ class AquiferData:
         # Needed for tracing
         self.z = np.atleast_1d(z)
         self.Hlayer = self.z[:-1] - self.z[1:]  # thickness of all layers
-        self.Nlayers = len(self.z) - 1
+        self.nlayers = len(self.z) - 1
         self.npor = npor
         self.ltype = ltype
         # tag indicating whether an aquifer is Laplace (confined on top)
@@ -29,9 +29,9 @@ class AquiferData:
             self.ilap = 0
         #
         self.area = 1e200  # Smaller than default of ml.aq so that inhom is found
-        self.layernumber = np.zeros(self.Nlayers, dtype='int')
-        self.layernumber[self.ltype == 'a'] = np.arange(self.Naq)
-        self.layernumber[self.ltype == 'l'] = np.arange(self.Nlayers - self.Naq)
+        self.layernumber = np.zeros(self.nlayers, dtype='int')
+        self.layernumber[self.ltype == 'a'] = np.arange(self.naq)
+        self.layernumber[self.ltype == 'l'] = np.arange(self.nlayers - self.naq)
         if self.ltype[0] == 'a':
             self.layernumber[self.ltype == 'l'] += 1  # first leaky layer below first aquifer layer
         self.zaqtop = self.z[:-1][self.ltype == 'a']
@@ -65,14 +65,14 @@ class AquiferData:
         w = w[index]
         v = v[:, index]
         if self.ilap:
-            self.lab = np.zeros(self.Naq)
+            self.lab = np.zeros(self.naq)
             self.lab[1:] = 1.0 / np.sqrt(w[1:])
             self.zeropluslab = self.lab  # to be deprecated when new lambda is fully implemented
             v[:, 0] = self.T / np.sum(self.T)  # first column is normalized T
         else:
             self.lab = 1.0 / np.sqrt(w)
         self.eigvec = v
-        self.coef = np.linalg.solve(v, np.diag(np.ones(self.Naq))).T
+        self.coef = np.linalg.solve(v, np.diag(np.ones(self.naq))).T
 
     def add_element(self, e):
         self.elementlist.append(e)

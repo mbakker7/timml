@@ -151,9 +151,9 @@ class LineSinkBase(LineSinkChangeTrace, Element):
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
-            pot = np.zeros(aq.Naq)
+            pot = np.zeros(aq.naq)
             pot[:] = besselaesnew.potbeslsho(x, y, self.z1, self.z2, aq.lab, 0,
                                              aq.ilap)
             rv[:] = self.aq.coef[self.layers] * pot
@@ -162,9 +162,9 @@ class LineSinkBase(LineSinkChangeTrace, Element):
     def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
-            qxqy = np.zeros((2, aq.Naq))
+            qxqy = np.zeros((2, aq.naq))
             qxqy[:, :] = besselaesnew.disbeslsho(x, y, self.z1, self.z2, aq.lab,
                                                  0, aq.ilap)
             rv[0] = self.aq.coef[self.layers] * qxqy[0]
@@ -173,7 +173,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
     
     def discharge(self):
         # returns the discharge in each layer
-        Q = np.zeros(self.aq.Naq)
+        Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0] * self.L
         return Q
     
@@ -253,7 +253,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
-        Returns array(nparam, self.aq.Naq) with order
+        Returns array(nparam, self.aq.naq) with order
         order 0, layer[0]
         order 0, layer[1]
         ...
@@ -262,11 +262,11 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         etc
         '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             # clever way of using a reshaped rv here
-            potrv = rv.reshape((self.order + 1, self.nlayers, aq.Naq))
-            pot = np.zeros((self.order + 1, aq.Naq))
+            potrv = rv.reshape((self.order + 1, self.nlayers, aq.naq))
+            pot = np.zeros((self.order + 1, aq.naq))
             pot[:, :] = besselaesnew.potbeslsv(x, y, self.z1, self.z2, aq.lab,
                                                self.order, aq.ilap)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
@@ -274,7 +274,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
 
     def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
-        Returns array(nparam, self.aq.Naq) with order
+        Returns array(nparam, self.aq.naq) with order
         order 0, layer[0]
         order 0, layer[1]
         ...
@@ -283,10 +283,10 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         etc
         '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
-            qxqyrv = rv.reshape((2, self.order + 1, self.nlayers, aq.Naq))
-            qxqy = np.zeros((2 * (self.order + 1), aq.Naq))
+            qxqyrv = rv.reshape((2, self.order + 1, self.nlayers, aq.naq))
+            qxqy = np.zeros((2 * (self.order + 1), aq.naq))
             qxqy[:, :] = besselaesnew.disbeslsv(x, y, self.z1, self.z2, aq.lab,
                                                 self.order, aq.ilap)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
@@ -309,14 +309,14 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
     
     def discharge(self):
         # returns the discharge in each layer
-        rv = np.zeros(self.aq.Naq)
+        rv = np.zeros(self.aq.naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
         rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.nlayers), 0)
         return rv
         
     #def discharge(self):
     #    # returns the discharge in each layer
-    #    rv = np.zeros(self.aq.Naq)
+    #    rv = np.zeros(self.aq.naq)
     #    Qdisinf = np.zeros((self.order + 1, self.nlayers))
     #    for n in range(self.order + 1):
     #        Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
@@ -497,18 +497,18 @@ class LineSinkStringBase(Element):
                     ...
         '''    
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nls, self.lslist[0].nparam, aq.Naq))
+        rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
         for i in range(self.nls):
             rv[i] = self.lslist[i].potinf(x, y, aq)
-        rv.shape = (self.nparam, aq.Naq)
+        rv.shape = (self.nparam, aq.naq)
         return rv
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.Naq))
+        rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.naq))
         for i in range(self.nls):
             rv[:, i] = self.lslist[i].disvecinf(x, y, aq)
-        rv.shape = (2, self.nparam, aq.Naq)
+        rv.shape = (2, self.nparam, aq.naq)
         return rv
     
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
@@ -615,20 +615,20 @@ class LineSinkStringBase2(Element):
                     ...
         '''    
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nls, self.lslist[0].nparam, aq.Naq))
+        rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
         if aq in self.aq:
             for i, ls in enumerate(self.lslist):
                 rv[i] = ls.potinf(x, y, aq)
-        rv.shape = (self.nparam, aq.Naq)
+        rv.shape = (self.nparam, aq.naq)
         return rv
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.Naq))
+        rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.naq))
         if aq in self.aq:
             for i, ls in enumerate(self.lslist):
                 rv[:, i] = ls.disvecinf(x, y, aq)
-        rv.shape = (2, self.nparam, aq.Naq)
+        rv.shape = (2, self.nparam, aq.naq)
         return rv
     
     def dischargeinf(self): 
@@ -639,7 +639,7 @@ class LineSinkStringBase2(Element):
    
     def discharge(self):
         # returns the discharge in each layer
-        rv = np.zeros(self.aq[0].Naq)
+        rv = np.zeros(self.aq[0].naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
         Qls = np.sum(Qls, 2)

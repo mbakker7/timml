@@ -41,7 +41,7 @@ class CircAreaSink(Element):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nparam, aq.Naq))
+        rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             r = np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2)
             if r <= self.R:
@@ -60,7 +60,7 @@ class CircAreaSink(Element):
     
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nparam, aq.Naq))
+        rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             r = np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2)
             if r <= self.R:

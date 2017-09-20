@@ -22,14 +22,14 @@ class Uflow(Element):
         self.parameters = np.array([[self.Qx], [self.Qy]])
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, aq.Naq))
+        rv = np.zeros((2, aq.naq))
         if aq == self.aq:
             rv[0, 0] = -x
             rv[1, 0] = -y
         return rv
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, 2, aq.Naq))
+        rv = np.zeros((2, 2, aq.naq))
         if aq == self.aq:
             rv[0, 0, 0] = 1.0
             rv[1, 1, 0] = 1.0

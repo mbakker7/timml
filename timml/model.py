@@ -67,7 +67,7 @@ class ModelBase(PlotTim):
 
     def potential(self, x, y, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
-        pot = np.zeros(aq.Naq)
+        pot = np.zeros(aq.naq)
         for e in aq.elementlist:
             pot += e.potential(x, y, aq)
         rv = np.sum(pot * aq.eigvec, 1)
@@ -78,7 +78,7 @@ class ModelBase(PlotTim):
 
     def disvec(self, x, y, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, aq.Naq))
+        rv = np.zeros((2, aq.naq))
         for e in aq.elementlist:
             rv += e.disvec(x, y, aq)
         rv = np.sum(rv[:, np.newaxis, :] * aq.eigvec, 2)
@@ -105,7 +105,7 @@ class ModelBase(PlotTim):
         If layers is None, all layers are returned'''
         nx, ny = len(xg), len(yg)
         if layers is None:
-            Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).Naq
+            Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
         else:
             Nlayers = len(np.atleast_1d(layers))
         h = np.empty((Nlayers, ny, nx))
@@ -129,7 +129,7 @@ class ModelBase(PlotTim):
         layers may be None or list of layers for which head is computed'''
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
-            Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).Naq
+            Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
         else:
             Nlayers = len(np.atleast_1d(layers))
         nx = len(xg)
@@ -152,7 +152,7 @@ class ModelBase(PlotTim):
             layer, ltype = layer_ltype
         h = self.head(x, y, aq=aq)
         # qz between aquifer layers
-        qzlayer = np.zeros(aq.Naq + 1)
+        qzlayer = np.zeros(aq.naq + 1)
         qzlayer[1:-1] = (h[1:] - h[:-1]) / aq.c[1:]
         if aq.ltype[0] == 'l':
             qzlayer[0] = (h[0] - aq.hstar) / aq.c[0]
