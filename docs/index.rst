@@ -19,14 +19,7 @@ General Outline
 Contents:
 
 .. toctree::
-   :maxdepth: 2
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+    :maxdepth: 2
+    :hidden:
+    
+    Elements <modules>
