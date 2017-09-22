@@ -686,6 +686,7 @@ class HeadLineSinkString(LineSinkStringBase2):
             self.hls = np.interp(s, [0, s[-1]], self.hls)
         elif len(self.hls) != len(self.x):  # head for each node
             print('Error: hls entry not supported')
+        self.lslist = []  # start with empty list
         for i in range(self.nls):
             self.lslist.append(HeadLineSinkHo(self.model, \
                                               x1=self.x[i], y1=self.y[i],
