@@ -662,9 +662,35 @@ class LineSinkStringBase2(Element):
         plt.plot(self.x, self.y, 'k')
         
 class HeadLineSinkString(LineSinkStringBase2):
-    '''
-    Not yet modified
-    '''
+    """
+    ModelMaq Class to create a multi-aquifer model object
+    Parameters
+    ----------
+    model : Model object
+    xy : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if top='conf': length is 2 * number of aquifers
+        if top='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    hls : scalar, array or list
+        head along string
+        if scalar: head is the same everywhere along the string
+        if list or array of length 2: head at beginning and end of string
+        if list or array with same length as xy: heads at nodes, which
+        may contain np.nan, except for first and last point
+    res : scalar
+    wh : scalar or str
+    order : int
+    layers : scalar, list or array
+    label: str or None
+    
+    -----
+    Examples
+    --------
+    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+    >>> HeadLineSinkString(ml, xy=[(-1, 0), (1, 0), (0, 1)], hls=5)
+    """
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0, \
                  res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkString'):
         self.storeinput(inspect.currentframe())
@@ -676,6 +702,7 @@ class HeadLineSinkString(LineSinkStringBase2):
         self.res = res
         self.wh = wh
         self.model.add_element(self)
+        #TO DO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
 
     def initialize(self):
         if len(self.hls) == 1:
@@ -684,7 +711,12 @@ class HeadLineSinkString(LineSinkStringBase2):
             L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
             s = np.hstack((0, np.cumsum(L)))
             self.hls = np.interp(s, [0, s[-1]], self.hls)
-        elif len(self.hls) != len(self.x):  # head for each node
+        elif len(self.hls) == len(self.x):
+            if np.isnan(self.hls).any():
+                L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
+                s = np.hstack((0, np.cumsum(L)))
+                self.hls = np.interp(s, s[~np.isnan(self.hls)], self.hls[~np.isnan(self.hls)])
+        else:
             print('Error: hls entry not supported')
         self.lslist = []  # start with empty list
         for i in range(self.nls):
