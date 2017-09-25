@@ -31,29 +31,28 @@ class PlotTim:
             if win is not None:
                 plt.axis(win)
             
-    def contour(self, x1, x2, nx, y1, y2, ny, layers, levels, layout=True, labels=False,
-                decimals=0, color=None, newfig=True, figsize=None, legend=False):
-        if type(layers) is int:
-            layers = np.arange(layers)
-        else:
-            layers = np.atleast_1d(layers)
+    def contour(self, x1, x2, nx, y1, y2, ny, layers=0, levels=20, layout=True, labels=False,
+                decimals=0, color=None, newfig=True, figsize=None, legend=True):
+        layers = np.atleast_1d(layers)
         xg = np.linspace(x1, x2, nx)
         yg = np.linspace(y1, y2, ny)
         h = self.headgrid2(x1, x2, nx, y1, y2, ny, layers)
         if newfig:
             plt.figure(figsize=figsize)
         # color
-        if type(color) is list:
-            if len(color) < len(layers):
-                print('len(color) smaller than len(layers)')
-        if type(color) is str:
-            color = len(layers) * [color]
         if color is None:
-            color = len(layers) * [color]
+            c = plt.rcParams['axes.prop_cycle'].by_key()['color']
+        elif type(color) is str:
+            c = len(layers) * [color]
+        elif type(color) is list:
+            c = color
+        if len(c) < len(layers):
+            n = np.ceil(self.aq.naq / len(c))
+            c = n * c 
         # contour
         cscollectionlist = []
         for i in range(len(layers)):
-            cs = plt.contour(xg, yg, h[i], levels, colors=color[i])
+            cs = plt.contour(xg, yg, h[i], levels, colors=c[i])
             cscollectionlist.append(cs.collections[0])
             if labels:
                 fmt = '%1.' + str(decimals) + 'f'

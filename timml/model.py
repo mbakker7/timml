@@ -1,3 +1,8 @@
+"""
+Model classes
+
+"""
+
 import numpy as np
 import sys
 import inspect  # Used for storing the input
@@ -13,6 +18,8 @@ class ModelBase(PlotTim):
     sequence of aquifer layers and leaky layers.
     Use ModelMaq for regular sequence of aquifer and leaky layers.
     Use Model3D for multi-layer model of single aquifer
+    
+    Parameters
     ----------
     kaq : array
         hydraulic conductivity of each aquifer from the top down
@@ -29,16 +36,16 @@ class ModelBase(PlotTim):
         array indicating for each layer whether it is
         'a' aquifer layer
         'l' leaky layer
-        
-    -----
+
     Examples
     --------
     >>> from timml import *
     >>> ml = ModelBase(kaq=array([10, 20, 10]), c=array([200, 2000]), \
              z=array([20, 15, 10, 8, 0]), npor=0.3 * ones(4), \
              ltype=array(['a', 'a', 'l', 'a']))
-
+    
     """
+    
     def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
@@ -215,6 +222,7 @@ class ModelBase(PlotTim):
 class ModelMaq(ModelBase):
     """
     ModelMaq Class to create a multi-aquifer model object
+    
     Parameters
     ----------
     kaq : float, array or list
@@ -242,11 +250,12 @@ class ModelMaq(ModelBase):
     hstar : float or None (default is None)
         head value above semi-confining top, only read if top='semi'
 
-    -----
     Examples
     --------
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+    
     """
+    
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf', hstar=None):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
@@ -260,6 +269,7 @@ class Model3D(ModelBase):
     Model3D Class to create a multi-layer model object consisting of
     many aquifer layers. The resistance between the layers is computed
     from the vertical hydraulic conductivity of the layers.
+    
     Parameters
     ----------
     kaq : float, array or list
@@ -272,7 +282,8 @@ class Model3D(ModelBase):
         if top='conf': length is number of layers + 1
         if top='semi': length is number of layers + 2 as top
         of leaky layer on top of systems needs to be specified
-    kzoverkh : vertical anisotropy ratio vertical k divided by horizontal k
+    kzoverkh : float
+        vertical anisotropy ratio vertical k divided by horizontal k
         if float, value is the same for all layers
         length is number of layers
     npor : float, array or list
@@ -290,11 +301,12 @@ class Model3D(ModelBase):
     hstar : float or None (default is None)
         head value above semi-confining top, only read if top='semi'
 
-    -----
     Examples
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    
     """
+    
     def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, top='conf', topres=0, topthick=0, hstar=0):
         '''Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide

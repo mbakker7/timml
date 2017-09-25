@@ -663,10 +663,12 @@ class LineSinkStringBase2(Element):
         
 class HeadLineSinkString(LineSinkStringBase2):
     """
-    ModelMaq Class to create a multi-aquifer model object
+    HeadLineSinkString Class to create a string of head-specified line-sinks
+    which may optionally have a width and resistance
     Parameters
     ----------
     model : Model object
+        Model to which the element is added
     xy : array or list
         elevation tops and bottoms of the aquifers from the top down
         leaky layers may have zero thickness
@@ -678,11 +680,16 @@ class HeadLineSinkString(LineSinkStringBase2):
         if scalar: head is the same everywhere along the string
         if list or array of length 2: head at beginning and end of string
         if list or array with same length as xy: heads at nodes, which
-        may contain np.nan, except for first and last point
-    res : scalar
-    wh : scalar or str
-    order : int
+        may contain nans, except for first and last point
+    res : scalar (default is 0)
+        resistance of line-sink
+    wh : scalar or str 
+    order : int (default is 0)
+        order of all line-sinks in string
     layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
     label: str or None
     
     -----
