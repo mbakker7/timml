@@ -14,7 +14,9 @@ class LineSinkChangeTrace:
         terminate = False
         xyztnew = 0
         if (ltype == 'a'):
-            if (layer == self.layers).any():  # in layer where line-sink is screened
+            if True:
+#            if (layer == self.layers).any():  # in layer where line-sink is screened
+# not needed anymore, I thin this is all taken care of with checking Qn1 and Qn2
                 if verbose:
                     print('hello changetrace')
                     print('xyz1:', xyzt1[:-1])
@@ -313,6 +315,12 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         Qls = self.parameters[:, 0] * self.dischargeinf()
         rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.nlayers), 0)
         return rv
+    
+    def headinside(self, icp=0):
+        hinside = self.model.head(self.xc[icp], self.yc[icp])[self.layers[0]] - \
+                  np.sum(self.strengthinf[icp] * self.parameters[:, 0]) * self.res / self.wh
+        return hinside
+    
         
     #def discharge(self):
     #    # returns the discharge in each layer

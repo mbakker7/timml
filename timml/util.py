@@ -91,7 +91,7 @@ class PlotTim:
         elif type(color) is list:
             c = color
         if len(c) < self.aq.naq:
-            n = np.ceil(self.aq.naq / len(c))
+            n = int(np.ceil(self.aq.naq / len(c)))
             c = n * c 
         fig = plt.gcf()
         assert len(fig.axes) > 0, 'Error: Need to specify axes in figure before invoking tracelines'
