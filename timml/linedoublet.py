@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
 from .besselaesnew import besselaesnew
@@ -61,7 +62,7 @@ class LineDoubletHoBase(Element):
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.naq) with order
+        Returns array(nparam, self.aq.naq) with order
         order 0, layer[0]
         order 0, layer[1]
         ...
@@ -82,7 +83,7 @@ class LineDoubletHoBase(Element):
 
     def disvecinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
-        Returns array(Nparam, self.aq.naq) with order
+        Returns array(nparam, self.aq.naq) with order
         order 0, layer[0]
         order 0, layer[1]
         ...
@@ -103,6 +104,9 @@ class LineDoubletHoBase(Element):
             qxqyrv[1, :] = self.aq.coef[self.layers] * qxqy[self.order + 1:,
                                                        np.newaxis, :]
         return rv
+
+    def plot(self):
+        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
@@ -162,8 +166,8 @@ class LineDoubletStringBase(Element):
         for ld in self.ldlist:
             ld.initialize()
         self.ncp = self.Nld * self.ldlist[
-            0].Ncp  # Same order for all elements in string
-        self.nparam = self.Nld * self.ldlist[0].Nparam
+            0].ncp  # Same order for all elements in string
+        self.nparam = self.Nld * self.ldlist[0].nparam
         self.nunknowns = self.nparam
         self.xld = np.empty((self.Nld, 2))
         self.yld = np.empty((self.Nld, 2))
@@ -190,7 +194,7 @@ class LineDoubletStringBase(Element):
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.Nld, self.ldlist[0].Nparam, aq.naq))
+        rv = np.zeros((self.Nld, self.ldlist[0].nparam, aq.naq))
         for i in range(self.Nld):
             rv[i] = self.ldlist[i].potinf(x, y, aq)
         rv.shape = (self.nparam, aq.naq)
@@ -198,15 +202,18 @@ class LineDoubletStringBase(Element):
 
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.Nld, self.ldlist[0].Nparam, aq.naq))
+        rv = np.zeros((2, self.Nld, self.ldlist[0].nparam, aq.naq))
         for i in range(self.Nld):
             rv[:, i] = self.ldlist[i].disvecinf(x, y, aq)
         rv.shape = (2, self.nparam, aq.naq)
         return rv
+    
+    def plot(self):
+        plt.plot(self.x, self.y, 'k')
 
 
 class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
-    def __init__(self, model, xy=[(-1, 0), (1, 0)], delp=0.0, \
+    def __init__(self, model, xy=[(-1, 0), (1, 0)], \
                  layers=0, order=0, label=None):
         self.storeinput(inspect.currentframe())
         LineDoubletStringBase.__init__(self, model, xy, closed=False,

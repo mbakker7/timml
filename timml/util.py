@@ -17,19 +17,36 @@ class PlotTim:
             elif orientation[:3] == 'ver':
                 ax2 = plt.subplot()
         else:
-            if orientation == 'both' or orientation == 'hor':
+            if orientation == 'both':
                 fig = plt.gcf()
                 ax1 = fig.axes[0]
+                ax2 = fig.axes[1]
+            elif orientation[:3] == 'hor':
+                fig = plt.gcf()
+                ax1 = fig.axes[0]
+                ax2 = None
+            elif orientation[:3] == 'ver':
+                fig = plt.gcf()
+                ax1 = None
+                ax2 = fig.axes[0]
         if ax1 is not None:
             plt.axes(ax1)
             for e in self.elementlist:
                 e.plot()
-            if orientation == 'hor':
+            if orientation[:3] == 'hor':
                 plt.axis('scaled')
             elif orientation == 'both':
                 plt.axis('equal')  # cannot be 'scaled' when sharing axes
             if win is not None:
                 plt.axis(win)
+        if ax2 is not None:
+            plt.axes(ax2)
+            for i in range(self.aq.nlayers):
+                if self.aq.ltype[i] == 'l':
+                    plt.axhspan(ymin=self.aq.z[i + 1], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8])
+            for i in range(1, self.aq.nlayers):
+                if self.aq.ltype[i] == 'a' and self.aq.ltype[i - 1] == 'a':
+                    plt.axhspan(ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8])
             
     def contour(self, x1, x2, nx, y1, y2, ny, layers=0, levels=20, layout=True, labels=False,
                 decimals=0, color=None, newfig=True, figsize=None, legend=True):
@@ -67,19 +84,32 @@ class PlotTim:
             self.plot(win=[x1, x2, y1, y2], newfig=False)
         #plt.show()
         
-    def vcontour(self, x1, x2, y1, y2, n, levels, labels=False, decimals=0, color=None, newfig=True, figsize=None):
+    def vcontour(self, x1, x2, y1, y2, n, levels, labels=False, decimals=0, color=None,
+                 vinterp=True, newfig=True, figsize=None, layout=True):
         h = self.headalongline(np.linspace(x1, x2, n), np.linspace(y1, y2, n))
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         xg = np.linspace(0, L, n)
-        zg = 0.5 * (self.aq.zaqbot + self.aq.zaqtop)
-        zg = np.hstack((self.aq.zaqtop[0], zg, self.aq.zaqbot[-1]))
-        h = np.vstack((h[0], h, h[-1]))
+        if vinterp:
+            zg = 0.5 * (self.aq.zaqbot + self.aq.zaqtop)
+            zg = np.hstack((self.aq.zaqtop[0], zg, self.aq.zaqbot[-1]))
+            h = np.vstack((h[0], h, h[-1]))
+        else:
+            zg = np.empty(2 * self.aq.naq)
+            for i in range(self.aq.naq):
+                zg[2 * i] = self.aq.zaqtop[i]
+                zg[2 * i + 1] = self.aq.zaqbot[i]
+            h = np.repeat(h, 2, 0)
+        print('shape xg', xg.shape)
+        print('shape zg', zg.shape)
+        print('shape h', h.shape)
         if newfig:
             plt.figure(figsize=figsize)
         cs = plt.contour(xg, zg, h, levels, colors=color)
         if labels:
             fmt = '%1.' + str(decimals) + 'f'
             plt.clabel(cs, fmt=fmt)
+        if layout:
+            self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
         
     def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
                    tmax=1e12, nstepmax=100, silent='.', color=None, orientation='hor',
