@@ -1,0 +1,281 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>timml.equation module &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-timml.equation">
+<span id="timml-equation-module"></span><h1>timml.equation module<a class="headerlink" href="#module-timml.equation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.equation.DisvecDiffEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">DisvecDiffEquation</code><a class="reference internal" href="../_modules/timml/equation.html#DisvecDiffEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecDiffEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.DisvecDiffEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#DisvecDiffEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecDiffEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for difference in head between inside and
+outside equals zeros
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.DisvecDiffEquation2">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">DisvecDiffEquation2</code><a class="reference internal" href="../_modules/timml/equation.html#DisvecDiffEquation2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecDiffEquation2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.DisvecDiffEquation2.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#DisvecDiffEquation2.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecDiffEquation2.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for difference in head between inside and
+outside equals zeros
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.DisvecEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">DisvecEquation</code><a class="reference internal" href="../_modules/timml/equation.html#DisvecEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.DisvecEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#DisvecEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for zero normal flux conditions.
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.DisvecEquationOut">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">DisvecEquationOut</code><a class="reference internal" href="../_modules/timml/equation.html#DisvecEquationOut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecEquationOut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.DisvecEquationOut.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#DisvecEquationOut.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.DisvecEquationOut.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for zero normal flux condition.
+Using the control point on the outside
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.HeadDiffEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">HeadDiffEquation</code><a class="reference internal" href="../_modules/timml/equation.html#HeadDiffEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadDiffEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.HeadDiffEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#HeadDiffEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadDiffEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for difference in head between inside and
+outside equals zeros
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.HeadDiffEquation2">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">HeadDiffEquation2</code><a class="reference internal" href="../_modules/timml/equation.html#HeadDiffEquation2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadDiffEquation2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.HeadDiffEquation2.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#HeadDiffEquation2.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadDiffEquation2.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for difference in head between inside and
+outside equals zeros
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.HeadEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">HeadEquation</code><a class="reference internal" href="../_modules/timml/equation.html#HeadEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.HeadEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#HeadEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for head-specified conditions. (now written as heads)
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.HeadEquationNoRes">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">HeadEquationNoRes</code><a class="reference internal" href="../_modules/timml/equation.html#HeadEquationNoRes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadEquationNoRes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.HeadEquationNoRes.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#HeadEquationNoRes.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.HeadEquationNoRes.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for head-specified conditions. (really written as constant potential element)
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.LeakyWallEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">LeakyWallEquation</code><a class="reference internal" href="../_modules/timml/equation.html#LeakyWallEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.LeakyWallEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.LeakyWallEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#LeakyWallEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.LeakyWallEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for leaky wall condition.
+Qnormal = resfac * (headin - headout)
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.MscreenWellEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">MscreenWellEquation</code><a class="reference internal" href="../_modules/timml/equation.html#MscreenWellEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.MscreenWellEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.MscreenWellEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#MscreenWellEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.MscreenWellEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for mscreen condition.
+Mscreen condition applied at each control point separately (so not like in ditch).
+Returns matrix part (nunknowns,neq)
+Returns rhs part (nunknowns)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.equation.PotentialEquation">
+<em class="property">class </em><code class="descclassname">timml.equation.</code><code class="descname">PotentialEquation</code><a class="reference internal" href="../_modules/timml/equation.html#PotentialEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.PotentialEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="timml.equation.PotentialEquation.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/equation.html#PotentialEquation.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.equation.PotentialEquation.equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix-in class that returns matrix rows for potential-specified conditions.
+Returns matrix part (nunknowns,neq)
+Returns rhs part nunknowns</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Setup Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ae.html">Elements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/elements/timml.equation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/mbakker7/timml" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>timml.constant module &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-timml.constant">
+<span id="timml-constant-module"></span><h1>timml.constant module<a class="headerlink" href="#module-timml.constant" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.constant.Constant">
+<em class="property">class </em><code class="descclassname">timml.constant.</code><code class="descname">Constant</code><span class="sig-paren">(</span><em>model</em>, <em>xr=0</em>, <em>yr=0</em>, <em>hr=0.0</em>, <em>layer=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#Constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.Constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#timml.constant.ConstantBase" title="timml.constant.ConstantBase"><code class="xref py py-class docutils literal"><span class="pre">timml.constant.ConstantBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.PotentialEquation" title="timml.equation.PotentialEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.PotentialEquation</span></code></a></p>
+<dl class="method">
+<dt id="timml.constant.Constant.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#Constant.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.Constant.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.Constant.setparams">
+<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#Constant.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.Constant.setparams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.constant.ConstantBase">
+<em class="property">class </em><code class="descclassname">timml.constant.</code><code class="descname">ConstantBase</code><span class="sig-paren">(</span><em>model</em>, <em>xr=0</em>, <em>yr=0</em>, <em>hr=0.0</em>, <em>layer=0</em>, <em>name=’ConstantBase’</em>, <em>label=None</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="timml.element.html#timml.element.Element" title="timml.element.Element"><code class="xref py py-class docutils literal"><span class="pre">timml.element.Element</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.PotentialEquation" title="timml.equation.PotentialEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.PotentialEquation</span></code></a></p>
+<dl class="method">
+<dt id="timml.constant.ConstantBase.disvecinf">
+<code class="descname">disvecinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantBase.disvecinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantBase.disvecinf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantBase.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantBase.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantBase.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantBase.potinf">
+<code class="descname">potinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantBase.potinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantBase.potinf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.constant.ConstantInside">
+<em class="property">class </em><code class="descclassname">timml.constant.</code><code class="descname">ConstantInside</code><span class="sig-paren">(</span><em>model</em>, <em>xc=0</em>, <em>yc=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantInside"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantInside" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="timml.element.html#timml.element.Element" title="timml.element.Element"><code class="xref py py-class docutils literal"><span class="pre">timml.element.Element</span></code></a></p>
+<dl class="method">
+<dt id="timml.constant.ConstantInside.disvecinf">
+<code class="descname">disvecinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantInside.disvecinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantInside.disvecinf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be called with only one x,y value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantInside.equation">
+<code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantInside.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantInside.equation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantInside.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantInside.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantInside.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantInside.potinf">
+<code class="descname">potinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantInside.potinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantInside.potinf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be called with only one x,y value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantInside.setparams">
+<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantInside.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantInside.setparams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.constant.ConstantStar">
+<em class="property">class </em><code class="descclassname">timml.constant.</code><code class="descname">ConstantStar</code><span class="sig-paren">(</span><em>model</em>, <em>hstar=0.0</em>, <em>label=None</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantStar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantStar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="timml.element.html#timml.element.Element" title="timml.element.Element"><code class="xref py py-class docutils literal"><span class="pre">timml.element.Element</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.PotentialEquation" title="timml.equation.PotentialEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.PotentialEquation</span></code></a></p>
+<dl class="method">
+<dt id="timml.constant.ConstantStar.disvecinf">
+<code class="descname">disvecinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantStar.disvecinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantStar.disvecinf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantStar.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantStar.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantStar.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantStar.potentiallayers">
+<code class="descname">potentiallayers</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantStar.potentiallayers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantStar.potentiallayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns array of size len(layers) only used in building equations
+Defined here as it is the particular solution inside a semi-confined aquifer
+and cannot be added by using eigen vectors</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.constant.ConstantStar.potinf">
+<code class="descname">potinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/constant.html#ConstantStar.potinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.ConstantStar.potinf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Setup Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ae.html">Elements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/elements/timml.constant.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/mbakker7/timml" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

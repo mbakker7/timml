@@ -1,0 +1,212 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>timml.well module &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Set up model" href="../ae.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-timml.well">
+<span id="timml-well-module"></span><h1>timml.well module<a class="headerlink" href="#module-timml.well" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.well.HeadWell">
+<em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">HeadWell</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>hw=10.0</em>, <em>rw=0.1</em>, <em>res=0.0</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#timml.well.WellBase" title="timml.well.WellBase"><code class="xref py py-class docutils literal"><span class="pre">timml.well.WellBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.PotentialEquation" title="timml.equation.PotentialEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.PotentialEquation</span></code></a></p>
+<dl class="method">
+<dt id="timml.well.HeadWell.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.HeadWell.setparams">
+<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell.setparams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.well.Well">
+<em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">Well</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>Qw=100.0</em>, <em>rw=0.1</em>, <em>res=0.0</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#Well"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.Well" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#timml.well.WellBase" title="timml.well.WellBase"><code class="xref py py-class docutils literal"><span class="pre">timml.well.WellBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.MscreenWellEquation" title="timml.equation.MscreenWellEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.MscreenWellEquation</span></code></a></p>
+<dl class="method">
+<dt id="timml.well.Well.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#Well.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.Well.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.Well.setparams">
+<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#Well.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.Well.setparams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.well.WellBase">
+<em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">WellBase</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>Qw=100.0</em>, <em>rw=0.1</em>, <em>res=0.0</em>, <em>layers=0</em>, <em>name=’WellBase’</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="timml.element.html#timml.element.Element" title="timml.element.Element"><code class="xref py py-class docutils literal"><span class="pre">timml.element.Element</span></code></a></p>
+<dl class="method">
+<dt id="timml.well.WellBase.capzone">
+<code class="descname">capzone</code><span class="sig-paren">(</span><em>hstepmax=10</em>, <em>nt=10</em>, <em>zstart=None</em>, <em>tmax=None</em>, <em>nstepmax=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.capzone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.capzone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.capzonestart">
+<code class="descname">capzonestart</code><span class="sig-paren">(</span><em>nt</em>, <em>zstart</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.capzonestart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.capzonestart" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.changetrace">
+<code class="descname">changetrace</code><span class="sig-paren">(</span><em>xyzt1</em>, <em>xyzt2</em>, <em>aq</em>, <em>layer</em>, <em>ltype</em>, <em>modellayer</em>, <em>direction</em>, <em>hstepmax</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.changetrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.changetrace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.discharge">
+<code class="descname">discharge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.discharge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.discharge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.disvecinf">
+<code class="descname">disvecinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.disvecinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.disvecinf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.headinside">
+<code class="descname">headinside</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.headinside"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.headinside" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.plotcapzone">
+<code class="descname">plotcapzone</code><span class="sig-paren">(</span><em>nt=10, zstart=None, hstepmax=20, vstepfrac=0.2, tmax=365, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.plotcapzone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.plotcapzone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.well.WellBase.potinf">
+<code class="descname">potinf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.potinf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.potinf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Setup Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ae.html">Elements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../ae.html">Set up model</a><ul>
+      <li>Previous: <a href="../ae.html" title="previous chapter">Set up model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/elements/timml.well.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/mbakker7/timml" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

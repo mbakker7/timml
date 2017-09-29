@@ -1,0 +1,441 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>timml.model &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for timml.model</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Model classes</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">inspect</span>  <span class="c1"># Used for storing the input</span>
+<span class="kn">from</span> <span class="nn">.aquifer</span> <span class="k">import</span> <span class="n">Aquifer</span>
+<span class="kn">from</span> <span class="nn">.aquifer_parameters</span> <span class="k">import</span> <span class="n">param_maq</span><span class="p">,</span> <span class="n">param_3d</span>
+<span class="kn">from</span> <span class="nn">.constant</span> <span class="k">import</span> <span class="n">ConstantStar</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">PlotTim</span>
+
+
+<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">PlotTim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ModelBase Class to create a model object consisting of an arbitrary</span>
+<span class="sd">    sequence of aquifer layers and leaky layers.</span>
+<span class="sd">    Use ModelMaq for regular sequence of aquifer and leaky layers.</span>
+<span class="sd">    Use Model3D for multi-layer model of single aquifer</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kaq : array</span>
+<span class="sd">        hydraulic conductivity of each aquifer from the top down</span>
+<span class="sd">    z : array</span>
+<span class="sd">        elevation tops and bottoms of all layers</span>
+<span class="sd">        layers may have zero thickness</span>
+<span class="sd">    c : array</span>
+<span class="sd">        resistance between two consecutive aquifers</span>
+<span class="sd">        if ltype[0]=&#39;a&#39;: length is number of aquifers - 1</span>
+<span class="sd">        if ltype[0]=&#39;l&#39;: length is number of aquifers</span>
+<span class="sd">    npor : array</span>
+<span class="sd">        porosity of all layers from the top down</span>
+<span class="sd">    ltype : array of characters</span>
+<span class="sd">        array indicating for each layer whether it is</span>
+<span class="sd">        &#39;a&#39; aquifer layer</span>
+<span class="sd">        &#39;l&#39; leaky layer</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from timml import *</span>
+<span class="sd">    &gt;&gt;&gt; ml = ModelBase(kaq=array([10, 20, 10]), c=array([200, 2000]), \</span>
+<span class="sd">             z=array([20, 15, 10, 8, 0]), npor=0.3 * ones(4), \</span>
+<span class="sd">             ltype=array([&#39;a&#39;, &#39;a&#39;, &#39;l&#39;, &#39;a&#39;]))</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">):</span>
+        <span class="c1"># All input variables are numpy arrays</span>
+        <span class="c1"># That should be checked outside this function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementdict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># only elements that have a label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="n">Aquifer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelname</span> <span class="o">=</span> <span class="s1">&#39;ml&#39;</span>  <span class="c1"># Used for writing out input</span>
+
+<div class="viewcode-block" id="ModelBase.initialize"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># remove inhomogeneity elements (they are added again)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">inhomelement</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelBase.add_element"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.add_element">[docs]</a>    <span class="k">def</span> <span class="nf">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementdict</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="ModelBase.remove_element"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.remove_element">[docs]</a>    <span class="k">def</span> <span class="nf">remove_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementdict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelBase.storeinput"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.storeinput">[docs]</a>    <span class="k">def</span> <span class="nf">storeinput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputargs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputvalues</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargvalues</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelBase.potential"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.potential">[docs]</a>    <span class="k">def</span> <span class="nf">potential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">pot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">aq</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="n">pot</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">potential</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pot</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">eigvec</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="c1"># potential for head above leaky layer</span>
+            <span class="n">rv</span> <span class="o">+=</span> <span class="n">aq</span><span class="o">.</span><span class="n">constantstar</span><span class="o">.</span><span class="n">potstar</span>
+        <span class="k">return</span> <span class="n">rv</span></div>
+
+<div class="viewcode-block" id="ModelBase.disvec"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.disvec">[docs]</a>    <span class="k">def</span> <span class="nf">disvec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">aq</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="n">rv</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">disvec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rv</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">eigvec</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span></div>
+    
+<div class="viewcode-block" id="ModelBase.qztop"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.qztop">[docs]</a>    <span class="k">def</span> <span class="nf">qztop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>  <span class="c1"># otherwise recharge cannot be added</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">aq</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+                <span class="n">rv</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">qztop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span></div>
+
+<div class="viewcode-block" id="ModelBase.head"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.head">[docs]</a>    <span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">potential</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rv</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rv</span><span class="p">[</span><span class="n">layers</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ModelBase.headgrid"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.headgrid">[docs]</a>    <span class="k">def</span> <span class="nf">headgrid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">printrow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns h[Nlayers,ny,nx].</span>
+<span class="sd">        If layers is None, all layers are returned&#39;&#39;&#39;</span>
+        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xg</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">yg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Nlayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">naq</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Nlayers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">layers</span><span class="p">))</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Nlayers</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ny</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">printrow</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+                <span class="n">h</span><span class="p">[:,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">layers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">printrow</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">h</span></div>
+
+<div class="viewcode-block" id="ModelBase.headgrid2"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.headgrid2">[docs]</a>    <span class="k">def</span> <span class="nf">headgrid2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">printrow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns h[Nlayers,ny,nx]. If layers is None, all layers are returned&#39;&#39;&#39;</span>
+        <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">nx</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headgrid</span><span class="p">(</span><span class="n">xg</span><span class="p">,</span> <span class="n">yg</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> <span class="n">printrow</span><span class="o">=</span><span class="n">printrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelBase.headalongline"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.headalongline">[docs]</a>    <span class="k">def</span> <span class="nf">headalongline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns head[Nlayers,len(x)]</span>
+<span class="sd">        Assumes same number of layers for each x and y</span>
+<span class="sd">        layers may be None or list of layers for which head is computed&#39;&#39;&#39;</span>
+        <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Nlayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">naq</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Nlayers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">layers</span><span class="p">))</span>
+        <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">yg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">yg</span> <span class="o">=</span> <span class="n">yg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Nlayers</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+            <span class="n">h</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">layers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">h</span></div>
+    
+<div class="viewcode-block" id="ModelBase.velocity"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.velocity">[docs]</a>    <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocomp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ModelBase.velocomp"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.velocomp">[docs]</a>    <span class="k">def</span> <span class="nf">velocomp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layer_ltype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">z</span> <span class="o">&lt;=</span> <span class="n">aq</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">z</span> <span class="o">&gt;=</span> <span class="n">aq</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;z value not inside aquifer&quot;</span>
+        <span class="k">if</span> <span class="n">layer_ltype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">layer</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">dummy</span> <span class="o">=</span> <span class="n">aq</span><span class="o">.</span><span class="n">findlayer</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">layer</span><span class="p">,</span> <span class="n">ltype</span> <span class="o">=</span> <span class="n">layer_ltype</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="n">aq</span><span class="p">)</span>
+        <span class="c1"># qz between aquifer layers</span>
+        <span class="n">qzlayer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">qzlayer</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">h</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">qzlayer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">aq</span><span class="o">.</span><span class="n">hstar</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ltype</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">vz</span> <span class="o">=</span> <span class="n">qzlayer</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">nporll</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+            <span class="n">vx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">vy</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qzbot</span> <span class="o">=</span> <span class="n">qzlayer</span><span class="p">[</span><span class="n">layer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">qztop</span> <span class="o">=</span> <span class="n">qzlayer</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">layer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">qztop</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qztop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>   
+            <span class="n">vz</span> <span class="o">=</span> <span class="p">(</span><span class="n">qzbot</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">aq</span><span class="o">.</span><span class="n">zaqbot</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">*</span> \
+                 <span class="p">(</span><span class="n">qztop</span> <span class="o">-</span> <span class="n">qzbot</span><span class="p">))</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">nporaq</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>        
+            <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disvec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="n">aq</span><span class="p">)</span>
+            <span class="n">vx</span> <span class="o">=</span> <span class="n">qx</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">nporaq</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>
+            <span class="n">vy</span> <span class="o">=</span> <span class="n">qy</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">nporaq</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">vz</span><span class="p">])</span></div>
+               
+<div class="viewcode-block" id="ModelBase.solve"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelBase.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">printmat</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sendback</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Compute solution&#39;&#39;&#39;</span>
+        <span class="c1"># Initialize elements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="c1"># Compute number of equations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of elements, Number of equations:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">),</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No unknowns. Solution complete&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">))</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+        <span class="n">ieq</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mat</span><span class="p">[</span><span class="n">ieq</span><span class="p">:</span><span class="n">ieq</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span><span class="p">,</span> <span class="p">:],</span> <span class="n">rhs</span><span class="p">[</span><span class="n">ieq</span><span class="p">:</span><span class="n">ieq</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">e</span><span class="o">.</span><span class="n">equation</span><span class="p">()</span>
+                <span class="n">ieq</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span>
+            <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">printmat</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+        <span class="n">icount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">setparams</span><span class="p">(</span><span class="n">sol</span><span class="p">[</span><span class="n">icount</span><span class="p">:</span><span class="n">icount</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span><span class="p">])</span>
+                <span class="n">icount</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span>
+        <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>  <span class="c1"># needed cause the dots are printed</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;solution complete&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">silent</span> <span class="o">==</span> <span class="s1">&#39;dot&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">silent</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sendback</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sol</span>
+        <span class="k">return</span>            </div></div>
+        
+<div class="viewcode-block" id="ModelMaq"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.ModelMaq">[docs]</a><span class="k">class</span> <span class="nc">ModelMaq</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ModelMaq Class to create a multi-aquifer model object</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kaq : float, array or list</span>
+<span class="sd">        hydraulic conductivity of each aquifer from the top down</span>
+<span class="sd">        if float, hydraulic conductivity is the same in all aquifers</span>
+<span class="sd">    z : array or list</span>
+<span class="sd">        elevation tops and bottoms of the aquifers from the top down</span>
+<span class="sd">        leaky layers may have zero thickness</span>
+<span class="sd">        if top=&#39;conf&#39;: length is 2 * number of aquifers</span>
+<span class="sd">        if top=&#39;semi&#39;: length is 2 * number of aquifers + 1 as top</span>
+<span class="sd">        of leaky layer on top of systems needs to be specified</span>
+<span class="sd">    c : float, array or list</span>
+<span class="sd">        resistance of leaky layers from the top down</span>
+<span class="sd">        if float, resistance is the same for all leaky layers</span>
+<span class="sd">        if top=&#39;conf&#39;: length is number of aquifers - 1</span>
+<span class="sd">        if top=&#39;semi&#39;: length is number of aquifers</span>
+<span class="sd">    npor : float, array or list</span>
+<span class="sd">        porosity of all aquifers and leaky layers from the top down</span>
+<span class="sd">        if float, porosity is the same for all layers</span>
+<span class="sd">        if top=&#39;conf&#39;: length is 2 * number of aquifers - 1</span>
+<span class="sd">        if top=&#39;semi&#39;: length is 2 * number of aquifers</span>
+<span class="sd">    top : string, &#39;conf&#39; or &#39;semi&#39; (default is &#39;conf&#39;)</span>
+<span class="sd">        indicating whether the top is confined (&#39;conf&#39;) or</span>
+<span class="sd">        semi-confined (&#39;semi&#39;)</span>
+<span class="sd">    hstar : float or None (default is None)</span>
+<span class="sd">        head value above semi-confining top, only read if top=&#39;semi&#39;</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
+        <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span> <span class="o">=</span> <span class="n">param_maq</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+        <span class="n">ModelBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ModelMaq&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">ConstantStar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hstar</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="Model3D"><a class="viewcode-back" href="../../elements/timml.model.html#timml.model.Model3D">[docs]</a><span class="k">class</span> <span class="nc">Model3D</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model3D Class to create a multi-layer model object consisting of</span>
+<span class="sd">    many aquifer layers. The resistance between the layers is computed</span>
+<span class="sd">    from the vertical hydraulic conductivity of the layers.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kaq : float, array or list</span>
+<span class="sd">        hydraulic conductivity of each layer from the top down</span>
+<span class="sd">        if float, hydraulic conductivity is the same in all aquifers</span>
+<span class="sd">    z : array or list</span>
+<span class="sd">        elevation of top of system followed by bottoms of all layers</span>
+<span class="sd">        from the top down</span>
+<span class="sd">        bottom of layer is automatically equal to top of layer below it</span>
+<span class="sd">        if top=&#39;conf&#39;: length is number of layers + 1</span>
+<span class="sd">        if top=&#39;semi&#39;: length is number of layers + 2 as top</span>
+<span class="sd">        of leaky layer on top of systems needs to be specified</span>
+<span class="sd">    kzoverkh : float</span>
+<span class="sd">        vertical anisotropy ratio vertical k divided by horizontal k</span>
+<span class="sd">        if float, value is the same for all layers</span>
+<span class="sd">        length is number of layers</span>
+<span class="sd">    npor : float, array or list</span>
+<span class="sd">        porosity of all aquifer layers from the top down</span>
+<span class="sd">        if float, porosity is the same for all layers</span>
+<span class="sd">        if top=&#39;conf&#39;: length is number of layers</span>
+<span class="sd">        if top=&#39;semi&#39;: length is number of layers + 1</span>
+<span class="sd">    top : string, &#39;conf&#39; or &#39;semi&#39; (default is &#39;conf&#39;)</span>
+<span class="sd">        indicating whether the top is confined (&#39;conf&#39;) or</span>
+<span class="sd">        semi-confined (&#39;semi&#39;)</span>
+<span class="sd">    topres : float</span>
+<span class="sd">        resistance of top semi-confining layer, only read if top=&#39;semi&#39;</span>
+<span class="sd">    topthick: float</span>
+<span class="sd">        thickness of top semi-confining layer, only read if top=&#39;semi&#39;</span>
+<span class="sd">    hstar : float or None (default is None)</span>
+<span class="sd">        head value above semi-confining top, only read if top=&#39;semi&#39;</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">topres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">topthick</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Model3D</span>
+<span class="sd">        for semi-confined aquifers, set top equal to &#39;semi&#39; and provide</span>
+<span class="sd">        topres: resistance of top</span>
+<span class="sd">        tophick: thickness of top</span>
+<span class="sd">        hstar: head above top&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
+        <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span> <span class="o">=</span> <span class="n">param_3d</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">kzoverkh</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">topres</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">top</span> <span class="o">==</span> <span class="s1">&#39;semi&#39;</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">topthick</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
+        <span class="n">ModelBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Model3D&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
+            <span class="n">ConstantStar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hstar</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Setup Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ae.html">Elements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/mbakker7/timml" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
