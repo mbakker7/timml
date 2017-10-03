@@ -1,6 +1,9 @@
 Set up model
 ------------
 
+.. automodule:: timml.well
+    :members:
+
 .. toctree::
   :maxdepth: 1
 

@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HeadLineSinkString &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="HeadWell" href="headlinesink.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="headlinesinkstring">
+<h1>HeadLineSinkString<a class="headerlink" href="#headlinesinkstring" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.linesink.HeadLineSinkString">
+<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSinkString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], hls=0, res=0, wh=1, order=0, layers=0, label=None, name=’HeadLineSinkString’</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timml/linesink.html#HeadLineSinkString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkString" title="Permalink to this definition">¶</a></dt>
+<dd><p>HeadLineSinkString Class to create a string of head-specified line-sinks
+which may optionally have a width and resistance
+:param model: Model to which the element is added
+:type model: Model object
+:param xy: elevation tops and bottoms of the aquifers from the top down</p>
+<blockquote>
+<div>leaky layers may have zero thickness
+if top=’conf’: length is 2 * number of aquifers
+if top=’semi’: length is 2 * number of aquifers + 1 as top
+of leaky layer on top of systems needs to be specified</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hls</strong> (<em>scalar</em><em>, </em><em>array</em><em> or </em><em>list</em>) – head along string
+if scalar: head is the same everywhere along the string
+if list or array of length 2: head at beginning and end of string
+if list or array with same length as xy: heads at nodes, which
+may contain nans, except for first and last point</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – </li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – order of all line-sinks in string</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – </li>
+<li><strong>-----</strong> – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">ModelMaq</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">HeadLineSinkString</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">hls</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Setup Model</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="aenew.html">Elements</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="wells.html">Wells</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="linesinks.html">Line-sinks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="headlinesink.html">HeadLineSink</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">HeadLineSinkString</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="aenew.html">Elements</a><ul>
+  <li><a href="linesinks.html">Line-sinks</a><ul>
+      <li>Previous: <a href="headlinesink.html" title="previous chapter">HeadWell</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/headlinesinkstring.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/mbakker7/timml" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

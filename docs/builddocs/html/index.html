@@ -46,15 +46,38 @@
   <div class="section" id="timml">
 <h1>TimML<a class="headerlink" href="#timml" title="Permalink to this headline">¶</a></h1>
 <p>TimML is a computer program for the modeling of steady-state multi-layer flow with analytic elements
-and consists of a library of Python scripts and FORTRAN extensions.
-TimML may be applied to an arbitrary number of aquifers and leaky layers.
-The head, flow, and leakage between aquifers may be computed analytically at any point in the aquifer system.
+TimML may be applied to an arbitrary number of layers and arbitrary sequence of aquifers and leaky layers.
+The Dupuit approximation is applied to aquifer layers, while flow in leaky layers is approximated as vertical.
+The head, flow, and leakage between aquifer layers may be computed analytically at any point in the aquifer system.
 The design of TimML is object-oriented and has been kept simple and flexible.
 New analytic elements may be added to the code without making any changes in the existing part of the code.
-TimML is coded in Python; use is made of FORTRAN extensions to improve performance.</p>
-<p>General Outline</p>
-<p>Contents:</p>
+TimML is coded in Python. Behind the scenes, use is made of FORTRAN extensions to improve performance.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>TimML is written for Python 3.</p>
+<blockquote>
+<div>installation instructions on pip</div></blockquote>
+</div>
+<div class="section" id="main-approximations">
+<h2>Main Approximations<a class="headerlink" href="#main-approximations" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="list-of-available-elements">
+<h2>List of available elements<a class="headerlink" href="#list-of-available-elements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Well<ul>
+<li>Discharge-specified well</li>
+<li>Head-specified well</li>
+<li>Multi-aquifer well. Well is screened in multiple layers and only total discharge is specified.</li>
+</ul>
+</li>
+<li>Line-sink<ul>
+<li>Head-specified line-sink</li>
+<li>String of head-specified line-sinks</li>
+</ul>
+</li>
+</ul>
 <div class="toctree-wrapper compound">
+</div>
 </div>
 </div>
 
@@ -85,7 +108,7 @@ TimML is coded in Python; use is made of FORTRAN extensions to improve performan
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Setup Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ae.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aenew.html">Elements</a></li>
 </ul>
 
 <div class="relations">

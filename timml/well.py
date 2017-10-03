@@ -81,6 +81,9 @@ class WellBase(Element):
         return rv
 
     def headinside(self):
+        """
+        Head inside
+        """
         h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
     
@@ -125,6 +128,9 @@ class WellBase(Element):
         return changed, terminate, [xyztnew]
     
     def capzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100):
+        """
+        capzone
+        """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \
                              vstepfrac=0.2, tmax=tmax, nstepmax=100, silent='.')
@@ -153,6 +159,35 @@ class WellBase(Element):
                    win=win, newfig=newfig, figsize=figsize)
         
 class Well(WellBase, MscreenWellEquation):
+    """
+    Well Class to create a well with a specified discharge. The well
+    may be screened in multiple layers. The resistance of the screen may
+    be specified.
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xw : float
+        x-coordinate of the well
+    yw : float
+        y-coordinate of the well
+    Qw : float
+        total discharge of the wellrs from the top down
+    rw : float
+        radius of the well
+    res : float
+        resistance of the well screen
+    label : string (default: None)
+        label of the well
+
+    Examples
+    --------
+    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+    
+    """
+    
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
                  res=0.0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
@@ -172,6 +207,35 @@ class Well(WellBase, MscreenWellEquation):
 
 
 class HeadWell(WellBase, PotentialEquation):
+    """
+    HeadWell Class to create a well with a specified discharge. The well
+    may be screened in multiple layers. The resistance of the screen may
+    be specified.
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xw : float
+        x-coordinate of the well
+    yw : float
+        y-coordinate of the well
+    Qw : float
+        total discharge of the wellrs from the top down
+    rw : float
+        radius of the well
+    res : float
+        resistance of the well screen
+    label : string (default: None)
+        label of the well
+
+    Examples
+    --------
+    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+    
+    """
+    
     def __init__(self, model, xw=0, yw=0, hw=10.0, rw=0.1, \
                  res=0.0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
