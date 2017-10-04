@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-============
-TimML
-============
+================================================
+TimML - THIS DOCUMENTATION IS UNDER CONSTRUCTION
+================================================
 TimML is a computer program for the modeling of steady-state multi-layer flow with analytic elements
 TimML may be applied to an arbitrary number of layers and arbitrary sequence of aquifers and leaky layers.
 The Dupuit approximation is applied to aquifer layers, while flow in leaky layers is approximated as vertical.
