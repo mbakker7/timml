@@ -2,4 +2,4 @@ HeadWell
 ------------
 
 .. autoclass:: timml.well.HeadWell
-    :members: headinside, capzone
+    :members: headinside, discharge, capzone, plotcapzone

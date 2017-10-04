@@ -5,5 +5,5 @@ Elements
     :maxdepth: 2
     :hidden:
     
-    Wells <wells>
-    Line-sinks <linesinks>
+    Wells <wells/index>
+    Line-sinks <linesinks/index>

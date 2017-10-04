@@ -81,14 +81,29 @@ class WellBase(Element):
         return rv
 
     def headinside(self):
+        """The head inside the well
+        
+        Returns
+        -------
+        array (length number of screens)
+            Head inside the well for each screen
+            
         """
-        Head inside
-        """
+        
         h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
     
     def discharge(self):
-        # returns with the discharge in each layer
+        """The discharge in each layer
+        
+        Returns
+        -------
+        array (length number of layers)
+            Discharge in each screen with zeros for layers that are not
+            screened
+            
+        """
+        
         Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0]
         return Q
@@ -129,7 +144,7 @@ class WellBase(Element):
     
     def capzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100):
         """
-        capzone
+        Capture zone
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \
@@ -153,6 +168,37 @@ class WellBase(Element):
     def plotcapzone(self, nt=10, zstart=None, hstepmax=20, vstepfrac=0.2,
                     tmax=365, nstepmax=100, silent='.', color=None, orientation='hor',
                    win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None):
+        """Plot a capture zone
+        
+        Parameters
+        ----------
+        nt : int
+            number of path lines
+        zstart : scalar
+            starting elevation of the path lines
+        hstepmax : scalar
+            maximum step in horizontal space
+        vstepfrac : float
+            maximum fraction of aquifer layer thickness during one step
+        tmax : scalar
+            maximum time
+        nstepmax : scalar(int)
+            maximum number of steps
+        silent : boolean or string
+            True (no messages), False (all messages), or '.'
+            (print dot for each path line)
+        color : color
+        orientation : string
+            'hor' for horizontal, 'ver' for vertical, or 'both' for both
+        win : array_like (length 4)
+            [xmin, xmax, ymin, ymax]
+        newfig : boolean (default False)
+            boolean indicating if new figure should be created
+        figsize : tuple of integers, optional, default: None
+            width, height in inches.
+            
+        """
+        
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         self.model.tracelines(xstart, ystart, zstart, hstepmax=-abs(hstepmax), vstepfrac=vstepfrac,
                    tmax=tmax, nstepmax=nstepmax, silent=silent, color=color, orientation=orientation,
@@ -162,7 +208,15 @@ class Well(WellBase, MscreenWellEquation):
     """
     Well Class to create a well with a specified discharge. The well
     may be screened in multiple layers. The resistance of the screen may
-    be specified.
+    be specified. The head is computed such that the discharge :math:`Q_i`
+    in layer :math:`i` is computed as
+    
+    .. math::
+        Q_i = 2\pi r_w(h_i - h_w)/c
+        
+    where :math:`c` is the resistance of the well screen and :math:`h_w` is
+    the head inside the well. The total discharge is distributed over the
+    screens such that :math:`h_w` is the same in each screened layer.
     
     Parameters
     ----------
@@ -173,12 +227,14 @@ class Well(WellBase, MscreenWellEquation):
     yw : float
         y-coordinate of the well
     Qw : float
-        total discharge of the wellrs from the top down
+        total discharge of the well
     rw : float
         radius of the well
     res : float
         resistance of the well screen
-    label : string (default: None)
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    label : string or None (default: None)
         label of the well
 
     Examples
@@ -208,9 +264,16 @@ class Well(WellBase, MscreenWellEquation):
 
 class HeadWell(WellBase, PotentialEquation):
     """
-    HeadWell Class to create a well with a specified discharge. The well
-    may be screened in multiple layers. The resistance of the screen may
-    be specified.
+    HeadWell Class to create a well with a specified head inside the well.
+    The well may be screened in multiple layers. The resistance of the screen
+    may be specified. The head is computed such that the discharge :math:`Q_i`
+    in layer :math:`i` is computed as
+    
+    .. math::
+        Q_i = 2\pi r_w(h_i - h_w)/c
+        
+    where :math:`c` is the resistance of the well screen and :math:`h_w` is
+    the head inside the well.
     
     Parameters
     ----------
@@ -220,24 +283,21 @@ class HeadWell(WellBase, PotentialEquation):
         x-coordinate of the well
     yw : float
         y-coordinate of the well
-    Qw : float
-        total discharge of the wellrs from the top down
+    hw : float
+        head inside the well
     rw : float
         radius of the well
     res : float
         resistance of the well screen
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
     label : string (default: None)
         label of the well
-
-    Examples
-    --------
-    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
     
     """
     
-    def __init__(self, model, xw=0, yw=0, hw=10.0, rw=0.1, \
-                 res=0.0, layers=0, label=None):
+    def __init__(self, model, xw=0, yw=0, hw=10, rw=0.1, \
+                 res=0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
         WellBase.__init__(self, model, xw, yw, 0.0, rw, res, \
                           layers=layers, name='HeadWell', label=label)

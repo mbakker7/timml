@@ -8,4 +8,4 @@ There are many line-sinks
     
     HeadLineSink <headlinesink>
     HeadLineSinkString <headlinesinkstring>
-    LineSinkDitch <LineSinkDitch>
+    LineSinkDitch <linesinkditch>

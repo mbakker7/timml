@@ -1,0 +1,242 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HeadWell &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Line-sinks" href="../linesinks/index.html" />
+    <link rel="prev" title="Well" href="well.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="headwell">
+<h1>HeadWell<a class="headerlink" href="#headwell" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.well.HeadWell">
+<em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">HeadWell</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>hw=10</em>, <em>rw=0.1</em>, <em>res=0</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell" title="Permalink to this definition">¶</a></dt>
+<dd><p>HeadWell Class to create a well with a specified head inside the well.
+The well may be screened in multiple layers. The resistance of the screen
+may be specified. The head is computed such that the discharge <span class="math">\(Q_i\)</span>
+in layer <span class="math">\(i\)</span> is computed as</p>
+<div class="math">
+\[Q_i = 2\pi r_w(h_i - h_w)/c\]</div>
+<p>where <span class="math">\(c\)</span> is the resistance of the well screen and <span class="math">\(h_w\)</span> is
+the head inside the well.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – model to which the element is added</li>
+<li><strong>xw</strong> (<em>float</em>) – x-coordinate of the well</li>
+<li><strong>yw</strong> (<em>float</em>) – y-coordinate of the well</li>
+<li><strong>hw</strong> (<em>float</em>) – head inside the well</li>
+<li><strong>rw</strong> (<em>float</em>) – radius of the well</li>
+<li><strong>res</strong> (<em>float</em>) – resistance of the well screen</li>
+<li><strong>layers</strong> (<em>int</em><em>, </em><em>array</em><em> or </em><em>list</em>) – layer (int) or layers (list or array) where well is screened</li>
+<li><strong>label</strong> (<em>string</em><em> (</em><em>default: None</em><em>)</em>) – label of the well</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="timml.well.HeadWell.capzone">
+<code class="descname">capzone</code><span class="sig-paren">(</span><em>hstepmax=10</em>, <em>nt=10</em>, <em>zstart=None</em>, <em>tmax=None</em>, <em>nstepmax=100</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.capzone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Capture zone</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.well.HeadWell.discharge">
+<code class="descname">discharge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.discharge" title="Permalink to this definition">¶</a></dt>
+<dd><p>The discharge in each layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Discharge in each screen with zeros for layers that are not
+screened</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array (length number of layers)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.well.HeadWell.headinside">
+<code class="descname">headinside</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.headinside" title="Permalink to this definition">¶</a></dt>
+<dd><p>The head inside the well</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Head inside the well for each screen</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array (length number of screens)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.well.HeadWell.plotcapzone">
+<code class="descname">plotcapzone</code><span class="sig-paren">(</span><em>nt=10, zstart=None, hstepmax=20, vstepfrac=0.2, tmax=365, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.plotcapzone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a capture zone</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nt</strong> (<em>int</em>) – number of path lines</li>
+<li><strong>zstart</strong> (<em>scalar</em>) – starting elevation of the path lines</li>
+<li><strong>hstepmax</strong> (<em>scalar</em>) – maximum step in horizontal space</li>
+<li><strong>vstepfrac</strong> (<em>float</em>) – maximum fraction of aquifer layer thickness during one step</li>
+<li><strong>tmax</strong> (<em>scalar</em>) – maximum time</li>
+<li><strong>nstepmax</strong> (<em>scalar</em><em>(</em><em>int</em><em>)</em>) – maximum number of steps</li>
+<li><strong>silent</strong> (<em>boolean</em><em> or </em><em>string</em>) – True (no messages), False (all messages), or ‘.’
+(print dot for each path line)</li>
+<li><strong>color</strong> (<em>color</em>) – </li>
+<li><strong>orientation</strong> (<em>string</em>) – ‘hor’ for horizontal, ‘ver’ for vertical, or ‘both’ for both</li>
+<li><strong>win</strong> (<em>array_like</em><em> (</em><em>length 4</em><em>)</em>) – [xmin, xmax, ymin, ymax]</li>
+<li><strong>newfig</strong> (<em>boolean</em><em> (</em><em>default False</em><em>)</em>) – boolean indicating if new figure should be created</li>
+<li><strong>figsize</strong> (<em>tuple of integers</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – width, height in inches.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Discharge in each screen with zeros for layers that are not
+screened</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array (length number of layers)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Setup Model</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../aenew.html">Elements</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Wells</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="well.html">Well</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">HeadWell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../linesinks/index.html">Line-sinks</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../aenew.html">Elements</a><ul>
+  <li><a href="index.html">Wells</a><ul>
+      <li>Previous: <a href="well.html" title="previous chapter">Well</a></li>
+      <li>Next: <a href="../linesinks/index.html" title="next chapter">Line-sinks</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/wells/headwell.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/mbakker7/timml" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

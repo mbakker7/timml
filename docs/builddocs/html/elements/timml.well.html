@@ -46,11 +46,16 @@
 <span id="timml-well-module"></span><h1>timml.well module<a class="headerlink" href="#module-timml.well" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.well.HeadWell">
-<em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">HeadWell</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>hw=10.0</em>, <em>rw=0.1</em>, <em>res=0.0</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">HeadWell</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>hw=10</em>, <em>rw=0.1</em>, <em>res=0</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#timml.well.WellBase" title="timml.well.WellBase"><code class="xref py py-class docutils literal"><span class="pre">timml.well.WellBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.PotentialEquation" title="timml.equation.PotentialEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.PotentialEquation</span></code></a></p>
-<p>HeadWell Class to create a well with a specified discharge. The well
-may be screened in multiple layers. The resistance of the screen may
-be specified.</p>
+<p>HeadWell Class to create a well with a specified head inside the well.
+The well may be screened in multiple layers. The resistance of the screen
+may be specified. The head is computed such that the discharge <span class="math">\(Q_i\)</span>
+in layer <span class="math">\(i\)</span> is computed as</p>
+<div class="math">
+\[Q_i = 2\pi r_w(h_i - h_w)/c\]</div>
+<p>where <span class="math">\(c\)</span> is the resistance of the well screen and <span class="math">\(h_w\)</span> is
+the head inside the well.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -59,20 +64,16 @@ be specified.</p>
 <li><strong>model</strong> (<em>Model object</em>) – model to which the element is added</li>
 <li><strong>xw</strong> (<em>float</em>) – x-coordinate of the well</li>
 <li><strong>yw</strong> (<em>float</em>) – y-coordinate of the well</li>
-<li><strong>Qw</strong> (<em>float</em>) – total discharge of the wellrs from the top down</li>
+<li><strong>hw</strong> (<em>float</em>) – head inside the well</li>
 <li><strong>rw</strong> (<em>float</em>) – radius of the well</li>
 <li><strong>res</strong> (<em>float</em>) – resistance of the well screen</li>
+<li><strong>layers</strong> (<em>int</em><em>, </em><em>array</em><em> or </em><em>list</em>) – layer (int) or layers (list or array) where well is screened</li>
 <li><strong>label</strong> (<em>string</em><em> (</em><em>default: None</em><em>)</em>) – label of the well</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">Model3D</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Well</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-</pre></div>
-</div>
 <dl class="method">
 <dt id="timml.well.HeadWell.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell.initialize" title="Permalink to this definition">¶</a></dt>
@@ -91,7 +92,13 @@ be specified.</p>
 <dd><p>Bases: <a class="reference internal" href="#timml.well.WellBase" title="timml.well.WellBase"><code class="xref py py-class docutils literal"><span class="pre">timml.well.WellBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.MscreenWellEquation" title="timml.equation.MscreenWellEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.MscreenWellEquation</span></code></a></p>
 <p>Well Class to create a well with a specified discharge. The well
 may be screened in multiple layers. The resistance of the screen may
-be specified.</p>
+be specified. The head is computed such that the discharge <span class="math">\(Q_i\)</span>
+in layer <span class="math">\(i\)</span> is computed as</p>
+<div class="math">
+\[Q_i = 2\pi r_w(h_i - h_w)/c\]</div>
+<p>where <span class="math">\(c\)</span> is the resistance of the well screen and <span class="math">\(h_w\)</span> is
+the head inside the well. The total discharge is distributed over the
+screens such that <span class="math">\(h_w\)</span> is the same in each screened layer.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -100,10 +107,11 @@ be specified.</p>
 <li><strong>model</strong> (<em>Model object</em>) – model to which the element is added</li>
 <li><strong>xw</strong> (<em>float</em>) – x-coordinate of the well</li>
 <li><strong>yw</strong> (<em>float</em>) – y-coordinate of the well</li>
-<li><strong>Qw</strong> (<em>float</em>) – total discharge of the wellrs from the top down</li>
+<li><strong>Qw</strong> (<em>float</em>) – total discharge of the well</li>
 <li><strong>rw</strong> (<em>float</em>) – radius of the well</li>
 <li><strong>res</strong> (<em>float</em>) – resistance of the well screen</li>
-<li><strong>label</strong> (<em>string</em><em> (</em><em>default: None</em><em>)</em>) – label of the well</li>
+<li><strong>layers</strong> (<em>int</em><em>, </em><em>array</em><em> or </em><em>list</em>) – layer (int) or layers (list or array) where well is screened</li>
+<li><strong>label</strong> (<em>string</em><em> or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – label of the well</li>
 </ul>
 </td>
 </tr>
@@ -133,7 +141,8 @@ be specified.</p>
 <dl class="method">
 <dt id="timml.well.WellBase.capzone">
 <code class="descname">capzone</code><span class="sig-paren">(</span><em>hstepmax=10</em>, <em>nt=10</em>, <em>zstart=None</em>, <em>tmax=None</em>, <em>nstepmax=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.capzone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.capzone" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Capture zone</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="timml.well.WellBase.capzonestart">
@@ -148,7 +157,19 @@ be specified.</p>
 <dl class="method">
 <dt id="timml.well.WellBase.discharge">
 <code class="descname">discharge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.discharge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.discharge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The discharge in each layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Discharge in each screen with zeros for layers that are not
+screened</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array (length number of layers)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="timml.well.WellBase.disvecinf">
@@ -158,7 +179,17 @@ be specified.</p>
 <dl class="method">
 <dt id="timml.well.WellBase.headinside">
 <code class="descname">headinside</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.headinside"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.headinside" title="Permalink to this definition">¶</a></dt>
-<dd><p>Head inside</p>
+<dd><p>The head inside the well</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Head inside the well for each screen</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array (length number of screens)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -174,7 +205,38 @@ be specified.</p>
 <dl class="method">
 <dt id="timml.well.WellBase.plotcapzone">
 <code class="descname">plotcapzone</code><span class="sig-paren">(</span><em>nt=10, zstart=None, hstepmax=20, vstepfrac=0.2, tmax=365, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.plotcapzone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.plotcapzone" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Plot a capture zone</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nt</strong> (<em>int</em>) – number of path lines</li>
+<li><strong>zstart</strong> (<em>scalar</em>) – starting elevation of the path lines</li>
+<li><strong>hstepmax</strong> (<em>scalar</em>) – maximum step in horizontal space</li>
+<li><strong>vstepfrac</strong> (<em>float</em>) – maximum fraction of aquifer layer thickness during one step</li>
+<li><strong>tmax</strong> (<em>scalar</em>) – maximum time</li>
+<li><strong>nstepmax</strong> (<em>scalar</em><em>(</em><em>int</em><em>)</em>) – maximum number of steps</li>
+<li><strong>silent</strong> (<em>boolean</em><em> or </em><em>string</em>) – True (no messages), False (all messages), or ‘.’
+(print dot for each path line)</li>
+<li><strong>color</strong> (<em>color</em>) – </li>
+<li><strong>orientation</strong> (<em>string</em>) – ‘hor’ for horizontal, ‘ver’ for vertical, or ‘both’ for both</li>
+<li><strong>win</strong> (<em>array_like</em><em> (</em><em>length 4</em><em>)</em>) – [xmin, xmax, ymin, ymax]</li>
+<li><strong>newfig</strong> (<em>boolean</em><em> (</em><em>default False</em><em>)</em>) – boolean indicating if new figure should be created</li>
+<li><strong>figsize</strong> (<em>tuple of integers</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – width, height in inches.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Discharge in each screen with zeros for layers that are not
+screened</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array (length number of layers)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="timml.well.WellBase.potinf">
