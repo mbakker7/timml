@@ -12,9 +12,9 @@ from .constant import ConstantStar
 from .util import PlotTim
 
 
-class ModelBase(PlotTim):
+class Model(PlotTim):
     """
-    ModelBase Class to create a model object consisting of an arbitrary
+    Model Class to create a model object consisting of an arbitrary
     sequence of aquifer layers and leaky layers.
     Use ModelMaq for regular sequence of aquifer and leaky layers.
     Use Model3D for multi-layer model of single aquifer
@@ -40,7 +40,7 @@ class ModelBase(PlotTim):
     Examples
     --------
     >>> from timml import *
-    >>> ml = ModelBase(kaq=array([10, 20, 10]), c=array([200, 2000]), \
+    >>> ml = Model(kaq=array([10, 20, 10]), c=array([200, 2000]), \
              z=array([20, 15, 10, 8, 0]), npor=0.3 * ones(4), \
              ltype=array(['a', 'a', 'l', 'a']))
     
@@ -219,7 +219,7 @@ class ModelBase(PlotTim):
             return sol
         return            
         
-class ModelMaq(ModelBase):
+class ModelMaq(Model):
     """
     ModelMaq Class to create a multi-aquifer model object
     
@@ -259,12 +259,12 @@ class ModelMaq(ModelBase):
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf', hstar=None):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
-        ModelBase.__init__(self, kaq, c, z, npor, ltype)
+        Model.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)
             
-class Model3D(ModelBase):
+class Model3D(Model):
     """
     Model3D Class to create a multi-layer model object consisting of
     many aquifer layers. The resistance between the layers is computed
@@ -317,7 +317,7 @@ class Model3D(ModelBase):
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, top, topres)
         if top == 'semi':
             z = np.hstack((z[0] + topthick, z))
-        ModelBase.__init__(self, kaq, c, z, npor, ltype)
+        Model.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'Model3D'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)

@@ -1,5 +1,5 @@
-ModelMaq
---------
+Model
+-----
 
-.. autoclass:: timml.model.ModelMaq
+.. autoclass:: timml.model.Model
     :members: head, disvec
