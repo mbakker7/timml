@@ -42,5 +42,5 @@ List of available elements
     :maxdepth: 3
     :hidden:
     
-    Setup Model <modules>
-    Elements <aenew>
+    Models <models/modelindex>
+    Elements <aems>

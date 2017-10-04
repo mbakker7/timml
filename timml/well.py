@@ -142,9 +142,32 @@ class WellBase(Element):
                         terminate = True
         return changed, terminate, [xyztnew]
     
-    def capzone(self, hstepmax=10, nt=10, zstart=None, tmax=None, nstepmax=100):
-        """
-        Capture zone
+    def capzone(self, nt=10, zstart=None, hstepmax=10, vstepfrac=0.2,
+                tmax=None, nstepmax=100, silent='.'):
+        """Compute a capture zone
+        
+        Parameters
+        ----------
+        nt : int
+            number of path lines
+        zstart : scalar
+            starting elevation of the path lines
+        hstepmax : scalar
+            maximum step in horizontal space
+        vstepfrac : float
+            maximum fraction of aquifer layer thickness during one step
+        tmax : scalar
+            maximum time
+        nstepmax : scalar(int)
+            maximum number of steps
+        silent : boolean or string
+            True (no messages), False (all messages), or '.'
+            (print dot for each path line)
+            
+        Returns
+        -------
+        xyzt : list of arrays of x, y, z, and t values
+            
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \

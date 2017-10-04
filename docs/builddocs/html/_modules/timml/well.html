@@ -187,9 +187,32 @@
                         <span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">changed</span><span class="p">,</span> <span class="n">terminate</span><span class="p">,</span> <span class="p">[</span><span class="n">xyztnew</span><span class="p">]</span></div>
     
-<div class="viewcode-block" id="WellBase.capzone"><a class="viewcode-back" href="../../elements/timml.well.html#timml.well.WellBase.capzone">[docs]</a>    <span class="k">def</span> <span class="nf">capzone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hstepmax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">zstart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nstepmax</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Capture zone</span>
+<div class="viewcode-block" id="WellBase.capzone"><a class="viewcode-back" href="../../elements/timml.well.html#timml.well.WellBase.capzone">[docs]</a>    <span class="k">def</span> <span class="nf">capzone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nt</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">zstart</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hstepmax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">vstepfrac</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nstepmax</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute a capture zone</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nt : int</span>
+<span class="sd">            number of path lines</span>
+<span class="sd">        zstart : scalar</span>
+<span class="sd">            starting elevation of the path lines</span>
+<span class="sd">        hstepmax : scalar</span>
+<span class="sd">            maximum step in horizontal space</span>
+<span class="sd">        vstepfrac : float</span>
+<span class="sd">            maximum fraction of aquifer layer thickness during one step</span>
+<span class="sd">        tmax : scalar</span>
+<span class="sd">            maximum time</span>
+<span class="sd">        nstepmax : scalar(int)</span>
+<span class="sd">            maximum number of steps</span>
+<span class="sd">        silent : boolean or string</span>
+<span class="sd">            True (no messages), False (all messages), or &#39;.&#39;</span>
+<span class="sd">            (print dot for each path line)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        xyzt : list of arrays of x, y, z, and t values</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">xstart</span><span class="p">,</span> <span class="n">ystart</span><span class="p">,</span> <span class="n">zstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">capzonestart</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">zstart</span><span class="p">)</span>
         <span class="n">xyzt</span> <span class="o">=</span> <span class="n">timtracelines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">xstart</span><span class="p">,</span> <span class="n">ystart</span><span class="p">,</span> <span class="n">zstart</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hstepmax</span><span class="p">),</span> \
@@ -241,12 +264,6 @@
 <span class="sd">            boolean indicating if new figure should be created</span>
 <span class="sd">        figsize : tuple of integers, optional, default: None</span>
 <span class="sd">            width, height in inches.</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        array (length number of layers)</span>
-<span class="sd">            Discharge in each screen with zeros for layers that are not</span>
-<span class="sd">            screened</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -389,8 +406,8 @@
 
 <h3>Navigation</h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Setup Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../aenew.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/modelindex.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../aems.html">Elements</a></li>
 </ul>
 
 <div class="relations">

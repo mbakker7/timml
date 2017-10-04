@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Line-sinks" href="../linesinks/index.html" />
+    <link rel="next" title="Line-sinks" href="../linesinks/linesinkindex.html" />
     <link rel="prev" title="Well" href="well.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -77,8 +77,32 @@ the head inside the well.</p>
 </table>
 <dl class="method">
 <dt id="timml.well.HeadWell.capzone">
-<code class="descname">capzone</code><span class="sig-paren">(</span><em>hstepmax=10</em>, <em>nt=10</em>, <em>zstart=None</em>, <em>tmax=None</em>, <em>nstepmax=100</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.capzone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Capture zone</p>
+<code class="descname">capzone</code><span class="sig-paren">(</span><em>nt=10</em>, <em>zstart=None</em>, <em>hstepmax=10</em>, <em>vstepfrac=0.2</em>, <em>tmax=None</em>, <em>nstepmax=100</em>, <em>silent=’.’</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.capzone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a capture zone</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nt</strong> (<em>int</em>) – number of path lines</li>
+<li><strong>zstart</strong> (<em>scalar</em>) – starting elevation of the path lines</li>
+<li><strong>hstepmax</strong> (<em>scalar</em>) – maximum step in horizontal space</li>
+<li><strong>vstepfrac</strong> (<em>float</em>) – maximum fraction of aquifer layer thickness during one step</li>
+<li><strong>tmax</strong> (<em>scalar</em>) – maximum time</li>
+<li><strong>nstepmax</strong> (<em>scalar</em><em>(</em><em>int</em><em>)</em>) – maximum number of steps</li>
+<li><strong>silent</strong> (<em>boolean</em><em> or </em><em>string</em>) – True (no messages), False (all messages), or ‘.’
+(print dot for each path line)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>xyzt</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of arrays of x, y, z, and t values</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -122,7 +146,7 @@ screened</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>nt</strong> (<em>int</em>) – number of path lines</li>
 <li><strong>zstart</strong> (<em>scalar</em>) – starting elevation of the path lines</li>
 <li><strong>hstepmax</strong> (<em>scalar</em>) – maximum step in horizontal space</li>
@@ -137,13 +161,6 @@ screened</td>
 <li><strong>newfig</strong> (<em>boolean</em><em> (</em><em>default False</em><em>)</em>) – boolean indicating if new figure should be created</li>
 <li><strong>figsize</strong> (<em>tuple of integers</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – width, height in inches.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Discharge in each screen with zeros for layers that are not
-screened</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array (length number of layers)</p>
 </td>
 </tr>
 </tbody>
@@ -180,14 +197,14 @@ screened</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">Setup Model</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../aenew.html">Elements</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="index.html">Wells</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../models/modelindex.html">Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../aems.html">Elements</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="wellindex.html">Wells</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="well.html">Well</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">HeadWell</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../linesinks/index.html">Line-sinks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linesinks/linesinkindex.html">Line-sinks</a></li>
 </ul>
 </li>
 </ul>
@@ -196,10 +213,10 @@ screened</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../aenew.html">Elements</a><ul>
-  <li><a href="index.html">Wells</a><ul>
+  <li><a href="../aems.html">Elements</a><ul>
+  <li><a href="wellindex.html">Wells</a><ul>
       <li>Previous: <a href="well.html" title="previous chapter">Well</a></li>
-      <li>Next: <a href="../linesinks/index.html" title="next chapter">Line-sinks</a></li>
+      <li>Next: <a href="../linesinks/linesinkindex.html" title="next chapter">Line-sinks</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

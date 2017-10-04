@@ -140,8 +140,32 @@ screens such that <span class="math">\(h_w\)</span> is the same in each screened
 <dd><p>Bases: <a class="reference internal" href="timml.element.html#timml.element.Element" title="timml.element.Element"><code class="xref py py-class docutils literal"><span class="pre">timml.element.Element</span></code></a></p>
 <dl class="method">
 <dt id="timml.well.WellBase.capzone">
-<code class="descname">capzone</code><span class="sig-paren">(</span><em>hstepmax=10</em>, <em>nt=10</em>, <em>zstart=None</em>, <em>tmax=None</em>, <em>nstepmax=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.capzone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.capzone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Capture zone</p>
+<code class="descname">capzone</code><span class="sig-paren">(</span><em>nt=10</em>, <em>zstart=None</em>, <em>hstepmax=10</em>, <em>vstepfrac=0.2</em>, <em>tmax=None</em>, <em>nstepmax=100</em>, <em>silent=’.’</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#WellBase.capzone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.WellBase.capzone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a capture zone</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nt</strong> (<em>int</em>) – number of path lines</li>
+<li><strong>zstart</strong> (<em>scalar</em>) – starting elevation of the path lines</li>
+<li><strong>hstepmax</strong> (<em>scalar</em>) – maximum step in horizontal space</li>
+<li><strong>vstepfrac</strong> (<em>float</em>) – maximum fraction of aquifer layer thickness during one step</li>
+<li><strong>tmax</strong> (<em>scalar</em>) – maximum time</li>
+<li><strong>nstepmax</strong> (<em>scalar</em><em>(</em><em>int</em><em>)</em>) – maximum number of steps</li>
+<li><strong>silent</strong> (<em>boolean</em><em> or </em><em>string</em>) – True (no messages), False (all messages), or ‘.’
+(print dot for each path line)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>xyzt</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of arrays of x, y, z, and t values</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -210,7 +234,7 @@ screened</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>nt</strong> (<em>int</em>) – number of path lines</li>
 <li><strong>zstart</strong> (<em>scalar</em>) – starting elevation of the path lines</li>
 <li><strong>hstepmax</strong> (<em>scalar</em>) – maximum step in horizontal space</li>
@@ -225,13 +249,6 @@ screened</td>
 <li><strong>newfig</strong> (<em>boolean</em><em> (</em><em>default False</em><em>)</em>) – boolean indicating if new figure should be created</li>
 <li><strong>figsize</strong> (<em>tuple of integers</em><em>, </em><em>optional</em><em>, </em><em>default: None</em>) – width, height in inches.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Discharge in each screen with zeros for layers that are not
-screened</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array (length number of layers)</p>
 </td>
 </tr>
 </tbody>
@@ -273,8 +290,8 @@ screened</p>
 
 <h3>Navigation</h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">Setup Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../aenew.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/modelindex.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
 </ul>
 
 <div class="relations">
