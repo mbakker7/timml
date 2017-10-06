@@ -121,7 +121,9 @@ class ConstantInside(Element):
         self.parameters[:, 0] = sol
 
 
-class ConstantStar(Element, PotentialEquation):
+#class ConstantStar(Element, PotentialEquation):
+# I don't think we need the equation
+class ConstantStar(Element):
     def __init__(self, model, hstar=0.0, label=None, aq=None):
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=0, \
                          name='ConstantStar', label=label)
