@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from .trace import timtracelines, timtraceline
+plt.rcParams['contour.negative_linestyle'] = 'solid'
 
 class PlotTim:
     def plot(self, win=None, newfig=True, figsize=None, orientation='hor', topfigfrac=0.8):
