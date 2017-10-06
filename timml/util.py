@@ -5,6 +5,8 @@ from .trace import timtracelines, timtraceline
 
 class PlotTim:
     def plot(self, win=None, newfig=True, figsize=None, orientation='hor', topfigfrac=0.8):
+        """Plot layout
+        """
         if newfig:
             plt.figure(figsize=figsize)
             ax1 = None
@@ -50,6 +52,8 @@ class PlotTim:
             
     def contour(self, x1, x2, nx, y1, y2, ny, layers=0, levels=20, layout=True, labels=False,
                 decimals=0, color=None, newfig=True, figsize=None, legend=True):
+        """Contour solution
+        """
         layers = np.atleast_1d(layers)
         xg = np.linspace(x1, x2, nx)
         yg = np.linspace(y1, y2, ny)
@@ -86,6 +90,8 @@ class PlotTim:
         
     def vcontour(self, x1, x2, y1, y2, n, levels, labels=False, decimals=0, color=None,
                  vinterp=True, newfig=True, figsize=None, layout=True):
+        """Vertical contour
+        """
         h = self.headalongline(np.linspace(x1, x2, n), np.linspace(y1, y2, n))
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         xg = np.linspace(0, L, n)
@@ -114,6 +120,8 @@ class PlotTim:
     def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
                    tmax=1e12, nstepmax=100, silent='.', color=None, orientation='hor',
                    win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None):
+        """Draw trace lines
+        """
         if color is None:
             c = plt.rcParams['axes.prop_cycle'].by_key()['color']
         elif type(color) is str:

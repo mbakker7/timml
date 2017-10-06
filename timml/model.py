@@ -36,13 +36,6 @@ class Model(PlotTim):
         array indicating for each layer whether it is
         'a' aquifer layer
         'l' leaky layer
-
-    Examples
-    --------
-    >>> from timml import *
-    >>> ml = Model(kaq=array([10, 20, 10]), c=array([200, 2000]), \
-             z=array([20, 15, 10, 8, 0]), npor=0.3 * ones(4), \
-             ltype=array(['a', 'a', 'l', 'a']))
     
     """
     
@@ -149,7 +142,7 @@ class Model(PlotTim):
         See also
         --------
         
-        headgrid2
+        :func:`~timml.model.Model.headgrid2`
 
         """
         
