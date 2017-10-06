@@ -2,4 +2,4 @@ Model
 -----
 
 .. autoclass:: timml.model.Model
-    :members: head, disvec
+    :members: head, disvec, remove_element, headgrid, headgrid2, headalongline, velocity, solve

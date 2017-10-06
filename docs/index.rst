@@ -18,7 +18,7 @@ Installation
 ------------
 TimML is written for Python 3.
 
-  installation instructions on pip
+  pip install instructions will follwo soon.
   
 Main Approximations
 -------------------
@@ -43,4 +43,6 @@ List of available elements
     :hidden:
     
     Models <models/modelindex>
+    Inhomogeneities <inhoms/inhoms>
     Elements <aems>
+    Utilities <utils/utils>

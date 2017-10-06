@@ -173,7 +173,7 @@ html_show_sphinx = True
 html_show_copyright = True
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TimMLdoc'
+htmlhelp_basename = 'timmldoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -196,7 +196,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'TimML.tex', u'TimML Documentation',
-     u'M. Bakker, R.A. Collenteur, R. Calje, F. Schaars', 'manual'),
+     u'M. Bakker', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

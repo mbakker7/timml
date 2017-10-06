@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ModelMaq &#8212; TimML 5.0.0 documentation</title>
+    <title>Multi-Aquifer Model &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ModelMaq" href="model3d.html" />
-    <link rel="prev" title="Wells" href="modelindex.html" />
+    <link rel="next" title="Three-dimensional flow model" href="model3d.html" />
+    <link rel="prev" title="Models" href="modelindex.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,8 +44,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="modelmaq">
-<h1>ModelMaq<a class="headerlink" href="#modelmaq" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="multi-aquifer-model">
+<h1>Multi-Aquifer Model<a class="headerlink" href="#multi-aquifer-model" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.model.ModelMaq">
 <em class="property">class </em><code class="descclassname">timml.model.</code><code class="descname">ModelMaq</code><span class="sig-paren">(</span><em>kaq=1, z=[1, 0], c=[], npor=0.3, top=’conf’, hstar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#ModelMaq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.ModelMaq" title="Permalink to this definition">¶</a></dt>
@@ -82,6 +82,114 @@ semi-confined (‘semi’)</li>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">ModelMaq</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="timml.model.ModelMaq.disvec">
+<code class="descname">disvec</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.disvec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discharge vector at <cite>x</cite>, <cite>y</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>qxqy</strong> – first row is Qx in each aquifer layer, second row is Qy</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array size (2, naq)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.ModelMaq.head">
+<code class="descname">head</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Head at <cite>x</cite>, <cite>y</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>h</strong> – head in all <cite>layers</cite> (if not <cite>None</cite>), or all layers of aquifer (otherwise)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">array length <cite>naq</cite> or <cite>len(layers)</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.ModelMaq.headalongline">
+<code class="descname">headalongline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.headalongline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns head[Nlayers,len(x)]
+Assumes same number of layers for each x and y
+layers may be None or list of layers for which head is computed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.ModelMaq.headgrid">
+<code class="descname">headgrid</code><span class="sig-paren">(</span><em>xg</em>, <em>yg</em>, <em>layers=None</em>, <em>printrow=False</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.headgrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grid of heads</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xg</strong> (<em>array</em>) – x values of grid</li>
+<li><strong>yg</strong> (<em>array</em>) – y values of grid</li>
+<li><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em><em>, </em><em>optional</em>) – layers for which grid is returned</li>
+<li><strong>printrow</strong> (<em>boolean</em><em>, </em><em>optional</em>) – prints dot to screen for each row of grid if set to <cite>True</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>h</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, ny, ny</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">headgrid2()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.ModelMaq.headgrid2">
+<code class="descname">headgrid2</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>nx</em>, <em>y1</em>, <em>y2</em>, <em>ny</em>, <em>layers=None</em>, <em>printrow=False</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.headgrid2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grid of heads</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x2</strong><strong>, </strong><strong>nx</strong> (<em>x1</em><em>,</em>) – x values of grid</li>
+<li><strong>y2</strong><strong>, </strong><strong>ny</strong> (<em>y1</em><em>,</em>) – y values of grid</li>
+<li><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em><em>, </em><em>optional</em>) – layers for which grid is returned</li>
+<li><strong>printrow</strong> (<em>boolean</em><em>, </em><em>optional</em>) – prints dot to screen for each row of grid if set to <cite>True</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>h</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, ny, ny</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.ModelMaq.remove_element">
+<code class="descname">remove_element</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.remove_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove element <cite>e</cite> from model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.ModelMaq.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>printmat=0</em>, <em>sendback=0</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.ModelMaq.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute solution</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -118,16 +226,18 @@ semi-confined (‘semi’)</li>
 <li class="toctree-l2"><a class="reference internal" href="model.html">Model</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modelindex.html">Wells</a><ul>
-      <li>Previous: <a href="modelindex.html" title="previous chapter">Wells</a></li>
-      <li>Next: <a href="model3d.html" title="next chapter">ModelMaq</a></li>
+  <li><a href="modelindex.html">Models</a><ul>
+      <li>Previous: <a href="modelindex.html" title="previous chapter">Models</a></li>
+      <li>Next: <a href="model3d.html" title="next chapter">Three-dimensional flow model</a></li>
   </ul></li>
   </ul></li>
 </ul>

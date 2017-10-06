@@ -1,5 +1,5 @@
-ModelMaq
---------
+Multi-Aquifer Model
+-------------------
 
 .. autoclass:: timml.model.ModelMaq
-    :members: head, disvec
+    :members: head, disvec, remove_element, headgrid, headgrid2, headalongline, velocity, solve

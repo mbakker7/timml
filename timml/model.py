@@ -66,6 +66,9 @@ class Model(PlotTim):
         if e.label is not None: self.elementdict[e.label] = e
 
     def remove_element(self, e):
+        """Remove element `e` from model
+        """
+        
         if e.label is not None: self.elementdict.pop(e.label)
         self.elementlist.remove(e)
 
@@ -84,6 +87,15 @@ class Model(PlotTim):
         return rv
 
     def disvec(self, x, y, aq=None):
+        """Discharge vector at `x`, `y`
+        
+        Returns
+        -------
+        
+        qxqy : array size (2, naq)
+            first row is Qx in each aquifer layer, second row is Qy
+        """
+        
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, aq.naq))
         for e in aq.elementlist:
@@ -100,6 +112,15 @@ class Model(PlotTim):
         return rv
 
     def head(self, x, y, layers=None, aq=None):
+        """Head at `x`, `y`
+        
+        Returns
+        -------
+        
+        h : array length `naq` or `len(layers)`
+            head in all `layers` (if not `None`), or all layers of aquifer (otherwise)
+        """
+        
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
         rv = self.potential(x, y, aq) / aq.T
         if layers is None:
@@ -108,8 +129,30 @@ class Model(PlotTim):
             return rv[layers]
 
     def headgrid(self, xg, yg, layers=None, printrow=False):
-        '''Returns h[Nlayers,ny,nx].
-        If layers is None, all layers are returned'''
+        """Grid of heads
+        
+        Parameters
+        ----------
+        xg : array
+            x values of grid
+        yg : array
+            y values of grid
+        layers : integer, list or array, optional
+            layers for which grid is returned
+        printrow : boolean, optional
+            prints dot to screen for each row of grid if set to `True`
+        
+        Returns
+        -------
+        h : array size `nlayers, ny, ny`
+        
+        See also
+        --------
+        
+        headgrid2
+
+        """
+        
         nx, ny = len(xg), len(yg)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -126,7 +169,25 @@ class Model(PlotTim):
         return h
 
     def headgrid2(self, x1, x2, nx, y1, y2, ny, layers=None, printrow=False):
-        '''Returns h[Nlayers,ny,nx]. If layers is None, all layers are returned'''
+        """Grid of heads
+        
+        Parameters
+        ----------
+        x1, x2, nx : 
+            x values of grid
+        y1, y2, ny : 
+            y values of grid
+        layers : integer, list or array, optional
+            layers for which grid is returned
+        printrow : boolean, optional
+            prints dot to screen for each row of grid if set to `True`
+        
+        Returns
+        -------
+        h : array size `nlayers, ny, ny`
+
+        """
+        
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
         return self.headgrid(xg, yg, layers=layers, printrow=printrow)
 
