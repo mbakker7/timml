@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Models &#8212; TimML 5.0.0 documentation</title>
+    <title>Starting a Model &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -44,8 +44,38 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="models">
-<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="starting-a-model">
+<h1>Starting a Model<a class="headerlink" href="#starting-a-model" title="Permalink to this headline">¶</a></h1>
+<p>There are three ways to start a model:</p>
+<p>1. <a class="reference internal" href="modelmaq.html#timml.model.ModelMaq" title="timml.model.ModelMaq"><code class="xref py py-class docutils literal"><span class="pre">ModelMaq</span></code></a>, which is model consisting of a regular sequence of aquifer - leaky layer - aquifer - leaky layer, aquifer, etc.
+The top of the system can be either an aquifer or a leaky layer. The head is computed in all aquifer layers only.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ml</span> <span class="o">=</span> <span class="n">ModelMaq</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure" id="id1">
+<img alt="../_images/modelmaq.png" src="../_images/modelmaq.png" />
+<p class="caption"><span class="caption-text">A <cite>ModelMaq</cite> example with three aquifers and two leaky layers</span></p>
+</div>
+<p>2. <a class="reference internal" href="model3d.html#timml.model.Model3D" title="timml.model.Model3D"><code class="xref py py-class docutils literal"><span class="pre">Model3D</span></code></a>, which is a model consisting of a stack of aquifer layers. The resistance between the aquifer layers is computed
+as the resistance from the middle of one layer to the middle of the next layer. Vertical anisotropy can be specified. The system
+may be bounded on top by a leaky layer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Model3D</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.0025</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure" id="id2">
+<img alt="../_images/model3d.png" src="../_images/model3d.png" />
+<p class="caption"><span class="caption-text">A  <cite>Model3D</cite> example consisting of five layers all treated as aquifers and a vertical anisotropy of 0.1</span></p>
+</div>
+<p>3. <a class="reference internal" href="model.html#timml.model.Model" title="timml.model.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a>, which is a model consisting of an arbitrary sequence of leaky layers and aquifers. The resistance between all aquifers needs to be specified by the user.
+This is the most general option, but requires a bit more input.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Model</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2000</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">],</span>
+      <span class="n">npor</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">ltype</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure" id="id3">
+<img alt="../_images/model.png" src="../_images/model.png" />
+<p class="caption"><span class="caption-text">A <cite>Model</cite> example with four aquifers and one leaky layer</span></p>
+</div>
 <div class="toctree-wrapper compound">
 </div>
 </div>
