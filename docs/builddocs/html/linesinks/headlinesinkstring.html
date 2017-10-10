@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>HeadLineSinkString &#8212; TimML 5.0.0 documentation</title>
+    <title>String of head-specified line-sinks &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Line-sink ditch" href="linesinkditch.html" />
-    <link rel="prev" title="Head-specified line-sink" href="headlinesink.html" />
+    <link rel="prev" title="Line-sink with specified head" href="headlinesink.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,49 +44,48 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="headlinesinkstring">
-<h1>HeadLineSinkString<a class="headerlink" href="#headlinesinkstring" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="string-of-head-specified-line-sinks">
+<h1>String of head-specified line-sinks<a class="headerlink" href="#string-of-head-specified-line-sinks" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.linesink.HeadLineSinkString">
 <em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSinkString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], hls=0, res=0, wh=1, order=0, layers=0, label=None, name=’HeadLineSinkString’</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkString" title="Permalink to this definition">¶</a></dt>
-<dd><p>HeadLineSinkString Class to create a string of head-specified line-sinks
-which may optionally have a width and resistance
-:param model: Model to which the element is added
-:type model: Model object
-:param xy: elevation tops and bottoms of the aquifers from the top down</p>
-<blockquote>
-<div>leaky layers may have zero thickness
-if top=’conf’: length is 2 * number of aquifers
-if top=’semi’: length is 2 * number of aquifers + 1 as top
-of leaky layer on top of systems needs to be specified</div></blockquote>
+<dd><p>Class to create a string of head-specified line-sinks
+which may optionally have a width and resistance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
+line-sinks in string</li>
 <li><strong>hls</strong> (<em>scalar</em><em>, </em><em>array</em><em> or </em><em>list</em>) – head along string
 if scalar: head is the same everywhere along the string
 if list or array of length 2: head at beginning and end of string
 if list or array with same length as xy: heads at nodes, which
 may contain nans, except for first and last point</li>
 <li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
-<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – </li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
 <li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – order of all line-sinks in string</li>
 <li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
 if list or array: element is placed in all these layers</li>
 <li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – </li>
-<li><strong>-----</strong> – </li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">ModelMaq</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">HeadLineSinkString</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">hls</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="headlinesink.html#timml.linesink.HeadLineSink" title="timml.linesink.HeadLineSink"><code class="xref py py-class docutils literal"><span class="pre">HeadLineSink</span></code></a></p>
 </div>
+<dl class="method">
+<dt id="timml.linesink.HeadLineSinkString.discharge">
+<code class="descname">discharge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#timml.linesink.HeadLineSinkString.discharge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discharge of the element in each layer</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -125,6 +124,7 @@ if list or array: element is placed in all these layers</li>
 <li class="toctree-l3"><a class="reference internal" href="headlinesink.html">HeadLineSink</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">HeadLineSinkString</a></li>
 <li class="toctree-l3"><a class="reference internal" href="linesinkditch.html">LineSinkDitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linesinkditchstring.html">LineSinkDitchString</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../linedoublets/linedoubletindex.html">Line-doublets</a></li>
@@ -132,6 +132,7 @@ if list or array: element is placed in all these layers</li>
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">
@@ -140,7 +141,7 @@ if list or array: element is placed in all these layers</li>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../aems.html">Elements</a><ul>
   <li><a href="linesinkindex.html">Line-sinks</a><ul>
-      <li>Previous: <a href="headlinesink.html" title="previous chapter">Head-specified line-sink</a></li>
+      <li>Previous: <a href="headlinesink.html" title="previous chapter">Line-sink with specified head</a></li>
       <li>Next: <a href="linesinkditch.html" title="next chapter">Line-sink ditch</a></li>
   </ul></li>
   </ul></li>

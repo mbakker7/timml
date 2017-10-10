@@ -182,7 +182,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
     def plot(self):
         plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
-class HeadLineSink(LineSinkBase, HeadEquation):
+class HeadLineSinkZero(LineSinkBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, hls=1.0, \
                  res=0, wh=1, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
@@ -334,40 +334,82 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
     
     #def strength()
 
-class HeadLineSinkHoOld(LineSinkHoBase, PotentialEquation):
-    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkHoOld', addtomodel=True):
-        self.storeinput(inspect.currentframe())
-        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-                                layers=layers, order=order,
-                                name='name', label=label, \
-                                addtomodel=addtomodel)
-        self.hc = hls
-        self.res = res
-        self.wh = wh
-        self.nunknowns = self.nparam
-
-    def initialize(self):
-        LineSinkHoBase.initialize(self)
-        if self.wh == 'H':
-            self.wh = self.aq.Haq[self.layers]
-        elif self.wh == '2H':
-            self.wh = 2.0 * self.aq.Haq[self.layers]
-        elif np.isscalar(self.wh):
-            self.wh = self.wh * np.ones(self.nlayers)
-        resfac = self.aq.T[self.layers] * self.res / self.wh
-        self.resfac = np.tile(resfac, self.ncp) * self.strengthinf
-        self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns)
-        self.pc = np.tile(self.hc * self.aq.T[self.layers], self.ncp)  # Needed in solving
-        self.hc2 = self.hc * np.ones(self.nlayers * self.ncp)
-
-    def setparams(self, sol):
-        self.parameters[:, 0] = sol
+#class HeadLineSinkHoOld(LineSinkHoBase, PotentialEquation):
+#    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
+#                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkHoOld', addtomodel=True):
+#        self.storeinput(inspect.currentframe())
+#        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
+#                                layers=layers, order=order,
+#                                name='name', label=label, \
+#                                addtomodel=addtomodel)
+#        self.hc = hls
+#        self.res = res
+#        self.wh = wh
+#        self.nunknowns = self.nparam
+#
+#    def initialize(self):
+#        LineSinkHoBase.initialize(self)
+#        if self.wh == 'H':
+#            self.wh = self.aq.Haq[self.layers]
+#        elif self.wh == '2H':
+#            self.wh = 2.0 * self.aq.Haq[self.layers]
+#        elif np.isscalar(self.wh):
+#            self.wh = self.wh * np.ones(self.nlayers)
+#        resfac = self.aq.T[self.layers] * self.res / self.wh
+#        self.resfac = np.tile(resfac, self.ncp) * self.strengthinf
+#        self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns)
+#        self.pc = np.tile(self.hc * self.aq.T[self.layers], self.ncp)  # Needed in solving
+#        self.hc2 = self.hc * np.ones(self.nlayers * self.ncp)
+#
+#    def setparams(self, sol):
+#        self.parameters[:, 0] = sol
         
-class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
+class HeadLineSink(LineSinkHoBase, HeadEquation):
+    """
+    HeadLineSink Class to create a head-specified line-sink
+    which may optionally have a width and resistance
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    x1 : scalar
+        x-coordinate of fist point of line-sink
+    y1 : scalar
+        y-coordinate of fist point of line-sink
+    x2 : scalar
+        x-coordinate of second point of line-sink
+    y2 : scalar
+        y-coordinate of second point of line-sink
+    hls : scalar, array or list
+        head along line-sink
+        if scalar: head is the same everywhere along line-sink
+        if list or array of length 2: head at beginning and end of line-sink
+        if list or array with length order + 1: heads at control points
+    res : scalar (default is 0)
+        resistance of line-sink
+    wh : scalar or str
+        distance over which water enters line-sink
+    order : int (default is 0)
+        polynomial order or inflow along line-sink
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.HeadLineSinkString`
+    
+    """
+    
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
                  hls=1.0, res=0, wh=1, order=0, layers=0, \
-                 label=None, name='HeadLineSinkHo', addtomodel=True):
+                 label=None, name='HeadLineSink', addtomodel=True):
         self.storeinput(inspect.currentframe())
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
                                 layers=layers, order=order,
@@ -400,20 +442,60 @@ class HeadLineSinkHo(LineSinkHoBase, HeadEquation):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
         
-class LineSinkDitch(HeadLineSinkHo):
+class LineSinkDitch(HeadLineSink):
+    """
+    Class to create a line-sink for which the total discharge
+    is specified, and for which the head along the line-sink
+    is uniform but unknown.
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    x1 : scalar
+        x-coordinate of fist point of line-sink
+    y1 : scalar
+        y-coordinate of fist point of line-sink
+    x2 : scalar
+        x-coordinate of second point of line-sink
+    y2 : scalar
+        y-coordinate of second point of line-sink
+    Qls : scalar
+        total discharge of the line-sink
+    res : scalar (default is 0)
+        resistance of line-sink
+    wh : scalar or str
+        distance over which water enters line-sink
+    order : int (default is 0)
+        polynomial order or inflow along line-sink
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.LineSinkDitchString`
+    
+    """
+    
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
                  Qls=1, res=0, wh=1, order=0, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
-        HeadLineSinkHo.__init__(self, model, x1, y1, x2, y2, \
+        HeadLineSink.__init__(self, model, x1, y1, x2, y2, \
                  hls=0, res=res, wh=wh, order=order, layers=layers, label=label,
                  name='HeadLineSinkDitch', addtomodel=addtomodel)
         self.Qls = Qls
 
     def initialize(self):
-        HeadLineSinkHo.initialize(self)
+        HeadLineSink.initialize(self)
         
     def equation(self):
-        mat, rhs = HeadLineSinkHo.equation(self)
+        mat, rhs = HeadLineSink.equation(self)
         for i in range(1, self.nunknowns):
             mat[i] -= mat[0]
             rhs[i] -= rhs[0]
@@ -646,7 +728,9 @@ class LineSinkStringBase2(Element):
         return rv.ravel()
    
     def discharge(self):
-        # returns the discharge in each layer
+        """Discharge of the element in each layer
+        """
+        
         rv = np.zeros(self.aq[0].naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
@@ -671,18 +755,17 @@ class LineSinkStringBase2(Element):
         
 class HeadLineSinkString(LineSinkStringBase2):
     """
-    HeadLineSinkString Class to create a string of head-specified line-sinks
+    Class to create a string of head-specified line-sinks
     which may optionally have a width and resistance
+    
     Parameters
     ----------
+    
     model : Model object
         Model to which the element is added
     xy : array or list
-        elevation tops and bottoms of the aquifers from the top down
-        leaky layers may have zero thickness
-        if top='conf': length is 2 * number of aquifers
-        if top='semi': length is 2 * number of aquifers + 1 as top
-        of leaky layer on top of systems needs to be specified
+        list or array of (x,y) pairs of coordinates of end-points of
+        line-sinks in string
     hls : scalar, array or list
         head along string
         if scalar: head is the same everywhere along the string
@@ -691,7 +774,8 @@ class HeadLineSinkString(LineSinkStringBase2):
         may contain nans, except for first and last point
     res : scalar (default is 0)
         resistance of line-sink
-    wh : scalar or str 
+    wh : scalar or str
+        distance over which water enters line-sink
     order : int (default is 0)
         order of all line-sinks in string
     layers : scalar, list or array
@@ -700,12 +784,13 @@ class HeadLineSinkString(LineSinkStringBase2):
         if list or array: element is placed in all these layers 
     label: str or None
     
-    -----
-    Examples
+    See Also
     --------
-    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
-    >>> HeadLineSinkString(ml, xy=[(-1, 0), (1, 0), (0, 1)], hls=5)
+    
+    :class:`.HeadLineSink`
+    
     """
+    
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0, \
                  res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkString'):
         self.storeinput(inspect.currentframe())
@@ -735,7 +820,7 @@ class HeadLineSinkString(LineSinkStringBase2):
             print('Error: hls entry not supported')
         self.lslist = []  # start with empty list
         for i in range(self.nls):
-            self.lslist.append(HeadLineSinkHo(self.model, \
+            self.lslist.append(HeadLineSink(self.model, \
                                               x1=self.x[i], y1=self.y[i],
                                               x2=self.x[i + 1],
                                               y2=self.y[i + 1], \
@@ -777,6 +862,41 @@ class HeadLineSinkString(LineSinkStringBase2):
         return mat, rhs
     
 class LineSinkDitchString(HeadLineSinkString):
+    """
+    Class to create a string of LineSinkDitch elements for which the
+    total discharge of the string is specified, and for which the head
+    along the entire string is uniform but unknown.
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of end-points of
+        line-sinks in string
+    Qls : scalar
+        total discharge of the string
+    res : scalar (default is 0)
+        resistance of line-sinks in string
+    wh : scalar or str
+        distance over which water enters the string
+    order : int (default is 0)
+        polynomial order or inflow along each line-sink in string
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.LineSinkDitch`
+    
+    """
+    
     def __init__(self, model, xy=[(-1, 0), (1, 0)], \
                  Qls=1, res=0, wh=1, order=0, layers=0, label=None):
         self.storeinput(inspect.currentframe())

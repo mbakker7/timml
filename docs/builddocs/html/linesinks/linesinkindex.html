@@ -27,8 +27,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Head-specified line-sink" href="headlinesink.html" />
-    <link rel="prev" title="HeadWell" href="../wells/headwell.html" />
+    <link rel="next" title="Line-sink with specified head" href="headlinesink.html" />
+    <link rel="prev" title="Well with specified head" href="../wells/headwell.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -46,7 +46,30 @@
             
   <div class="section" id="line-sinks">
 <h1>Line-sinks<a class="headerlink" href="#line-sinks" title="Permalink to this headline">¶</a></h1>
-<p>There are many line-sinks</p>
+<p>Line-sinks are lines along which water is taken out of or put into the aquifer. The inflow/outflow along the line-sink varies as a polynomial (the order of the
+polynomial may be specified).
+There are two types of line-sinks: line-sinks for which the head is specified along the line-sink, and line-sinks for which the total discharge is specified
+and the head along the line-sink is unknown but uniform.
+Both types of line-sinks may have an entry resistance defined by the resistance <span class="math">\(c\)</span> (dimension: time). The inflow <span class="math">\(\sigma_i\)</span> into the line-sink in
+layer <span class="math">\(i\)</span> is a function of the head
+<span class="math">\(h_i\)</span> just outside the line-sink in layer <span class="math">\(i\)</span> and the head <span class="math">\(h_{ls}\)</span> inside the line-sink:</p>
+<blockquote>
+<div><div class="math">
+\[\sigma_i = w(h_i - h_{ls})/c\]</div>
+</div></blockquote>
+<p>This equation is applied along each control point of the line-sink. <span class="math">\(w\)</span> is the distance over which water infiltrates into the line-sink.
+The distanc may be the width of the stream, for example, in case of a partially penetrating stream. In case the stream penetrates the aquifer
+layer fully, the distance may equal the thickness of the aquifer layer (if water enters primarily from one side),
+or twice the aquifer thickness (if water enters from both sides).</p>
+<p>The two types of line-sinks may be entered one by one or as a string. For a string of head-specified line-sinks, the head needs only be specified at the beginning and
+end of the string and the head is interpolated between these values. Alternatively, the head may be specified at the beginning and end of some or all line-sinks in the string
+For a string of line-sink ditch elements, the head is uniform along the entire string while the total discharge of all the line-sinks in the string is equal to the specified value.</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="headlinesink.html#timml.linesink.HeadLineSink" title="timml.linesink.HeadLineSink"><code class="xref py py-class docutils literal"><span class="pre">HeadLineSink</span></code></a> is a line-sink for which the head is specified along the line-sink. <a class="reference external" href="https://github.com/mbakker7/timml/blob/master/notebooks/test_linesink_discharge.ipynb">Example Notebook.</a></li>
+<li><a class="reference internal" href="headlinesinkstring.html#timml.linesink.HeadLineSinkString" title="timml.linesink.HeadLineSinkString"><code class="xref py py-class docutils literal"><span class="pre">HeadLineSinkString</span></code></a> is a string of head-specified line-sinks</li>
+<li><a class="reference internal" href="linesinkditch.html#timml.linesink.LineSinkDitch" title="timml.linesink.LineSinkDitch"><code class="xref py py-class docutils literal"><span class="pre">LineSinkDitch</span></code></a> is a line-sink for which the head is unknown and uniform and the total discharge is specified</li>
+<li><a class="reference internal" href="linesinkditchstring.html#timml.linesink.LineSinkDitchString" title="timml.linesink.LineSinkDitchString"><code class="xref py py-class docutils literal"><span class="pre">LineSinkDitchString</span></code></a> is a string of line-sink ditch elements</li>
+</ol>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -85,6 +108,7 @@
 <li class="toctree-l3"><a class="reference internal" href="headlinesink.html">HeadLineSink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="headlinesinkstring.html">HeadLineSinkString</a></li>
 <li class="toctree-l3"><a class="reference internal" href="linesinkditch.html">LineSinkDitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linesinkditchstring.html">LineSinkDitchString</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../linedoublets/linedoubletindex.html">Line-doublets</a></li>
@@ -92,6 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">
@@ -99,8 +124,8 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../aems.html">Elements</a><ul>
-      <li>Previous: <a href="../wells/headwell.html" title="previous chapter">HeadWell</a></li>
-      <li>Next: <a href="headlinesink.html" title="next chapter">Head-specified line-sink</a></li>
+      <li>Previous: <a href="../wells/headwell.html" title="previous chapter">Well with specified head</a></li>
+      <li>Next: <a href="headlinesink.html" title="next chapter">Line-sink with specified head</a></li>
   </ul></li>
   </ul></li>
 </ul>

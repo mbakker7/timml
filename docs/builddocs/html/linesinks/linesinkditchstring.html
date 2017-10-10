@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Impermeable wall &#8212; TimML 5.0.0 documentation</title>
+    <title>Line-sink ditch string &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Leaky wall" href="leakylinedoublet.html" />
-    <link rel="prev" title="Line-doublets" href="linedoubletindex.html" />
+    <link rel="next" title="Line-doublets" href="../linedoublets/linedoubletindex.html" />
+    <link rel="prev" title="Line-sink ditch" href="linesinkditch.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -44,24 +44,27 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="impermeable-wall">
-<h1>Impermeable wall<a class="headerlink" href="#impermeable-wall" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="line-sink-ditch-string">
+<h1>Line-sink ditch string<a class="headerlink" href="#line-sink-ditch-string" title="Permalink to this headline">¶</a></h1>
+<p>Specified total discharge with unknown but uniform head</p>
 <dl class="class">
-<dt id="timml.linedoublet.ImpLineDoublet">
-<em class="property">class </em><code class="descclassname">timml.linedoublet.</code><code class="descname">ImpLineDoublet</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoublet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoublet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to create a segment of an impermeable wall, which is
-simulated with a line-doublet</p>
+<dt id="timml.linesink.LineSinkDitchString">
+<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">LineSinkDitchString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], Qls=1, res=0, wh=1, order=0, layers=0, label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkDitchString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkDitchString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to create a string of LineSinkDitch elements for which the
+total discharge of the string is specified, and for which the head
+along the entire string is uniform but unknown.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
-<li><strong>x1</strong> (<em>scalar</em>) – x-coordinate of fist point of line-doublet</li>
-<li><strong>y1</strong> (<em>scalar</em>) – y-coordinate of fist point of line-doublet</li>
-<li><strong>x2</strong> (<em>scalar</em>) – x-coordinate of second point of line-doublet</li>
-<li><strong>y2</strong> (<em>scalar</em>) – y-coordinate of second point of line-doublet</li>
-<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order of potential jump along line-doublet</li>
+<li><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
+line-sinks in string</li>
+<li><strong>Qls</strong> (<em>scalar</em>) – total discharge of the string</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sinks in string</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters the string</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along each line-sink in string</li>
 <li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
 if list or array: element is placed in all these layers</li>
@@ -73,7 +76,7 @@ if list or array: element is placed in all these layers</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../elements/timml.linedoublet.html#timml.linedoublet.ImpLineDoubletString" title="timml.linedoublet.ImpLineDoubletString"><code class="xref py py-class docutils literal"><span class="pre">ImpLineDoubletString</span></code></a></p>
+<p class="last"><a class="reference internal" href="linesinkditch.html#timml.linesink.LineSinkDitch" title="timml.linesink.LineSinkDitch"><code class="xref py py-class docutils literal"><span class="pre">LineSinkDitch</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -109,12 +112,14 @@ if list or array: element is placed in all these layers</li>
 <li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../aems.html">Elements</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../wells/wellindex.html">Wells</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../linesinks/linesinkindex.html">Line-sinks</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="linedoubletindex.html">Line-doublets</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">ImpLineDoublet</a></li>
-<li class="toctree-l3"><a class="reference internal" href="leakylinedoublet.html">LeakyLineDoublet</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="linesinkindex.html">Line-sinks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="headlinesink.html">HeadLineSink</a></li>
+<li class="toctree-l3"><a class="reference internal" href="headlinesinkstring.html">HeadLineSinkString</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linesinkditch.html">LineSinkDitch</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">LineSinkDitchString</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../linedoublets/linedoubletindex.html">Line-doublets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../uflow.html">Uniform flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
@@ -127,9 +132,9 @@ if list or array: element is placed in all these layers</li>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../aems.html">Elements</a><ul>
-  <li><a href="linedoubletindex.html">Line-doublets</a><ul>
-      <li>Previous: <a href="linedoubletindex.html" title="previous chapter">Line-doublets</a></li>
-      <li>Next: <a href="leakylinedoublet.html" title="next chapter">Leaky wall</a></li>
+  <li><a href="linesinkindex.html">Line-sinks</a><ul>
+      <li>Previous: <a href="linesinkditch.html" title="previous chapter">Line-sink ditch</a></li>
+      <li>Next: <a href="../linedoublets/linedoubletindex.html" title="next chapter">Line-doublets</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -157,7 +162,7 @@ if list or array: element is placed in all these layers</li>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/linedoublets/implinedoublet.rst.txt"
+      <a href="../_sources/linesinks/linesinkditchstring.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

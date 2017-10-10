@@ -27,8 +27,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Line-doublets" href="../linedoublets/linedoubletindex.html" />
-    <link rel="prev" title="HeadLineSinkString" href="headlinesinkstring.html" />
+    <link rel="next" title="Line-sink ditch string" href="linesinkditchstring.html" />
+    <link rel="prev" title="String of head-specified line-sinks" href="headlinesinkstring.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -50,7 +50,37 @@
 <dl class="class">
 <dt id="timml.linesink.LineSinkDitch">
 <em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">LineSinkDitch</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>Qls=1</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkDitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkDitch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Class to create a line-sink for which the total discharge
+is specified, and for which the head along the line-sink
+is uniform but unknown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>x1</strong> (<em>scalar</em>) – x-coordinate of fist point of line-sink</li>
+<li><strong>y1</strong> (<em>scalar</em>) – y-coordinate of fist point of line-sink</li>
+<li><strong>x2</strong> (<em>scalar</em>) – x-coordinate of second point of line-sink</li>
+<li><strong>y2</strong> (<em>scalar</em>) – y-coordinate of second point of line-sink</li>
+<li><strong>Qls</strong> (<em>scalar</em>) – total discharge of the line-sink</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along line-sink</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="linesinkditchstring.html#timml.linesink.LineSinkDitchString" title="timml.linesink.LineSinkDitchString"><code class="xref py py-class docutils literal"><span class="pre">LineSinkDitchString</span></code></a></p>
+</div>
+</dd></dl>
 
 </div>
 
@@ -88,6 +118,7 @@
 <li class="toctree-l3"><a class="reference internal" href="headlinesink.html">HeadLineSink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="headlinesinkstring.html">HeadLineSinkString</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">LineSinkDitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linesinkditchstring.html">LineSinkDitchString</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../linedoublets/linedoubletindex.html">Line-doublets</a></li>
@@ -95,6 +126,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">
@@ -103,8 +135,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../aems.html">Elements</a><ul>
   <li><a href="linesinkindex.html">Line-sinks</a><ul>
-      <li>Previous: <a href="headlinesinkstring.html" title="previous chapter">HeadLineSinkString</a></li>
-      <li>Next: <a href="../linedoublets/linedoubletindex.html" title="next chapter">Line-doublets</a></li>
+      <li>Previous: <a href="headlinesinkstring.html" title="previous chapter">String of head-specified line-sinks</a></li>
+      <li>Next: <a href="linesinkditchstring.html" title="next chapter">Line-sink ditch string</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

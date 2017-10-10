@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Head-specified line-sink &#8212; TimML 5.0.0 documentation</title>
+    <title>Line-sink with specified head &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="HeadLineSinkString" href="headlinesinkstring.html" />
+    <link rel="next" title="String of head-specified line-sinks" href="headlinesinkstring.html" />
     <link rel="prev" title="Line-sinks" href="linesinkindex.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -44,12 +44,44 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="head-specified-line-sink">
-<h1>Head-specified line-sink<a class="headerlink" href="#head-specified-line-sink" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="line-sink-with-specified-head">
+<h1>Line-sink with specified head<a class="headerlink" href="#line-sink-with-specified-head" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.linesink.HeadLineSink">
-<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSink</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSink" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSink</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>name=’HeadLineSink’</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSink" title="Permalink to this definition">¶</a></dt>
+<dd><p>HeadLineSink Class to create a head-specified line-sink
+which may optionally have a width and resistance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>x1</strong> (<em>scalar</em>) – x-coordinate of fist point of line-sink</li>
+<li><strong>y1</strong> (<em>scalar</em>) – y-coordinate of fist point of line-sink</li>
+<li><strong>x2</strong> (<em>scalar</em>) – x-coordinate of second point of line-sink</li>
+<li><strong>y2</strong> (<em>scalar</em>) – y-coordinate of second point of line-sink</li>
+<li><strong>hls</strong> (<em>scalar</em><em>, </em><em>array</em><em> or </em><em>list</em>) – head along line-sink
+if scalar: head is the same everywhere along line-sink
+if list or array of length 2: head at beginning and end of line-sink
+if list or array with length order + 1: heads at control points</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along line-sink</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="headlinesinkstring.html#timml.linesink.HeadLineSinkString" title="timml.linesink.HeadLineSinkString"><code class="xref py py-class docutils literal"><span class="pre">HeadLineSinkString</span></code></a></p>
+</div>
+</dd></dl>
 
 </div>
 
@@ -87,6 +119,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">HeadLineSink</a></li>
 <li class="toctree-l3"><a class="reference internal" href="headlinesinkstring.html">HeadLineSinkString</a></li>
 <li class="toctree-l3"><a class="reference internal" href="linesinkditch.html">LineSinkDitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linesinkditchstring.html">LineSinkDitchString</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../linedoublets/linedoubletindex.html">Line-doublets</a></li>
@@ -94,6 +127,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">
@@ -103,7 +137,7 @@
   <li><a href="../aems.html">Elements</a><ul>
   <li><a href="linesinkindex.html">Line-sinks</a><ul>
       <li>Previous: <a href="linesinkindex.html" title="previous chapter">Line-sinks</a></li>
-      <li>Next: <a href="headlinesinkstring.html" title="next chapter">HeadLineSinkString</a></li>
+      <li>Next: <a href="headlinesinkstring.html" title="next chapter">String of head-specified line-sinks</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

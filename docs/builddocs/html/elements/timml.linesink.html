@@ -46,8 +46,40 @@
 <span id="timml-linesink-module"></span><h1>timml.linesink module<a class="headerlink" href="#module-timml.linesink" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.linesink.HeadLineSink">
-<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSink</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSink" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#timml.linesink.LineSinkBase" title="timml.linesink.LineSinkBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.LineSinkBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.HeadEquation" title="timml.equation.HeadEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.HeadEquation</span></code></a></p>
+<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSink</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>name=’HeadLineSink’</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#timml.linesink.LineSinkHoBase" title="timml.linesink.LineSinkHoBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.LineSinkHoBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.HeadEquation" title="timml.equation.HeadEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.HeadEquation</span></code></a></p>
+<p>HeadLineSink Class to create a head-specified line-sink
+which may optionally have a width and resistance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>x1</strong> (<em>scalar</em>) – x-coordinate of fist point of line-sink</li>
+<li><strong>y1</strong> (<em>scalar</em>) – y-coordinate of fist point of line-sink</li>
+<li><strong>x2</strong> (<em>scalar</em>) – x-coordinate of second point of line-sink</li>
+<li><strong>y2</strong> (<em>scalar</em>) – y-coordinate of second point of line-sink</li>
+<li><strong>hls</strong> (<em>scalar</em><em>, </em><em>array</em><em> or </em><em>list</em>) – head along line-sink
+if scalar: head is the same everywhere along line-sink
+if list or array of length 2: head at beginning and end of line-sink
+if list or array with length order + 1: heads at control points</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along line-sink</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../linesinks/headlinesinkstring.html#timml.linesink.HeadLineSinkString" title="timml.linesink.HeadLineSinkString"><code class="xref py py-class docutils literal"><span class="pre">HeadLineSinkString</span></code></a></p>
+</div>
 <dl class="method">
 <dt id="timml.linesink.HeadLineSink.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSink.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSink.initialize" title="Permalink to this definition">¶</a></dt>
@@ -61,78 +93,39 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="timml.linesink.HeadLineSinkHo">
-<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSinkHo</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>name=’HeadLineSinkHo’</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkHo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkHo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#timml.linesink.LineSinkHoBase" title="timml.linesink.LineSinkHoBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.LineSinkHoBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.HeadEquation" title="timml.equation.HeadEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.HeadEquation</span></code></a></p>
-<dl class="method">
-<dt id="timml.linesink.HeadLineSinkHo.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkHo.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkHo.initialize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="timml.linesink.HeadLineSinkHo.setparams">
-<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkHo.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkHo.setparams" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="timml.linesink.HeadLineSinkHoOld">
-<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSinkHoOld</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>name=’HeadLineSinkHoOld’</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkHoOld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkHoOld" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#timml.linesink.LineSinkHoBase" title="timml.linesink.LineSinkHoBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.LineSinkHoBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.PotentialEquation" title="timml.equation.PotentialEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.PotentialEquation</span></code></a></p>
-<dl class="method">
-<dt id="timml.linesink.HeadLineSinkHoOld.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkHoOld.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkHoOld.initialize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="timml.linesink.HeadLineSinkHoOld.setparams">
-<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkHoOld.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkHoOld.setparams" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="timml.linesink.HeadLineSinkString">
 <em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSinkString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], hls=0, res=0, wh=1, order=0, layers=0, label=None, name=’HeadLineSinkString’</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkString" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#timml.linesink.LineSinkStringBase2" title="timml.linesink.LineSinkStringBase2"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.LineSinkStringBase2</span></code></a></p>
-<p>HeadLineSinkString Class to create a string of head-specified line-sinks
-which may optionally have a width and resistance
-:param model: Model to which the element is added
-:type model: Model object
-:param xy: elevation tops and bottoms of the aquifers from the top down</p>
-<blockquote>
-<div>leaky layers may have zero thickness
-if top=’conf’: length is 2 * number of aquifers
-if top=’semi’: length is 2 * number of aquifers + 1 as top
-of leaky layer on top of systems needs to be specified</div></blockquote>
+<p>Class to create a string of head-specified line-sinks
+which may optionally have a width and resistance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
+line-sinks in string</li>
 <li><strong>hls</strong> (<em>scalar</em><em>, </em><em>array</em><em> or </em><em>list</em>) – head along string
 if scalar: head is the same everywhere along the string
 if list or array of length 2: head at beginning and end of string
 if list or array with same length as xy: heads at nodes, which
 may contain nans, except for first and last point</li>
 <li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
-<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – </li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
 <li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – order of all line-sinks in string</li>
 <li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
 if list or array: element is placed in all these layers</li>
 <li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – </li>
-<li><strong>-----</strong> – </li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">ModelMaq</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">HeadLineSinkString</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">hls</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../linesinks/headlinesink.html#timml.linesink.HeadLineSink" title="timml.linesink.HeadLineSink"><code class="xref py py-class docutils literal"><span class="pre">HeadLineSink</span></code></a></p>
 </div>
 <dl class="method">
 <dt id="timml.linesink.HeadLineSinkString.equation">
@@ -163,6 +156,22 @@ if list or array: element is placed in all these layers</li>
 <dl class="method">
 <dt id="timml.linesink.HeadLineSinkStringOLd.setparams">
 <code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkStringOLd.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkStringOLd.setparams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="timml.linesink.HeadLineSinkZero">
+<em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSinkZero</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkZero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkZero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#timml.linesink.LineSinkBase" title="timml.linesink.LineSinkBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.LineSinkBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.HeadEquation" title="timml.equation.HeadEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.HeadEquation</span></code></a></p>
+<dl class="method">
+<dt id="timml.linesink.HeadLineSinkZero.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkZero.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkZero.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="timml.linesink.HeadLineSinkZero.setparams">
+<code class="descname">setparams</code><span class="sig-paren">(</span><em>sol</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSinkZero.setparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSinkZero.setparams" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -214,7 +223,37 @@ if list or array: element is placed in all these layers</li>
 <dl class="class">
 <dt id="timml.linesink.LineSinkDitch">
 <em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">LineSinkDitch</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>Qls=1</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkDitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkDitch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#timml.linesink.HeadLineSinkHo" title="timml.linesink.HeadLineSinkHo"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.HeadLineSinkHo</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../linesinks/headlinesink.html#timml.linesink.HeadLineSink" title="timml.linesink.HeadLineSink"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.HeadLineSink</span></code></a></p>
+<p>Class to create a line-sink for which the total discharge
+is specified, and for which the head along the line-sink
+is uniform but unknown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>x1</strong> (<em>scalar</em>) – x-coordinate of fist point of line-sink</li>
+<li><strong>y1</strong> (<em>scalar</em>) – y-coordinate of fist point of line-sink</li>
+<li><strong>x2</strong> (<em>scalar</em>) – x-coordinate of second point of line-sink</li>
+<li><strong>y2</strong> (<em>scalar</em>) – y-coordinate of second point of line-sink</li>
+<li><strong>Qls</strong> (<em>scalar</em>) – total discharge of the line-sink</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along line-sink</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../linesinks/linesinkditchstring.html#timml.linesink.LineSinkDitchString" title="timml.linesink.LineSinkDitchString"><code class="xref py py-class docutils literal"><span class="pre">LineSinkDitchString</span></code></a></p>
+</div>
 <dl class="method">
 <dt id="timml.linesink.LineSinkDitch.equation">
 <code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkDitch.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkDitch.equation" title="Permalink to this definition">¶</a></dt>
@@ -236,6 +275,34 @@ if list or array: element is placed in all these layers</li>
 <dt id="timml.linesink.LineSinkDitchString">
 <em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">LineSinkDitchString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], Qls=1, res=0, wh=1, order=0, layers=0, label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkDitchString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkDitchString" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../linesinks/headlinesinkstring.html#timml.linesink.HeadLineSinkString" title="timml.linesink.HeadLineSinkString"><code class="xref py py-class docutils literal"><span class="pre">timml.linesink.HeadLineSinkString</span></code></a></p>
+<p>Class to create a string of LineSinkDitch elements for which the
+total discharge of the string is specified, and for which the head
+along the entire string is uniform but unknown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
+line-sinks in string</li>
+<li><strong>Qls</strong> (<em>scalar</em>) – total discharge of the string</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sinks in string</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters the string</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along each line-sink in string</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../linesinks/linesinkditch.html#timml.linesink.LineSinkDitch" title="timml.linesink.LineSinkDitch"><code class="xref py py-class docutils literal"><span class="pre">LineSinkDitch</span></code></a></p>
+</div>
 <dl class="method">
 <dt id="timml.linesink.LineSinkDitchString.equation">
 <code class="descname">equation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkDitchString.equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkDitchString.equation" title="Permalink to this definition">¶</a></dt>
@@ -371,7 +438,8 @@ Has the advantage that it is easier to have different line-sinks in different la
 <dl class="method">
 <dt id="timml.linesink.LineSinkStringBase2.discharge">
 <code class="descname">discharge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#LineSinkStringBase2.discharge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.LineSinkStringBase2.discharge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Discharge of the element in each layer</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="timml.linesink.LineSinkStringBase2.dischargeinf">
@@ -445,6 +513,7 @@ order 1, layer[1]
 <li class="toctree-l1"><a class="reference internal" href="../models/modelindex.html">Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">

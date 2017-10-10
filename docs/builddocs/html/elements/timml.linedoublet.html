@@ -48,6 +48,32 @@
 <dt id="timml.linedoublet.ImpLineDoublet">
 <em class="property">class </em><code class="descclassname">timml.linedoublet.</code><code class="descname">ImpLineDoublet</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoublet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoublet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#timml.linedoublet.LineDoubletHoBase" title="timml.linedoublet.LineDoubletHoBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linedoublet.LineDoubletHoBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.DisvecEquation" title="timml.equation.DisvecEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.DisvecEquation</span></code></a></p>
+<p>Class to create a segment of an impermeable wall, which is
+simulated with a line-doublet</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>x1</strong> (<em>scalar</em>) – x-coordinate of fist point of line-doublet</li>
+<li><strong>y1</strong> (<em>scalar</em>) – y-coordinate of fist point of line-doublet</li>
+<li><strong>x2</strong> (<em>scalar</em>) – x-coordinate of second point of line-doublet</li>
+<li><strong>y2</strong> (<em>scalar</em>) – y-coordinate of second point of line-doublet</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order of potential jump along line-doublet</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#timml.linedoublet.ImpLineDoubletString" title="timml.linedoublet.ImpLineDoubletString"><code class="xref py py-class docutils literal"><span class="pre">ImpLineDoubletString</span></code></a></p>
+</div>
 <dl class="method">
 <dt id="timml.linedoublet.ImpLineDoublet.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoublet.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoublet.initialize" title="Permalink to this definition">¶</a></dt>
@@ -64,6 +90,30 @@
 <dt id="timml.linedoublet.ImpLineDoubletString">
 <em class="property">class </em><code class="descclassname">timml.linedoublet.</code><code class="descname">ImpLineDoubletString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], layers=0, order=0, label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoubletString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoubletString" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#timml.linedoublet.LineDoubletStringBase" title="timml.linedoublet.LineDoubletStringBase"><code class="xref py py-class docutils literal"><span class="pre">timml.linedoublet.LineDoubletStringBase</span></code></a>, <a class="reference internal" href="timml.equation.html#timml.equation.DisvecEquation" title="timml.equation.DisvecEquation"><code class="xref py py-class docutils literal"><span class="pre">timml.equation.DisvecEquation</span></code></a></p>
+<p>Class to create a string of impermeable wall segements consisting
+of line-doublets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
+the segements in the string</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order of potential jump along line-doublet</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../linedoublets/implinedoublet.html#timml.linedoublet.ImpLineDoublet" title="timml.linedoublet.ImpLineDoublet"><code class="xref py py-class docutils literal"><span class="pre">ImpLineDoublet</span></code></a></p>
+</div>
 <dl class="method">
 <dt id="timml.linedoublet.ImpLineDoubletString.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoubletString.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoubletString.initialize" title="Permalink to this definition">¶</a></dt>
@@ -207,6 +257,7 @@ etc</p>
 <li class="toctree-l1"><a class="reference internal" href="../models/modelindex.html">Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">

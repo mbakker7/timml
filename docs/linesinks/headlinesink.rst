@@ -1,5 +1,5 @@
-Head-specified line-sink
-------------------------
+Line-sink with specified head
+-----------------------------
 
 .. autoclass:: timml.linesink.HeadLineSink
-    :members: headinside
+    :members: headinside, discharge

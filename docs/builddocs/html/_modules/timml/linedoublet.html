@@ -154,6 +154,39 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="ImpLineDoublet"><a class="viewcode-back" href="../../linedoublets/implinedoublet.html#timml.linedoublet.ImpLineDoublet">[docs]</a><span class="k">class</span> <span class="nc">ImpLineDoublet</span><span class="p">(</span><span class="n">LineDoubletHoBase</span><span class="p">,</span> <span class="n">DisvecEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to create a segment of an impermeable wall, which is</span>
+<span class="sd">    simulated with a line-doublet</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    x1 : scalar</span>
+<span class="sd">        x-coordinate of fist point of line-doublet</span>
+<span class="sd">    y1 : scalar</span>
+<span class="sd">        y-coordinate of fist point of line-doublet</span>
+<span class="sd">    x2 : scalar</span>
+<span class="sd">        x-coordinate of second point of line-doublet</span>
+<span class="sd">    y2 : scalar</span>
+<span class="sd">        y-coordinate of second point of line-doublet</span>
+<span class="sd">    order : int (default is 0)</span>
+<span class="sd">        polynomial order of potential jump along line-doublet</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers </span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+<span class="sd">    </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    </span>
+<span class="sd">    :class:`.ImpLineDoubletString`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
                  <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
@@ -258,6 +291,35 @@
 
 
 <div class="viewcode-block" id="ImpLineDoubletString"><a class="viewcode-back" href="../../elements/timml.linedoublet.html#timml.linedoublet.ImpLineDoubletString">[docs]</a><span class="k">class</span> <span class="nc">ImpLineDoubletString</span><span class="p">(</span><span class="n">LineDoubletStringBase</span><span class="p">,</span> <span class="n">DisvecEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to create a string of impermeable wall segements consisting</span>
+<span class="sd">    of line-doublets</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    xy : array or list</span>
+<span class="sd">        list or array of (x,y) pairs of coordinates of end-points of</span>
+<span class="sd">        the segements in the string</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers</span>
+<span class="sd">    order : int (default is 0)</span>
+<span class="sd">        polynomial order of potential jump along line-doublet</span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+<span class="sd">    </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    </span>
+<span class="sd">    :class:`.ImpLineDoublet`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> \
                  <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>

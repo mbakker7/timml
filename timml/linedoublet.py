@@ -109,6 +109,39 @@ class LineDoubletHoBase(Element):
         plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
+    """
+    Class to create a segment of an impermeable wall, which is
+    simulated with a line-doublet
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    x1 : scalar
+        x-coordinate of fist point of line-doublet
+    y1 : scalar
+        y-coordinate of fist point of line-doublet
+    x2 : scalar
+        x-coordinate of second point of line-doublet
+    y2 : scalar
+        y-coordinate of second point of line-doublet
+    order : int (default is 0)
+        polynomial order of potential jump along line-doublet
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.ImpLineDoubletString`
+    
+    """
+    
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
                  order=0, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
@@ -213,6 +246,35 @@ class LineDoubletStringBase(Element):
 
 
 class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
+    """
+    Class to create a string of impermeable wall segements consisting
+    of line-doublets
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of end-points of
+        the segements in the string
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers
+    order : int (default is 0)
+        polynomial order of potential jump along line-doublet
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.ImpLineDoublet`
+    
+    """
+    
+    
     def __init__(self, model, xy=[(-1, 0), (1, 0)], \
                  layers=0, order=0, label=None):
         self.storeinput(inspect.currentframe())

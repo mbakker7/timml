@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Well" href="well.html" />
+    <link rel="next" title="Well with specified discharge" href="well.html" />
     <link rel="prev" title="Elements" href="../aems.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -46,6 +46,17 @@
             
   <div class="section" id="wells">
 <h1>Wells<a class="headerlink" href="#wells" title="Permalink to this headline">¶</a></h1>
+<p>There are two types of wells: wells for which the total discharge is specified and wells for which the head inside the well is specified.
+Both types of wells may have an entry resistance (skin effect) defined by the resistance <span class="math">\(c\)</span> (dimension: time). The discharge <span class="math">\(Q_i\)</span> in layer <span class="math">\(i\)</span> is a function of the head
+<span class="math">\(h_i\)</span> in layer <span class="math">\(i\)</span> just outside the well and the head <span class="math">\(h_w\)</span> inside the well:</p>
+<blockquote>
+<div><div class="math">
+\[Q_i = 2\pi r_w(h_i - h_w)/c\]</div>
+</div></blockquote>
+<p>1. <a class="reference internal" href="well.html#timml.well.Well" title="timml.well.Well"><code class="xref py py-class docutils literal"><span class="pre">Well</span></code></a> is a well for which the total discharge is specified. The total discharge is distributed across the layers in which the
+well is screened such that the head inside the well is the same in each screened layer.</p>
+<p>2. <a class="reference internal" href="headwell.html#timml.well.HeadWell" title="timml.well.HeadWell"><code class="xref py py-class docutils literal"><span class="pre">HeadWell</span></code></a> is a well for which the head inside the well is specified. The discharge in each layer is computed such that
+the head in all screened layers is equal to the specified head.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -90,6 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
 </ul>
 
 <div class="relations">
@@ -98,7 +110,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../aems.html">Elements</a><ul>
       <li>Previous: <a href="../aems.html" title="previous chapter">Elements</a></li>
-      <li>Next: <a href="well.html" title="next chapter">Well</a></li>
+      <li>Next: <a href="well.html" title="next chapter">Well with specified discharge</a></li>
   </ul></li>
   </ul></li>
 </ul>

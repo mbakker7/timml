@@ -227,7 +227,7 @@
 <div class="viewcode-block" id="LineSinkBase.plot"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.LineSinkBase.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="HeadLineSink"><a class="viewcode-back" href="../../linesinks/headlinesink.html#timml.linesink.HeadLineSink">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSink</span><span class="p">(</span><span class="n">LineSinkBase</span><span class="p">,</span> <span class="n">HeadEquation</span><span class="p">):</span>
+<div class="viewcode-block" id="HeadLineSinkZero"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkZero">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSinkZero</span><span class="p">(</span><span class="n">LineSinkBase</span><span class="p">,</span> <span class="n">HeadEquation</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hls</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> \
                  <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
@@ -238,11 +238,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hls</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
 
-<div class="viewcode-block" id="HeadLineSink.initialize"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSink.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HeadLineSinkZero.initialize"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkZero.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">LineSinkBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>  <span class="c1"># Needed in solving</span></div>
 
-<div class="viewcode-block" id="HeadLineSink.setparams"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSink.setparams">[docs]</a>    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+<div class="viewcode-block" id="HeadLineSinkZero.setparams"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkZero.setparams">[docs]</a>    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span></div></div>
 
 
@@ -379,40 +379,82 @@
     
     <span class="c1">#def strength()</span>
 
-<div class="viewcode-block" id="HeadLineSinkHoOld"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkHoOld">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSinkHoOld</span><span class="p">(</span><span class="n">LineSinkHoBase</span><span class="p">,</span> <span class="n">PotentialEquation</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
-                 <span class="n">hls</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HeadLineSinkHoOld&#39;</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
-        <span class="n">LineSinkHoBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">Qls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
-                                <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
-                                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> \
-                                <span class="n">addtomodel</span><span class="o">=</span><span class="n">addtomodel</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">=</span> <span class="n">hls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="n">res</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="n">wh</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
-
-<div class="viewcode-block" id="HeadLineSinkHoOld.initialize"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkHoOld.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">LineSinkHoBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">==</span> <span class="s1">&#39;2H&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wh</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">)</span>
-        <span class="n">resfac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resfac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">resfac</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">strengthinf</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resfac</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">)</span>  <span class="c1"># Needed in solving</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hc2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="HeadLineSinkHoOld.setparams"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkHoOld.setparams">[docs]</a>    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span></div></div>
+<span class="c1">#class HeadLineSinkHoOld(LineSinkHoBase, PotentialEquation):</span>
+<span class="c1">#    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \</span>
+<span class="c1">#                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, name=&#39;HeadLineSinkHoOld&#39;, addtomodel=True):</span>
+<span class="c1">#        self.storeinput(inspect.currentframe())</span>
+<span class="c1">#        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \</span>
+<span class="c1">#                                layers=layers, order=order,</span>
+<span class="c1">#                                name=&#39;name&#39;, label=label, \</span>
+<span class="c1">#                                addtomodel=addtomodel)</span>
+<span class="c1">#        self.hc = hls</span>
+<span class="c1">#        self.res = res</span>
+<span class="c1">#        self.wh = wh</span>
+<span class="c1">#        self.nunknowns = self.nparam</span>
+<span class="c1">#</span>
+<span class="c1">#    def initialize(self):</span>
+<span class="c1">#        LineSinkHoBase.initialize(self)</span>
+<span class="c1">#        if self.wh == &#39;H&#39;:</span>
+<span class="c1">#            self.wh = self.aq.Haq[self.layers]</span>
+<span class="c1">#        elif self.wh == &#39;2H&#39;:</span>
+<span class="c1">#            self.wh = 2.0 * self.aq.Haq[self.layers]</span>
+<span class="c1">#        elif np.isscalar(self.wh):</span>
+<span class="c1">#            self.wh = self.wh * np.ones(self.nlayers)</span>
+<span class="c1">#        resfac = self.aq.T[self.layers] * self.res / self.wh</span>
+<span class="c1">#        self.resfac = np.tile(resfac, self.ncp) * self.strengthinf</span>
+<span class="c1">#        self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns)</span>
+<span class="c1">#        self.pc = np.tile(self.hc * self.aq.T[self.layers], self.ncp)  # Needed in solving</span>
+<span class="c1">#        self.hc2 = self.hc * np.ones(self.nlayers * self.ncp)</span>
+<span class="c1">#</span>
+<span class="c1">#    def setparams(self, sol):</span>
+<span class="c1">#        self.parameters[:, 0] = sol</span>
         
-<div class="viewcode-block" id="HeadLineSinkHo"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkHo">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSinkHo</span><span class="p">(</span><span class="n">LineSinkHoBase</span><span class="p">,</span> <span class="n">HeadEquation</span><span class="p">):</span>
+<div class="viewcode-block" id="HeadLineSink"><a class="viewcode-back" href="../../linesinks/headlinesink.html#timml.linesink.HeadLineSink">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSink</span><span class="p">(</span><span class="n">LineSinkHoBase</span><span class="p">,</span> <span class="n">HeadEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HeadLineSink Class to create a head-specified line-sink</span>
+<span class="sd">    which may optionally have a width and resistance</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    x1 : scalar</span>
+<span class="sd">        x-coordinate of fist point of line-sink</span>
+<span class="sd">    y1 : scalar</span>
+<span class="sd">        y-coordinate of fist point of line-sink</span>
+<span class="sd">    x2 : scalar</span>
+<span class="sd">        x-coordinate of second point of line-sink</span>
+<span class="sd">    y2 : scalar</span>
+<span class="sd">        y-coordinate of second point of line-sink</span>
+<span class="sd">    hls : scalar, array or list</span>
+<span class="sd">        head along line-sink</span>
+<span class="sd">        if scalar: head is the same everywhere along line-sink</span>
+<span class="sd">        if list or array of length 2: head at beginning and end of line-sink</span>
+<span class="sd">        if list or array with length order + 1: heads at control points</span>
+<span class="sd">    res : scalar (default is 0)</span>
+<span class="sd">        resistance of line-sink</span>
+<span class="sd">    wh : scalar or str</span>
+<span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">    order : int (default is 0)</span>
+<span class="sd">        polynomial order or inflow along line-sink</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers </span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+<span class="sd">    </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    </span>
+<span class="sd">    :class:`.HeadLineSinkString`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
                  <span class="n">hls</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
-                 <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HeadLineSinkHo&#39;</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HeadLineSink&#39;</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">LineSinkHoBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">Qls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
                                 <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
@@ -423,7 +465,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="n">wh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
 
-<div class="viewcode-block" id="HeadLineSinkHo.initialize"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkHo.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HeadLineSink.initialize"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSink.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">LineSinkHoBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
@@ -442,23 +484,63 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">hls</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HeadLineSinkHo.setparams"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSinkHo.setparams">[docs]</a>    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+<div class="viewcode-block" id="HeadLineSink.setparams"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.HeadLineSink.setparams">[docs]</a>    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span></div></div>
         
-<div class="viewcode-block" id="LineSinkDitch"><a class="viewcode-back" href="../../linesinks/linesinkditch.html#timml.linesink.LineSinkDitch">[docs]</a><span class="k">class</span> <span class="nc">LineSinkDitch</span><span class="p">(</span><span class="n">HeadLineSinkHo</span><span class="p">):</span>
+<div class="viewcode-block" id="LineSinkDitch"><a class="viewcode-back" href="../../linesinks/linesinkditch.html#timml.linesink.LineSinkDitch">[docs]</a><span class="k">class</span> <span class="nc">LineSinkDitch</span><span class="p">(</span><span class="n">HeadLineSink</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to create a line-sink for which the total discharge</span>
+<span class="sd">    is specified, and for which the head along the line-sink</span>
+<span class="sd">    is uniform but unknown.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    x1 : scalar</span>
+<span class="sd">        x-coordinate of fist point of line-sink</span>
+<span class="sd">    y1 : scalar</span>
+<span class="sd">        y-coordinate of fist point of line-sink</span>
+<span class="sd">    x2 : scalar</span>
+<span class="sd">        x-coordinate of second point of line-sink</span>
+<span class="sd">    y2 : scalar</span>
+<span class="sd">        y-coordinate of second point of line-sink</span>
+<span class="sd">    Qls : scalar</span>
+<span class="sd">        total discharge of the line-sink</span>
+<span class="sd">    res : scalar (default is 0)</span>
+<span class="sd">        resistance of line-sink</span>
+<span class="sd">    wh : scalar or str</span>
+<span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">    order : int (default is 0)</span>
+<span class="sd">        polynomial order or inflow along line-sink</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers </span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+<span class="sd">    </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    </span>
+<span class="sd">    :class:`.LineSinkDitchString`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
                  <span class="n">Qls</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
-        <span class="n">HeadLineSinkHo</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> \
+        <span class="n">HeadLineSink</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> \
                  <span class="n">hls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="n">wh</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
                  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HeadLineSinkDitch&#39;</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="n">addtomodel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Qls</span> <span class="o">=</span> <span class="n">Qls</span>
 
 <div class="viewcode-block" id="LineSinkDitch.initialize"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.LineSinkDitch.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">HeadLineSinkHo</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="n">HeadLineSink</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="LineSinkDitch.equation"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.LineSinkDitch.equation">[docs]</a>    <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">HeadLineSinkHo</span><span class="o">.</span><span class="n">equation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">HeadLineSink</span><span class="o">.</span><span class="n">equation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span><span class="p">):</span>
             <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">mat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">rhs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">rhs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -691,7 +773,9 @@
         <span class="k">return</span> <span class="n">rv</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span></div>
    
 <div class="viewcode-block" id="LineSinkStringBase2.discharge"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.LineSinkStringBase2.discharge">[docs]</a>    <span class="k">def</span> <span class="nf">discharge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># returns the discharge in each layer</span>
+        <span class="sd">&quot;&quot;&quot;Discharge of the element in each layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">naq</span><span class="p">)</span>
         <span class="n">Qls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dischargeinf</span><span class="p">()</span>
         <span class="n">Qls</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -716,18 +800,17 @@
         
 <div class="viewcode-block" id="HeadLineSinkString"><a class="viewcode-back" href="../../linesinks/headlinesinkstring.html#timml.linesink.HeadLineSinkString">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSinkString</span><span class="p">(</span><span class="n">LineSinkStringBase2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    HeadLineSinkString Class to create a string of head-specified line-sinks</span>
+<span class="sd">    Class to create a string of head-specified line-sinks</span>
 <span class="sd">    which may optionally have a width and resistance</span>
+<span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
+<span class="sd">    </span>
 <span class="sd">    model : Model object</span>
 <span class="sd">        Model to which the element is added</span>
 <span class="sd">    xy : array or list</span>
-<span class="sd">        elevation tops and bottoms of the aquifers from the top down</span>
-<span class="sd">        leaky layers may have zero thickness</span>
-<span class="sd">        if top=&#39;conf&#39;: length is 2 * number of aquifers</span>
-<span class="sd">        if top=&#39;semi&#39;: length is 2 * number of aquifers + 1 as top</span>
-<span class="sd">        of leaky layer on top of systems needs to be specified</span>
+<span class="sd">        list or array of (x,y) pairs of coordinates of end-points of</span>
+<span class="sd">        line-sinks in string</span>
 <span class="sd">    hls : scalar, array or list</span>
 <span class="sd">        head along string</span>
 <span class="sd">        if scalar: head is the same everywhere along the string</span>
@@ -736,7 +819,8 @@
 <span class="sd">        may contain nans, except for first and last point</span>
 <span class="sd">    res : scalar (default is 0)</span>
 <span class="sd">        resistance of line-sink</span>
-<span class="sd">    wh : scalar or str </span>
+<span class="sd">    wh : scalar or str</span>
+<span class="sd">        distance over which water enters line-sink</span>
 <span class="sd">    order : int (default is 0)</span>
 <span class="sd">        order of all line-sinks in string</span>
 <span class="sd">    layers : scalar, list or array</span>
@@ -745,12 +829,13 @@
 <span class="sd">        if list or array: element is placed in all these layers </span>
 <span class="sd">    label: str or None</span>
 <span class="sd">    </span>
-<span class="sd">    -----</span>
-<span class="sd">    Examples</span>
+<span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)</span>
-<span class="sd">    &gt;&gt;&gt; HeadLineSinkString(ml, xy=[(-1, 0), (1, 0), (0, 1)], hls=5)</span>
+<span class="sd">    </span>
+<span class="sd">    :class:`.HeadLineSink`</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">hls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
                  <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HeadLineSinkString&#39;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
@@ -780,7 +865,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: hls entry not supported&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lslist</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># start with empty list</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nls</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lslist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HeadLineSinkHo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">lslist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HeadLineSink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> \
                                               <span class="n">x1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                                               <span class="n">x2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
                                               <span class="n">y2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> \
@@ -821,7 +906,42 @@
             <span class="n">jcol</span> <span class="o">+=</span> <span class="n">ls</span><span class="o">.</span><span class="n">nunknowns</span>
         <span class="k">return</span> <span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span></div></div>
     
-<div class="viewcode-block" id="LineSinkDitchString"><a class="viewcode-back" href="../../elements/timml.linesink.html#timml.linesink.LineSinkDitchString">[docs]</a><span class="k">class</span> <span class="nc">LineSinkDitchString</span><span class="p">(</span><span class="n">HeadLineSinkString</span><span class="p">):</span>
+<div class="viewcode-block" id="LineSinkDitchString"><a class="viewcode-back" href="../../linesinks/linesinkditchstring.html#timml.linesink.LineSinkDitchString">[docs]</a><span class="k">class</span> <span class="nc">LineSinkDitchString</span><span class="p">(</span><span class="n">HeadLineSinkString</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to create a string of LineSinkDitch elements for which the</span>
+<span class="sd">    total discharge of the string is specified, and for which the head</span>
+<span class="sd">    along the entire string is uniform but unknown.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    xy : array or list</span>
+<span class="sd">        list or array of (x,y) pairs of coordinates of end-points of</span>
+<span class="sd">        line-sinks in string</span>
+<span class="sd">    Qls : scalar</span>
+<span class="sd">        total discharge of the string</span>
+<span class="sd">    res : scalar (default is 0)</span>
+<span class="sd">        resistance of line-sinks in string</span>
+<span class="sd">    wh : scalar or str</span>
+<span class="sd">        distance over which water enters the string</span>
+<span class="sd">    order : int (default is 0)</span>
+<span class="sd">        polynomial order or inflow along each line-sink in string</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers </span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+<span class="sd">    </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    </span>
+<span class="sd">    :class:`.LineSinkDitch`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> \
                  <span class="n">Qls</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
