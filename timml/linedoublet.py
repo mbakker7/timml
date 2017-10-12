@@ -110,7 +110,7 @@ class LineDoubletHoBase(Element):
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
     """
-    Class to create a segment of an impermeable wall, which is
+    Create a segment of an impermeable wall, which is
     simulated with a line-doublet
     
     Parameters
@@ -128,6 +128,7 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
         y-coordinate of second point of line-doublet
     order : int (default is 0)
         polynomial order of potential jump along line-doublet
+        (head jump if transmissivity is equal on each side of wall)
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
@@ -158,6 +159,44 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
         self.parameters[:, 0] = sol
         
 class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
+    """
+    Create a segment of a leaky wall, which is
+    simulated with a line-doublet. The specific discharge through
+    the wall is equal to the head difference across the wall
+    divided by the resistance of the wall. 
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    x1 : scalar
+        x-coordinate of fist point of line-doublet
+    y1 : scalar
+        y-coordinate of fist point of line-doublet
+    x2 : scalar
+        x-coordinate of second point of line-doublet
+    y2 : scalar
+        y-coordinate of second point of line-doublet
+    res : scalar
+        resistance of leaky wall
+    order : int (default is 0)
+        polynomial order of potential jump along line-doublet
+        (head jump if transmissivity is equal on each side of wall)
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.LeakyLineDoubletString`
+    
+    """
+    
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, res=0,\
                  order=0, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
@@ -247,7 +286,7 @@ class LineDoubletStringBase(Element):
 
 class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
     """
-    Class to create a string of impermeable wall segements consisting
+    Create a string of impermeable wall segements consisting
     of line-doublets
     
     Parameters
@@ -264,6 +303,7 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
         if list or array: element is placed in all these layers
     order : int (default is 0)
         polynomial order of potential jump along line-doublet
+        (head jump if transmissivity is equal on each side of wall)
     label: str or None
         label of element
     
@@ -292,6 +332,37 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
         self.parameters[:, 0] = sol
         
 class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
+    """
+    Class to create a string of leaky wall segements consisting
+    of line-doublets
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of end-points of
+        the segements in the string
+    res : scalar
+        resistance of leaky wall
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers
+    order : int (default is 0)
+        polynomial order of potential jump along line-doublet
+        (head jump if transmissivity is equal on each side of wall)
+    label: str or None
+        label of element
+    
+    See Also
+    --------
+    
+    :class:`.ImpLineDoublet`
+    
+    """
+    
     def __init__(self, model, xy=[(-1, 0), (1, 0)], res=np.inf,\
                  layers=0, order=0, label=None):
         self.storeinput(inspect.currentframe())

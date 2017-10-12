@@ -6,4 +6,6 @@ Line-doublets
     :hidden:
     
     ImpLineDoublet <implinedoublet>
+    ImpLineDoubletString <implinedoubletstring>
     LeakyLineDoublet <leakylinedoublet>
+    LeakyLineDoubletString <leakylinedoubletstring>
