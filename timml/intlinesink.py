@@ -11,7 +11,7 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
                  order=0, ndeg=3, layers=0, label=None, addtomodel=True,
                  aq=None, aqin=None, aqout=None):
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-                                layers=list(range(model.aq.naq)), order=order, \
+                                layers=np.arange(model.aq.naq), order=order, \
                                 name='IntHeadDiffLineSink', label=label, \
                                 addtomodel=addtomodel, aq=aq)
         self.inhomelement = True

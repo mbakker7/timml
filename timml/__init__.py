@@ -23,6 +23,7 @@ from .circareasink import CircAreaSink
 from .inhomogeneity import PolygonInhomMaq
 from .uflow import Uflow
 from .trace import timtraceline, timtracelines
+from .linesink1d import LineSink1DBase, HeadLineSink1D
 
 
 
