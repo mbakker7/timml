@@ -51,9 +51,9 @@ class LineSink1DBase(Element):
         if aq == self.aq:
             pot = np.zeros(aq.naq)
             if x - self.xls < 0.:
-                pot[:] = aq.lab * np.exp((x - self.xls) / aq.lab)
+                pot[:] = 0.5 * aq.lab * np.exp((x - self.xls) / aq.lab)
             elif x - self.xls >= 0.:
-                pot[:] = aq.lab * np.exp(-(x - self.xls) / aq.lab)
+                pot[:] = 0.5 * aq.lab * np.exp(-(x - self.xls) / aq.lab)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
     
@@ -64,9 +64,9 @@ class LineSink1DBase(Element):
         if aq == self.aq:
             qx = np.zeros(aq.naq)
             if x - self.xls < 0.:
-                qx[:] = np.exp((x - self.xls) / aq.lab)
+                qx[:] = 0.5 * np.exp((x - self.xls) / aq.lab)
             elif x - self.xls >= 0.:
-                qx[:] = -np.exp(-(x - self.xls) / aq.lab)
+                qx[:] = -0.5 * np.exp(-(x - self.xls) / aq.lab)
             rv[0] = self.aq.coef[self.layers] * qx
         return rv
     
