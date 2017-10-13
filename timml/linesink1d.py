@@ -1,7 +1,7 @@
 import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
-from .equation import HeadEquation
+from .equation import HeadEquation, MscreenWellEquation
 
 class LineSink1DBase(Element):
 
@@ -51,9 +51,9 @@ class LineSink1DBase(Element):
         if aq == self.aq:
             pot = np.zeros(aq.naq)
             if x - self.xls < 0.:
-                pot[:] = 0.5 * aq.lab * np.exp((x - self.xls) / aq.lab)
+                pot[:] = -0.5 * aq.lab * np.exp((x - self.xls) / aq.lab)
             elif x - self.xls >= 0.:
-                pot[:] = 0.5 * aq.lab * np.exp(-(x - self.xls) / aq.lab)
+                pot[:] = -0.5 * aq.lab * np.exp(-(x - self.xls) / aq.lab)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
     
@@ -69,6 +69,30 @@ class LineSink1DBase(Element):
                 qx[:] = -0.5 * np.exp(-(x - self.xls) / aq.lab)
             rv[0] = self.aq.coef[self.layers] * qx
         return rv
+    
+class LineSink1D(LineSink1DBase, MscreenWellEquation):
+    """
+    Create 1D line-sink with given total flux per unit length
+    
+    """
+    
+    def __init__(self, model, xls=0, sigls=1, \
+                 layers=0, label=None):
+        self.storeinput(inspect.currentframe())
+        LineSink1DBase.__init__(self, model, xls, sigls=0, layers=layers, \
+                               name="Linesink1D", label=label, \
+                               addtomodel=True, res=0, wh=1, aq=None)
+        self.Qc = float(sigls)
+        if self.nlayers == 1:
+            self.nunknowns = 0
+        else:
+            self.nunknowns = self.nparam
+
+    def initialize(self):
+        LineSink1DBase.initialize(self)
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
     
 class HeadLineSink1D(LineSink1DBase, HeadEquation):
     
