@@ -1,7 +1,7 @@
 import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
-from .equation import HeadEquation, MscreenWellEquation
+from .equation import HeadEquation, MscreenWellEquation, HeadDiffEquation2, DisvecDiffEquation2
 
 class LineSink1DBase(Element):
 
@@ -50,10 +50,18 @@ class LineSink1DBase(Element):
         rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             pot = np.zeros(aq.naq)
-            if x - self.xls < 0.:
-                pot[:] = -0.5 * aq.lab * np.exp((x - self.xls) / aq.lab)
-            elif x - self.xls >= 0.:
-                pot[:] = -0.5 * aq.lab * np.exp(-(x - self.xls) / aq.lab)
+            if aq.ilap:
+                if x - self.xls < 0.:
+                    pot[0] = -0.5 * (x - self.xls - 1)  # so that pot = 0.5 at x=xls
+                    pot[1:] = -0.5 * aq.lab[1:] * np.exp((x - self.xls) / aq.lab[1:])
+                elif x - self.xls >= 0.:
+                    pot[0] = 0.5 * (x - self.xls + 1)
+                    pot[1:] = -0.5 * aq.lab[1:] * np.exp(-(x - self.xls) / aq.lab[1:])
+            else:
+                if x - self.xls < 0.:
+                    pot[:] = -0.5 * aq.lab * np.exp((x - self.xls) / aq.lab)
+                elif x - self.xls >= 0.:
+                    pot[:] = -0.5 * aq.lab * np.exp(-(x - self.xls) / aq.lab)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
     
@@ -63,10 +71,18 @@ class LineSink1DBase(Element):
         rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             qx = np.zeros(aq.naq)
-            if x - self.xls < 0.:
-                qx[:] = 0.5 * np.exp((x - self.xls) / aq.lab)
-            elif x - self.xls >= 0.:
-                qx[:] = -0.5 * np.exp(-(x - self.xls) / aq.lab)
+            if aq.ilap:
+                if x - self.xls < 0.:
+                    qx[0] = 0.5
+                    qx[1:] = 0.5 * np.exp((x - self.xls) / aq.lab[1:])
+                elif x - self.xls >= 0.:
+                    qx[0] = -0.5
+                    qx[1:] = -0.5 * np.exp(-(x - self.xls) / aq.lab[1:])
+            else:
+                if x - self.xls < 0.:
+                    qx[:] = 0.5 * np.exp((x - self.xls) / aq.lab)
+                elif x - self.xls >= 0.:
+                    qx[:] = -0.5 * np.exp(-(x - self.xls) / aq.lab)
             rv[0] = self.aq.coef[self.layers] * qx
         return rv
     
@@ -102,7 +118,7 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
         LineSink1DBase.__init__(self, model, xls, sigls=0, layers=layers, \
                                name="HeadLinesink1D", label=label, \
                                addtomodel=True, res=res, wh=wh, aq=None)
-        self.hc = np.atleast_1d(float(hls))
+        self.hc = np.atleast_1d(hls) * np.ones(self.nlayers)
         self.nunknowns = self.nparam
 
     def initialize(self):
@@ -112,13 +128,13 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
     
-class HeadDiffLineSink1D(LineSink1DBase):
+class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation2):
     """HeadDiffLineSink1D for left side (xcout)
     """
     
     def __init__(self, model, xls, label=None, 
                  aq=None, aqin=None, aqout=None):
-        LineSink1DBase.__init__(self, model, xls, sigls=1,
+        LineSink1DBase.__init__(self, model, xls, sigls=0,
                                 layers=np.arange(model.aq.naq), label=label, 
                                 name='HeadDiffLineSink1D', addtomodel=True, aq=aq)
         self.inhomelement = True
@@ -126,9 +142,38 @@ class HeadDiffLineSink1D(LineSink1DBase):
         self.aqin = aqin
         self.aqout = aqout
     
+    def initialize(self):
         self.xcout = self.xc - tiny
         self.xcin = self.xc + tiny
         if self.aqout is None:
             self.aqout = self.model.aq.find_aquifer_data(self.xccout[0], self.ycout[0])
         if self.aqin is None:
             self.aqin = self.model.aq.find_aquifer_data(self.xcin[0], self.ycin[0])
+            
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        
+class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation2):
+    """HeadDiffLineSink1D for left side (xcout)
+    """
+    
+    def __init__(self, model, xls, label=None, 
+                 aq=None, aqin=None, aqout=None):
+        LineSink1DBase.__init__(self, model, xls, sigls=0,
+                                layers=np.arange(model.aq.naq), label=label, 
+                                name='HeadDiffLineSink1D', addtomodel=True, aq=aq)
+        self.inhomelement = True
+        self.nunknowns = self.nparam
+        self.aqin = aqin
+        self.aqout = aqout
+    
+    def initialize(self):
+        self.xcout = self.xc - tiny
+        self.xcin = self.xc + tiny
+        if self.aqout is None:
+            self.aqout = self.model.aq.find_aquifer_data(self.xccout[0], self.ycout[0])
+        if self.aqin is None:
+            self.aqin = self.model.aq.find_aquifer_data(self.xcin[0], self.ycin[0])
+            
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol

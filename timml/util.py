@@ -106,9 +106,6 @@ class PlotTim:
                 zg[2 * i] = self.aq.zaqtop[i]
                 zg[2 * i + 1] = self.aq.zaqbot[i]
             h = np.repeat(h, 2, 0)
-        print('shape xg', xg.shape)
-        print('shape zg', zg.shape)
-        print('shape h', h.shape)
         if newfig:
             plt.figure(figsize=figsize)
         cs = plt.contour(xg, zg, h, levels, colors=color)
