@@ -25,23 +25,24 @@ class StripInhom(AquiferData):
     def create_elements(self):
         # HeadDiff on right side, FluxDiff on left side
         if self.x1 == -np.inf:
-            xin = self.x2 * (1 - self.tiny) - self.tiny
-            xoutright = self.x2 * (1 + self.tiny) + self.tiny
+            xin = self.x2 - self.tiny * abs(self.x2) - self.tiny
+            xoutright = self.x2 + self.tiny * abs(self.x2) + self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutright = self.model.aq.find_aquifer_data(xoutright, 0)
             HeadDiffLineSink1D(self.model, self.x2, label=None, 
                  aq=aqin, aqin=aqin, aqout=aqoutright)
+            print('aqin:', aqin)
         elif self.x2 == np.inf:
-            xin = self.x1 * (1 + self.tiny) + self.tiny
-            xoutleft = self.x1 * (1 - self.tiny) - self.tiny
+            xin = self.x1 + self.tiny * abs(self.x1) + self.tiny
+            xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutleft = self.model.aq.find_aquifer_data(xoutleft, 0)
             FluxDiffLineSink1D(self.model, self.x1, label=None, 
                  aq=aqin, aqin=aqin, aqout=aqoutleft)
         else:
             xin = 0.5 * (self.x1 + self.x2)
-            xoutleft = self.x1 * (1 - self.tiny) - self.tiny
-            xoutright = self.x2 * (1 + self.tiny) + self.tiny
+            xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
+            xoutright = self.x2 + self.tiny * abs(self.x2) + self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqleft = self.model.aq.find_aquifer_data(xoutleft, 0)
             aqright = self.model.aq.find_aquifer_data(xoutright, 0)
