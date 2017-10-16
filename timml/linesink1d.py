@@ -145,12 +145,12 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
     
     def initialize(self):
         LineSink1DBase.initialize(self)
-        self.xcout = self.xc + self.tiny
-        self.xcin = self.xc - self.tiny
+        self.xcout = self.xc + self.tiny * abs(self.xc) + self.tiny
+        self.xcin = self.xc - self.tiny * abs(self.xc) - self.tiny
         self.ycout = np.zeros(1)
         self.ycin = np.zeros(1)
         if self.aqout is None:
-            self.aqout = self.model.aq.find_aquifer_data(self.xccout[0], 0)
+            self.aqout = self.model.aq.find_aquifer_data(self.xcout[0], 0)
         if self.aqin is None:
             self.aqin = self.model.aq.find_aquifer_data(self.xcin[0], 0)
             
@@ -173,12 +173,12 @@ class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
     
     def initialize(self):
         LineSink1DBase.initialize(self)
-        self.xcout = self.xc - self.tiny
-        self.xcin = self.xc + self.tiny
+        self.xcout = self.xc - self.tiny * abs(self.xc) - self.tiny
+        self.xcin = self.xc + self.tiny * abs(self.xc) + self.tiny
         self.ycout = np.zeros(1)
         self.ycin = np.zeros(1)
         if self.aqout is None:
-            self.aqout = self.model.aq.find_aquifer_data(self.xccout[0], 0)
+            self.aqout = self.model.aq.find_aquifer_data(self.xcout[0], 0)
         if self.aqin is None:
             self.aqin = self.model.aq.find_aquifer_data(self.xcin[0], 0)
             

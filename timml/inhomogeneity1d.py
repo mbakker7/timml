@@ -31,7 +31,6 @@ class StripInhom(AquiferData):
             aqoutright = self.model.aq.find_aquifer_data(xoutright, 0)
             HeadDiffLineSink1D(self.model, self.x2, label=None, 
                  aq=aqin, aqin=aqin, aqout=aqoutright)
-            print('aqin:', aqin)
         elif self.x2 == np.inf:
             xin = self.x1 + self.tiny * abs(self.x1) + self.tiny
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
