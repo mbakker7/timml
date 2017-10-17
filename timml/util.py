@@ -162,3 +162,33 @@ class PlotTim:
                 lc = LineCollection(segments, colors=color)
                 ax2.add_collection(lc)
                 ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
+                
+    def vcontoursf1D(self, x1, x2, nx, levels, labels=False, decimals=0, color=None,
+                 vinterp=True, newfig=True, figsize=None, layout=True):
+        """Vertical contour for 1D model
+        """
+        naq = self.aq.naq
+        xflow = np.linspace(x1, x2, nx)
+        Qx = np.empty((naq, nx))
+        for i in range(nx):
+            Qx[:, i], Qydump = self.disvec(xflow[i], 0)
+        zflow = np.empty(2 * naq)
+        for i in range(self.aq.naq):
+            zflow[2 * i] = self.aq.zaqtop[i]
+            zflow[2 * i + 1] = self.aq.zaqbot[i]
+        Qx = Qx[::-1] # set upside down
+        Qxgrid = np.empty((2 * naq, nx))
+        Qxgrid[0] = 0
+        for i in range(naq - 1):
+            Qxgrid[2 * i + 1] = Qxgrid[2 * i] - Qx[i]
+            Qxgrid[2 * i + 2] = Qxgrid[2 * i + 1]
+        Qxgrid[-1] = Qxgrid[-2] - Qx[-1]
+        Qxgrid = Qxgrid[::-1] # index 0 at top
+        if newfig:
+            plt.figure(figsize=figsize)
+        cs = plt.contour(xflow, zflow, Qxgrid, levels, colors=color)
+        if labels:
+            fmt = '%1.' + str(decimals) + 'f'
+            plt.clabel(cs, fmt=fmt)
+        #if layout:
+        #    self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)

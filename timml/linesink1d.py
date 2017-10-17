@@ -5,7 +5,7 @@ from .equation import HeadEquation, MscreenWellEquation, HeadDiffEquation, Disve
 
 class LineSink1DBase(Element):
 
-    def __init__(self, model, xls, sigls=1, layers=0, name="Linesink1DBase", label=None, 
+    def __init__(self, model, xls, sigls=1, layers=0, name="LineSink1DBase", label=None, 
                  addtomodel=True, res=0, wh=1, aq=None):
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers,
                          name=name, label=label)
