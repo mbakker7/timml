@@ -201,6 +201,24 @@ class Model(PlotTim):
             h[:, i] = self.head(xg[i], yg[i], layers)
         return h
     
+    def disvecalongline(self, x, y, layers=None):
+        '''Returns Qx[Nlayers,len(x)], Qy[Nlayers,len(x)]
+        Assumes same number of layers for each x and y
+        layers may be None or list of layers for which head is computed'''
+        xg, yg = np.atleast_1d(x), np.atleast_1d(y)
+        if layers is None:
+            Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
+        else:
+            Nlayers = len(np.atleast_1d(layers))
+        nx = len(xg)
+        if len(yg) == 1:
+            yg = yg * np.ones(nx)
+        Qx = np.zeros((Nlayers, nx))
+        Qy = np.zeros((Nlayers, nx))
+        for i in range(nx):
+            Qx[:, i], Qy[:, 1] = self.disvec(xg[i], yg[i], layers)
+        return Qx, Qy
+    
     def velocity(self, x, y, z):
         return self.velocomp(x, y, z)
     
