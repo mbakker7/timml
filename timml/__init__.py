@@ -26,6 +26,7 @@ from .uflow import Uflow
 from .trace import timtraceline, timtracelines
 from .linesink1d import LineSink1D, HeadLineSink1D
 from .linedoublet1d import ImpLineDoublet1D
+from .stripareasink import StripAreaSink
 
 
 
