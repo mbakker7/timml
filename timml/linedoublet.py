@@ -147,7 +147,7 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
                  order=0, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
         LineDoubletHoBase.__init__(self, model, x1, y1, x2, y2, delp=0, \
-                                layers=layers, order=order,
+                                res = np.inf, layers=layers, order=order,
                                 name='ImpLineDoublet', label=label, \
                                 addtomodel=addtomodel)
         self.nunknowns = self.nparam
@@ -319,7 +319,7 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
                  layers=0, order=0, label=None):
         self.storeinput(inspect.currentframe())
         LineDoubletStringBase.__init__(self, model, xy, closed=False,
-                                    layers=layers, order=order, \
+                                    res=np.inf, layers=layers, order=order, \
                                     name='ImpLineDoubletString', label=label,
                                     aq=None)
         self.model.add_element(self)

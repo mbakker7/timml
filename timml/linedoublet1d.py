@@ -44,11 +44,13 @@ class LineDoublet1D(Element):
             pot = np.zeros(aq.naq)
             if aq.ilap:
                 if x - self.xld < 0.:
-                    pot[0] = -0.5 * (x - self.xld - 1)  # so that pot = 0.5 at x=xld
-                    pot[1:] = -0.5 * aq.lab[1:] * np.exp((x - self.xld) / aq.lab[1:])
+                    #pot[0] = -0.5 * (x - self.xld - 1)  # so that pot = 0.5 at x=xld
+                    pot[0] = -0.5   # so that pot = 0.5 at x=xld
+                    pot[1:] = -0.5 * np.exp((x - self.xld) / aq.lab[1:])
                 elif x - self.xld >= 0.:
-                    pot[0] = 0.5 * (x - self.xld + 1)
-                    pot[1:] = -0.5 * aq.lab[1:] * np.exp(-(x - self.xld) / aq.lab[1:])
+                    #pot[0] = 0.5 * (x - self.xld + 1)
+                    pot[0] = 0.5
+                    pot[1:] = 0.5 * np.exp(-(x - self.xld) / aq.lab[1:])
             else:
                 if x - self.xld < 0.:
                     pot[:] = -0.5 * np.exp((x - self.xld) / aq.lab)
@@ -65,11 +67,11 @@ class LineDoublet1D(Element):
             qx = np.zeros(aq.naq)
             if aq.ilap:
                 if x - self.xld < 0.:
-                    qx[0] = 0.5
-                    qx[1:] = 0.5 * np.exp((x - self.xld) / aq.lab[1:])
+                    qx[0] = 0.0
+                    qx[1:] = 0.5 / aq.lab[1:] * np.exp((x - self.xld) / aq.lab[1:])
                 elif x - self.xld >= 0.:
-                    qx[0] = -0.5
-                    qx[1:] = -0.5 * np.exp(-(x - self.xld) / aq.lab[1:])
+                    qx[0] = 0.0
+                    qx[1:] = 0.5 / aq.lab[1:] * np.exp(-(x - self.xld) / aq.lab[1:])
             else:
                 if x - self.xld < 0.:
                     qx[:] = 0.5 / aq.lab * np.exp((x - self.xld) / aq.lab)
@@ -88,7 +90,7 @@ class ImpLineDoublet1D(LineDoublet1D, DisvecEquation):
         self.storeinput(inspect.currentframe())
         LineDoublet1D.__init__(self, model, xld, delp=0, layers=layers, \
                                name="ImpLineDoublet1D", label=label, \
-                               addtomodel=True, res=0, aq=None)
+                               addtomodel=True, res=np.inf, aq=None)
         self.nunknowns = self.nparam
 
     def initialize(self):
