@@ -90,10 +90,11 @@ class PlotTim:
         #plt.show()
         
     def vcontour(self, x1, x2, y1, y2, n, levels, labels=False, decimals=0, color=None,
-                 vinterp=True, newfig=True, figsize=None, layout=True):
+                 vinterp=True, nudge=1e-6, newfig=True, figsize=None, layout=True):
         """Vertical contour
         """
-        h = self.headalongline(np.linspace(x1, x2, n), np.linspace(y1, y2, n))
+        h = self.headalongline(np.linspace(x1 + nudge, x2 - nudge, n),
+                               np.linspace(y1 + nudge, y2 - nudge, n))
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         xg = np.linspace(0, L, n)
         if vinterp:
@@ -164,11 +165,11 @@ class PlotTim:
                 ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
                 
     def vcontoursf1D(self, x1, x2, nx, levels, labels=False, decimals=0, color=None,
-                 vinterp=True, newfig=True, figsize=None, layout=True):
+                 nudge=1e-6, newfig=True, figsize=None, layout=True):
         """Vertical contour for 1D model
         """
         naq = self.aq.naq
-        xflow = np.linspace(x1, x2, nx)
+        xflow = np.linspace(x1 + nudge, x2 - nudge, nx)
         Qx = np.empty((naq, nx))
         for i in range(nx):
             Qx[:, i], Qydump = self.disvec(xflow[i], 0)
