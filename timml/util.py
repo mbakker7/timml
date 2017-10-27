@@ -7,7 +7,15 @@ plt.rcParams['contour.negative_linestyle'] = 'solid'
 class PlotTim:
     def plot(self, win=None, newfig=True, figsize=None, orientation='hor', topfigfrac=0.8):
         """Plot layout
+        
+        Parameters
+        ----------
+    
+        win : list or tuple
+            [x1, x2, y1, y2]
+            
         """
+        
         if newfig:
             plt.figure(figsize=figsize)
             ax1 = None
@@ -51,10 +59,26 @@ class PlotTim:
                 if self.aq.ltype[i] == 'a' and self.aq.ltype[i - 1] == 'a':
                     plt.axhspan(ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8])
             
-    def contour(self, x1, x2, nx, y1, y2, ny, layers=0, levels=20, layout=True, labels=False,
+    def contour(self, win, ngr=20, layers=0, levels=20, layout=True, labels=False,
                 decimals=0, color=None, newfig=True, figsize=None, legend=True):
-        """Contour solution
+        """Contour plot
+        
+        Parameters
+        ----------
+    
+        win : list or tuple
+            [x1, x2, y1, y2]
+        ngr : scalar, tuple or list
+            if scalar: number of grid points in x and y direction
+            if tuple or list: nx, ny, number of grid points in x and y direction 
+            
         """
+        
+        x1, x2, y1, y2 = win
+        if np.isscalar(ngr):
+            nx = ny = ngr
+        else:
+            nx, ny = ngr
         layers = np.atleast_1d(layers)
         xg = np.linspace(x1, x2, nx)
         yg = np.linspace(y1, y2, ny)
@@ -89,10 +113,11 @@ class PlotTim:
             self.plot(win=[x1, x2, y1, y2], newfig=False)
         #plt.show()
         
-    def vcontour(self, x1, x2, y1, y2, n, levels, labels=False, decimals=0, color=None,
+    def vcontour(self, win, n, levels, labels=False, decimals=0, color=None,
                  vinterp=True, nudge=1e-6, newfig=True, figsize=None, layout=True):
         """Vertical contour
         """
+        x1, x2, y1, y2 = win
         h = self.headalongline(np.linspace(x1 + nudge, x2 - nudge, n),
                                np.linspace(y1 + nudge, y2 - nudge, n))
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
