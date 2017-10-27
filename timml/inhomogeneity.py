@@ -82,6 +82,49 @@ class PolygonInhom(AquiferData):
 
 
 class PolygonInhomMaq(PolygonInhom):
+    """Create a polygonal inhomogeneity
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of corners of the
+        inhomogeneity
+        polygonal boundary is automatically closed (so first point
+        is not repeated)
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if top='conf': length is 2 * number of aquifers
+        if top='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if top='conf': length is number of aquifers - 1
+        if top='semi': length is number of aquifers
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if top='conf': length is 2 * number of aquifers - 1
+        if top='semi': length is 2 * number of aquifers
+    top : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if top='semi'
+    order : int
+        polynomial order of flux along each segment
+    ndeg : int
+        number of points used between two segments to numerically
+        integrate normal discharge
+
+    """
+    
     tiny = 1e-8
 
     def __init__(self, model, xy, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf',

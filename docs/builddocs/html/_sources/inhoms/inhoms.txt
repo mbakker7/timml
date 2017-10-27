@@ -1,0 +1,4 @@
+Inhomogeneities
+---------------
+
+.. autoclass:: timml.inhomogeneity.PolygonInhomMaq

@@ -95,6 +95,14 @@ if ltype[0]=’l’: length is number of aquifers</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="timml.model.Model.disvecalongline">
+<code class="descname">disvecalongline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.disvecalongline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.disvecalongline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Qx[Nlayers,len(x)], Qy[Nlayers,len(x)]
+Assumes same number of layers for each x and y
+layers may be None or list of layers for which head is computed</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="timml.model.Model.head">
 <code class="descname">head</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em>, <em>aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.head" title="Permalink to this definition">¶</a></dt>
 <dd><p>Head at <cite>x</cite>, <cite>y</cite></p>

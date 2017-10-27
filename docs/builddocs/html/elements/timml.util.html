@@ -50,14 +50,35 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="timml.util.PlotTim.contour">
-<code class="descname">contour</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>nx</em>, <em>y1</em>, <em>y2</em>, <em>ny</em>, <em>layers=0</em>, <em>levels=20</em>, <em>layout=True</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/util.html#PlotTim.contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.util.PlotTim.contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contour solution</p>
+<code class="descname">contour</code><span class="sig-paren">(</span><em>win</em>, <em>ngr=20</em>, <em>layers=0</em>, <em>levels=20</em>, <em>layout=True</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/util.html#PlotTim.contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.util.PlotTim.contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contour plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</li>
+<li><strong>ngr</strong> (<em>scalar</em><em>, </em><em>tuple</em><em> or </em><em>list</em>) – if scalar: number of grid points in x and y direction
+if tuple or list: nx, ny, number of grid points in x and y direction</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="timml.util.PlotTim.plot">
 <code class="descname">plot</code><span class="sig-paren">(</span><em>win=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>orientation=’hor’</em>, <em>topfigfrac=0.8</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/util.html#PlotTim.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.util.PlotTim.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot layout</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -68,8 +89,14 @@
 
 <dl class="method">
 <dt id="timml.util.PlotTim.vcontour">
-<code class="descname">vcontour</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>y1</em>, <em>y2</em>, <em>n</em>, <em>levels</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>vinterp=True</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>layout=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/util.html#PlotTim.vcontour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.util.PlotTim.vcontour" title="Permalink to this definition">¶</a></dt>
+<code class="descname">vcontour</code><span class="sig-paren">(</span><em>win</em>, <em>n</em>, <em>levels</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>vinterp=True</em>, <em>nudge=1e-06</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>layout=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/util.html#PlotTim.vcontour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.util.PlotTim.vcontour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vertical contour</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.util.PlotTim.vcontoursf1D">
+<code class="descname">vcontoursf1D</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>nx</em>, <em>levels</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>nudge=1e-06</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>layout=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/util.html#PlotTim.vcontoursf1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.util.PlotTim.vcontoursf1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertical contour for 1D model</p>
 </dd></dl>
 
 </dd></dl>
