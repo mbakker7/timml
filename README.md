@@ -10,6 +10,38 @@ The design of TimML is object-oriented and has been kept simple and flexible.
 New analytic elements may be added to the code without making any changes in the existing part of the code.
 TimML is coded in Python; use is made of FORTRAN extensions to improve performance.
 
+## Installation
+
+**Python versions:**
+
+TimML requires **Python** 3.6 and can be installed from PyPI.
+The PyPI installation includes compiled versions of the FORTRAN extension
+for both Windows and MaxOS.
+
+
+**Dependencies:**
+
+TimML requires **NumPy** 1.12 (or higher) and **matplotlib** 2.0 (or higher). 
+
+**For base Python distributions:**
+
+To install TimML, open a command prompt and type:
+
+    pip install timml
+
+To update TimML type:
+
+    pip install timml --upgrade
+
+To uninstall TimML type:
+
+    pip uninstall timml
+    
+## Documentation
+
+* The manual is available from the docs directory or can be viewed [here](http://mbakker7.github.io/timml/docs/builddocs/html/index.html).
+* Example Notebooks are available from the notebooks directory on github, of from [here](https://github.com/mbakker7/timml/tree/master/notebooks).
+
 ## TimML Version 5
 
 TimML version 5 is a total rewrite and is not backwards compatible with previous TimML versions.
@@ -18,7 +50,7 @@ TimML version 5 has many new features and elements, the code base is Python 3, a
 TimML version 4 remains available through the timml4 branch.
 
 ## Release
-The first release of TimML Version 5 is planned for the summer of 2017.
+TimML 5.0.0 - alpha release
 
 ## Citation
 
