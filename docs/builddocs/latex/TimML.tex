@@ -38,7 +38,7 @@
 
 
 \title{TimML Documentation}
-\date{Oct 06, 2017}
+\date{Oct 30, 2017}
 \release{5.0.0}
 \author{M. Bakker}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -103,11 +103,54 @@ String of head-specified line-sinks
 \end{itemize}
 
 
-\section{Models}
-\label{\detokenize{models/modelindex::doc}}\label{\detokenize{models/modelindex:models}}
+\section{Starting a Model}
+\label{\detokenize{models/modelindex:starting-a-model}}\label{\detokenize{models/modelindex::doc}}
+There are three ways to start a model:
 
-\subsection{Multi-Aquifer Model}
-\label{\detokenize{models/modelmaq::doc}}\label{\detokenize{models/modelmaq:multi-aquifer-model}}\index{ModelMaq (class in timml.model)}
+1. {\hyperref[\detokenize{models/modelmaq:timml.model.ModelMaq}]{\sphinxcrossref{\sphinxcode{ModelMaq}}}}, which is model consisting of a regular sequence of aquifer - leaky layer - aquifer - leaky layer, aquifer, etc.
+The top of the system can be either an aquifer or a leaky layer. The head is computed in all aquifer layers only.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{ml} \PYG{o}{=} \PYG{n}{ModelMaq}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{30}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{]}\PYG{p}{,} \PYG{n}{z}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{25}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{35}\PYG{p}{]}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{2000}\PYG{p}{,} \PYG{l+m+mi}{5000}\PYG{p}{]}\PYG{p}{)}
+\end{sphinxVerbatim}
+\begin{figure}[htbp]
+\centering
+\capstart
+
+\noindent\sphinxincludegraphics{{modelmaq}.png}
+\caption{A \sphinxtitleref{ModelMaq} example with three aquifers and two leaky layers}\label{\detokenize{models/modelindex:id1}}\end{figure}
+
+2. {\hyperref[\detokenize{models/model3d:timml.model.Model3D}]{\sphinxcrossref{\sphinxcode{Model3D}}}}, which is a model consisting of a stack of aquifer layers. The resistance between the aquifer layers is computed
+as the resistance from the middle of one layer to the middle of the next layer. Vertical anisotropy can be specified. The system
+may be bounded on top by a leaky layer.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{Model3D}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mf}{0.0025}\PYG{p}{,} \PYG{l+m+mi}{30}\PYG{p}{,} \PYG{l+m+mf}{0.001}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{]}\PYG{p}{,} \PYG{n}{z}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{25}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{35}\PYG{p}{]}\PYG{p}{,} \PYG{n}{kzoverkh}\PYG{o}{=}\PYG{l+m+mf}{0.1}\PYG{p}{)}
+\end{sphinxVerbatim}
+\begin{figure}[htbp]
+\centering
+\capstart
+
+\noindent\sphinxincludegraphics{{model3d}.png}
+\caption{A  \sphinxtitleref{Model3D} example consisting of five layers all treated as aquifers and a vertical anisotropy of 0.1}\label{\detokenize{models/modelindex:id2}}\end{figure}
+
+3. {\hyperref[\detokenize{models/model:timml.model.Model}]{\sphinxcrossref{\sphinxcode{Model}}}}, which is a model consisting of an arbitrary sequence of leaky layers and aquifers. The resistance between all aquifers needs to be specified by the user.
+This is the most general option, but requires a bit more input.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n}{Model}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{30}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{]}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{2000}\PYG{p}{]}\PYG{p}{,} \PYG{n}{z}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{25}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{35}\PYG{p}{]}\PYG{p}{,}
+      \PYG{n}{npor}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mf}{0.3}\PYG{p}{,} \PYG{l+m+mf}{0.3}\PYG{p}{,} \PYG{l+m+mf}{0.3}\PYG{p}{,} \PYG{l+m+mf}{0.3}\PYG{p}{]}\PYG{p}{,} \PYG{n}{ltype}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{l}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}
+\end{sphinxVerbatim}
+\begin{figure}[htbp]
+\centering
+\capstart
+
+\noindent\sphinxincludegraphics{{model}.png}
+\caption{A \sphinxtitleref{Model} example with four aquifers and one leaky layer}\label{\detokenize{models/modelindex:id3}}\end{figure}
+
+
+\subsection{ModelMaq}
+\label{\detokenize{models/modelmaq:modelmaq}}\label{\detokenize{models/modelmaq::doc}}\index{ModelMaq (class in timml.model)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.model.}\sphinxbfcode{ModelMaq}}{\emph{kaq=1, z={[}1, 0{]}, c={[}{]}, npor=0.3, top=’conf’, hstar=None}}{}
@@ -152,6 +195,26 @@ semi-confined (‘semi’)
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{n}{ml} \PYG{o}{=} \PYG{n}{ModelMaq}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{]}\PYG{p}{,} \PYG{n}{z}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{l+m+mi}{12}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+m+mi}{1000}\PYG{p}{)}
 \end{sphinxVerbatim}
+\index{contour() (timml.model.ModelMaq method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq.contour}}\pysiglinewithargsret{\sphinxbfcode{contour}}{\emph{win}, \emph{ngr=20}, \emph{layers=0}, \emph{levels=20}, \emph{layout=True}, \emph{labels=False}, \emph{decimals=0}, \emph{color=None}, \emph{newfig=True}, \emph{figsize=None}, \emph{legend=True}}{}
+Contour plot
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{win} (\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{tuple}) \textendash{} {[}x1, x2, y1, y2{]}
+
+\item {} 
+\sphinxstyleliteralstrong{ngr} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{tuple}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} if scalar: number of grid points in x and y direction
+if tuple or list: nx, ny, number of grid points in x and y direction
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 \index{disvec() (timml.model.ModelMaq method)}
 
 \begin{fulllineitems}
@@ -198,8 +261,38 @@ layers may be None or list of layers for which head is computed
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq.headgrid}}\pysiglinewithargsret{\sphinxbfcode{headgrid}}{\emph{xg}, \emph{yg}, \emph{layers=None}, \emph{printrow=False}}{}
-Returns h{[}Nlayers,ny,nx{]}.
-If layers is None, all layers are returned
+Grid of heads
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{xg} (\sphinxstyleliteralemphasis{array}) \textendash{} x values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{yg} (\sphinxstyleliteralemphasis{array}) \textendash{} y values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{integer}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} layers for which grid is returned
+
+\item {} 
+\sphinxstyleliteralstrong{printrow} (\sphinxstyleliteralemphasis{boolean}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} prints dot to screen for each row of grid if set to \sphinxtitleref{True}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{h}
+
+\item[{Return type}] \leavevmode
+array size \sphinxtitleref{nlayers, ny, ny}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{models/model:timml.model.Model.headgrid2}]{\sphinxcrossref{\sphinxcode{headgrid2()}}}}
+
+
 
 \end{fulllineitems}
 
@@ -207,7 +300,43 @@ If layers is None, all layers are returned
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq.headgrid2}}\pysiglinewithargsret{\sphinxbfcode{headgrid2}}{\emph{x1}, \emph{x2}, \emph{nx}, \emph{y1}, \emph{y2}, \emph{ny}, \emph{layers=None}, \emph{printrow=False}}{}
-Returns h{[}Nlayers,ny,nx{]}. If layers is None, all layers are returned
+Grid of heads
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{x2}\sphinxstyleliteralstrong{, }\sphinxstyleliteralstrong{nx} (\sphinxstyleliteralemphasis{x1}\sphinxstyleliteralemphasis{,}) \textendash{} x values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{y2}\sphinxstyleliteralstrong{, }\sphinxstyleliteralstrong{ny} (\sphinxstyleliteralemphasis{y1}\sphinxstyleliteralemphasis{,}) \textendash{} y values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{integer}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} layers for which grid is returned
+
+\item {} 
+\sphinxstyleliteralstrong{printrow} (\sphinxstyleliteralemphasis{boolean}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} prints dot to screen for each row of grid if set to \sphinxtitleref{True}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{h}
+
+\item[{Return type}] \leavevmode
+array size \sphinxtitleref{nlayers, ny, ny}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{plot() (timml.model.ModelMaq method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq.plot}}\pysiglinewithargsret{\sphinxbfcode{plot}}{\emph{win=None}, \emph{newfig=True}, \emph{figsize=None}, \emph{orientation=’hor’}, \emph{topfigfrac=0.8}}{}
+Plot layout
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{win} (\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{tuple}) \textendash{} {[}x1, x2, y1, y2{]}
+
+\end{description}\end{quote}
 
 \end{fulllineitems}
 
@@ -227,15 +356,29 @@ Compute solution
 
 \end{fulllineitems}
 
+\index{tracelines() (timml.model.ModelMaq method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq.tracelines}}\pysiglinewithargsret{\sphinxbfcode{tracelines}}{\emph{xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1000000000000.0, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win={[}-1e+30, 1e+30, -1e+30, 1e+30{]}, newfig=False, figsize=None}}{}
+Draw trace lines
+
+\end{fulllineitems}
+
+\index{vcontour() (timml.model.ModelMaq method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/modelmaq:timml.model.ModelMaq.vcontour}}\pysiglinewithargsret{\sphinxbfcode{vcontour}}{\emph{win}, \emph{n}, \emph{levels}, \emph{labels=False}, \emph{decimals=0}, \emph{color=None}, \emph{vinterp=True}, \emph{nudge=1e-06}, \emph{newfig=True}, \emph{figsize=None}, \emph{layout=True}}{}
+Vertical contour
+
+\end{fulllineitems}
+
 
 \end{fulllineitems}
 
 
 
-\subsection{Three-dimensional flow model}
-\label{\detokenize{models/model3d::doc}}\label{\detokenize{models/model3d:three-dimensional-flow-model}}
-Similar to LPF in MODFLOW
-\index{Model3D (class in timml.model)}
+\subsection{Model3D}
+\label{\detokenize{models/model3d:model3d}}\label{\detokenize{models/model3d::doc}}\index{Model3D (class in timml.model)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/model3d:timml.model.Model3D}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.model.}\sphinxbfcode{Model3D}}{\emph{kaq=1, z={[}1, 0{]}, kzoverkh=1, npor=0.3, top=’conf’, topres=0, topthick=0, hstar=0}}{}
@@ -288,6 +431,26 @@ semi-confined (‘semi’)
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{n}{ml} \PYG{o}{=} \PYG{n}{Model3D}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{z}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{p}{,} \PYG{n}{kzoverkh}\PYG{o}{=}\PYG{l+m+mf}{0.1}\PYG{p}{)}
 \end{sphinxVerbatim}
+\index{contour() (timml.model.Model3D method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model3d:timml.model.Model3D.contour}}\pysiglinewithargsret{\sphinxbfcode{contour}}{\emph{win}, \emph{ngr=20}, \emph{layers=0}, \emph{levels=20}, \emph{layout=True}, \emph{labels=False}, \emph{decimals=0}, \emph{color=None}, \emph{newfig=True}, \emph{figsize=None}, \emph{legend=True}}{}
+Contour plot
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{win} (\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{tuple}) \textendash{} {[}x1, x2, y1, y2{]}
+
+\item {} 
+\sphinxstyleliteralstrong{ngr} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{tuple}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} if scalar: number of grid points in x and y direction
+if tuple or list: nx, ny, number of grid points in x and y direction
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 \index{disvec() (timml.model.Model3D method)}
 
 \begin{fulllineitems}
@@ -334,8 +497,38 @@ layers may be None or list of layers for which head is computed
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/model3d:timml.model.Model3D.headgrid}}\pysiglinewithargsret{\sphinxbfcode{headgrid}}{\emph{xg}, \emph{yg}, \emph{layers=None}, \emph{printrow=False}}{}
-Returns h{[}Nlayers,ny,nx{]}.
-If layers is None, all layers are returned
+Grid of heads
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{xg} (\sphinxstyleliteralemphasis{array}) \textendash{} x values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{yg} (\sphinxstyleliteralemphasis{array}) \textendash{} y values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{integer}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} layers for which grid is returned
+
+\item {} 
+\sphinxstyleliteralstrong{printrow} (\sphinxstyleliteralemphasis{boolean}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} prints dot to screen for each row of grid if set to \sphinxtitleref{True}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{h}
+
+\item[{Return type}] \leavevmode
+array size \sphinxtitleref{nlayers, ny, ny}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{models/model:timml.model.Model.headgrid2}]{\sphinxcrossref{\sphinxcode{headgrid2()}}}}
+
+
 
 \end{fulllineitems}
 
@@ -343,7 +536,43 @@ If layers is None, all layers are returned
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/model3d:timml.model.Model3D.headgrid2}}\pysiglinewithargsret{\sphinxbfcode{headgrid2}}{\emph{x1}, \emph{x2}, \emph{nx}, \emph{y1}, \emph{y2}, \emph{ny}, \emph{layers=None}, \emph{printrow=False}}{}
-Returns h{[}Nlayers,ny,nx{]}. If layers is None, all layers are returned
+Grid of heads
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{x2}\sphinxstyleliteralstrong{, }\sphinxstyleliteralstrong{nx} (\sphinxstyleliteralemphasis{x1}\sphinxstyleliteralemphasis{,}) \textendash{} x values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{y2}\sphinxstyleliteralstrong{, }\sphinxstyleliteralstrong{ny} (\sphinxstyleliteralemphasis{y1}\sphinxstyleliteralemphasis{,}) \textendash{} y values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{integer}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} layers for which grid is returned
+
+\item {} 
+\sphinxstyleliteralstrong{printrow} (\sphinxstyleliteralemphasis{boolean}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} prints dot to screen for each row of grid if set to \sphinxtitleref{True}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{h}
+
+\item[{Return type}] \leavevmode
+array size \sphinxtitleref{nlayers, ny, ny}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{plot() (timml.model.Model3D method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model3d:timml.model.Model3D.plot}}\pysiglinewithargsret{\sphinxbfcode{plot}}{\emph{win=None}, \emph{newfig=True}, \emph{figsize=None}, \emph{orientation=’hor’}, \emph{topfigfrac=0.8}}{}
+Plot layout
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{win} (\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{tuple}) \textendash{} {[}x1, x2, y1, y2{]}
+
+\end{description}\end{quote}
 
 \end{fulllineitems}
 
@@ -363,13 +592,29 @@ Compute solution
 
 \end{fulllineitems}
 
+\index{tracelines() (timml.model.Model3D method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model3d:timml.model.Model3D.tracelines}}\pysiglinewithargsret{\sphinxbfcode{tracelines}}{\emph{xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1000000000000.0, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win={[}-1e+30, 1e+30, -1e+30, 1e+30{]}, newfig=False, figsize=None}}{}
+Draw trace lines
+
+\end{fulllineitems}
+
+\index{vcontour() (timml.model.Model3D method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model3d:timml.model.Model3D.vcontour}}\pysiglinewithargsret{\sphinxbfcode{vcontour}}{\emph{win}, \emph{n}, \emph{levels}, \emph{labels=False}, \emph{decimals=0}, \emph{color=None}, \emph{vinterp=True}, \emph{nudge=1e-06}, \emph{newfig=True}, \emph{figsize=None}, \emph{layout=True}}{}
+Vertical contour
+
+\end{fulllineitems}
+
 
 \end{fulllineitems}
 
 
 
 \subsection{Model}
-\label{\detokenize{models/model::doc}}\label{\detokenize{models/model:model}}\index{Model (class in timml.model)}
+\label{\detokenize{models/model:model}}\label{\detokenize{models/model::doc}}\index{Model (class in timml.model)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/model:timml.model.Model}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.model.}\sphinxbfcode{Model}}{\emph{kaq}, \emph{c}, \emph{z}, \emph{npor}, \emph{ltype}}{}
@@ -402,12 +647,14 @@ if ltype{[}0{]}=’l’: length is number of aquifers
 \end{itemize}
 
 \end{description}\end{quote}
-\paragraph{Examples}
+\index{remove\_element() (timml.model.Model method)}
 
-\begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{k+kn}{from} \PYG{n+nn}{timml} \PYG{k}{import} \PYG{o}{*}
-\PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{n}{ml} \PYG{o}{=} \PYG{n}{Model}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{]}\PYG{p}{)}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{200}\PYG{p}{,} \PYG{l+m+mi}{2000}\PYG{p}{]}\PYG{p}{)}\PYG{p}{,}              \PYG{n}{z}\PYG{o}{=}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{l+m+mi}{15}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{8}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{,} \PYG{n}{npor}\PYG{o}{=}\PYG{l+m+mf}{0.3} \PYG{o}{*} \PYG{n}{ones}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{)}\PYG{p}{,}              \PYG{n}{ltype}\PYG{o}{=}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{l}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{a}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}
-\end{sphinxVerbatim}
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model:timml.model.Model.remove_element}}\pysiglinewithargsret{\sphinxbfcode{remove\_element}}{\emph{e}}{}
+Remove element \sphinxtitleref{e} from model
+
+\end{fulllineitems}
+
 \index{disvec() (timml.model.Model method)}
 
 \begin{fulllineitems}
@@ -440,22 +687,42 @@ array length \sphinxtitleref{naq} or \sphinxtitleref{len(layers)}
 
 \end{fulllineitems}
 
-\index{headalongline() (timml.model.Model method)}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{models/model:timml.model.Model.headalongline}}\pysiglinewithargsret{\sphinxbfcode{headalongline}}{\emph{x}, \emph{y}, \emph{layers=None}}{}
-Returns head{[}Nlayers,len(x){]}
-Assumes same number of layers for each x and y
-layers may be None or list of layers for which head is computed
-
-\end{fulllineitems}
-
 \index{headgrid() (timml.model.Model method)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/model:timml.model.Model.headgrid}}\pysiglinewithargsret{\sphinxbfcode{headgrid}}{\emph{xg}, \emph{yg}, \emph{layers=None}, \emph{printrow=False}}{}
-Returns h{[}Nlayers,ny,nx{]}.
-If layers is None, all layers are returned
+Grid of heads
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{xg} (\sphinxstyleliteralemphasis{array}) \textendash{} x values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{yg} (\sphinxstyleliteralemphasis{array}) \textendash{} y values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{integer}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} layers for which grid is returned
+
+\item {} 
+\sphinxstyleliteralstrong{printrow} (\sphinxstyleliteralemphasis{boolean}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} prints dot to screen for each row of grid if set to \sphinxtitleref{True}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{h}
+
+\item[{Return type}] \leavevmode
+array size \sphinxtitleref{nlayers, ny, ny}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{models/model:timml.model.Model.headgrid2}]{\sphinxcrossref{\sphinxcode{headgrid2()}}}}
+
+
 
 \end{fulllineitems}
 
@@ -463,15 +730,40 @@ If layers is None, all layers are returned
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{models/model:timml.model.Model.headgrid2}}\pysiglinewithargsret{\sphinxbfcode{headgrid2}}{\emph{x1}, \emph{x2}, \emph{nx}, \emph{y1}, \emph{y2}, \emph{ny}, \emph{layers=None}, \emph{printrow=False}}{}
-Returns h{[}Nlayers,ny,nx{]}. If layers is None, all layers are returned
+Grid of heads
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{x2}\sphinxstyleliteralstrong{, }\sphinxstyleliteralstrong{nx} (\sphinxstyleliteralemphasis{x1}\sphinxstyleliteralemphasis{,}) \textendash{} x values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{y2}\sphinxstyleliteralstrong{, }\sphinxstyleliteralstrong{ny} (\sphinxstyleliteralemphasis{y1}\sphinxstyleliteralemphasis{,}) \textendash{} y values of grid
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{integer}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} layers for which grid is returned
+
+\item {} 
+\sphinxstyleliteralstrong{printrow} (\sphinxstyleliteralemphasis{boolean}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{optional}) \textendash{} prints dot to screen for each row of grid if set to \sphinxtitleref{True}
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+\sphinxstylestrong{h}
+
+\item[{Return type}] \leavevmode
+array size \sphinxtitleref{nlayers, ny, ny}
+
+\end{description}\end{quote}
 
 \end{fulllineitems}
 
-\index{remove\_element() (timml.model.Model method)}
+\index{headalongline() (timml.model.Model method)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{models/model:timml.model.Model.remove_element}}\pysiglinewithargsret{\sphinxbfcode{remove\_element}}{\emph{e}}{}
-Remove element \sphinxtitleref{e} from model
+\phantomsection\label{\detokenize{models/model:timml.model.Model.headalongline}}\pysiglinewithargsret{\sphinxbfcode{headalongline}}{\emph{x}, \emph{y}, \emph{layers=None}}{}
+Returns head{[}Nlayers,len(x){]}
+Assumes same number of layers for each x and y
+layers may be None or list of layers for which head is computed
 
 \end{fulllineitems}
 
@@ -483,22 +775,159 @@ Compute solution
 
 \end{fulllineitems}
 
+\index{contour() (timml.model.Model method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model:timml.model.Model.contour}}\pysiglinewithargsret{\sphinxbfcode{contour}}{\emph{win}, \emph{ngr=20}, \emph{layers=0}, \emph{levels=20}, \emph{layout=True}, \emph{labels=False}, \emph{decimals=0}, \emph{color=None}, \emph{newfig=True}, \emph{figsize=None}, \emph{legend=True}}{}
+Contour plot
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{win} (\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{tuple}) \textendash{} {[}x1, x2, y1, y2{]}
+
+\item {} 
+\sphinxstyleliteralstrong{ngr} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{tuple}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} if scalar: number of grid points in x and y direction
+if tuple or list: nx, ny, number of grid points in x and y direction
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{plot() (timml.model.Model method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model:timml.model.Model.plot}}\pysiglinewithargsret{\sphinxbfcode{plot}}{\emph{win=None}, \emph{newfig=True}, \emph{figsize=None}, \emph{orientation=’hor’}, \emph{topfigfrac=0.8}}{}
+Plot layout
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{win} (\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{tuple}) \textendash{} {[}x1, x2, y1, y2{]}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{tracelines() (timml.model.Model method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model:timml.model.Model.tracelines}}\pysiglinewithargsret{\sphinxbfcode{tracelines}}{\emph{xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1000000000000.0, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win={[}-1e+30, 1e+30, -1e+30, 1e+30{]}, newfig=False, figsize=None}}{}
+Draw trace lines
+
+\end{fulllineitems}
+
+\index{vcontour() (timml.model.Model method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{models/model:timml.model.Model.vcontour}}\pysiglinewithargsret{\sphinxbfcode{vcontour}}{\emph{win}, \emph{n}, \emph{levels}, \emph{labels=False}, \emph{decimals=0}, \emph{color=None}, \emph{vinterp=True}, \emph{nudge=1e-06}, \emph{newfig=True}, \emph{figsize=None}, \emph{layout=True}}{}
+Vertical contour
+
+\end{fulllineitems}
+
 
 \end{fulllineitems}
 
 
 
 \section{Inhomogeneities}
-\label{\detokenize{inhoms/inhoms::doc}}\label{\detokenize{inhoms/inhoms:inhomogeneities}}
+\label{\detokenize{inhoms/inhoms:inhomogeneities}}\label{\detokenize{inhoms/inhoms::doc}}
+Polygonal inhomogeneities can be added in three ways:
+
+1. {\hyperref[\detokenize{inhoms/polygoninhommaq:timml.inhomogeneity.PolygonInhomMaq}]{\sphinxcrossref{\sphinxcode{PolygonInhomMaq}}}}, which is an inhomogeneity
+consisting of a regular sequence of aquifer - leaky layer - aquifer - leaky layer, aquifer, etc.
+The top of the system can be either an aquifer or a leaky layer.
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item {} 
+Model3D to be added
+
+\end{enumerate}
+
+
+\subsection{ModelMaq}
+\label{\detokenize{inhoms/polygoninhommaq:modelmaq}}\label{\detokenize{inhoms/polygoninhommaq::doc}}\index{PolygonInhomMaq (class in timml.inhomogeneity)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{inhoms/polygoninhommaq:timml.inhomogeneity.PolygonInhomMaq}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.inhomogeneity.}\sphinxbfcode{PolygonInhomMaq}}{\emph{model, xy, kaq=1, z={[}1, 0{]}, c={[}{]}, npor=0.3, top=’conf’, hstar=None, order=3, ndeg=3}}{}
+Create a polygonal inhomogeneity
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{xy} (\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} list or array of (x,y) pairs of coordinates of corners of the
+inhomogeneity
+polygonal boundary is automatically closed (so first point
+is not repeated)
+
+\item {} 
+\sphinxstyleliteralstrong{kaq} (\sphinxstyleliteralemphasis{float}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} hydraulic conductivity of each aquifer from the top down
+if float, hydraulic conductivity is the same in all aquifers
+
+\item {} 
+\sphinxstyleliteralstrong{z} (\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} elevation tops and bottoms of the aquifers from the top down
+leaky layers may have zero thickness
+if top=’conf’: length is 2 * number of aquifers
+if top=’semi’: length is 2 * number of aquifers + 1 as top
+of leaky layer on top of systems needs to be specified
+
+\item {} 
+\sphinxstyleliteralstrong{c} (\sphinxstyleliteralemphasis{float}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} resistance of leaky layers from the top down
+if float, resistance is the same for all leaky layers
+if top=’conf’: length is number of aquifers - 1
+if top=’semi’: length is number of aquifers
+
+\item {} 
+\sphinxstyleliteralstrong{npor} (\sphinxstyleliteralemphasis{float}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} porosity of all aquifers and leaky layers from the top down
+if float, porosity is the same for all layers
+if top=’conf’: length is 2 * number of aquifers - 1
+if top=’semi’: length is 2 * number of aquifers
+
+\item {} 
+\sphinxstyleliteralstrong{top} (\sphinxstyleliteralemphasis{string}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{'conf'}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{'semi'}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 'conf'}\sphinxstyleliteralemphasis{)}) \textendash{} indicating whether the top is confined (‘conf’) or
+semi-confined (‘semi’)
+
+\item {} 
+\sphinxstyleliteralstrong{hstar} (\sphinxstyleliteralemphasis{float}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is None}\sphinxstyleliteralemphasis{)}) \textendash{} head value above semi-confining top, only read if top=’semi’
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}) \textendash{} polynomial order of flux along each segment
+
+\item {} 
+\sphinxstyleliteralstrong{ndeg} (\sphinxstyleliteralemphasis{int}) \textendash{} number of points used between two segments to numerically
+integrate normal discharge
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+
 
 \section{Elements}
 \label{\detokenize{aems:elements}}\label{\detokenize{aems::doc}}
 
 \subsection{Wells}
 \label{\detokenize{wells/wellindex:wells}}\label{\detokenize{wells/wellindex::doc}}
+There are two types of wells: wells for which the total discharge is specified and wells for which the head inside the well is specified.
+Both types of wells may have an entry resistance (skin effect) defined by the resistance \(c\) (dimension: time). The discharge \(Q_i\) in layer \(i\) is a function of the head
+\(h_i\) in layer \(i\) just outside the well and the head \(h_w\) inside the well:
+\begin{quote}
+\begin{equation*}
+\begin{split}Q_i = 2\pi r_w(h_i - h_w)/c\end{split}
+\end{equation*}\end{quote}
 
-\subsubsection{Well}
-\label{\detokenize{wells/well::doc}}\label{\detokenize{wells/well:well}}\index{Well (class in timml.well)}
+1. {\hyperref[\detokenize{wells/well:timml.well.Well}]{\sphinxcrossref{\sphinxcode{Well}}}} is a well for which the total discharge is specified. The total discharge is distributed across the layers in which the
+well is screened such that the head inside the well is the same in each screened layer.
+
+2. {\hyperref[\detokenize{wells/headwell:timml.well.HeadWell}]{\sphinxcrossref{\sphinxcode{HeadWell}}}} is a well for which the head inside the well is specified. The discharge in each layer is computed such that
+the head in all screened layers is equal to the specified head.
+
+
+\subsubsection{Well with specified discharge}
+\label{\detokenize{wells/well:well-with-specified-discharge}}\label{\detokenize{wells/well::doc}}\index{Well (class in timml.well)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{wells/well:timml.well.Well}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.well.}\sphinxbfcode{Well}}{\emph{model}, \emph{xw=0}, \emph{yw=0}, \emph{Qw=100.0}, \emph{rw=0.1}, \emph{res=0.0}, \emph{layers=0}, \emph{label=None}}{}
@@ -676,8 +1105,8 @@ Plot a capture zone
 
 
 
-\subsubsection{HeadWell}
-\label{\detokenize{wells/headwell::doc}}\label{\detokenize{wells/headwell:headwell}}\index{HeadWell (class in timml.well)}
+\subsubsection{Well with specified head}
+\label{\detokenize{wells/headwell:well-with-specified-head}}\label{\detokenize{wells/headwell::doc}}\index{HeadWell (class in timml.well)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{wells/headwell:timml.well.HeadWell}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.well.}\sphinxbfcode{HeadWell}}{\emph{model}, \emph{xw=0}, \emph{yw=0}, \emph{hw=10}, \emph{rw=0.1}, \emph{res=0}, \emph{layers=0}, \emph{label=None}}{}
@@ -849,38 +1278,122 @@ Plot a capture zone
 
 
 \subsection{Line-sinks}
-\label{\detokenize{linesinks/linesinkindex::doc}}\label{\detokenize{linesinks/linesinkindex:line-sinks}}
-There are many line-sinks
+\label{\detokenize{linesinks/linesinkindex:line-sinks}}\label{\detokenize{linesinks/linesinkindex::doc}}
+Line-sinks are lines along which water is taken out of or put into the aquifer. The inflow/outflow along the line-sink varies as a polynomial (the order of the
+polynomial may be specified).
+There are two types of line-sinks: line-sinks for which the head is specified along the line-sink, and line-sinks for which the total discharge is specified
+and the head along the line-sink is unknown but uniform.
+Both types of line-sinks may have an entry resistance defined by the resistance \(c\) (dimension: time). The inflow \(\sigma_i\) into the line-sink in
+layer \(i\) is a function of the head
+\(h_i\) just outside the line-sink in layer \(i\) and the head \(h_{ls}\) inside the line-sink:
+\begin{quote}
+\begin{equation*}
+\begin{split}\sigma_i = w(h_i - h_{ls})/c\end{split}
+\end{equation*}\end{quote}
+
+This equation is applied along each control point of the line-sink. \(w\) is the distance over which water infiltrates into the line-sink.
+The distanc may be the width of the stream, for example, in case of a partially penetrating stream. In case the stream penetrates the aquifer
+layer fully, the distance may equal the thickness of the aquifer layer (if water enters primarily from one side),
+or twice the aquifer thickness (if water enters from both sides).
+
+The two types of line-sinks may be entered one by one or as a string. For a string of head-specified line-sinks, the head needs only be specified at the beginning and
+end of the string and the head is interpolated between these values. Alternatively, the head may be specified at the beginning and end of some or all line-sinks in the string
+For a string of line-sink ditch elements, the head is uniform along the entire string while the total discharge of all the line-sinks in the string is equal to the specified value.
+\begin{enumerate}
+\item {} 
+{\hyperref[\detokenize{linesinks/headlinesink:timml.linesink.HeadLineSink}]{\sphinxcrossref{\sphinxcode{HeadLineSink}}}} is a line-sink for which the head is specified along the line-sink. \sphinxhref{https://github.com/mbakker7/timml/blob/master/notebooks/test\_linesink\_discharge.ipynb}{Example Notebook.}
+
+\item {} 
+{\hyperref[\detokenize{linesinks/headlinesinkstring:timml.linesink.HeadLineSinkString}]{\sphinxcrossref{\sphinxcode{HeadLineSinkString}}}} is a string of head-specified line-sinks
+
+\item {} 
+{\hyperref[\detokenize{linesinks/linesinkditch:timml.linesink.LineSinkDitch}]{\sphinxcrossref{\sphinxcode{LineSinkDitch}}}} is a line-sink for which the head is unknown and uniform and the total discharge is specified
+
+\item {} 
+{\hyperref[\detokenize{linesinks/linesinkditchstring:timml.linesink.LineSinkDitchString}]{\sphinxcrossref{\sphinxcode{LineSinkDitchString}}}} is a string of line-sink ditch elements
+
+\end{enumerate}
 
 
-\subsubsection{Head-specified line-sink}
-\label{\detokenize{linesinks/headlinesink:head-specified-line-sink}}\label{\detokenize{linesinks/headlinesink::doc}}\index{HeadLineSink (class in timml.linesink)}
+\subsubsection{Line-sink with specified head}
+\label{\detokenize{linesinks/headlinesink:line-sink-with-specified-head}}\label{\detokenize{linesinks/headlinesink::doc}}\index{HeadLineSink (class in timml.linesink)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{linesinks/headlinesink:timml.linesink.HeadLineSink}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linesink.}\sphinxbfcode{HeadLineSink}}{\emph{model}, \emph{x1=-1}, \emph{y1=0}, \emph{x2=1}, \emph{y2=0}, \emph{hls=1.0}, \emph{res=0}, \emph{wh=1}, \emph{layers=0}, \emph{label=None}, \emph{addtomodel=True}}{}
+\phantomsection\label{\detokenize{linesinks/headlinesink:timml.linesink.HeadLineSink}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linesink.}\sphinxbfcode{HeadLineSink}}{\emph{model}, \emph{x1=-1}, \emph{y1=0}, \emph{x2=1}, \emph{y2=0}, \emph{hls=1.0}, \emph{res=0}, \emph{wh=1}, \emph{order=0}, \emph{layers=0}, \emph{label=None}, \emph{name=’HeadLineSink’}, \emph{addtomodel=True}}{}
+HeadLineSink Class to create a head-specified line-sink
+which may optionally have a width and resistance
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{x1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of fist point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{y1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of fist point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{x2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of second point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{y2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of second point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{hls} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} head along line-sink
+if scalar: head is the same everywhere along line-sink
+if list or array of length 2: head at beginning and end of line-sink
+if list or array with length order + 1: heads at control points
+
+\item {} 
+\sphinxstyleliteralstrong{res} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} resistance of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{wh} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{str}) \textendash{} distance over which water enters line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order or inflow along line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linesinks/headlinesinkstring:timml.linesink.HeadLineSinkString}]{\sphinxcrossref{\sphinxcode{HeadLineSinkString}}}}
+
+
+
 \end{fulllineitems}
 
 
 
-\subsubsection{HeadLineSinkString}
-\label{\detokenize{linesinks/headlinesinkstring::doc}}\label{\detokenize{linesinks/headlinesinkstring:headlinesinkstring}}\index{HeadLineSinkString (class in timml.linesink)}
+\subsubsection{String of head-specified line-sinks}
+\label{\detokenize{linesinks/headlinesinkstring:string-of-head-specified-line-sinks}}\label{\detokenize{linesinks/headlinesinkstring::doc}}\index{HeadLineSinkString (class in timml.linesink)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{linesinks/headlinesinkstring:timml.linesink.HeadLineSinkString}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linesink.}\sphinxbfcode{HeadLineSinkString}}{\emph{model, xy={[}(-1, 0), (1, 0){]}, hls=0, res=0, wh=1, order=0, layers=0, label=None, name=’HeadLineSinkString’}}{}
-HeadLineSinkString Class to create a string of head-specified line-sinks
+Class to create a string of head-specified line-sinks
 which may optionally have a width and resistance
-:param model: Model to which the element is added
-:type model: Model object
-:param xy: elevation tops and bottoms of the aquifers from the top down
-\begin{quote}
-
-leaky layers may have zero thickness
-if top=’conf’: length is 2 * number of aquifers
-if top=’semi’: length is 2 * number of aquifers + 1 as top
-of leaky layer on top of systems needs to be specified
-\end{quote}
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{xy} (\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} list or array of (x,y) pairs of coordinates of end-points of
+line-sinks in string
+
 \item {} 
 \sphinxstyleliteralstrong{hls} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} head along string
 if scalar: head is the same everywhere along the string
@@ -892,7 +1405,7 @@ may contain nans, except for first and last point
 \sphinxstyleliteralstrong{res} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} resistance of line-sink
 
 \item {} 
-\sphinxstyleliteralstrong{wh} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{str}) \textendash{} 
+\sphinxstyleliteralstrong{wh} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{str}) \textendash{} distance over which water enters line-sink
 
 \item {} 
 \sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} order of all line-sinks in string
@@ -905,42 +1418,267 @@ if list or array: element is placed in all these layers
 \item {} 
 \sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} 
 
-\item {} 
-\sphinxstyleliteralstrong{-{-}-{-}-} \textendash{} 
-
 \end{itemize}
 
 \end{description}\end{quote}
-\paragraph{Examples}
 
-\begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{n}{ml} \PYG{o}{=} \PYG{n}{ModelMaq}\PYG{p}{(}\PYG{n}{kaq}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{20}\PYG{p}{]}\PYG{p}{,} \PYG{n}{z}\PYG{o}{=}\PYG{p}{[}\PYG{l+m+mi}{20}\PYG{p}{,} \PYG{l+m+mi}{12}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{c}\PYG{o}{=}\PYG{l+m+mi}{1000}\PYG{p}{)}
-\PYG{g+gp}{\PYGZgt{}\PYGZgt{}\PYGZgt{} }\PYG{n}{HeadLineSinkString}\PYG{p}{(}\PYG{n}{ml}\PYG{p}{,} \PYG{n}{xy}\PYG{o}{=}\PYG{p}{[}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}\PYG{p}{]}\PYG{p}{,} \PYG{n}{hls}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{)}
-\end{sphinxVerbatim}
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linesinks/headlinesink:timml.linesink.HeadLineSink}]{\sphinxcrossref{\sphinxcode{HeadLineSink}}}}
+
+
+\index{discharge() (timml.linesink.HeadLineSinkString method)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{linesinks/headlinesinkstring:timml.linesink.HeadLineSinkString.discharge}}\pysiglinewithargsret{\sphinxbfcode{discharge}}{}{}
+Discharge of the element in each layer
+
+\end{fulllineitems}
+
 
 \end{fulllineitems}
 
 
 
 \subsubsection{Line-sink ditch}
-\label{\detokenize{linesinks/linesinkditch::doc}}\label{\detokenize{linesinks/linesinkditch:line-sink-ditch}}
+\label{\detokenize{linesinks/linesinkditch:line-sink-ditch}}\label{\detokenize{linesinks/linesinkditch::doc}}
 Specified total discharge with unknown but uniform head
 \index{LineSinkDitch (class in timml.linesink)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{linesinks/linesinkditch:timml.linesink.LineSinkDitch}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linesink.}\sphinxbfcode{LineSinkDitch}}{\emph{model}, \emph{x1=-1}, \emph{y1=0}, \emph{x2=1}, \emph{y2=0}, \emph{Qls=1}, \emph{res=0}, \emph{wh=1}, \emph{order=0}, \emph{layers=0}, \emph{label=None}, \emph{addtomodel=True}}{}
+Class to create a line-sink for which the total discharge
+is specified, and for which the head along the line-sink
+is uniform but unknown.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{x1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of fist point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{y1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of fist point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{x2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of second point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{y2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of second point of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{Qls} (\sphinxstyleliteralemphasis{scalar}) \textendash{} total discharge of the line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{res} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} resistance of line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{wh} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{str}) \textendash{} distance over which water enters line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order or inflow along line-sink
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linesinks/linesinkditchstring:timml.linesink.LineSinkDitchString}]{\sphinxcrossref{\sphinxcode{LineSinkDitchString}}}}
+
+
+
+\end{fulllineitems}
+
+
+
+\subsubsection{Line-sink ditch string}
+\label{\detokenize{linesinks/linesinkditchstring:line-sink-ditch-string}}\label{\detokenize{linesinks/linesinkditchstring::doc}}
+Specified total discharge with unknown but uniform head
+\index{LineSinkDitchString (class in timml.linesink)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{linesinks/linesinkditchstring:timml.linesink.LineSinkDitchString}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linesink.}\sphinxbfcode{LineSinkDitchString}}{\emph{model, xy={[}(-1, 0), (1, 0){]}, Qls=1, res=0, wh=1, order=0, layers=0, label=None}}{}
+Class to create a string of LineSinkDitch elements for which the
+total discharge of the string is specified, and for which the head
+along the entire string is uniform but unknown.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{xy} (\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} list or array of (x,y) pairs of coordinates of end-points of
+line-sinks in string
+
+\item {} 
+\sphinxstyleliteralstrong{Qls} (\sphinxstyleliteralemphasis{scalar}) \textendash{} total discharge of the string
+
+\item {} 
+\sphinxstyleliteralstrong{res} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} resistance of line-sinks in string
+
+\item {} 
+\sphinxstyleliteralstrong{wh} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{str}) \textendash{} distance over which water enters the string
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order or inflow along each line-sink in string
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linesinks/linesinkditch:timml.linesink.LineSinkDitch}]{\sphinxcrossref{\sphinxcode{LineSinkDitch}}}}
+
+
+
 \end{fulllineitems}
 
 
 
 \subsection{Line-doublets}
 \label{\detokenize{linedoublets/linedoubletindex:line-doublets}}\label{\detokenize{linedoublets/linedoubletindex::doc}}
+Line-doublets are used to simulate leaky and impermeable walls.
+The flux normal to an impermeable wall is zero. The flux through a leaky wall (the normal component \(q_{n}\)) is defined as
+\begin{quote}
+\begin{equation*}
+\begin{split}q_n = (h^- - h^+)/c\end{split}
+\end{equation*}\end{quote}
+
+where \(h^-\) and \(h^-\) are the heads on the minus and plus sides of the wall, and \(c\) is the resistance against flow
+through the walll. An impermeable wall is equivalent to a leaky wall with a resistance that is equal to infinity.
+\begin{enumerate}
+\item {} 
+{\hyperref[\detokenize{linedoublets/implinedoublet:timml.linedoublet.ImpLineDoublet}]{\sphinxcrossref{\sphinxcode{ImpLineDoublet}}}} is used to simulate one straight impermeable wall
+
+\item {} 
+{\hyperref[\detokenize{linedoublets/implinedoubletstring:timml.linedoublet.ImpLineDoubletString}]{\sphinxcrossref{\sphinxcode{ImpLineDoubletString}}}} is an impermeable wall represented by a poly line of straight segments
+
+\item {} 
+{\hyperref[\detokenize{linedoublets/leakylinedoublet:timml.linedoublet.LeakyLineDoublet}]{\sphinxcrossref{\sphinxcode{LeakyLineDoublet}}}} is used to simulate one straight leaky wall
+
+\item {} 
+{\hyperref[\detokenize{linedoublets/leakylinedoubletstring:timml.linedoublet.LeakyLineDoubletString}]{\sphinxcrossref{\sphinxcode{LeakyLineDoubletString}}}} is a leaky wall represented by a poly line of straight segments
+
+\end{enumerate}
+
 
 \subsubsection{Impermeable wall}
 \label{\detokenize{linedoublets/implinedoublet:impermeable-wall}}\label{\detokenize{linedoublets/implinedoublet::doc}}\index{ImpLineDoublet (class in timml.linedoublet)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{linedoublets/implinedoublet:timml.linedoublet.ImpLineDoublet}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linedoublet.}\sphinxbfcode{ImpLineDoublet}}{\emph{model}, \emph{x1=-1}, \emph{y1=0}, \emph{x2=1}, \emph{y2=0}, \emph{order=0}, \emph{layers=0}, \emph{label=None}, \emph{addtomodel=True}}{}
+Create a segment of an impermeable wall, which is
+simulated with a line-doublet
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{x1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of fist point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{y1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of fist point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{x2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of second point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{y2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of second point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order of potential jump along line-doublet
+(head jump if transmissivity is equal on each side of wall)
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linedoublets/implinedoubletstring:timml.linedoublet.ImpLineDoubletString}]{\sphinxcrossref{\sphinxcode{ImpLineDoubletString}}}}
+
+
+
+\end{fulllineitems}
+
+
+
+\subsubsection{String of impermeable wall segments}
+\label{\detokenize{linedoublets/implinedoubletstring:string-of-impermeable-wall-segments}}\label{\detokenize{linedoublets/implinedoubletstring::doc}}\index{ImpLineDoubletString (class in timml.linedoublet)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{linedoublets/implinedoubletstring:timml.linedoublet.ImpLineDoubletString}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linedoublet.}\sphinxbfcode{ImpLineDoubletString}}{\emph{model, xy={[}(-1, 0), (1, 0){]}, layers=0, order=0, label=None}}{}
+Create a string of impermeable wall segements consisting
+of line-doublets
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{xy} (\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} list or array of (x,y) pairs of coordinates of end-points of
+the segements in the string
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order of potential jump along line-doublet
+(head jump if transmissivity is equal on each side of wall)
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linedoublets/implinedoublet:timml.linedoublet.ImpLineDoublet}]{\sphinxcrossref{\sphinxcode{ImpLineDoublet}}}}
+
+
+
 \end{fulllineitems}
 
 
@@ -950,24 +1688,188 @@ Specified total discharge with unknown but uniform head
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{linedoublets/leakylinedoublet:timml.linedoublet.LeakyLineDoublet}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linedoublet.}\sphinxbfcode{LeakyLineDoublet}}{\emph{model}, \emph{x1=-1}, \emph{y1=0}, \emph{x2=1}, \emph{y2=0}, \emph{res=0}, \emph{order=0}, \emph{layers=0}, \emph{label=None}, \emph{addtomodel=True}}{}
+Create a segment of a leaky wall, which is
+simulated with a line-doublet. The specific discharge through
+the wall is equal to the head difference across the wall
+divided by the resistance of the wall.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{x1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of fist point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{y1} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of fist point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{x2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} x-coordinate of second point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{y2} (\sphinxstyleliteralemphasis{scalar}) \textendash{} y-coordinate of second point of line-doublet
+
+\item {} 
+\sphinxstyleliteralstrong{res} (\sphinxstyleliteralemphasis{scalar}) \textendash{} resistance of leaky wall
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order of potential jump along line-doublet
+(head jump if transmissivity is equal on each side of wall)
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linedoublets/leakylinedoubletstring:timml.linedoublet.LeakyLineDoubletString}]{\sphinxcrossref{\sphinxcode{LeakyLineDoubletString}}}}
+
+
+
+\end{fulllineitems}
+
+
+
+\subsubsection{String of leaky wall segments}
+\label{\detokenize{linedoublets/leakylinedoubletstring:string-of-leaky-wall-segments}}\label{\detokenize{linedoublets/leakylinedoubletstring::doc}}\index{LeakyLineDoubletString (class in timml.linedoublet)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{linedoublets/leakylinedoubletstring:timml.linedoublet.LeakyLineDoubletString}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.linedoublet.}\sphinxbfcode{LeakyLineDoubletString}}{\emph{model, xy={[}(-1, 0), (1, 0){]}, res=inf, layers=0, order=0, label=None}}{}
+Class to create a string of leaky wall segements consisting
+of line-doublets
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} Model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{xy} (\sphinxstyleliteralemphasis{array}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{list}) \textendash{} list or array of (x,y) pairs of coordinates of end-points of
+the segements in the string
+
+\item {} 
+\sphinxstyleliteralstrong{res} (\sphinxstyleliteralemphasis{scalar}) \textendash{} resistance of leaky wall
+
+\item {} 
+\sphinxstyleliteralstrong{layers} (\sphinxstyleliteralemphasis{scalar}\sphinxstyleliteralemphasis{, }\sphinxstyleliteralemphasis{list}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{array}) \textendash{} layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers
+
+\item {} 
+\sphinxstyleliteralstrong{order} (\sphinxstyleliteralemphasis{int}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default is 0}\sphinxstyleliteralemphasis{)}) \textendash{} polynomial order of potential jump along line-doublet
+(head jump if transmissivity is equal on each side of wall)
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{str}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}) \textendash{} label of element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+
+\sphinxstrong{See also:}
+
+
+{\hyperref[\detokenize{linedoublets/implinedoublet:timml.linedoublet.ImpLineDoublet}]{\sphinxcrossref{\sphinxcode{ImpLineDoublet}}}}
+
+
+
+\end{fulllineitems}
+
+
+
+\subsection{Constant}
+\label{\detokenize{constant:constant}}\label{\detokenize{constant::doc}}
+Every model needs at least one head-specified condition. In addition, the head may be specified at one point in one layer,
+provided this is in an area where the aquifer is confined. This point is historically called the \sphinxstyleemphasis{reference point}.
+The \sphinxstyleemphasis{reference} point is useful to control the behavior in the far field, especially in models where the far field is
+not modeled explicitly.
+\index{Constant (class in timml.constant)}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{constant:timml.constant.Constant}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.constant.}\sphinxbfcode{Constant}}{\emph{model}, \emph{xr=0}, \emph{yr=0}, \emph{hr=0.0}, \emph{layer=0}, \emph{label=None}}{}
+Specify the head at one point in the model in one layer.
+The head may only be specified in an area of the model where
+the aquifer system is confined.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} model to which the element is added
+
+\item {} 
+\sphinxstyleliteralstrong{xr} (\sphinxstyleliteralemphasis{float}) \textendash{} x-coordinate of the point where the head is specified
+
+\item {} 
+\sphinxstyleliteralstrong{yr} (\sphinxstyleliteralemphasis{float}) \textendash{} y-coordinate of the point where the head is specified
+
+\item {} 
+\sphinxstyleliteralstrong{hr} (\sphinxstyleliteralemphasis{float}) \textendash{} specified head
+
+\item {} 
+\sphinxstyleliteralstrong{rw} (\sphinxstyleliteralemphasis{float}) \textendash{} radius of the well
+
+\item {} 
+\sphinxstyleliteralstrong{layer} (\sphinxstyleliteralemphasis{int}) \textendash{} layer where the head is specified
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{string}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default: None}\sphinxstyleliteralemphasis{)}) \textendash{} label of the element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
 
 \subsection{Uniform Flow}
-\label{\detokenize{uflow::doc}}\label{\detokenize{uflow:uniform-flow}}\index{Uflow (class in timml.uflow)}
+\label{\detokenize{uflow:uniform-flow}}\label{\detokenize{uflow::doc}}\index{Uflow (class in timml.uflow)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{uflow:timml.uflow.Uflow}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.uflow.}\sphinxbfcode{Uflow}}{\emph{model}, \emph{slope}, \emph{angle}, \emph{name=’Uflow’}, \emph{label=None}}{}
+\phantomsection\label{\detokenize{uflow:timml.uflow.Uflow}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.uflow.}\sphinxbfcode{Uflow}}{\emph{model}, \emph{slope}, \emph{angle}, \emph{label=None}}{}
+Add uniform flow to the model.
+Uniform flow may only be added to a model of which the background
+aquifer system is confined.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{model} (\sphinxstyleliteralemphasis{Model object}) \textendash{} model to which the uniform flow is added
+
+\item {} 
+\sphinxstyleliteralstrong{slope} (\sphinxstyleliteralemphasis{float}) \textendash{} slope of the head (head drop divided by the distance) in the
+direction of flow
+
+\item {} 
+\sphinxstyleliteralstrong{angle} (\sphinxstyleliteralemphasis{float}) \textendash{} direction of flow in degerees (0 degrees is straight East,
+counter clock-wise is positive)
+
+\item {} 
+\sphinxstyleliteralstrong{label} (\sphinxstyleliteralemphasis{string}\sphinxstyleliteralemphasis{ or }\sphinxstyleliteralemphasis{None}\sphinxstyleliteralemphasis{ (}\sphinxstyleliteralemphasis{default: None}\sphinxstyleliteralemphasis{)}) \textendash{} label of the element
+
+\end{itemize}
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
 
 \subsection{Area-sinks}
-\label{\detokenize{areasinks/areasinkindex::doc}}\label{\detokenize{areasinks/areasinkindex:area-sinks}}
+\label{\detokenize{areasinks/areasinkindex:area-sinks}}\label{\detokenize{areasinks/areasinkindex::doc}}
+There is a circular area-sink. In the future there will be a strip area-sink and a polygonal area-sink.
+
 
 \subsubsection{Circular Area-Sink}
-\label{\detokenize{areasinks/circareasink::doc}}\label{\detokenize{areasinks/circareasink:circular-area-sink}}\index{CircAreaSink (class in timml.circareasink)}
+\label{\detokenize{areasinks/circareasink:circular-area-sink}}\label{\detokenize{areasinks/circareasink::doc}}\index{CircAreaSink (class in timml.circareasink)}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{areasinks/circareasink:timml.circareasink.CircAreaSink}}\pysiglinewithargsret{\sphinxstrong{class }\sphinxcode{timml.circareasink.}\sphinxbfcode{CircAreaSink}}{\emph{model}, \emph{xc=0}, \emph{yc=0}, \emph{R=1}, \emph{N=0.001}, \emph{layer=0}, \emph{name=’CircAreasink’}, \emph{label=None}}{}
@@ -976,7 +1878,11 @@ Specified total discharge with unknown but uniform head
 
 
 \section{Utilities}
-\label{\detokenize{utils/utils::doc}}\label{\detokenize{utils/utils:utilities}}
+\label{\detokenize{utils/utils:utilities}}\label{\detokenize{utils/utils::doc}}
+Utilities include contouring in both the horizontal and vertical plane, and tracing path lines in both horizontal and vertical cross-section.
+All these utilities are functions of the Model class.
+.. {\color{red}\bfseries{}\textbar{}project\textbar{}} replace:: TimML
+
 
 
 \renewcommand{\indexname}{Index}

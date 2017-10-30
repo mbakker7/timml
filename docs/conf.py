@@ -262,3 +262,6 @@ texinfo_documents = [
 #                       'http://pandas.pydata.org/pandas-docs/stable/': None,
 #                       'https://docs.scipy.org/doc/scipy/reference/': None,
 #                       'https://docs.scipy.org/doc/numpy/': None}
+
+# Added by MB
+autodoc_member_order = 'bysource'

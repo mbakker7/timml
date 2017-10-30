@@ -46,6 +46,20 @@
             
   <div class="section" id="line-doublets">
 <h1>Line-doublets<a class="headerlink" href="#line-doublets" title="Permalink to this headline">¶</a></h1>
+<p>Line-doublets are used to simulate leaky and impermeable walls.
+The flux normal to an impermeable wall is zero. The flux through a leaky wall (the normal component <span class="math">\(q_{n}\)</span>) is defined as</p>
+<blockquote>
+<div><div class="math">
+\[q_n = (h^- - h^+)/c\]</div>
+</div></blockquote>
+<p>where <span class="math">\(h^-\)</span> and <span class="math">\(h^-\)</span> are the heads on the minus and plus sides of the wall, and <span class="math">\(c\)</span> is the resistance against flow
+through the walll. An impermeable wall is equivalent to a leaky wall with a resistance that is equal to infinity.</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="implinedoublet.html#timml.linedoublet.ImpLineDoublet" title="timml.linedoublet.ImpLineDoublet"><code class="xref py py-class docutils literal"><span class="pre">ImpLineDoublet</span></code></a> is used to simulate one straight impermeable wall</li>
+<li><a class="reference internal" href="implinedoubletstring.html#timml.linedoublet.ImpLineDoubletString" title="timml.linedoublet.ImpLineDoubletString"><code class="xref py py-class docutils literal"><span class="pre">ImpLineDoubletString</span></code></a> is an impermeable wall represented by a poly line of straight segments</li>
+<li><a class="reference internal" href="leakylinedoublet.html#timml.linedoublet.LeakyLineDoublet" title="timml.linedoublet.LeakyLineDoublet"><code class="xref py py-class docutils literal"><span class="pre">LeakyLineDoublet</span></code></a> is used to simulate one straight leaky wall</li>
+<li><a class="reference internal" href="leakylinedoubletstring.html#timml.linedoublet.LeakyLineDoubletString" title="timml.linedoublet.LeakyLineDoubletString"><code class="xref py py-class docutils literal"><span class="pre">LeakyLineDoubletString</span></code></a> is a leaky wall represented by a poly line of straight segments</li>
+</ol>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -88,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="leakylinedoubletstring.html">LeakyLineDoubletString</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../constant.html">Constant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../uflow.html">Uniform flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>

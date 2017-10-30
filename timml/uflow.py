@@ -3,12 +3,31 @@ import inspect # Used for storing the input
 from .element import Element
 
 class Uflow(Element):
-    def __init__(self, model, slope, angle,\
-                 name='Uflow', label=None):
+    """
+    Add uniform flow to the model.
+    Uniform flow may only be added to a model of which the background
+    aquifer system is confined.
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the uniform flow is added
+    slope : float
+        slope of the head (head drop divided by the distance) in the
+        direction of flow
+    angle : float
+        direction of flow in degerees (0 degrees is straight East,
+        counter clock-wise is positive)
+    label : string or None (default: None)
+        label of the element
+    
+    """
+    
+    def __init__(self, model, slope, angle, label=None):
         assert model.aq.ilap, 'TimML Error: Uflow can only be added to model with background confined aquifer'
         self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=2, nunknowns=0, layers=0, \
-                         name=name, label=label)
+                         name='Uflow', label=label)
         self.slope = slope
         self.angle = angle
         self.model.add_element(self)

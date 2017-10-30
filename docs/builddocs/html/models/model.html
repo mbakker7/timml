@@ -74,22 +74,9 @@ if ltype[0]=’l’: length is number of aquifers</li>
 </tbody>
 </table>
 <dl class="method">
-<dt id="timml.model.Model.contour">
-<code class="descname">contour</code><span class="sig-paren">(</span><em>win</em>, <em>ngr=20</em>, <em>layers=0</em>, <em>levels=20</em>, <em>layout=True</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contour plot</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</li>
-<li><strong>ngr</strong> (<em>scalar</em><em>, </em><em>tuple</em><em> or </em><em>list</em>) – if scalar: number of grid points in x and y direction
-if tuple or list: nx, ny, number of grid points in x and y direction</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="timml.model.Model.remove_element">
+<code class="descname">remove_element</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.remove_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.remove_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove element <cite>e</cite> from model</p>
 </dd></dl>
 
 <dl class="method">
@@ -122,14 +109,6 @@ if tuple or list: nx, ny, number of grid points in x and y direction</li>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="timml.model.Model.headalongline">
-<code class="descname">headalongline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headalongline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.headalongline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns head[Nlayers,len(x)]
-Assumes same number of layers for each x and y
-layers may be None or list of layers for which head is computed</p>
 </dd></dl>
 
 <dl class="method">
@@ -189,6 +168,39 @@ layers may be None or list of layers for which head is computed</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="timml.model.Model.headalongline">
+<code class="descname">headalongline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headalongline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.headalongline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns head[Nlayers,len(x)]
+Assumes same number of layers for each x and y
+layers may be None or list of layers for which head is computed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.Model.solve">
+<code class="descname">solve</code><span class="sig-paren">(</span><em>printmat=0</em>, <em>sendback=0</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute solution</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="timml.model.Model.contour">
+<code class="descname">contour</code><span class="sig-paren">(</span><em>win</em>, <em>ngr=20</em>, <em>layers=0</em>, <em>levels=20</em>, <em>layout=True</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contour plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</li>
+<li><strong>ngr</strong> (<em>scalar</em><em>, </em><em>tuple</em><em> or </em><em>list</em>) – if scalar: number of grid points in x and y direction
+if tuple or list: nx, ny, number of grid points in x and y direction</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="timml.model.Model.plot">
 <code class="descname">plot</code><span class="sig-paren">(</span><em>win=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>orientation=’hor’</em>, <em>topfigfrac=0.8</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot layout</p>
@@ -200,18 +212,6 @@ layers may be None or list of layers for which head is computed</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="timml.model.Model.remove_element">
-<code class="descname">remove_element</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.remove_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.remove_element" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove element <cite>e</cite> from model</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="timml.model.Model.solve">
-<code class="descname">solve</code><span class="sig-paren">(</span><em>printmat=0</em>, <em>sendback=0</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.solve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute solution</p>
 </dd></dl>
 
 <dl class="method">

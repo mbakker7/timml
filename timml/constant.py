@@ -46,6 +46,30 @@ class ConstantBase(Element, PotentialEquation):
 
 
 class Constant(ConstantBase, PotentialEquation):
+    """
+    Specify the head at one point in the model in one layer.
+    The head may only be specified in an area of the model where
+    the aquifer system is confined.
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xr : float
+        x-coordinate of the point where the head is specified
+    yr : float
+        y-coordinate of the point where the head is specified
+    hr : float
+        specified head
+    rw : float
+        radius of the well
+    layer : int
+        layer where the head is specified
+    label : string or None (default: None)
+        label of the element
+    
+    """
+    
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, label=None):
         self.storeinput(inspect.currentframe())
         ConstantBase.__init__(self, model, xr=xr, yr=yr, hr=hr, layer=layer, \

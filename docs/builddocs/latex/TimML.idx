@@ -1,41 +1,59 @@
 \indexentry{ModelMaq (class in timml.model)|hyperpage}{7}
-\indexentry{disvec() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{head() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{headalongline() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{headgrid() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{headgrid2() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{remove\_element() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{solve() (timml.model.ModelMaq method)|hyperpage}{8}
-\indexentry{Model3D (class in timml.model)|hyperpage}{8}
-\indexentry{disvec() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{head() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{headalongline() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{headgrid() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{headgrid2() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{remove\_element() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{solve() (timml.model.Model3D method)|hyperpage}{9}
-\indexentry{Model (class in timml.model)|hyperpage}{9}
-\indexentry{disvec() (timml.model.Model method)|hyperpage}{10}
-\indexentry{head() (timml.model.Model method)|hyperpage}{10}
-\indexentry{headalongline() (timml.model.Model method)|hyperpage}{10}
-\indexentry{headgrid() (timml.model.Model method)|hyperpage}{10}
-\indexentry{headgrid2() (timml.model.Model method)|hyperpage}{10}
-\indexentry{remove\_element() (timml.model.Model method)|hyperpage}{10}
-\indexentry{solve() (timml.model.Model method)|hyperpage}{10}
-\indexentry{Well (class in timml.well)|hyperpage}{10}
-\indexentry{capzone() (timml.well.Well method)|hyperpage}{11}
-\indexentry{discharge() (timml.well.Well method)|hyperpage}{11}
-\indexentry{headinside() (timml.well.Well method)|hyperpage}{11}
-\indexentry{plotcapzone() (timml.well.Well method)|hyperpage}{11}
-\indexentry{HeadWell (class in timml.well)|hyperpage}{12}
-\indexentry{capzone() (timml.well.HeadWell method)|hyperpage}{12}
-\indexentry{discharge() (timml.well.HeadWell method)|hyperpage}{13}
-\indexentry{headinside() (timml.well.HeadWell method)|hyperpage}{13}
-\indexentry{plotcapzone() (timml.well.HeadWell method)|hyperpage}{13}
-\indexentry{HeadLineSink (class in timml.linesink)|hyperpage}{14}
-\indexentry{HeadLineSinkString (class in timml.linesink)|hyperpage}{14}
-\indexentry{LineSinkDitch (class in timml.linesink)|hyperpage}{14}
-\indexentry{ImpLineDoublet (class in timml.linedoublet)|hyperpage}{15}
-\indexentry{LeakyLineDoublet (class in timml.linedoublet)|hyperpage}{15}
-\indexentry{Uflow (class in timml.uflow)|hyperpage}{15}
-\indexentry{CircAreaSink (class in timml.circareasink)|hyperpage}{15}
+\indexentry{contour() (timml.model.ModelMaq method)|hyperpage}{9}
+\indexentry{disvec() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{head() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{headalongline() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{headgrid() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{headgrid2() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{plot() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{remove\_element() (timml.model.ModelMaq method)|hyperpage}{10}
+\indexentry{solve() (timml.model.ModelMaq method)|hyperpage}{11}
+\indexentry{tracelines() (timml.model.ModelMaq method)|hyperpage}{11}
+\indexentry{vcontour() (timml.model.ModelMaq method)|hyperpage}{11}
+\indexentry{Model3D (class in timml.model)|hyperpage}{11}
+\indexentry{contour() (timml.model.Model3D method)|hyperpage}{11}
+\indexentry{disvec() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{head() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{headalongline() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{headgrid() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{headgrid2() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{plot() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{remove\_element() (timml.model.Model3D method)|hyperpage}{12}
+\indexentry{solve() (timml.model.Model3D method)|hyperpage}{13}
+\indexentry{tracelines() (timml.model.Model3D method)|hyperpage}{13}
+\indexentry{vcontour() (timml.model.Model3D method)|hyperpage}{13}
+\indexentry{Model (class in timml.model)|hyperpage}{13}
+\indexentry{remove\_element() (timml.model.Model method)|hyperpage}{13}
+\indexentry{disvec() (timml.model.Model method)|hyperpage}{13}
+\indexentry{head() (timml.model.Model method)|hyperpage}{13}
+\indexentry{headgrid() (timml.model.Model method)|hyperpage}{13}
+\indexentry{headgrid2() (timml.model.Model method)|hyperpage}{14}
+\indexentry{headalongline() (timml.model.Model method)|hyperpage}{14}
+\indexentry{solve() (timml.model.Model method)|hyperpage}{14}
+\indexentry{contour() (timml.model.Model method)|hyperpage}{14}
+\indexentry{plot() (timml.model.Model method)|hyperpage}{14}
+\indexentry{tracelines() (timml.model.Model method)|hyperpage}{14}
+\indexentry{vcontour() (timml.model.Model method)|hyperpage}{14}
+\indexentry{PolygonInhomMaq (class in timml.inhomogeneity)|hyperpage}{15}
+\indexentry{Well (class in timml.well)|hyperpage}{16}
+\indexentry{capzone() (timml.well.Well method)|hyperpage}{16}
+\indexentry{discharge() (timml.well.Well method)|hyperpage}{17}
+\indexentry{headinside() (timml.well.Well method)|hyperpage}{17}
+\indexentry{plotcapzone() (timml.well.Well method)|hyperpage}{17}
+\indexentry{HeadWell (class in timml.well)|hyperpage}{17}
+\indexentry{capzone() (timml.well.HeadWell method)|hyperpage}{18}
+\indexentry{discharge() (timml.well.HeadWell method)|hyperpage}{18}
+\indexentry{headinside() (timml.well.HeadWell method)|hyperpage}{18}
+\indexentry{plotcapzone() (timml.well.HeadWell method)|hyperpage}{18}
+\indexentry{HeadLineSink (class in timml.linesink)|hyperpage}{19}
+\indexentry{HeadLineSinkString (class in timml.linesink)|hyperpage}{20}
+\indexentry{discharge() (timml.linesink.HeadLineSinkString method)|hyperpage}{20}
+\indexentry{LineSinkDitch (class in timml.linesink)|hyperpage}{21}
+\indexentry{LineSinkDitchString (class in timml.linesink)|hyperpage}{21}
+\indexentry{ImpLineDoublet (class in timml.linedoublet)|hyperpage}{22}
+\indexentry{ImpLineDoubletString (class in timml.linedoublet)|hyperpage}{23}
+\indexentry{LeakyLineDoublet (class in timml.linedoublet)|hyperpage}{23}
+\indexentry{LeakyLineDoubletString (class in timml.linedoublet)|hyperpage}{23}
+\indexentry{Constant (class in timml.constant)|hyperpage}{24}
+\indexentry{Uflow (class in timml.uflow)|hyperpage}{24}
+\indexentry{CircAreaSink (class in timml.circareasink)|hyperpage}{25}

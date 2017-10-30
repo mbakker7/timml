@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Uniform Flow &#8212; TimML 5.0.0 documentation</title>
+    <title>Constant &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Area-sinks" href="areasinks/areasinkindex.html" />
-    <link rel="prev" title="Constant" href="constant.html" />
+    <link rel="next" title="Uniform Flow" href="uflow.html" />
+    <link rel="prev" title="String of leaky wall segments" href="linedoublets/leakylinedoubletstring.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -44,24 +44,29 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="uniform-flow">
-<h1>Uniform Flow<a class="headerlink" href="#uniform-flow" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="constant">
+<h1>Constant<a class="headerlink" href="#constant" title="Permalink to this headline">¶</a></h1>
+<p>Every model needs at least one head-specified condition. In addition, the head may be specified at one point in one layer,
+provided this is in an area where the aquifer is confined. This point is historically called the <em>reference point</em>.
+The <em>reference</em> point is useful to control the behavior in the far field, especially in models where the far field is
+not modeled explicitly.</p>
 <dl class="class">
-<dt id="timml.uflow.Uflow">
-<em class="property">class </em><code class="descclassname">timml.uflow.</code><code class="descname">Uflow</code><span class="sig-paren">(</span><em>model</em>, <em>slope</em>, <em>angle</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timml/uflow.html#Uflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.uflow.Uflow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add uniform flow to the model.
-Uniform flow may only be added to a model of which the background
-aquifer system is confined.</p>
+<dt id="timml.constant.Constant">
+<em class="property">class </em><code class="descclassname">timml.constant.</code><code class="descname">Constant</code><span class="sig-paren">(</span><em>model</em>, <em>xr=0</em>, <em>yr=0</em>, <em>hr=0.0</em>, <em>layer=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timml/constant.html#Constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.Constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the head at one point in the model in one layer.
+The head may only be specified in an area of the model where
+the aquifer system is confined.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>model</strong> (<em>Model object</em>) – model to which the uniform flow is added</li>
-<li><strong>slope</strong> (<em>float</em>) – slope of the head (head drop divided by the distance) in the
-direction of flow</li>
-<li><strong>angle</strong> (<em>float</em>) – direction of flow in degerees (0 degrees is straight East,
-counter clock-wise is positive)</li>
+<li><strong>model</strong> (<em>Model object</em>) – model to which the element is added</li>
+<li><strong>xr</strong> (<em>float</em>) – x-coordinate of the point where the head is specified</li>
+<li><strong>yr</strong> (<em>float</em>) – y-coordinate of the point where the head is specified</li>
+<li><strong>hr</strong> (<em>float</em>) – specified head</li>
+<li><strong>rw</strong> (<em>float</em>) – radius of the well</li>
+<li><strong>layer</strong> (<em>int</em>) – layer where the head is specified</li>
 <li><strong>label</strong> (<em>string</em><em> or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – label of the element</li>
 </ul>
 </td>
@@ -104,8 +109,8 @@ counter clock-wise is positive)</li>
 <li class="toctree-l2"><a class="reference internal" href="wells/wellindex.html">Wells</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linesinks/linesinkindex.html">Line-sinks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linedoublets/linedoubletindex.html">Line-doublets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constant.html">Constant</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Uniform flow</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uflow.html">Uniform flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="areasinks/areasinkindex.html">Area-sinks</a></li>
 </ul>
 </li>
@@ -117,8 +122,8 @@ counter clock-wise is positive)</li>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="aems.html">Elements</a><ul>
-      <li>Previous: <a href="constant.html" title="previous chapter">Constant</a></li>
-      <li>Next: <a href="areasinks/areasinkindex.html" title="next chapter">Area-sinks</a></li>
+      <li>Previous: <a href="linedoublets/leakylinedoubletstring.html" title="previous chapter">String of leaky wall segments</a></li>
+      <li>Next: <a href="uflow.html" title="next chapter">Uniform Flow</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -145,7 +150,7 @@ counter clock-wise is positive)</li>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/uflow.rst.txt"
+      <a href="_sources/constant.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
