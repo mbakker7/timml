@@ -25,8 +25,6 @@ TimML requires **NumPy** 1.12 (or higher) and **matplotlib** 2.0 (or higher).
 
 **For base Python distributions:**
 
-## THIS WILL BE AVAILABLE NEXT WEEK
-
 To install TimML, open a command prompt and type:
 
     pip install timml
