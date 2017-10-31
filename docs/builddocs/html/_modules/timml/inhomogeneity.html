@@ -51,7 +51,7 @@
 <span class="kn">from</span> <span class="nn">.intlinesink</span> <span class="k">import</span> <span class="n">IntHeadDiffLineSink</span><span class="p">,</span> <span class="n">IntFluxDiffLineSink</span>
 
 
-<div class="viewcode-block" id="PolygonInhom"><a class="viewcode-back" href="../../elements/timml.inhomogeneity.html#timml.inhomogeneity.PolygonInhom">[docs]</a><span class="k">class</span> <span class="nc">PolygonInhom</span><span class="p">(</span><span class="n">AquiferData</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PolygonInhom</span><span class="p">(</span><span class="n">AquiferData</span><span class="p">):</span>
     <span class="n">tiny</span> <span class="o">=</span> <span class="mf">1e-8</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">hstar</span><span class="p">,</span>
@@ -81,7 +81,7 @@
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;PolygonInhom: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="PolygonInhom.isinside"><a class="viewcode-back" href="../../elements/timml.inhomogeneity.html#timml.inhomogeneity.PolygonInhom.isinside">[docs]</a>    <span class="k">def</span> <span class="nf">isinside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">isinside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="n">y</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">):</span>
@@ -97,9 +97,9 @@
             <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">bigZmin1</span> <span class="o">/</span> <span class="n">bigZplus1</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span>
             <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">angle</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span> <span class="n">rv</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">rv</span></div>
+        <span class="k">return</span> <span class="n">rv</span>
 
-<div class="viewcode-block" id="PolygonInhom.create_elements"><a class="viewcode-back" href="../../elements/timml.inhomogeneity.html#timml.inhomogeneity.PolygonInhom.create_elements">[docs]</a>    <span class="k">def</span> <span class="nf">create_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">aqin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zcin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
                                                <span class="bp">self</span><span class="o">.</span><span class="n">zcin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Nsides</span><span class="p">):</span>
@@ -123,7 +123,7 @@
         <span class="k">if</span> <span class="n">aqin</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">hstar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Error: hstar needs to be set&#39;</span>
             <span class="n">c</span> <span class="o">=</span> <span class="n">ConstantStar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hstar</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="n">aqin</span><span class="p">)</span>
-            <span class="n">c</span><span class="o">.</span><span class="n">inhomelement</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+            <span class="n">c</span><span class="o">.</span><span class="n">inhomelement</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <div class="viewcode-block" id="PolygonInhomMaq"><a class="viewcode-back" href="../../inhoms/polygoninhommaq.html#timml.inhomogeneity.PolygonInhomMaq">[docs]</a><span class="k">class</span> <span class="nc">PolygonInhomMaq</span><span class="p">(</span><span class="n">PolygonInhom</span><span class="p">):</span>
@@ -180,7 +180,7 @@
                               <span class="n">hstar</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">ndeg</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="compute_z1z2"><a class="viewcode-back" href="../../elements/timml.inhomogeneity.html#timml.inhomogeneity.compute_z1z2">[docs]</a><span class="k">def</span> <span class="nf">compute_z1z2</span><span class="p">(</span><span class="n">xy</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">compute_z1z2</span><span class="p">(</span><span class="n">xy</span><span class="p">):</span>
     <span class="c1"># Returns z1 and z2 of polygon, in clockwise order</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">xy</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># In case last point is repeated</span>
@@ -198,7 +198,7 @@
     <span class="k">if</span> <span class="n">angle</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>  <span class="c1"># reverse order</span>
         <span class="n">z1</span> <span class="o">=</span> <span class="n">z1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">z2</span> <span class="o">=</span> <span class="n">z2</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">z1</span><span class="p">,</span> <span class="n">z2</span></div>
+    <span class="k">return</span> <span class="n">z1</span><span class="p">,</span> <span class="n">z2</span>
 </pre></div>
 
           </div>

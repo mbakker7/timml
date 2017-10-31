@@ -21,19 +21,13 @@ Installation
 TimML is written for Python 3.
 To install TimML, open a command prompt and type:
 
-.. code-block:: python
-
   pip install timml
 
 To update TimML type:
 
-.. code-block:: python
-
   pip install timml --upgrade
 
 To uninstall TimML type:
-
-.. code-block:: python
 
   pip uninstall timml
   

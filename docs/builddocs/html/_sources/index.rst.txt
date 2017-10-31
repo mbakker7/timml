@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-================================================
-TimML - THIS DOCUMENTATION IS UNDER CONSTRUCTION
-================================================
+=====
+TimML
+=====
 TimML is a computer program for the modeling of steady-state multi-layer flow with analytic elements
 TimML may be applied to an arbitrary number of layers and arbitrary sequence of aquifers and leaky layers.
 The Dupuit approximation is applied to aquifer layers, while flow in leaky layers is approximated as vertical.
@@ -14,27 +14,38 @@ The design of TimML is object-oriented and has been kept simple and flexible.
 New analytic elements may be added to the code without making any changes in the existing part of the code.
 TimML is coded in Python. Behind the scenes, use is made of FORTRAN extensions to improve performance.
 
+This documentation is nearing completion.
+
 Installation
 ------------
 TimML is written for Python 3.
+To install TimML, open a command prompt and type:
 
-  pip install instructions will follwo soon.
+.. code-block:: python
+
+  pip install timml
+
+To update TimML type:
+
+.. code-block:: python
+
+  pip install timml --upgrade
+
+To uninstall TimML type:
+
+.. code-block:: python
+
+  pip uninstall timml
   
 Main Approximations
 -------------------
 
+To be added. 
+
 List of available elements
 --------------------------
-* Well
 
-  * Discharge-specified well
-  * Head-specified well
-  * Multi-aquifer well. Well is screened in multiple layers and only total discharge is specified.
-  
-* Line-sink
-
-  * Head-specified line-sink
-  * String of head-specified line-sinks
+A list of available elements is available in the menu on the right under *elements*.
 
 
   

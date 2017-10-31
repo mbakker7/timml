@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>TimML - THIS DOCUMENTATION IS UNDER CONSTRUCTION &#8212; TimML 5.0.0 documentation</title>
+    <title>TimML &#8212; TimML 5.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -43,8 +43,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="timml-this-documentation-is-under-construction">
-<h1>TimML - THIS DOCUMENTATION IS UNDER CONSTRUCTION<a class="headerlink" href="#timml-this-documentation-is-under-construction" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="timml">
+<h1>TimML<a class="headerlink" href="#timml" title="Permalink to this headline">¶</a></h1>
 <p>TimML is a computer program for the modeling of steady-state multi-layer flow with analytic elements
 TimML may be applied to an arbitrary number of layers and arbitrary sequence of aquifers and leaky layers.
 The Dupuit approximation is applied to aquifer layers, while flow in leaky layers is approximated as vertical.
@@ -52,30 +52,30 @@ The head, flow, and leakage between aquifer layers may be computed analytically 
 The design of TimML is object-oriented and has been kept simple and flexible.
 New analytic elements may be added to the code without making any changes in the existing part of the code.
 TimML is coded in Python. Behind the scenes, use is made of FORTRAN extensions to improve performance.</p>
+<p>This documentation is nearing completion.</p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>TimML is written for Python 3.</p>
-<blockquote>
-<div>pip install instructions will follwo soon.</div></blockquote>
+<p>TimML is written for Python 3.
+To install TimML, open a command prompt and type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">timml</span>
+</pre></div>
+</div>
+<p>To update TimML type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">timml</span> <span class="o">--</span><span class="n">upgrade</span>
+</pre></div>
+</div>
+<p>To uninstall TimML type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">uninstall</span> <span class="n">timml</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="main-approximations">
 <h2>Main Approximations<a class="headerlink" href="#main-approximations" title="Permalink to this headline">¶</a></h2>
+<p>To be added.</p>
 </div>
 <div class="section" id="list-of-available-elements">
 <h2>List of available elements<a class="headerlink" href="#list-of-available-elements" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Well<ul>
-<li>Discharge-specified well</li>
-<li>Head-specified well</li>
-<li>Multi-aquifer well. Well is screened in multiple layers and only total discharge is specified.</li>
-</ul>
-</li>
-<li>Line-sink<ul>
-<li>Head-specified line-sink</li>
-<li>String of head-specified line-sinks</li>
-</ul>
-</li>
-</ul>
+<p>A list of available elements is available in the menu on the right under <em>elements</em>.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
