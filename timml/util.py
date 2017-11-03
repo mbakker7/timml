@@ -190,8 +190,10 @@ class PlotTim:
                 ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
                 
     def vcontoursf1D(self, x1, x2, nx, levels, labels=False, decimals=0, color=None,
-                 nudge=1e-6, newfig=True, figsize=None, layout=True):
-        """Vertical contour for 1D model
+                     nudge=1e-6, newfig=True, figsize=None, layout=True, ax=None):
+        """
+        Vertical contour for 1D model
+
         """
         naq = self.aq.naq
         xflow = np.linspace(x1 + nudge, x2 - nudge, nx)
@@ -211,8 +213,10 @@ class PlotTim:
         Qxgrid[-1] = Qxgrid[-2] - Qx[-1]
         Qxgrid = Qxgrid[::-1] # index 0 at top
         if newfig:
-            plt.figure(figsize=figsize)
-        cs = plt.contour(xflow, zflow, Qxgrid, levels, colors=color)
+            fig, ax = plt.subplots(1, 1, figsize=figsize)
+        else:
+            ax=ax
+        cs = ax.contour(xflow, zflow, Qxgrid, levels, colors=color)
         if labels:
             fmt = '%1.' + str(decimals) + 'f'
             plt.clabel(cs, fmt=fmt)
