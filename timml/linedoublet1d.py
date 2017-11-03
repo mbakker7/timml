@@ -1,7 +1,7 @@
 import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
-from .equation import DisvecEquation
+from .equation import DisvecEquation, LeakyWallEquation
 
 class LineDoublet1D(Element):
 
@@ -95,6 +95,31 @@ class ImpLineDoublet1D(LineDoublet1D, DisvecEquation):
 
     def initialize(self):
         LineDoublet1D.initialize(self)
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+
+
+class LeakyLineDoublet1D(LineDoublet1D, LeakyWallEquation):
+    """
+    Create leaky wall, flux through wall is equal to difference in head divided by resistance.
+
+    """
+    tiny = 1e-6
+
+    def __init__(self, model, xld=0, res=np.inf, layers=0, label=None):
+        self.storeinput(inspect.currentframe())
+        LineDoublet1D.__init__(self, model, xld, delp=0, layers=layers,
+                               name="LeakyLineDoublet1D", label=label,
+                               addtomodel=True, res=res, aq=None)
+        self.nunknowns = self.nparam
+
+    def initialize(self):
+        LineDoublet1D.initialize(self)
+        self.xcin = self.xc - self.tiny
+        self.xcout = self.xc + self.tiny
+        self.ycin = self.yc
+        self.ycout = self.yc
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
