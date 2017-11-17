@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/jentjr/timml.svg?branch=master)](https://travis-ci.org/jentjr/timml)
-[![Build status](https://ci.appveyor.com/api/github/webhook?id=g9qqcx6wcv4dpbs8/branch/master?svg=true)](https://ci.appveyor.com/project/jentjr/timml/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/h5y9fpjdb092kphg/branch/master?svg=true)](https://ci.appveyor.com/project/jentjr/timml/branch/master)
+
 # TimML, A Multi-Layer, Analytic Element Model
 
 ## Introduction
