@@ -55,5 +55,5 @@ before_install:
   - export SRCDIR=$PWD
   # Install packages
 install:
-  - python setup_conda_forge_try.py build_ext --inplace
-  - python setup_conda_forge_try.py develop
+  - python setup.py build_ext --inplace
+  - python setup.py develop
