@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/jentjr/timml.svg?branch=master)](https://travis-ci.org/jentjr/timml)
 # TimML, A Multi-Layer, Analytic Element Model
 
 ## Introduction
