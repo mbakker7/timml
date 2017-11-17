@@ -17,8 +17,8 @@ matrix:
     env:
     - PYTHON=3.6
     - NUMPY=1.13
-    - SCIPY=0.18
-    - MATPLOTLIB=2.0
+    - SCIPY=1.0
+    - MATPLOTLIB=2.1
 
 addons:
   apt:
