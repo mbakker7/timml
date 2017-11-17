@@ -57,3 +57,6 @@ before_install:
 install:
   - python setup.py build_ext --inplace
   - python setup.py install
+  
+script:
+  - python -c 'import timml; timml.version.__version__;'
