@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
-from besselaesnew import besselaesnew
+from .besselaesnew import besselaesnew
 besselaesnew.initialize()
 from .controlpoints import controlpoints
 from .equation import DisvecEquation, LeakyWallEquation
