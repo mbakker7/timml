@@ -40,8 +40,7 @@ ml.solve()
 # In[6]:
 
 
-ml.contour(x1=-1200, x2=200, nx=50, y1=-500, y2=500, ny=50,
-           levels=10, labels=True, decimals=2, legend=True)
+ml.contour(win=[-1200, 200, -500, 500], levels=10, labels=True, decimals=2, legend=True)
 
 
 # The default contour levels are not what we want for this example, so let's specify the levels 
@@ -50,8 +49,7 @@ ml.contour(x1=-1200, x2=200, nx=50, y1=-500, y2=500, ny=50,
 # In[7]:
 
 
-ml.contour(x1=-1200, x2=200, nx=50, y1=-500, y2=500, ny=50,
-           levels=arange(39, 42, 0.1), labels=True, decimals=1)
+ml.contour(win=[-1200, 200, -500, 500], labels=True, decimals=1)
 
 
 # A well is located at $(x,y)=(-400,0)$ with a discharge $Q=50$ m$^3$ and a radius of 0.2 m.
@@ -67,9 +65,9 @@ w = Well(ml, xw=-400, yw=0, Qw=50., rw=0.2)
 # In[9]:
 
 
-ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(-800 * ones(1), -200 * ones(1), zeros(1), hstepmax=20)
+#ml.solve()
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+#ml.tracelines(-800 * ones(1), -200 * ones(1), zeros(1), hstepmax=20)
 
 
 # ### Exercise a
@@ -78,8 +76,8 @@ ml.tracelines(-800 * ones(1), -200 * ones(1), zeros(1), hstepmax=20)
 # In[10]:
 
 
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20)
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+#ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20)
 
 
 # ### Exercise b
@@ -88,14 +86,14 @@ ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20)
 # In[11]:
 
 
-ml = ModelMaq(kaq=10, z=[10, 0])
-rf = Constant(ml, xr=-1000, yr=0, hr=41)
-uf = Uflow(ml, slope=0.001, angle=0)
-w = Well(ml, xw=-400, yw=0, Qw=200, rw=0.2)
-ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20)
-print(('head at well:', w.headinside()))
+#ml = ModelMaq(kaq=10, z=[10, 0])
+#rf = Constant(ml, xr=-1000, yr=0, hr=41)
+#uf = Uflow(ml, slope=0.001, angle=0)
+#w = Well(ml, xw=-400, yw=0, Qw=200, rw=0.2)
+#ml.solve()
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+#ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20)
+#print(('head at well:', w.headinside()))
 
 
 # ### Add a river
@@ -109,9 +107,9 @@ rf = Constant(ml, xr=-1000, yr=0, hr=41)
 uf = Uflow(ml, slope=0.001, angle=0)
 w = Well(ml, xw=-400, yw=0, Qw=200, rw=0.2)
 ls1 = HeadLineSink(ml, 0, -500, 0, 500, 40)
-ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1))
-print(('head at well:', w.headinside()))
+#ml.solve()
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1))
+#print(('head at well:', w.headinside()))
 
 
 # ### Exercise c
@@ -128,9 +126,9 @@ xls = zeros(21)
 yls = linspace(-800, 800, 21)
 ls = HeadLineSinkString(ml, xy=list(zip(xls, yls)), hls=40, layers=0)
 ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1))
-ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20, color='b')
-ml.tracelines(-0.01 * ones(5), linspace(-150, 150, 5), zeros(5), hstepmax=20, color='r')
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1))
+#ml.tracelines(-800 * ones(10), linspace(-500, 500, 10), zeros(10), hstepmax=20, color='b')
+#ml.tracelines(-0.01 * ones(5), linspace(-150, 150, 5), zeros(5), hstepmax=20, color='r')
 
 
 # ### Capture zone
@@ -139,8 +137,8 @@ ml.tracelines(-0.01 * ones(5), linspace(-150, 150, 5), zeros(5), hstepmax=20, co
 # In[14]:
 
 
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1), layers=0)
-w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=5 * 365.25, color='b')
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1), layers=0)
+#w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=5 * 365.25, color='b')
 
 
 # ### Exercise d
@@ -149,8 +147,8 @@ w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=5 * 365.25, color='b')
 # In[15]:
 
 
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1), layers=0)
-w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=20 * 365.25, color='b')
+#ml.contour(-1000, 100, 50, -500, 500, 50, levels=arange(39, 42, 0.1), layers=0)
+#w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=20 * 365.25, color='b')
 
 
 # In[ ]:

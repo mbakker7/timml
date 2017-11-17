@@ -1,0 +1,59 @@
+sudo: required
+language: python
+
+env:
+  # Default values for common package
+  global:
+    - OPTIONAL=
+    - COVERAGE=false
+    - USEMPL=true
+    - MATPLOTLIB=
+    - DOCBUIL=false
+
+matrix:
+  fast_finish: true
+  include:
+  - python: 2.7
+    env:
+    - PYTHON=3.6
+    - NUMPY=1.13
+    - SCIPY=0.18
+    - MATPLOTLIB=2.0
+
+addons:
+  apt:
+   packages:
+   - gfortran
+
+# Setup anaconda
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - export PATH=/home/travis/miniconda2/bin:$PATH
+  - export MKL_NUM_THREADS=1
+  - export NUMEXPR_NUM_THREADS=1
+  - export OMP_NUM_THREADS=1
+  - conda config --set always_yes yes
+  # Temporarily disabled until conda is fixed
+  # - conda update --quiet conda
+  # Fix for headless TravisCI
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  # Avoid noise from matplotlib
+  - mkdir -p $HOME/.config/matplotlib
+  - SRCDIR=$PWD
+  # Build package list to avoid empty package=versions; only needed for versioned packages
+  - PKGS="python=${PYTHON}"
+  - PKGS="${PKGS} numpy"; if [ ${NUMPY} ]; then PKGS="${PKGS}=${NUMPY}"; fi
+  - PKGS="${PKGS} scipy"; if [ ${SCIPY} ]; then PKGS="${PKGS}=${SCIPY}"; fi
+  - if [ ${USEMPL} = true ]; then PKGS="${PKGS} matplotlib"; if [ ${MATPLOTLIB} ]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi; fi
+  - echo conda create --yes --quiet -n timml ${PKGS} ${OPTIONAL} pyyaml
+  - conda create --yes --quiet -n timml ${PKGS} ${OPTIONAL} pyyaml
+  - source activate timml
+  - export SRCDIR=$PWD
+  # Install packages
+install:
+  - python setup_conda_forge_try.py build_ext --inplace
+  - python setup_conda_forge_try.py develop
