@@ -2,6 +2,8 @@ skip_tags: true
 clone_depth: 50
 
 environment:
+  global:
+    MINGW_64: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin
   matrix:
     - PY_MAJOR_VER: 3
       PYTHON_ARCH: "x86_64"
@@ -11,7 +13,7 @@ platform:
 
 build_script:
   - ps: Start-FileDownload "https://repo.continuum.io/miniconda/Miniconda$env:PY_MAJOR_VER-latest-Windows-$env:PYTHON_ARCH.exe"
-  - cmd: C:\Miniconda.exe /S /D=C:\Py
+  - cmd: C:\Miniconda /S /D=C:\Py
   - SET PATH=C:\Py;C:\Py\Scripts;C:\Py\Library\bin;%PATH%
   - conda config --set always_yes yes
   - conda update conda --quiet
