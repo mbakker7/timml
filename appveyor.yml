@@ -3,17 +3,17 @@ clone_depth: 50
 
 environment:
   global:
-    MINGW_64: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin
+    MINGW_32: C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
 
   matrix:
     - PY_MAJOR_VER: 3
-      PYTHON_ARCH: "x86_64"
+      PYTHON_ARCH: "x86"
 
 matrix:
   fast_finish: true
 
 platform:
-    - x64
+    - x86
 
 build_script:
   - ps: Start-FileDownload "https://repo.continuum.io/miniconda/Miniconda$env:PY_MAJOR_VER-latest-Windows-$env:PYTHON_ARCH.exe" C:\Miniconda.exe; echo "Finished downloading miniconda"
@@ -23,8 +23,8 @@ build_script:
   - conda update conda --quiet
   - ps: conda install -c conda-forge numpy scipy matplotlib --quiet
   - python setup.py config_fc
-  - python setup.py config --compiler=mingw64 --fcompiler=gfortran
-  - python setup.py build_ext --inplace --compiler=mingw64
+  - python setup.py config --compiler=mingw32 --fcompiler=gfortran
+  - python setup.py build_ext --inplace 
   - python setup.py install
 
 test_script:
