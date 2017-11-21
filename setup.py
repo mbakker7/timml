@@ -3,7 +3,7 @@ import sys
 import os
 
 try:
-    from numpy.distutils.core import Extension
+    from numpy.distutils.core import Extension, setup
 except ImportError:
     sys.exit("install requires: 'numpy'.")
 
@@ -20,7 +20,6 @@ def configuration(parent_package='', top_path=None):
     return config
 
 def setup_package():
-    from setuptools import setup
 
     metadata = dict(
         name = 'timml',
