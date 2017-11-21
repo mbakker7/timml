@@ -22,7 +22,7 @@ build_script:
   - conda update conda --quiet
   - ps: conda install -c conda-forge numpy scipy matplotlib toolchain mingw setuptools --quiet
   - python setup.py config_fc
-  - python setup.py config --fcompiler=gfortran
+  - python setup.py config --compiler=mingw32 --fcompiler=gfortran
   - python setup.py build_ext build_src --inplace 
   - python setup.py install
 
