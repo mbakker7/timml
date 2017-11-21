@@ -1,8 +1,9 @@
+from __future__ import division, absolute_import, print_function
 import sys
 import os
 
 try:
-    from numpy.distutils.core import Extension, setup
+    from numpy.distutils.core import Extension
 except ImportError:
     sys.exit("install requires: 'numpy'.")
 
@@ -19,6 +20,7 @@ def configuration(parent_package='', top_path=None):
     return config
 
 def setup_package():
+    from setuptools import setup
 
     metadata = dict(
         name = 'timml',
