@@ -30,7 +30,7 @@ build_script:
   - conda create -q -n timml_env python="%PYTHON_VERSION%" numpy scipy matplotlib mingw
   - activate timml_env
   - python setup.py config_fc
-  - python setup.py config --compiler=mingw32 --fcompiler=gfortran
+  - python setup.py config --fcompiler=gfortran
   - python setup.py build_ext --inplace 
   - python setup.py install
 
