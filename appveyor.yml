@@ -25,7 +25,7 @@ build_script:
   - python -c "import sys; print(sys.version)"
   - python -c "import sys; print(sys.executable)"
   - python -c "import sys; print(sys.prefix)"
-  - ps: conda create -q -n timml_env python=%PYTHON_VERSION% numpy scipy matplotlib toolchain mingw setuptools
+  - conda create -q -n timml_env python="%PYTHON_VERSION%" numpy scipy matplotlib toolchain mingw setuptools
   - activate timml_env
   - python setup.py config_fc
   - python setup.py config --compiler=mingw32 --fcompiler=gfortran
