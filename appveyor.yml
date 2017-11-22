@@ -23,7 +23,7 @@ init:
   - ECHO "Installed SDKs:"
   - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
 
-  - ps:ECHO %PYTHON_VERSION% %MINICONDA%
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
 
 build_script:
   - ps: set PATH=%MINICONDA%;MINICONDA%\\Scripts;%PATH%
