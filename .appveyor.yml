@@ -1,3 +1,5 @@
+os: Visual Studio 2015
+
 environment:
   matrix:
     - PYTHON: "C:\\Miniconda36-x64"
@@ -25,7 +27,7 @@ build_script:
   - python -c "import sys; print(sys.version)"
   - python -c "import sys; print(sys.executable)"
   - python -c "import sys; print(sys.prefix)"
-  - conda create -q -n timml_env python="%PYTHON_VERSION%" numpy scipy matplotlib mingw toolchain vc
+  - conda create -q -n timml_env python="%PYTHON_VERSION%" numpy scipy matplotlib mingw
   - activate timml_env
   - python setup.py config_fc
   - python setup.py config --compiler=mingw32 --fcompiler=gfortran
