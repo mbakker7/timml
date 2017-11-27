@@ -293,7 +293,8 @@ class Model(PlotTim):
         
 class ModelMaq(Model):
     """
-    ModelMaq Class to create a multi-aquifer model object
+    Create a Model object by specifying a mult-aquifer sequence of
+    aquifer-leakylayer-aquifer-leakylayer-aquifer etc
     
     Parameters
     ----------
@@ -303,24 +304,24 @@ class ModelMaq(Model):
     z : array or list
         elevation tops and bottoms of the aquifers from the top down
         leaky layers may have zero thickness
-        if top='conf': length is 2 * number of aquifers
-        if top='semi': length is 2 * number of aquifers + 1 as top
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
         of leaky layer on top of systems needs to be specified
     c : float, array or list
         resistance of leaky layers from the top down
         if float, resistance is the same for all leaky layers
-        if top='conf': length is number of aquifers - 1
-        if top='semi': length is number of aquifers
+        if topboundary='conf': length is number of aquifers - 1
+        if topboundary='semi': length is number of aquifers
     npor : float, array or list
         porosity of all aquifers and leaky layers from the top down
         if float, porosity is the same for all layers
-        if top='conf': length is 2 * number of aquifers - 1
-        if top='semi': length is 2 * number of aquifers
-    top : string, 'conf' or 'semi' (default is 'conf')
-        indicating whether the top is confined ('conf') or
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the topboundary is confined ('conf') or
         semi-confined ('semi')
     hstar : float or None (default is None)
-        head value above semi-confining top, only read if top='semi'
+        head value above semi-confining top, only read if topboundary='semi'
 
     Examples
     --------
@@ -328,9 +329,9 @@ class ModelMaq(Model):
     
     """
     
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf', hstar=None):
+    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf', hstar=None):
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype = param_maq(kaq, z, c, npor, top)
+        kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
         Model.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
@@ -351,8 +352,8 @@ class Model3D(Model):
         elevation of top of system followed by bottoms of all layers
         from the top down
         bottom of layer is automatically equal to top of layer below it
-        if top='conf': length is number of layers + 1
-        if top='semi': length is number of layers + 2 as top
+        if topboundary='conf': length is number of layers + 1
+        if topboundary='semi': length is number of layers + 2 as top
         of leaky layer on top of systems needs to be specified
     kzoverkh : float
         vertical anisotropy ratio vertical k divided by horizontal k
@@ -361,17 +362,17 @@ class Model3D(Model):
     npor : float, array or list
         porosity of all aquifer layers from the top down
         if float, porosity is the same for all layers
-        if top='conf': length is number of layers
-        if top='semi': length is number of layers + 1
-    top : string, 'conf' or 'semi' (default is 'conf')
+        if topboundary='conf': length is number of layers
+        if topboundary='semi': length is number of layers + 1
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
         indicating whether the top is confined ('conf') or
         semi-confined ('semi')
     topres : float
-        resistance of top semi-confining layer, only read if top='semi'
+        resistance of top semi-confining layer, only read if topboundary='semi'
     topthick: float
-        thickness of top semi-confining layer, only read if top='semi'
+        thickness of top semi-confining layer, only read if topboundary='semi'
     hstar : float or None (default is None)
-        head value above semi-confining top, only read if top='semi'
+        head value above semi-confining top, only read if topboundary='semi'
 
     Examples
     --------
@@ -379,15 +380,15 @@ class Model3D(Model):
     
     """
     
-    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, top='conf', topres=0, topthick=0, hstar=0):
+    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, topboundary='conf', topres=0, topthick=0, hstar=0):
         '''Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top
         hstar: head above top'''
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, top, topres)
-        if top == 'semi':
+        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
+        if topboundary == 'semi':
             z = np.hstack((z[0] + topthick, z))
         Model.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'Model3D'

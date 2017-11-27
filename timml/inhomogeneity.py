@@ -99,24 +99,24 @@ class PolygonInhomMaq(PolygonInhom):
     z : array or list
         elevation tops and bottoms of the aquifers from the top down
         leaky layers may have zero thickness
-        if top='conf': length is 2 * number of aquifers
-        if top='semi': length is 2 * number of aquifers + 1 as top
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
         of leaky layer on top of systems needs to be specified
     c : float, array or list
         resistance of leaky layers from the top down
         if float, resistance is the same for all leaky layers
-        if top='conf': length is number of aquifers - 1
-        if top='semi': length is number of aquifers
+        if topboundary='conf': length is number of aquifers - 1
+        if topboundary='semi': length is number of aquifers
     npor : float, array or list
         porosity of all aquifers and leaky layers from the top down
         if float, porosity is the same for all layers
-        if top='conf': length is 2 * number of aquifers - 1
-        if top='semi': length is 2 * number of aquifers
-    top : string, 'conf' or 'semi' (default is 'conf')
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
         indicating whether the top is confined ('conf') or
         semi-confined ('semi')
     hstar : float or None (default is None)
-        head value above semi-confining top, only read if top='semi'
+        head value above semi-confining top, only read if topboundary='semi'
     order : int
         polynomial order of flux along each segment
     ndeg : int
@@ -127,10 +127,10 @@ class PolygonInhomMaq(PolygonInhom):
     
     tiny = 1e-8
 
-    def __init__(self, model, xy, kaq=1, z=[1, 0], c=[], npor=0.3, top='conf',
+    def __init__(self, model, xy, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf',
                  hstar=None, order=3, ndeg=3):
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, top)
+        kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, topboundary)
         PolygonInhom.__init__(self, model, xy, kaq, c, z, npor, ltype,
                               hstar, order, ndeg)
 
