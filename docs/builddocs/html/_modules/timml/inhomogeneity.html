@@ -144,24 +144,24 @@
 <span class="sd">    z : array or list</span>
 <span class="sd">        elevation tops and bottoms of the aquifers from the top down</span>
 <span class="sd">        leaky layers may have zero thickness</span>
-<span class="sd">        if top=&#39;conf&#39;: length is 2 * number of aquifers</span>
-<span class="sd">        if top=&#39;semi&#39;: length is 2 * number of aquifers + 1 as top</span>
+<span class="sd">        if topboundary=&#39;conf&#39;: length is 2 * number of aquifers</span>
+<span class="sd">        if topboundary=&#39;semi&#39;: length is 2 * number of aquifers + 1 as top</span>
 <span class="sd">        of leaky layer on top of systems needs to be specified</span>
 <span class="sd">    c : float, array or list</span>
 <span class="sd">        resistance of leaky layers from the top down</span>
 <span class="sd">        if float, resistance is the same for all leaky layers</span>
-<span class="sd">        if top=&#39;conf&#39;: length is number of aquifers - 1</span>
-<span class="sd">        if top=&#39;semi&#39;: length is number of aquifers</span>
+<span class="sd">        if topboundary=&#39;conf&#39;: length is number of aquifers - 1</span>
+<span class="sd">        if topboundary=&#39;semi&#39;: length is number of aquifers</span>
 <span class="sd">    npor : float, array or list</span>
 <span class="sd">        porosity of all aquifers and leaky layers from the top down</span>
 <span class="sd">        if float, porosity is the same for all layers</span>
-<span class="sd">        if top=&#39;conf&#39;: length is 2 * number of aquifers - 1</span>
-<span class="sd">        if top=&#39;semi&#39;: length is 2 * number of aquifers</span>
-<span class="sd">    top : string, &#39;conf&#39; or &#39;semi&#39; (default is &#39;conf&#39;)</span>
+<span class="sd">        if topboundary=&#39;conf&#39;: length is 2 * number of aquifers - 1</span>
+<span class="sd">        if topboundary=&#39;semi&#39;: length is 2 * number of aquifers</span>
+<span class="sd">    topboundary : string, &#39;conf&#39; or &#39;semi&#39; (default is &#39;conf&#39;)</span>
 <span class="sd">        indicating whether the top is confined (&#39;conf&#39;) or</span>
 <span class="sd">        semi-confined (&#39;semi&#39;)</span>
 <span class="sd">    hstar : float or None (default is None)</span>
-<span class="sd">        head value above semi-confining top, only read if top=&#39;semi&#39;</span>
+<span class="sd">        head value above semi-confining top, only read if topboundary=&#39;semi&#39;</span>
 <span class="sd">    order : int</span>
 <span class="sd">        polynomial order of flux along each segment</span>
 <span class="sd">    ndeg : int</span>
@@ -172,10 +172,10 @@
     
     <span class="n">tiny</span> <span class="o">=</span> <span class="mf">1e-8</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span>
                  <span class="n">hstar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
-        <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="o">=</span> <span class="n">param_maq</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+        <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="o">=</span> <span class="n">param_maq</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">topboundary</span><span class="p">)</span>
         <span class="n">PolygonInhom</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span>
                               <span class="n">hstar</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">ndeg</span><span class="p">)</span></div>
 

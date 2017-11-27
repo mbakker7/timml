@@ -48,8 +48,9 @@
 <h1>ModelMaq<a class="headerlink" href="#modelmaq" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.model.ModelMaq">
-<em class="property">class </em><code class="descclassname">timml.model.</code><code class="descname">ModelMaq</code><span class="sig-paren">(</span><em>kaq=1, z=[1, 0], c=[], npor=0.3, top=’conf’, hstar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#ModelMaq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.ModelMaq" title="Permalink to this definition">¶</a></dt>
-<dd><p>ModelMaq Class to create a multi-aquifer model object</p>
+<em class="property">class </em><code class="descclassname">timml.model.</code><code class="descname">ModelMaq</code><span class="sig-paren">(</span><em>kaq=1, z=[1, 0], c=[], npor=0.3, topboundary=’conf’, hstar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#ModelMaq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.ModelMaq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Model object by specifying a mult-aquifer sequence of
+aquifer-leakylayer-aquifer-leakylayer-aquifer etc</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -59,20 +60,20 @@
 if float, hydraulic conductivity is the same in all aquifers</li>
 <li><strong>z</strong> (<em>array</em><em> or </em><em>list</em>) – elevation tops and bottoms of the aquifers from the top down
 leaky layers may have zero thickness
-if top=’conf’: length is 2 * number of aquifers
-if top=’semi’: length is 2 * number of aquifers + 1 as top
+if topboundary=’conf’: length is 2 * number of aquifers
+if topboundary=’semi’: length is 2 * number of aquifers + 1 as top
 of leaky layer on top of systems needs to be specified</li>
 <li><strong>c</strong> (<em>float</em><em>, </em><em>array</em><em> or </em><em>list</em>) – resistance of leaky layers from the top down
 if float, resistance is the same for all leaky layers
-if top=’conf’: length is number of aquifers - 1
-if top=’semi’: length is number of aquifers</li>
+if topboundary=’conf’: length is number of aquifers - 1
+if topboundary=’semi’: length is number of aquifers</li>
 <li><strong>npor</strong> (<em>float</em><em>, </em><em>array</em><em> or </em><em>list</em>) – porosity of all aquifers and leaky layers from the top down
 if float, porosity is the same for all layers
-if top=’conf’: length is 2 * number of aquifers - 1
-if top=’semi’: length is 2 * number of aquifers</li>
-<li><strong>top</strong> (<em>string</em><em>, </em><em>'conf'</em><em> or </em><em>'semi'</em><em> (</em><em>default is 'conf'</em><em>)</em>) – indicating whether the top is confined (‘conf’) or
+if topboundary=’conf’: length is 2 * number of aquifers - 1
+if topboundary=’semi’: length is 2 * number of aquifers</li>
+<li><strong>topboundary</strong> (<em>string</em><em>, </em><em>'conf'</em><em> or </em><em>'semi'</em><em> (</em><em>default is 'conf'</em><em>)</em>) – indicating whether the topboundary is confined (‘conf’) or
 semi-confined (‘semi’)</li>
-<li><strong>hstar</strong> (<em>float</em><em> or </em><em>None</em><em> (</em><em>default is None</em><em>)</em>) – head value above semi-confining top, only read if top=’semi’</li>
+<li><strong>hstar</strong> (<em>float</em><em> or </em><em>None</em><em> (</em><em>default is None</em><em>)</em>) – head value above semi-confining top, only read if topboundary=’semi’</li>
 </ul>
 </td>
 </tr>
