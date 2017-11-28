@@ -20,7 +20,6 @@ def configuration(parent_package='', top_path=None):
     return config
 
 def setup_package():
-    from setuptools import setup
     
     metadata = dict(
         name = 'timml',
