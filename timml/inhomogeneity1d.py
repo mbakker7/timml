@@ -58,18 +58,18 @@ class StripInhom(AquiferData):
 class StripInhomMaq(StripInhom):
     
     def __init__(self, model, x1, x2, kaq=1, z=[1, 0], c=[], npor=0.3, 
-                 top='conf', hstar=None):
+                 topboundary='conf', hstar=None):
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, top)
+        kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, topboundary)
         StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar)
 
 
 class StripInhom3D(StripInhom):
     
     def __init__(self, model, x1, x2, kaq, z=[1, 0], kzoverkh=1, npor=0.3, 
-                 top='conf', hstar=None, topres=None, topthick=0.):
+                 topboundary='conf', hstar=None, topres=None, topthick=0.):
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype, = param_3d(kaq, z, kzoverkh, npor, top, topres)
-        if top == 'semi':
+        kaq, c, npor, ltype, = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
+        if topbndary== 'semi':
             z = np.hstack((z[0] + topthick, z))
         StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar)
