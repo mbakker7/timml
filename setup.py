@@ -3,7 +3,7 @@ import sys
 import os
 
 try:
-    from numpy.distutils.core import Extension
+    from numpy.distutils.core import Extension, setup
 except ImportError:
     sys.exit("install requires: 'numpy'.")
 
