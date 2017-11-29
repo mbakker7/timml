@@ -15,6 +15,7 @@ class StripInhom(AquiferData):
         self.x1 = x1
         self.x2 = x2
         self.inhom_number = self.model.aq.add_inhom(self)
+        self.addlinesinks = True  # Set to False not to add line-sinks
         
     def __repr__(self):
         return "Inhom1D: " + str(list([self.x1, self.x2]))
@@ -29,15 +30,17 @@ class StripInhom(AquiferData):
             xoutright = self.x2 + self.tiny * abs(self.x2) + self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutright = self.model.aq.find_aquifer_data(xoutright, 0)
-            HeadDiffLineSink1D(self.model, self.x2, label=None, 
-                 aq=aqin, aqin=aqin, aqout=aqoutright)
+            if self.addlinesinks:
+                HeadDiffLineSink1D(self.model, self.x2, label=None, 
+                                   aq=aqin, aqin=aqin, aqout=aqoutright)
         elif self.x2 == np.inf:
             xin = self.x1 + self.tiny * abs(self.x1) + self.tiny
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutleft = self.model.aq.find_aquifer_data(xoutleft, 0)
-            FluxDiffLineSink1D(self.model, self.x1, label=None, 
-                 aq=aqin, aqin=aqin, aqout=aqoutleft)
+            if self.addlinesinks:   
+                FluxDiffLineSink1D(self.model, self.x1, label=None, 
+                                   aq=aqin, aqin=aqin, aqout=aqoutleft)
         else:
             xin = 0.5 * (self.x1 + self.x2)
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
@@ -45,10 +48,11 @@ class StripInhom(AquiferData):
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqleft = self.model.aq.find_aquifer_data(xoutleft, 0)
             aqright = self.model.aq.find_aquifer_data(xoutright, 0)
-            HeadDiffLineSink1D(self.model, self.x2, label=None, 
-                 aq=aqin, aqin=aqin, aqout=aqright)
-            FluxDiffLineSink1D(self.model, self.x1, label=None, 
-                 aq=aqin, aqin=aqin, aqout=aqleft)
+            if self.addlinesinks:
+                HeadDiffLineSink1D(self.model, self.x2, label=None, 
+                                   aq=aqin, aqin=aqin, aqout=aqright)
+                FluxDiffLineSink1D(self.model, self.x1, label=None, 
+                                   aq=aqin, aqin=aqin, aqout=aqleft)
         if aqin.ltype[0] == 'l':
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(self.model, self.hstar, aq=aqin)
