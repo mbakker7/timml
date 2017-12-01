@@ -82,7 +82,7 @@ class PlotTim:
         layers = np.atleast_1d(layers)
         xg = np.linspace(x1, x2, nx)
         yg = np.linspace(y1, y2, ny)
-        h = self.headgrid2(x1, x2, nx, y1, y2, ny, layers)
+        h = self.headgrid(xg, yg, layers)
         if newfig:
             plt.figure(figsize=figsize)
         # color
@@ -103,11 +103,11 @@ class PlotTim:
             if labels:
                 fmt = '%1.' + str(decimals) + 'f'
                 plt.clabel(cs, fmt=fmt)
-        if legend == True:
+        if type(legend) is list:
+            plt.legend(cscollectionlist, legend)
+        elif legend:
             legendlist = ['layer ' + str(i) for i in layers]
             plt.legend(cscollectionlist, legendlist)
-        elif type(legend) is list:
-            plt.legend(cscollectionlist, legend)
         plt.axis('scaled')
         if layout:
             self.plot(win=[x1, x2, y1, y2], newfig=False)

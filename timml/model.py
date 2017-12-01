@@ -142,7 +142,7 @@ class Model(PlotTim):
         See also
         --------
         
-        :func:`~timml.model.Model.headgrid2`
+        :func:`~timml.model.Model.headgrid`
 
         """
         
@@ -178,7 +178,12 @@ class Model(PlotTim):
         Returns
         -------
         h : array size `nlayers, ny, ny`
-
+        
+        See also
+        --------
+        
+        :func:`~timml.model.Model.headgrid`
+        
         """
         
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
