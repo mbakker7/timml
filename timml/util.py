@@ -70,7 +70,26 @@ class PlotTim:
             [x1, x2, y1, y2]
         ngr : scalar, tuple or list
             if scalar: number of grid points in x and y direction
-            if tuple or list: nx, ny, number of grid points in x and y direction 
+            if tuple or list: nx, ny, number of grid points in x and y direction
+        layers : integer, list or array
+            layers for which grid is returned
+        levels : integer or array (default 20)
+            levels that are contoured
+        layout : boolean (default True_)
+            plot layout of elements
+        labels : boolean (default True)
+            print labels along contours
+        decimals : integer (default 0)
+            number of decimals of labels along contours
+        color : str or list of strings
+            color of contour lines
+        newfig : boolean (default True)
+            create new figure
+        figsize : tuple of 2 values (default is mpl default)
+            size of figure
+        legend : list or boolean (default True)
+            add legend to figure
+            if list of strings: use strings as names in legend
             
         """
         

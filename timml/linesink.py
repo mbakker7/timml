@@ -366,7 +366,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         
 class HeadLineSink(LineSinkHoBase, HeadEquation):
     """
-    HeadLineSink Class to create a head-specified line-sink
+    Create a head-specified line-sink
     which may optionally have a width and resistance
     
     Parameters
