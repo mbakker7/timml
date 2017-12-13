@@ -333,7 +333,7 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
         
 class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
     """
-    Class to create a string of leaky wall segements consisting
+    Create a string of leaky wall segements consisting
     of line-doublets
     
     Parameters

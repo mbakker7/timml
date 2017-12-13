@@ -63,7 +63,10 @@ along the entire string is uniform but unknown.</p>
 line-sinks in string</li>
 <li><strong>Qls</strong> (<em>scalar</em>) – total discharge of the string</li>
 <li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sinks in string</li>
-<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters the string</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink
+if ‘H’: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+if ‘2H’: distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+if scalar: the width of the stream that partially penetrates the aquifer layer</li>
 <li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along each line-sink in string</li>
 <li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
@@ -126,6 +129,7 @@ if list or array: element is placed in all these layers</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xsection/xsectionindex.html">Xsection model</a></li>
 </ul>
 
 <div class="relations">
@@ -167,10 +171,6 @@ if list or array: element is placed in all these layers</li>
           rel="nofollow">Page source</a>
     </div>
 
-    
-    <a href="https://github.com/mbakker7/timml" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
     
 
     

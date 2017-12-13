@@ -122,7 +122,7 @@ html_theme_options = {
     'logo_name': False,
     'github_user': 'mbakker7',
     'github_repo': 'timml',
-    'github_banner': True,
+    'github_banner': False,
     'github_button': True,
     'github_type': 'watch',
     'github_count': True,

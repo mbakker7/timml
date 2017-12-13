@@ -49,7 +49,7 @@
 <dl class="class">
 <dt id="timml.linesink.HeadLineSink">
 <em class="property">class </em><code class="descclassname">timml.linesink.</code><code class="descname">HeadLineSink</code><span class="sig-paren">(</span><em>model</em>, <em>x1=-1</em>, <em>y1=0</em>, <em>x2=1</em>, <em>y2=0</em>, <em>hls=1.0</em>, <em>res=0</em>, <em>wh=1</em>, <em>order=0</em>, <em>layers=0</em>, <em>label=None</em>, <em>name=’HeadLineSink’</em>, <em>addtomodel=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink.html#HeadLineSink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink.HeadLineSink" title="Permalink to this definition">¶</a></dt>
-<dd><p>HeadLineSink Class to create a head-specified line-sink
+<dd><p>Create a head-specified line-sink
 which may optionally have a width and resistance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -66,7 +66,10 @@ if scalar: head is the same everywhere along line-sink
 if list or array of length 2: head at beginning and end of line-sink
 if list or array with length order + 1: heads at control points</li>
 <li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
-<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink
+if ‘H’: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+if ‘2H’: distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+if scalar: the width of the stream that partially penetrates the aquifer layer</li>
 <li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order or inflow along line-sink</li>
 <li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
@@ -129,6 +132,7 @@ if list or array: element is placed in all these layers</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xsection/xsectionindex.html">Xsection model</a></li>
 </ul>
 
 <div class="relations">
@@ -170,10 +174,6 @@ if list or array: element is placed in all these layers</li>
           rel="nofollow">Page source</a>
     </div>
 
-    
-    <a href="https://github.com/mbakker7/timml" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
     
 
     

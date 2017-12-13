@@ -57,3 +57,4 @@ A list of available elements is available in the menu on the right under *elemen
     Inhomogeneities <inhoms/inhoms>
     Elements <aems>
     Utilities <utils/utils>
+    Xsection model <xsection/xsectionindex>

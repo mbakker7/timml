@@ -60,6 +60,43 @@ class StripInhom(AquiferData):
         
 
 class StripInhomMaq(StripInhom):
+    """Create a strip inhomogeneity for a mult-aquifer sequence of
+    aquifer-leakylayer-aquifer-leakylayer-aquifer etc
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x1 : float
+        left boundary of inhomogeneity (may be -np.inf if extends to infinity)
+    x2 : float
+        right boundary of inhomogeneity (may be np.inf if extends to infinity)
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if topboundary='conf': length is number of aquifers - 1
+        if topboundary='semi': length is number of aquifers
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if topboundary='semi'
+
+    """
     
     def __init__(self, model, x1, x2, kaq=1, z=[1, 0], c=[], npor=0.3, 
                  topboundary='conf', hstar=None):
@@ -69,11 +106,53 @@ class StripInhomMaq(StripInhom):
 
 
 class StripInhom3D(StripInhom):
+    """Create a strip inhomogeneity for a multi-layer model consisting of
+    many aquifer layers. The resistance between the layers is computed
+    from the vertical hydraulic conductivity of the layers.
     
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x1 : float
+        left boundary of inhomogeneity (may be -np.inf if extends to infinity)
+    x2 : float
+        right boundary of inhomogeneity (may be np.inf if extends to infinity)
+    kaq : float, array or list
+        hydraulic conductivity of each layer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    z : array or list
+        elevation of top of system followed by bottoms of all layers
+        from the top down
+        bottom of layer is automatically equal to top of layer below it
+        if topboundary='conf': length is number of layers + 1
+        if topboundary='semi': length is number of layers + 2 as top
+        of leaky layer on top of systems needs to be specified
+    kzoverkh : float
+        vertical anisotropy ratio vertical k divided by horizontal k
+        if float, value is the same for all layers
+        length is number of layers
+    npor : float, array or list
+        porosity of all aquifer layers from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is number of layers
+        if topboundary='semi': length is number of layers + 1
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    topres : float
+        resistance of top semi-confining layer, only read if topboundary='semi'
+    topthick: float
+        thickness of top semi-confining layer, only read if topboundary='semi'
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if topboundary='semi'
+    
+    """
+        
     def __init__(self, model, x1, x2, kaq, z=[1, 0], kzoverkh=1, npor=0.3, 
                  topboundary='conf', hstar=None, topres=None, topthick=0.):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype, = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
-        if topbndary== 'semi':
+        if topboundary== 'semi':
             z = np.hstack((z[0] + topthick, z))
         StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar)
