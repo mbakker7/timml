@@ -2,6 +2,8 @@ import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
 
+__all__ = ['StripAreaSink']
+
 class StripAreaSink(Element):
     def __init__(self, model, xleft=-1, xright=1, N=0.001, layer=0, name='StripAreaSink', label=None):
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \
@@ -27,7 +29,7 @@ class StripAreaSink(Element):
             self.B = self.A * (np.exp(-self.L / self.lab) - 1)
             self.plabsq = self.aq.coef[self.layers, 1:] * self.lab ** 2
         else:
-            print('StripAreaSink cannot be added to semi-cofined system')
+            print('StripAreaSink cannot be added to semi-confined system')
 
     def potinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)

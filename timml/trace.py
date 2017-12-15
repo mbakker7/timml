@@ -1,5 +1,7 @@
 import numpy as np
 
+__all__ = ['timtraceline', 'timtracelines']
+
 def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100, win=[-1e30, 1e30, -1e30, 1e30], silent=False, returnlayers=False):
     # treating aquifer layers and leaky layers the same way
     xw1, xw2, yw1, yw2 = win

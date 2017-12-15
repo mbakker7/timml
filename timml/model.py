@@ -11,6 +11,7 @@ from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .util import PlotTim
 
+__all__ = ['Model', 'ModelMaq', 'Model3D']
 
 class Model(PlotTim):
     """

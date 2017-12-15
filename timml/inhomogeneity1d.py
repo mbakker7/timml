@@ -5,6 +5,7 @@ from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .linesink1d import HeadDiffLineSink1D, FluxDiffLineSink1D
 
+__all__ = ['StripInhomMaq', 'StripInhom3D']
 
 class StripInhom(AquiferData):
     tiny = 1e-12

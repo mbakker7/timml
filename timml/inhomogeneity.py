@@ -5,6 +5,7 @@ from .aquifer_parameters import param_maq
 from .constant import ConstantInside, ConstantStar
 from .intlinesink import IntHeadDiffLineSink, IntFluxDiffLineSink
 
+__all__ = ['PolygonInhomMaq']
 
 class PolygonInhom(AquiferData):
     tiny = 1e-8
