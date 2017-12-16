@@ -10,9 +10,13 @@ except ImportError:
 def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
 
-    config = Configuration('timml', parent_package, top_path)
-    config.add_extension('besselaesnew',
-                         sources = ['timml/src/besselaesnew.f95'])
+    config = Configuration(None, parent_package, top_path)
+    config.set_options(ignore_setup_xxx_py=True,
+                       assume_default_configuration=True,
+                       delegate_options_to_subpackages=True,
+                       quiet=True)
+
+    config.add_subpackage('timml')
 
     config.get_version(os.path.join('timml', 'version.py'))
 
