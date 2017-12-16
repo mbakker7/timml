@@ -1,0 +1,170 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Strip Inhomogeneity Maq &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Strip Inhomogeneity 3D" href="stripinhom3d.html" />
+    <link rel="prev" title="Xsection Models" href="xsectionindex.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="strip-inhomogeneity-maq">
+<h1>Strip Inhomogeneity Maq<a class="headerlink" href="#strip-inhomogeneity-maq" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.inhomogeneity1d.StripInhomMaq">
+<em class="property">class </em><code class="descclassname">timml.inhomogeneity1d.</code><code class="descname">StripInhomMaq</code><span class="sig-paren">(</span><em>model, x1, x2, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary=’conf’, hstar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/inhomogeneity1d.html#StripInhomMaq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.inhomogeneity1d.StripInhomMaq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a strip inhomogeneity for a mult-aquifer sequence of
+aquifer-leakylayer-aquifer-leakylayer-aquifer etc</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – model to which the element is added</li>
+<li><strong>x1</strong> (<em>float</em>) – left boundary of inhomogeneity (may be -np.inf if extends to infinity)</li>
+<li><strong>x2</strong> (<em>float</em>) – right boundary of inhomogeneity (may be np.inf if extends to infinity)</li>
+<li><strong>kaq</strong> (<em>float</em><em>, </em><em>array</em><em> or </em><em>list</em>) – hydraulic conductivity of each aquifer from the top down
+if float, hydraulic conductivity is the same in all aquifers</li>
+<li><strong>z</strong> (<em>array</em><em> or </em><em>list</em>) – elevation tops and bottoms of the aquifers from the top down
+leaky layers may have zero thickness
+if topboundary=’conf’: length is 2 * number of aquifers
+if topboundary=’semi’: length is 2 * number of aquifers + 1 as top
+of leaky layer on top of systems needs to be specified</li>
+<li><strong>c</strong> (<em>float</em><em>, </em><em>array</em><em> or </em><em>list</em>) – resistance of leaky layers from the top down
+if float, resistance is the same for all leaky layers
+if topboundary=’conf’: length is number of aquifers - 1
+if topboundary=’semi’: length is number of aquifers</li>
+<li><strong>npor</strong> (<em>float</em><em>, </em><em>array</em><em> or </em><em>list</em>) – porosity of all aquifers and leaky layers from the top down
+if float, porosity is the same for all layers
+if topboundary=’conf’: length is 2 * number of aquifers - 1
+if topboundary=’semi’: length is 2 * number of aquifers</li>
+<li><strong>topboundary</strong> (<em>string</em><em>, </em><em>'conf'</em><em> or </em><em>'semi'</em><em> (</em><em>default is 'conf'</em><em>)</em>) – indicating whether the top is confined (‘conf’) or
+semi-confined (‘semi’)</li>
+<li><strong>hstar</strong> (<em>float</em><em> or </em><em>None</em><em> (</em><em>default is None</em><em>)</em>) – head value above semi-confining top, only read if topboundary=’semi’</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../models/modelindex.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="xsectionindex.html">Xsection model</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">StripInhomMaq</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stripinhom3d.html">StripInhom3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linesink1d.html">LineSink1D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="headlinesink1d.html">HeadLineSink1D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="leakylinedoublet1d.html">LeakyLineDoublet1D</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="xsectionindex.html">Xsection Models</a><ul>
+      <li>Previous: <a href="xsectionindex.html" title="previous chapter">Xsection Models</a></li>
+      <li>Next: <a href="stripinhom3d.html" title="next chapter">Strip Inhomogeneity 3D</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/xsection/stripinhommaq.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

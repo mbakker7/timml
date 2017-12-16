@@ -1,0 +1,160 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Infinitely long line-sink with given head &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Infinitely long leaky or impermeable wall" href="leakylinedoublet1d.html" />
+    <link rel="prev" title="Infinitely long line-sink with given discharge" href="linesink1d.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="infinitely-long-line-sink-with-given-head">
+<h1>Infinitely long line-sink with given head<a class="headerlink" href="#infinitely-long-line-sink-with-given-head" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="timml.linesink1d.HeadLineSink1D">
+<em class="property">class </em><code class="descclassname">timml.linesink1d.</code><code class="descname">HeadLineSink1D</code><span class="sig-paren">(</span><em>model</em>, <em>xls=0</em>, <em>hls=1</em>, <em>res=0</em>, <em>wh=1</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink1d.html#HeadLineSink1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink1d.HeadLineSink1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an infinitely long line-sink with a given head.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
+<li><strong>xls</strong> (<em>scalar</em>) – x-location of line-sink</li>
+<li><strong>hls</strong> (<em>scalar</em>) – head in line-sink</li>
+<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
+<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink
+if ‘H’: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+if ‘2H’: distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+if scalar: the width of the stream that partially penetrates the aquifer layer</li>
+<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: element is placed in this layer
+if list or array: element is placed in all these layers</li>
+<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../models/modelindex.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="xsectionindex.html">Xsection model</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="stripinhommaq.html">StripInhomMaq</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stripinhom3d.html">StripInhom3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linesink1d.html">LineSink1D</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">HeadLineSink1D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="leakylinedoublet1d.html">LeakyLineDoublet1D</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="xsectionindex.html">Xsection Models</a><ul>
+      <li>Previous: <a href="linesink1d.html" title="previous chapter">Infinitely long line-sink with given discharge</a></li>
+      <li>Next: <a href="leakylinedoublet1d.html" title="next chapter">Infinitely long leaky  or impermeable wall</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/xsection/headlinesink1d.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

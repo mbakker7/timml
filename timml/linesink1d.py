@@ -89,10 +89,42 @@ class LineSink1DBase(Element):
             rv[0] = self.aq.coef[self.layers] * qx
         return rv
     
+    def discharge(self):
+        """Discharge per unit length"""
+        Q = np.zeros(self.aq.naq)
+        Q[self.layers] = self.parameters[:, 0]
+        return Q
+    
 class LineSink1D(LineSink1DBase, MscreenWellEquation):
     """
-    Create 1D line-sink with given total flux per unit length
+    Create an infinitely long line-sink with a given discharge
+    per unit length. In case the line-sink is screened in multiple
+    layers, the discharge is distributed over the layers such that
+    the head inside the line-sink is constant in all layers.
     
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    xls : scalar
+        x-location of line-sink
+    sigls : scalar
+        discharge per unit length
+    res : scalar (default is 0)
+        resistance of line-sink
+    wh : scalar or str
+        distance over which water enters line-sink
+        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+        if scalar: the width of the stream that partially penetrates the aquifer layer
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+
     """
     
     def __init__(self, model, xls=0, sigls=1, \
@@ -114,7 +146,34 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
         self.parameters[:, 0] = sol
     
 class HeadLineSink1D(LineSink1DBase, HeadEquation):
+    """
+    Create an infinitely long line-sink with a given head.
     
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    xls : scalar
+        x-location of line-sink
+    hls : scalar
+        head in line-sink
+    res : scalar (default is 0)
+        resistance of line-sink
+    wh : scalar or str
+        distance over which water enters line-sink
+        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+        if scalar: the width of the stream that partially penetrates the aquifer layer
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
+
+    """
+ 
     def __init__(self, model, xls=0, hls=1, \
                  res=0, wh=1, layers=0, label=None):
         self.storeinput(inspect.currentframe())

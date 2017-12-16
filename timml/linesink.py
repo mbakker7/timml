@@ -368,7 +368,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         
 class HeadLineSink(LineSinkHoBase, HeadEquation):
     """
-    HeadLineSink Class to create a head-specified line-sink
+    Create a head-specified line-sink
     which may optionally have a width and resistance
     
     Parameters
@@ -393,6 +393,9 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
+        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+        if scalar: the width of the stream that partially penetrates the aquifer layer
     order : int (default is 0)
         polynomial order or inflow along line-sink
     layers : scalar, list or array
@@ -469,6 +472,9 @@ class LineSinkDitch(HeadLineSink):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
+        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+        if scalar: the width of the stream that partially penetrates the aquifer layer
     order : int (default is 0)
         polynomial order or inflow along line-sink
     layers : scalar, list or array
@@ -778,6 +784,9 @@ class HeadLineSinkString(LineSinkStringBase2):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
+        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+        if scalar: the width of the stream that partially penetrates the aquifer layer
     order : int (default is 0)
         order of all line-sinks in string
     layers : scalar, list or array
@@ -882,7 +891,10 @@ class LineSinkDitchString(HeadLineSinkString):
     res : scalar (default is 0)
         resistance of line-sinks in string
     wh : scalar or str
-        distance over which water enters the string
+        distance over which water enters line-sink
+        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
+        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
+        if scalar: the width of the stream that partially penetrates the aquifer layer
     order : int (default is 0)
         polynomial order or inflow along each line-sink in string
     layers : scalar, list or array

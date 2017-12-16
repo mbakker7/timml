@@ -130,7 +130,7 @@ if ltype[0]=’l’: length is number of aquifers</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>h</strong></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, ny, ny</cite></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, ny, nx</cite></p>
 </td>
 </tr>
 </tbody>
@@ -150,8 +150,8 @@ if ltype[0]=’l’: length is number of aquifers</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x2</strong><strong>, </strong><strong>nx</strong> (<em>x1</em><em>,</em>) – x values of grid</li>
-<li><strong>y2</strong><strong>, </strong><strong>ny</strong> (<em>y1</em><em>,</em>) – y values of grid</li>
+<li><strong>x2</strong><strong>, </strong><strong>nx</strong> (<em>x1</em><em>,</em>) – x values are generated as linspace(x1, x2, nx)</li>
+<li><strong>y2</strong><strong>, </strong><strong>ny</strong> (<em>y1</em><em>,</em>) – y values are generated as linspace(y1, y2, ny)</li>
 <li><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em><em>, </em><em>optional</em>) – layers for which grid is returned</li>
 <li><strong>printrow</strong> (<em>boolean</em><em>, </em><em>optional</em>) – prints dot to screen for each row of grid if set to <cite>True</cite></li>
 </ul>
@@ -160,19 +160,40 @@ if ltype[0]=’l’: length is number of aquifers</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>h</strong></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, ny, ny</cite></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, ny, nx</cite></p>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#timml.model.Model.headgrid" title="timml.model.Model.headgrid"><code class="xref py py-func docutils literal"><span class="pre">headgrid()</span></code></a></p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="timml.model.Model.headalongline">
 <code class="descname">headalongline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>layers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headalongline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.headalongline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns head[Nlayers,len(x)]
-Assumes same number of layers for each x and y
-layers may be None or list of layers for which head is computed</p>
+<dd><p>Head along line or curve</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>array</em>) – x values of line</li>
+<li><strong>y</strong> (<em>array</em>) – y values of line</li>
+<li><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em><em>, </em><em>optional</em>) – layers for which grid is returned</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>h</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array size <cite>nlayers, nx</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -193,6 +214,16 @@ layers may be None or list of layers for which head is computed</p>
 <li><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</li>
 <li><strong>ngr</strong> (<em>scalar</em><em>, </em><em>tuple</em><em> or </em><em>list</em>) – if scalar: number of grid points in x and y direction
 if tuple or list: nx, ny, number of grid points in x and y direction</li>
+<li><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layers for which grid is returned</li>
+<li><strong>levels</strong> (<em>integer</em><em> or </em><em>array</em><em> (</em><em>default 20</em><em>)</em>) – levels that are contoured</li>
+<li><strong>layout</strong> (boolean (default <a href="#id1"><span class="problematic" id="id2">True_</span></a>)) – plot layout of elements</li>
+<li><strong>labels</strong> (<em>boolean</em><em> (</em><em>default True</em><em>)</em>) – print labels along contours</li>
+<li><strong>decimals</strong> (<em>integer</em><em> (</em><em>default 0</em><em>)</em>) – number of decimals of labels along contours</li>
+<li><strong>color</strong> (<em>str</em><em> or </em><em>list of strings</em>) – color of contour lines</li>
+<li><strong>newfig</strong> (<em>boolean</em><em> (</em><em>default True</em><em>)</em>) – create new figure</li>
+<li><strong>figsize</strong> (<em>tuple of 2 values</em><em> (</em><em>default is mpl default</em><em>)</em>) – size of figure</li>
+<li><strong>legend</strong> (<em>list</em><em> or </em><em>boolean</em><em> (</em><em>default True</em><em>)</em>) – add legend to figure
+if list of strings: use strings as names in legend</li>
 </ul>
 </td>
 </tr>
@@ -265,6 +296,7 @@ if tuple or list: nx, ny, number of grid points in x and y direction</li>
 <li class="toctree-l1"><a class="reference internal" href="../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aems.html">Elements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xsection/xsectionindex.html">Xsection model</a></li>
 </ul>
 
 <div class="relations">
@@ -304,10 +336,6 @@ if tuple or list: nx, ny, number of grid points in x and y direction</li>
           rel="nofollow">Page source</a>
     </div>
 
-    
-    <a href="https://github.com/mbakker7/timml" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
     
 
     

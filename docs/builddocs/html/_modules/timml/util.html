@@ -115,7 +115,26 @@
 <span class="sd">            [x1, x2, y1, y2]</span>
 <span class="sd">        ngr : scalar, tuple or list</span>
 <span class="sd">            if scalar: number of grid points in x and y direction</span>
-<span class="sd">            if tuple or list: nx, ny, number of grid points in x and y direction </span>
+<span class="sd">            if tuple or list: nx, ny, number of grid points in x and y direction</span>
+<span class="sd">        layers : integer, list or array</span>
+<span class="sd">            layers for which grid is returned</span>
+<span class="sd">        levels : integer or array (default 20)</span>
+<span class="sd">            levels that are contoured</span>
+<span class="sd">        layout : boolean (default True_)</span>
+<span class="sd">            plot layout of elements</span>
+<span class="sd">        labels : boolean (default True)</span>
+<span class="sd">            print labels along contours</span>
+<span class="sd">        decimals : integer (default 0)</span>
+<span class="sd">            number of decimals of labels along contours</span>
+<span class="sd">        color : str or list of strings</span>
+<span class="sd">            color of contour lines</span>
+<span class="sd">        newfig : boolean (default True)</span>
+<span class="sd">            create new figure</span>
+<span class="sd">        figsize : tuple of 2 values (default is mpl default)</span>
+<span class="sd">            size of figure</span>
+<span class="sd">        legend : list or boolean (default True)</span>
+<span class="sd">            add legend to figure</span>
+<span class="sd">            if list of strings: use strings as names in legend</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -127,7 +146,7 @@
         <span class="n">layers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
         <span class="n">xg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
         <span class="n">yg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headgrid2</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headgrid</span><span class="p">(</span><span class="n">xg</span><span class="p">,</span> <span class="n">yg</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">newfig</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
         <span class="c1"># color</span>
@@ -148,11 +167,11 @@
             <span class="k">if</span> <span class="n">labels</span><span class="p">:</span>
                 <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;%1.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f&#39;</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">legend</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">cscollectionlist</span><span class="p">,</span> <span class="n">legend</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">legend</span><span class="p">:</span>
             <span class="n">legendlist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;layer &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">]</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">cscollectionlist</span><span class="p">,</span> <span class="n">legendlist</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">cscollectionlist</span><span class="p">,</span> <span class="n">legend</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;scaled&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">layout</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">win</span><span class="o">=</span><span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">],</span> <span class="n">newfig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -298,6 +317,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../aems.html">Elements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xsection/xsectionindex.html">Xsection model</a></li>
 </ul>
 
 <div class="relations">
@@ -332,10 +352,6 @@
       
     </div>
 
-    
-    <a href="https://github.com/mbakker7/timml" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
     
 
     

@@ -1,0 +1,361 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>timml.linesink1d &#8212; TimML 5.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '5.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for timml.linesink1d</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">inspect</span>  <span class="c1"># Used for storing the input</span>
+<span class="kn">from</span> <span class="nn">.element</span> <span class="k">import</span> <span class="n">Element</span>
+<span class="kn">from</span> <span class="nn">.equation</span> <span class="k">import</span> <span class="n">HeadEquation</span><span class="p">,</span> <span class="n">MscreenWellEquation</span><span class="p">,</span> <span class="n">HeadDiffEquation</span><span class="p">,</span> <span class="n">DisvecDiffEquation</span>
+
+<span class="k">class</span> <span class="nc">LineSink1DBase</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">sigls</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;LineSink1DBase&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">Element</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">nparam</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nunknowns</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">sigls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="n">wh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="n">aq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addtomodel</span> <span class="o">=</span> <span class="n">addtomodel</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">addtomodel</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span> <span class="o">=</span> <span class="mf">1e-12</span>
+        
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; at &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; in layers: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ncp</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">yc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">addtomodel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nparam</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_norm_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cosnorm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_norm_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sinnorm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_norm_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">==</span> <span class="s1">&#39;2H&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">Haq</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wh</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resfac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">wh</span>
+
+    <span class="k">def</span> <span class="nf">potinf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nparam</span><span class="p">,</span> <span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">:</span>
+            <span class="n">pot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">aq</span><span class="o">.</span><span class="n">ilap</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">pot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># so that pot = 0.5 at x=xls</span>
+                    <span class="n">pot</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">elif</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">pot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">pot</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">pot</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">pot</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">)</span>
+            <span class="n">rv</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span> <span class="o">*</span> <span class="n">pot</span>
+        <span class="k">return</span> <span class="n">rv</span>
+    
+    <span class="k">def</span> <span class="nf">disvecinf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span><span class="p">,</span> <span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">aq</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">:</span>
+            <span class="n">qx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">aq</span><span class="o">.</span><span class="n">ilap</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">qx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+                    <span class="n">qx</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">elif</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">qx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+                    <span class="n">qx</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">qx</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">qx</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xls</span><span class="p">)</span> <span class="o">/</span> <span class="n">aq</span><span class="o">.</span><span class="n">lab</span><span class="p">)</span>
+            <span class="n">rv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span> <span class="o">*</span> <span class="n">qx</span>
+        <span class="k">return</span> <span class="n">rv</span>
+    
+    <span class="k">def</span> <span class="nf">discharge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Discharge per unit length&quot;&quot;&quot;</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">)</span>
+        <span class="n">Q</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Q</span>
+    
+<div class="viewcode-block" id="LineSink1D"><a class="viewcode-back" href="../../xsection/linesink1d.html#timml.linesink1d.LineSink1D">[docs]</a><span class="k">class</span> <span class="nc">LineSink1D</span><span class="p">(</span><span class="n">LineSink1DBase</span><span class="p">,</span> <span class="n">MscreenWellEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an infinitely long line-sink with a given discharge</span>
+<span class="sd">    per unit length. In case the line-sink is screened in multiple</span>
+<span class="sd">    layers, the discharge is distributed over the layers such that</span>
+<span class="sd">    the head inside the line-sink is constant in all layers.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    xls : scalar</span>
+<span class="sd">        x-location of line-sink</span>
+<span class="sd">    sigls : scalar</span>
+<span class="sd">        discharge per unit length</span>
+<span class="sd">    res : scalar (default is 0)</span>
+<span class="sd">        resistance of line-sink</span>
+<span class="sd">    wh : scalar or str</span>
+<span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">        if &#39;H&#39;: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)</span>
+<span class="sd">        if &#39;2H&#39;: distance is twice the thickness of the aquifer layer (when flow comes from both sides)</span>
+<span class="sd">        if scalar: the width of the stream that partially penetrates the aquifer layer</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers </span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigls</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> \
+                 <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">sigls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> \
+                               <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Linesink1D&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> \
+                               <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Qc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sigls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span></div>
+    
+<div class="viewcode-block" id="HeadLineSink1D"><a class="viewcode-back" href="../../xsection/headlinesink1d.html#timml.linesink1d.HeadLineSink1D">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSink1D</span><span class="p">(</span><span class="n">LineSink1DBase</span><span class="p">,</span> <span class="n">HeadEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an infinitely long line-sink with a given head.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        Model to which the element is added</span>
+<span class="sd">    xls : scalar</span>
+<span class="sd">        x-location of line-sink</span>
+<span class="sd">    hls : scalar</span>
+<span class="sd">        head in line-sink</span>
+<span class="sd">    res : scalar (default is 0)</span>
+<span class="sd">        resistance of line-sink</span>
+<span class="sd">    wh : scalar or str</span>
+<span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">        if &#39;H&#39;: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)</span>
+<span class="sd">        if &#39;2H&#39;: distance is twice the thickness of the aquifer layer (when flow comes from both sides)</span>
+<span class="sd">        if scalar: the width of the stream that partially penetrates the aquifer layer</span>
+<span class="sd">    layers : scalar, list or array</span>
+<span class="sd">        layer(s) in which element is placed</span>
+<span class="sd">        if scalar: element is placed in this layer</span>
+<span class="sd">        if list or array: element is placed in all these layers </span>
+<span class="sd">    label: str or None</span>
+<span class="sd">        label of element</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+ 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hls</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> \
+                 <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">sigls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> \
+                               <span class="n">name</span><span class="o">=</span><span class="s2">&quot;HeadLinesink1D&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> \
+                               <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">wh</span><span class="o">=</span><span class="n">wh</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">hls</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlayers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>  <span class="c1"># Needed in solving</span>
+
+    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span></div>
+    
+<span class="k">class</span> <span class="nc">HeadDiffLineSink1D</span><span class="p">(</span><span class="n">LineSink1DBase</span><span class="p">,</span> <span class="n">HeadDiffEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HeadDiffLineSink1D for left side (xcout)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aqin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aqout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">sigls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">layers</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> 
+                                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;HeadDiffLineSink1D&#39;</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="n">aq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inhomelement</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aqin</span> <span class="o">=</span> <span class="n">aqin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aqout</span> <span class="o">=</span> <span class="n">aqout</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xcout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xcin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ycout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ycin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aqout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aqout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xcout</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aqin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aqin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xcin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span>
+        
+<span class="k">class</span> <span class="nc">FluxDiffLineSink1D</span><span class="p">(</span><span class="n">LineSink1DBase</span><span class="p">,</span> <span class="n">DisvecDiffEquation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HeadDiffLineSink1D for left side (xcout)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aqin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aqout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xls</span><span class="p">,</span> <span class="n">sigls</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                <span class="n">layers</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> 
+                                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;FluxDiffLineSink1D&#39;</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="n">aq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inhomelement</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aqin</span> <span class="o">=</span> <span class="n">aqin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aqout</span> <span class="o">=</span> <span class="n">aqout</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LineSink1DBase</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xcout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xcin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ycout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ycin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aqout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aqout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xcout</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aqin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aqin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xcin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">setparams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">TimML</a></h1>
+
+
+
+<p class="blurb">TimML is a multi-layer analytic element model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=mbakker7&repo=timml&type=watch&count=True&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models/modelindex.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inhoms/inhoms.html">Inhomogeneities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../aems.html">Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xsection/xsectionindex.html">Xsection model</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Mark Bakker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -182,7 +182,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        h : array size `nlayers, ny, ny`</span>
+<span class="sd">        h : array size `nlayers, ny, nx`</span>
 <span class="sd">        </span>
 <span class="sd">        See also</span>
 <span class="sd">        --------</span>
@@ -199,7 +199,7 @@
         <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">Nlayers</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ny</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">printrow</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
                 <span class="n">h</span><span class="p">[:,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">layers</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">printrow</span><span class="p">:</span>
@@ -212,9 +212,9 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        x1, x2, nx : </span>
-<span class="sd">            x values of grid</span>
+<span class="sd">            x values are generated as linspace(x1, x2, nx)</span>
 <span class="sd">        y1, y2, ny : </span>
-<span class="sd">            y values of grid</span>
+<span class="sd">            y values are generated as linspace(y1, y2, ny)</span>
 <span class="sd">        layers : integer, list or array, optional</span>
 <span class="sd">            layers for which grid is returned</span>
 <span class="sd">        printrow : boolean, optional</span>
@@ -222,17 +222,36 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        h : array size `nlayers, ny, ny`</span>
-
+<span class="sd">        h : array size `nlayers, ny, nx`</span>
+<span class="sd">        </span>
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
+<span class="sd">        :func:`~timml.model.Model.headgrid`</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">nx</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headgrid</span><span class="p">(</span><span class="n">xg</span><span class="p">,</span> <span class="n">yg</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> <span class="n">printrow</span><span class="o">=</span><span class="n">printrow</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.headalongline"><a class="viewcode-back" href="../../models/model.html#timml.model.Model.headalongline">[docs]</a>    <span class="k">def</span> <span class="nf">headalongline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Returns head[Nlayers,len(x)]</span>
-<span class="sd">        Assumes same number of layers for each x and y</span>
-<span class="sd">        layers may be None or list of layers for which head is computed&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Head along line or curve</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array</span>
+<span class="sd">            x values of line</span>
+<span class="sd">        y : array</span>
+<span class="sd">            y values of line</span>
+<span class="sd">        layers : integer, list or array, optional</span>
+<span class="sd">            layers for which grid is returned</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        h : array size `nlayers, nx`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">Nlayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">naq</span>
@@ -471,6 +490,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../aems.html">Elements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xsection/xsectionindex.html">Xsection model</a></li>
 </ul>
 
 <div class="relations">
@@ -505,10 +525,6 @@
       
     </div>
 
-    
-    <a href="https://github.com/mbakker7/timml" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
     
 
     

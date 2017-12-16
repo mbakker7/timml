@@ -138,7 +138,7 @@ class Model(PlotTim):
         
         Returns
         -------
-        h : array size `nlayers, ny, ny`
+        h : array size `nlayers, ny, nx`
         
         See also
         --------
@@ -155,7 +155,7 @@ class Model(PlotTim):
         h = np.empty((Nlayers, ny, nx))
         for j in range(ny):
             if printrow:
-                print(str(j) + ' ', flush=True)
+                print('.', end='', flush=True)
             for i in range(nx):
                 h[:, j, i] = self.head(xg[i], yg[j], layers)
         if printrow:
@@ -168,9 +168,9 @@ class Model(PlotTim):
         Parameters
         ----------
         x1, x2, nx : 
-            x values of grid
+            x values are generated as linspace(x1, x2, nx)
         y1, y2, ny : 
-            y values of grid
+            y values are generated as linspace(y1, y2, ny)
         layers : integer, list or array, optional
             layers for which grid is returned
         printrow : boolean, optional
@@ -178,17 +178,36 @@ class Model(PlotTim):
         
         Returns
         -------
-        h : array size `nlayers, ny, ny`
-
+        h : array size `nlayers, ny, nx`
+        
+        See also
+        --------
+        
+        :func:`~timml.model.Model.headgrid`
+        
         """
         
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
         return self.headgrid(xg, yg, layers=layers, printrow=printrow)
 
     def headalongline(self, x, y, layers=None):
-        '''Returns head[Nlayers,len(x)]
-        Assumes same number of layers for each x and y
-        layers may be None or list of layers for which head is computed'''
+        """Head along line or curve
+        
+        Parameters
+        ----------
+        x : array
+            x values of line
+        y : array
+            y values of line
+        layers : integer, list or array, optional
+            layers for which grid is returned
+        
+        Returns
+        -------
+        h : array size `nlayers, nx`
+
+        """
+        
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq

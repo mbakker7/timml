@@ -104,9 +104,28 @@ class ImpLineDoublet1D(LineDoublet1D, DisvecEquation):
 
 class LeakyLineDoublet1D(LineDoublet1D, LeakyWallEquation):
     """
-    Create leaky wall, flux through wall is equal to difference in head divided by resistance.
+    Create an infinitely long leaky or impermeable wall
+    
+    Parameters
+    ----------
+    
+    model : Model object
+        Model to which the element is added
+    xld : scalar
+        x-location of line-doublet
+    hls : scalar
+        head in line-sink
+    res : scalar (default is 0)
+        resistance of leaky wall. use np.inf to create impermeable wall 
+    layers : scalar, list or array
+        layer(s) in which element is placed
+        if scalar: element is placed in this layer
+        if list or array: element is placed in all these layers 
+    label: str or None
+        label of element
 
     """
+
     tiny = 1e-6
 
     def __init__(self, model, xld=0, res=np.inf, layers=0, label=None):

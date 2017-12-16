@@ -411,7 +411,7 @@
         
 <div class="viewcode-block" id="HeadLineSink"><a class="viewcode-back" href="../../linesinks/headlinesink.html#timml.linesink.HeadLineSink">[docs]</a><span class="k">class</span> <span class="nc">HeadLineSink</span><span class="p">(</span><span class="n">LineSinkHoBase</span><span class="p">,</span> <span class="n">HeadEquation</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    HeadLineSink Class to create a head-specified line-sink</span>
+<span class="sd">    Create a head-specified line-sink</span>
 <span class="sd">    which may optionally have a width and resistance</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -436,6 +436,9 @@
 <span class="sd">        resistance of line-sink</span>
 <span class="sd">    wh : scalar or str</span>
 <span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">        if &#39;H&#39;: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)</span>
+<span class="sd">        if &#39;2H&#39;: distance is twice the thickness of the aquifer layer (when flow comes from both sides)</span>
+<span class="sd">        if scalar: the width of the stream that partially penetrates the aquifer layer</span>
 <span class="sd">    order : int (default is 0)</span>
 <span class="sd">        polynomial order or inflow along line-sink</span>
 <span class="sd">    layers : scalar, list or array</span>
@@ -512,6 +515,9 @@
 <span class="sd">        resistance of line-sink</span>
 <span class="sd">    wh : scalar or str</span>
 <span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">        if &#39;H&#39;: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)</span>
+<span class="sd">        if &#39;2H&#39;: distance is twice the thickness of the aquifer layer (when flow comes from both sides)</span>
+<span class="sd">        if scalar: the width of the stream that partially penetrates the aquifer layer</span>
 <span class="sd">    order : int (default is 0)</span>
 <span class="sd">        polynomial order or inflow along line-sink</span>
 <span class="sd">    layers : scalar, list or array</span>
@@ -821,6 +827,9 @@
 <span class="sd">        resistance of line-sink</span>
 <span class="sd">    wh : scalar or str</span>
 <span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">        if &#39;H&#39;: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)</span>
+<span class="sd">        if &#39;2H&#39;: distance is twice the thickness of the aquifer layer (when flow comes from both sides)</span>
+<span class="sd">        if scalar: the width of the stream that partially penetrates the aquifer layer</span>
 <span class="sd">    order : int (default is 0)</span>
 <span class="sd">        order of all line-sinks in string</span>
 <span class="sd">    layers : scalar, list or array</span>
@@ -925,7 +934,10 @@
 <span class="sd">    res : scalar (default is 0)</span>
 <span class="sd">        resistance of line-sinks in string</span>
 <span class="sd">    wh : scalar or str</span>
-<span class="sd">        distance over which water enters the string</span>
+<span class="sd">        distance over which water enters line-sink</span>
+<span class="sd">        if &#39;H&#39;: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)</span>
+<span class="sd">        if &#39;2H&#39;: distance is twice the thickness of the aquifer layer (when flow comes from both sides)</span>
+<span class="sd">        if scalar: the width of the stream that partially penetrates the aquifer layer</span>
 <span class="sd">    order : int (default is 0)</span>
 <span class="sd">        polynomial order or inflow along each line-sink in string</span>
 <span class="sd">    layers : scalar, list or array</span>
@@ -1004,6 +1016,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../inhoms/inhoms.html">Inhomogeneities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../aems.html">Elements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xsection/xsectionindex.html">Xsection model</a></li>
 </ul>
 
 <div class="relations">
@@ -1038,10 +1051,6 @@
       
     </div>
 
-    
-    <a href="https://github.com/mbakker7/timml" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
     
 
     
