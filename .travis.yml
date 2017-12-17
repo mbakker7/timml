@@ -17,10 +17,8 @@ matrix:
      env: TRAVIS_PYTHON_VERSION=3.6
   fast_finish: true
 
-addons:
-  apt:
-   packages:
-   - gfortran
+compilers:
+  - gcc
 
 # Setup anaconda
 before_install:
