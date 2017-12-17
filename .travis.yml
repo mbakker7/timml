@@ -9,6 +9,10 @@ matrix:
   include:
    - os: osx
      language: generic
+     python: "3.5"
+   - os: osx
+     language: generic
+     python: "3.6"
   fast_finish: true
 
 addons:
