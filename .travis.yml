@@ -4,23 +4,13 @@ os:
 
 sudo: required
 language: python
-
-env:
-  # Default values for common package
-  global:
-    - COVERAGE=false
-    - USEMPL=true
-    - MATPLOTLIB=
-
+  
 matrix:
   fast_finish: true
-  include:
-  - python: 2.7
-    env:
-    - PYTHON=3.6
-    - NUMPY=
-    - SCIPY=
-    - MATPLOTLIB=
+  python:
+  # We don't actually use the Travis Python, but this keeps it organized.
+  - "3.5"
+  - "3.6"
 
 addons:
   apt:
@@ -44,15 +34,8 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - SRCDIR=$PWD
-  # Build package list to avoid empty package=versions; only needed for versioned packages
-  - PKGS="python=${PYTHON}"
-  - PKGS="${PKGS} numpy"; if [ ${NUMPY} ]; then PKGS="${PKGS}=${NUMPY}"; fi
-  - PKGS="${PKGS} scipy"; if [ ${SCIPY} ]; then PKGS="${PKGS}=${SCIPY}"; fi
-  - if [ ${USEMPL} = true ]; then PKGS="${PKGS} matplotlib"; if [ ${MATPLOTLIB} ]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi; fi
-  - conda create --yes --quiet -n timml ${PKGS}
+  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib
   - source activate timml
-  - export SRCDIR=$PWD
 
 install:
   - python setup.py build_ext --inplace
