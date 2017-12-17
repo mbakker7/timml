@@ -31,7 +31,7 @@ before_install:
   - conda update --quiet conda
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib gcc
+  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib gcc toolchain
   - source activate timml
 
 install:
