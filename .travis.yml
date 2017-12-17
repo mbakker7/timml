@@ -4,13 +4,13 @@ os:
 
 sudo: required
 language: python
-  
-matrix:
-  fast_finish: true
-  python:
-  # We don't actually use the Travis Python, but this keeps it organized.
+
+python:
   - "3.5"
   - "3.6"
+
+matrix:
+  fast_finish: true
 
 addons:
   apt:
