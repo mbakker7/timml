@@ -1,7 +1,7 @@
 import os
 import shutil, tempfile
 
-nbdir = os.path.join('..', 'notebooks')
+nbdir = os.path.join('notebooks')
 
 testdir = tempfile.mkdtemp()
 
