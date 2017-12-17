@@ -17,8 +17,10 @@ matrix:
      env: TRAVIS_PYTHON_VERSION=3.6
   fast_finish: true
 
-compiler:
-  - gcc
+addons:
+   apt:
+    packages:
+     - gfortran
 
 # Setup anaconda
 before_install:
@@ -27,6 +29,7 @@ before_install:
     else
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
     fi
+  - if [[ "$TRAVIS_OS_NAME" == 'osx' ]]; then brew install gfortran; fi
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
