@@ -26,7 +26,7 @@ before_install:
     fi
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda3/bin:$PATH
+  - export PATH=/home/travis/miniconda/bin:$PATH
   - conda config --set always_yes yes
   - conda update --quiet conda
   # Fix for headless TravisCI
