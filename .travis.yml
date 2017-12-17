@@ -17,7 +17,7 @@ matrix:
      env: TRAVIS_PYTHON_VERSION=3.6
   fast_finish: true
 
-compilers:
+compiler:
   - gcc
 
 # Setup anaconda
