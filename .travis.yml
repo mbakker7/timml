@@ -17,6 +17,11 @@ matrix:
      env: TRAVIS_PYTHON_VERSION=3.6
   fast_finish: true
 
+addons:
+  apt:
+    packages:
+     - gfortran
+
 # Setup anaconda
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == 'osx' ]]; then 
@@ -24,15 +29,16 @@ before_install:
     else
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
     fi
+  - if [[ "$TRAVIS_OS_NAME" == 'osx' ]]; then brew install gcc; fi
+  - if [[ "$TRAVIS_OS_NAME" == 'osx' ]]; then brew link --overwrite gcc; fi
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes
-  - conda config --add channels conda-forge
   - conda update --quiet conda
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib gcc toolchain libgfortran
+  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib
   - source activate timml
 
 install:
