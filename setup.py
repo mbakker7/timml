@@ -7,21 +7,8 @@ try:
 except ImportError:
     sys.exit("install requires: 'numpy'.")
 
-def configuration(parent_package='', top_path=None):
-    from numpy.distutils.misc_util import Configuration
-
-    config = Configuration(None, parent_package, top_path)
-    config.set_options(ignore_setup_xxx_py=True,
-                       assume_default_configuration=True,
-                       delegate_options_to_subpackages=True,
-                       quiet=True)
-
-    config.add_subpackage('timml')
-
-    config.get_version(os.path.join('timml', 'version.py'))
-
-    config.make_config_py()
-    return config
+ext1 = Extension(name = 'timml.besselaesnew', 
+                 sources = ['timml/src/besselaesnew.f95'])
 
 def setup_package():
     
@@ -35,9 +22,8 @@ def setup_package():
         url = 'https://github.com/mbakker7/timml',
         license = 'MIT',
         packages = ['timml'],
+        ext_modules = [ext1]
         )
-
-    metadata['configuration'] = configuration
 
     setup(**metadata)
 
