@@ -8,11 +8,9 @@ language: python
 env:
   # Default values for common package
   global:
-    - OPTIONAL=
     - COVERAGE=false
     - USEMPL=true
     - MATPLOTLIB=
-    - DOCBUIL=false
 
 matrix:
   fast_finish: true
@@ -32,20 +30,15 @@ addons:
 # Setup anaconda
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == 'linux' ]]; then 
-      wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
+      wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
     else
-      wget https://repo.continuum.io/minicond/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh;
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh;
     fi
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - export PATH=/home/travis/miniconda2/bin:$PATH
-  - export MKL_NUM_THREADS=1
-  - export NUMEXPR_NUM_THREADS=1
-  - export OMP_NUM_THREADS=1
+  - export PATH=/home/travis/miniconda3/bin:$PATH
   - conda config --set always_yes yes
-  # Temporarily disabled until conda is fixed
-  # - conda update --quiet conda
+  - conda update --quiet conda
   # Fix for headless TravisCI
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
@@ -57,11 +50,10 @@ before_install:
   - PKGS="${PKGS} numpy"; if [ ${NUMPY} ]; then PKGS="${PKGS}=${NUMPY}"; fi
   - PKGS="${PKGS} scipy"; if [ ${SCIPY} ]; then PKGS="${PKGS}=${SCIPY}"; fi
   - if [ ${USEMPL} = true ]; then PKGS="${PKGS} matplotlib"; if [ ${MATPLOTLIB} ]; then PKGS="${PKGS}=${MATPLOTLIB}"; fi; fi
-  - echo conda create --yes --quiet -n timml ${PKGS} ${OPTIONAL} pyyaml
-  - conda create --yes --quiet -n timml ${PKGS} ${OPTIONAL} pyyaml
+  - conda create --yes --quiet -n timml ${PKGS}
   - source activate timml
   - export SRCDIR=$PWD
-  # Install packages
+
 install:
   - python setup.py build_ext --inplace
   - python setup.py install
