@@ -35,7 +35,7 @@ before_install:
           if brew list -1 | grep -q "^${pkg}\$"; then
             brew outdated $pkg || brew upgrade $pkg;
           else
-            brew install $pkg;
+            brew install $pkg && brew link --overwrite $pkg;
           fi
         done
       fi
