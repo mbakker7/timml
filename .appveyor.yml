@@ -54,16 +54,17 @@ install:
   - conda update -q conda
   - conda info -a
   - conda install numpy scipy matplotlib
+
   # Replace numpy distutils with a version that can build with msvc + mingw-gfortran
   - ps: |
-          $NumpyDir = $((python -c import os; import numpy; print(os.path.dirname(numpy.__file__))') | Out-String).Trim()
-          rm -r -Force "$NumpyDir\distutils"
-          $tmpdir = New-TemporaryFile | %{ rm $_; mkdir $_ }
+      $NumpyDir = $((python -c 'import os; import numpy; print(os.path.dirname(numpy.__file__))') | Out-String).Trim()
+      rm -r -Force "$NumpyDir\distutils"
+      $tmpdir = New-TemporaryFile | %{ rm $_; mkdir $_ }
 
-    echo $env:NUMPY_HEAD
-    echo $env:NUMPY_BRANCH
-    git clone -q --depth=1 -b $env:NUMPY_BRANCH $env:NUMPY_HEAD $tmpdir
-    mv $tmpdir\numpy\distutils $NumpyDir
+      echo $env:NUMPY_HEAD
+      echo $env:NUMPY_BRANCH
+      git clone -q --depth=1 -b $env:NUMPY_BRANCH $env:NUMPY_HEAD $tmpdir
+      mv $tmpdir\numpy\distutils $NumpyDir
 
 build_script:
   - ps: |
