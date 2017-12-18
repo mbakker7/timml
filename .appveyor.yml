@@ -3,6 +3,8 @@ os: Visual Studio 2015
 environment:
   global:
       MINGW_64: C:\mingw-64\x86_64-6.3.0-posix-seh-rt_v5-rev1\ming64\bin
+      NUMPY_HEAD: https://github.com/numpy/numpy.git
+      NUMPY_BRANCH: master
 
   matrix:
     - PYTHON: C:\Miniconda36-x64
@@ -46,7 +48,23 @@ install:
           %CMD_IN_ENV%
           python -c "import sys, platform, struct;
           print(sys.platform, platform.machine(), struct.calcsize('P') * 8, )"
-    
+
+  - conda config --set always_yes yes
+  - conda config --add channels conda-forge
+  - conda update -q conda
+  - conda info -a
+  - conda install numpy scipy matplotlib
+  # Replace numpy distutils with a version that can build with msvc + mingw-gfortran
+  - ps: |
+          $NumpyDir = $((python -c import os; import numpy; print(os.path.dirname(numpy.__file__))') | Out-String).Trim()
+          rm -r -Force "$NumpyDir\distutils"
+          $tmpdir = New-TemporaryFile | %{ rm $_; mkdir $_ }
+
+    echo $env:NUMPY_HEAD
+    echo $env:NUMPY_BRANCH
+    git clone -q --depth=1 -b $env:NUMPY_BRANCH $env:NUMPY_HEAD $tmpdir
+    mv $tmpdir\numpy\distutils $NumpyDir
+
 build_script:
   - ps: |
       $PYTHON_ARCH = $env:PYTHON_ARCH
@@ -57,14 +75,6 @@ build_script:
       }
       $env:Path += ";$MINGW"
   - "ECHO %PATH%"
-  - conda config --set always_yes yes
-  - conda update conda --quiet
-  - conda config --set auto_update_conda no
-  - conda info
-  - python -c "import sys; print(sys.version)"
-  - python -c "import sys; print(sys.executable)"
-  - python -c "import sys; print(sys.prefix)"
-  - conda install numpy scipy matplotlib
   - python setup.py build_ext --compiler=mingw32 --fcompiler=gfortran 
   - python setup.py install
 
