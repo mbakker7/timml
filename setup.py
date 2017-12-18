@@ -7,8 +7,11 @@ try:
 except ImportError:
     sys.exit("install requires: 'numpy'.")
 
-ext1 = Extension(name = 'timml.besselaesnew', 
-                 sources = ['timml/src/besselaesnew.f95'])
+if os.name == 'nt':
+    compile_args = ['-static']
+else: 
+    compile_args = []
+    cputune = []
 
 def setup_package():
     
@@ -22,7 +25,12 @@ def setup_package():
         url = 'https://github.com/mbakker7/timml',
         license = 'MIT',
         packages = ['timml'],
-        ext_modules = [ext1]
+        ext_modules = [
+          Extension(
+              'timml.besselaesnew', ['timml/src/besselaesnew.f95'],
+              extra_compile_args=compile_args + cputune
+              )
+          ]
         )
 
     setup(**metadata)
