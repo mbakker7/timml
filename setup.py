@@ -1,16 +1,19 @@
 from __future__ import division, absolute_import, print_function
 import sys
 import os
+import platform
 
 try:
     from numpy.distutils.core import Extension, setup
 except ImportError:
     sys.exit("install requires: 'numpy'.")
 
+cputune = ['-march=native',]
+
 if os.name == 'nt':
     compile_args = ['-static']
 else: 
-    compile_args = []
+    compile_args = ['-static-libcc', '-static-libgfortran', '-lquadmath']
     cputune = []
 
 def setup_package():
