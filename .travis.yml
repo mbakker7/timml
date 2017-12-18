@@ -8,22 +8,23 @@ matrix:
    - os: linux
      python: "3.6"
    - os: osx
+     osx_image: xcode7
      language: generic
+     compiler: gcc
      python: "3.5"
-     env: TRAVIS_PYTHON_VERSION=3.5
+     env: TRAVIS_PYTHON_VERSION=3.5 C_COMPILER='gcc-5' Fortran_COMPILER='gfortran'
    - os: osx
+     osx_image: xcode7
      language: generic
+     compiler: gcc
      python: "3.6"
-     env: TRAVIS_PYTHON_VERSION=3.6
+     env: TRAVIS_PYTHON_VERSION=3.6 C_COMPILER='gcc-5' Fortran_COMPILER='gfortran'
   fast_finish: true
 
 addons:
   apt:
     packages:
      - gfortran
-     
-compiler:
-  - gcc
 
 # Setup anaconda
 before_install:
