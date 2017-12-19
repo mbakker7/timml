@@ -52,7 +52,7 @@ before_install:
   - conda install conda-build
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib pytest
+  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest
   - source activate timml
 
 install:
