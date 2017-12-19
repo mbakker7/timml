@@ -3,15 +3,18 @@ os: Visual Studio 2015
 environment:
   global:
       MINGW_64: C:\mingw-64\x86_64-6.3.0-posix-seh-rt_v5-rev1\ming64\bin
+      EXTERNAL_WINDOWS_DIR: "%APPVEYOR_BUILD_FOLDER%\\external\\%EXTERNAL_STATIC_SUBDIR%"
 
   matrix:
     - PYTHON: C:\Miniconda36-x64
       PYTHON_VERSION: 3.6
       PYTHON_ARCH: 64
+      EXTERNAL_STATIC_SUBDIR: "windows64-gcc"
     
     - PYTHON: C:\Miniconda35-x64
       PYTHON_VERSION: 3.5
       PYTHON_ARCH: 64
+      EXTERNAL_STATIC_SUBDIR: "windows64-gcc"
 
 matrix:
   fast_finish: true
@@ -62,7 +65,7 @@ build_script:
           $MINGW = $env:MINGW_64 
       }
       $env:Path += ";$MINGW"
-  - "ECHO %PATH%"
+  - copy %EXTERNAL_WINDOWS_DIR%\bin\distutils.cfg %PYTHON%\Lib\distutils\distutils.cfg
   - python setup.py build_ext --compiler=mingw32 --fcompiler=gfortran 
   - python setup.py install
 
