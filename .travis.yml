@@ -53,10 +53,10 @@ before_install:
   - conda info -a
 
 install:
- # - conda build conda-recipe
- # - conda install --use-local $PACKAGENAME
- - python setup.py build_ext --inplace --fcompiler=gfortran
- - python setup.py install
+ - conda build ./conda-recipe
+ - conda install --use-local $PACKAGENAME
+   #- python setup.py build_ext --inplace --fcompiler=gfortran
+   #- python setup.py install
   
 script: 
   - pytest
