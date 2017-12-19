@@ -13,7 +13,7 @@ cputune = ['-march=native',]
 if os.name == 'nt':
     compile_args = ['-static']
 else: 
-    compile_args = ['-static-libcc', '-static-libgfortran', '-lquadmath']
+    compile_args = ['-static-libgcc', '-Wall', '-lgfortran', '-lquadmath']
     cputune = []
 
 def setup_package():
