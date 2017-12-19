@@ -63,7 +63,7 @@ build_script:
       }
       $env:Path += ";$MINGW"
   - ECHO [build] > %PYTHON%\lib\distutils\distutils.cfg
-  - ECHO compiler=mingw32 >> %PYTHON%\lib\disutils\distutils.cfg
+  - ECHO compiler=mingw32 >> %PYTHON%\lib\distutils\distutils.cfg
   - type %PYTHON%\lib\distutils\distutils.cfg
   - python setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran 
   - python setup.py install
