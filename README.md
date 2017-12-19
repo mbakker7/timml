@@ -19,7 +19,7 @@ TimML is coded in Python; use is made of FORTRAN extensions to improve performan
 
 TimML requires **Python** 3.6 and can be installed from PyPI.
 The PyPI installation includes compiled versions of the FORTRAN extension
-for both Windows and MaxOS.
+for both Windows and MacOS.
 
 
 **Dependencies:**
