@@ -2,13 +2,12 @@ sudo: required
 language: python
 
 matrix:
-  global:
-     env: CONDA_BUILD=True
   include:
    - os: linux
      python: "3.5"
    - os: linux
      python: "3.6"
+     env: CONDA_BUILD=True
    - os: osx
      language: generic
      python: "3.5"
@@ -16,7 +15,7 @@ matrix:
    - os: osx
      language: generic
      python: "3.6"
-     env: TRAVIS_PYTHON_VERSION=3.6
+     env: TRAVIS_PYTHON_VERSION=3.6 CONDA_BUILD=True
   fast_finish: true
 
 addons:
