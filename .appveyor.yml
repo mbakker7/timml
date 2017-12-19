@@ -50,7 +50,7 @@ install:
   - conda config --set always_yes yes
   - conda config --add channels conda-forge
   - conda update -q conda
-  - conda install numpy scipy matplotlib conda-build
+  - conda install numpy scipy matplotlib jupyter pytest conda-build
   - conda info -a
 
 build_script:
@@ -62,8 +62,8 @@ build_script:
           $MINGW = $env:MINGW_64 
       }
       $env:Path += ";$MINGW"
-  - conda build conda-recipe 
-  - conda install timml --use-local
+  - python setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran 
+  - python setup.py install
 
 test_script:
-  - python -c 'import timml; timml.version.__version__;'
+  - pytest
