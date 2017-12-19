@@ -54,8 +54,7 @@ before_install:
   - source activate timml
 
 install:
-  - pwd
-  - conda build conda-recipe
+  - conda build 'conda-recipe'
   - conda install timml --use-local
   
 script:
