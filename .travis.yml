@@ -52,8 +52,8 @@ before_install:
   - source activate timml
 
 install:
-  - python setup.py build_ext --inplace
-  - python setup.py install
+  - conda build conda-recipe
+  - conda install timml --use-local
   
 script:
   - python -c 'import timml; timml.version.__version__;'
