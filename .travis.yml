@@ -2,6 +2,8 @@ sudo: required
 language: python
 
 matrix:
+  global:
+     env: CONDA_BUILD=True
   include:
    - os: linux
      python: "3.5"
@@ -50,14 +52,13 @@ before_install:
   - conda install conda-build
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib
+  - conda create --yes --quiet -n timml python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib pytest
   - source activate timml
 
 install:
   - python setup.py build_ext --inplace --fcompiler=gfortran
   - python setup.py install
-    # - conda build conda-recipe
-    #- conda install timml --use-local
   
-script:
-  - python -c 'import timml; timml.version.__version__;'
+script: 
+  - pytest
+  - if [[ "$CONDA_BUILD" == "True" ]]; then conda build conda-recipe; fi
