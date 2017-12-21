@@ -11,7 +11,7 @@ except ImportError:
 cputune = ['-march=native',]
 
 if os.name == 'nt':
-    compile_args = ['-static']
+    compile_args = ['-static-libgcc', '-Wall', '-shared']
 else: 
     compile_args = ['-static-libgcc', '-Wall', '-lgfortran', '-lquadmath']
     cputune = []
