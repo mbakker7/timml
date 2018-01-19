@@ -27,7 +27,7 @@ class Model(PlotTim):
         elevation tops and bottoms of all layers
         layers may have zero thickness
     c : array
-        resistance between two consecutive aquifers
+        resistance between two consecutive aquifer layers
         if ltype[0]='a': length is number of aquifers - 1
         if ltype[0]='l': length is number of aquifers
     npor : array
@@ -379,7 +379,8 @@ class Model3D(Model):
         if float, value is the same for all layers
         length is number of layers
     npor : float, array or list
-        porosity of all aquifer layers from the top down
+        porosity of all aquifer layers
+        from the top down
         if float, porosity is the same for all layers
         if topboundary='conf': length is number of layers
         if topboundary='semi': length is number of layers + 1
