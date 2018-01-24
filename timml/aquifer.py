@@ -9,19 +9,16 @@ class AquiferData:
         # That should be checked outside this function
         self.model = model
         # Needed for heads
-        self.kaq = kaq
+        self.kaq = np.atleast_1d(kaq)
         self.naq = len(kaq)
-        #self.Haq = Haq
-        #self.T = self.kaq * self.Haq
-        #self.Tcol = self.T[:, np.newaxis]
-        self.c = c
+        self.c = np.atleast_1d(c)
         self.hstar = None
         # Needed for tracing
         self.z = np.atleast_1d(z)
         self.Hlayer = self.z[:-1] - self.z[1:]  # thickness of all layers
         self.nlayers = len(self.z) - 1
-        self.npor = npor
-        self.ltype = ltype
+        self.npor = np.atleast_1d(npor)
+        self.ltype = np.atleast_1d(ltype)
         # tag indicating whether an aquifer is Laplace (confined on top)
         if self.ltype[0] == 'a':
             self.ilap = 1

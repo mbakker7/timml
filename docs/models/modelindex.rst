@@ -32,7 +32,7 @@ This is the most general option, but requires a bit more input.
 .. code-block:: python
 
     Model(kaq=[10, 5, 30, 20], c=[2, 5, 2000], z=[0, -5, -10, -20, -25, -35], 
-          npor=[0.3, 0.3, 0.3, 0.3], ltype=['a', 'a', 'a', 'l', 'a'])
+          npor=[0.3, 0.3, 0.3, 0.3, 0.3], ltype=['a', 'a', 'a', 'l', 'a'])
 
 .. figure:: model.png
 
