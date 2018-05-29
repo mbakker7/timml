@@ -41,7 +41,7 @@ class PlotTim:
                 ax1 = None
                 ax2 = fig.axes[0]
         if ax1 is not None:
-            plt.axes(ax1)
+            plt.sca(ax1)
             for e in self.elementlist:
                 e.plot()
             if orientation[:3] == 'hor':
@@ -51,7 +51,7 @@ class PlotTim:
             if win is not None:
                 plt.axis(win)
         if ax2 is not None:
-            plt.axes(ax2)
+            plt.sca(ax2)
             for i in range(self.aq.nlayers):
                 if self.aq.ltype[i] == 'l':
                     plt.axhspan(ymin=self.aq.z[i + 1], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8])
