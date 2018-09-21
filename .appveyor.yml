@@ -51,7 +51,6 @@ install:
   - conda config --add channels conda-forge
   - conda update -q conda
   - conda install numpy scipy matplotlib jupyter pytest conda-build
-  - conda install -c msys2 m2w64-gcc-fortran
   - conda info -a
 
 build_script:
