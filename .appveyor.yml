@@ -1,25 +1,36 @@
-os: Visual Studio 2015
+# Modified https://github.com/scipy/scipy/blob/master/appveyor.yml
+clone_depth: 50
+
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
 
 environment:
   global:
-      MINGW_64: C:\mingw-64\x86_64-6.3.0-posix-seh-rt_v5-rev1\ming64\bin
+      MINGW_32: C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
+      MINGW_64: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\ming64\bin
+      NUMPY_HEAD: https://github.com/numpy/numpy.git
+      NUMPY_BRANCH: master
+      APPVEYOR_SAVE_CACHE_ON_ERROR: true
+      APPVEYOR_SKIP_FINALIZE_ON_EXIT: true
 
   matrix:
-    - PYTHON: C:\Miniconda36-x64
+    - PYTHON: C:\Python36
+      PYTHON_VERSION: 3.6
+      PYTHON_ARCH: 32
+      
+    - PYTHON: C:\Python36-x64
       PYTHON_VERSION: 3.6
       PYTHON_ARCH: 64
+      
+    - PYTHON: C:\Python35
+      PYTHON_VERSION: 3.5
+      PYTHON_ARCH: 32
     
-    - PYTHON: C:\Miniconda35-x64
+    - PYTHON: C:\Python35-x64
       PYTHON_VERSION: 3.5
       PYTHON_ARCH: 64
 
-matrix:
-  fast_finish: true
-
 init:
-  - ECHO "Installed SDKs:"
-  - ps: "ls \"C:/Program Files/Microsoft SDKs/Windows\""
-
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH% %HOME%"
   - "ECHO \"%APPVEYOR_SCHEDULED_BUILD%\""
       # If there is a newer build queued for the same PR, cancel this one.
@@ -40,18 +51,30 @@ init:
       }
 
 install:
-  - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PYTHON%\Library\bin;%PATH%
+  - C:\cygwin\bin\du -hs "%LOCALAPPDATA%\pip\Cache"
+  # Prepared newly installed Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
   - python --version
   - >-
           %CMD_IN_ENV%
           python -c "import sys, platform, struct;
           print(sys.platform, platform.machine(), struct.calcsize('P') * 8, )"
 
-  - conda config --set always_yes yes
-  - conda config --add channels conda-forge
-  - conda update -q conda
-  - conda install numpy scipy matplotlib jupyter pytest conda-build
-  - conda info -a
+  # Upgrade to the latest pip.
+  - '%CMD_IN_ENV% python -m pip install -U pip setuptools wheel'
+
+  # Replace numpy distutils with a version that can build with msvc + mingw-gfortran
+  - ps: |
+      $NumpyDir = $((python -c 'import os; import numpy; print(os.path.dirname(numpy.__file__))') | Out-String).Trim()
+      rm -r -Force "$NumpyDir\distutils"
+      $tmpdir = New-TemporaryFile | %{ rm $_; mkdir $_ }
+      
+      echo $env:NUMPY_HEAD
+      echo $env:NUMPY_BRANCH
+      git clone -q --depth=1 -b $env:NUMPY_BRANCH $env:NUMPY_HEAD $tmpdir
+      mv $tmpdir\numpy\distutils $NumpyDir
 
 build_script:
   - ps: |
@@ -62,10 +85,28 @@ build_script:
           $MINGW = $env:MINGW_64 
       }
       $env:Path += ";$MINGW"
-  - ECHO [build] > %PYTHON%\lib\distutils\distutils.cfg
-  - ECHO compiler=mingw32 >> %PYTHON%\lib\distutils\distutils.cfg
-  - type %PYTHON%\lib\distutils\distutils.cfg
-  - python setup.py config_fc install
-
+      $env:NPY_NUM_BUILD_JOBS = "4"
+      mkdir test
+      pip wheel --no-build-isolation -v -v -v --wheel-dir=dist .
+      
+      ls dist -r | Foreach-Object {
+          appveyor PushArtifact $_.FullName
+          pip install $_.FullName
+      }
+      
 test_script:
   - pytest
+
+after_build:
+  # Remove old or huge cache files to hopefully not exceed the 1GB cache limit.
+  #
+  # If the cache limit is reached, the cache will not be updated (of not even
+  # created in the first run). So this is a trade of between keeping the cache
+  # current and having a cache at all.
+  # NB: This is done only `on_success` since the cache in uploaded only on
+  # success anyway.
+  - C:\cygwin\bin\find "%LOCALAPPDATA%\pip" -type f -mtime +360 -delete
+  - C:\cygwin\bin\find "%LOCALAPPDATA%\pip" -type f -size +10M -delete
+  - C:\cygwin\bin\find "%LOCALAPPDATA%\pip" -empty -delete
+  # Show size of cache
+  - C:\cygwin\bin\du -hs "%LOCALAPPDATA%\pip\Cache"
