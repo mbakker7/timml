@@ -118,14 +118,8 @@ build_script:
       }
       $env:Path += ";$MINGW"
       $env:NPY_NUM_BUILD_JOBS = "4"
-      mkdir test
-      pip wheel --no-build-isolation -v -v -v --wheel-dir=dist .
-      
-      ls dist -r | Foreach-Object {
-          appveyor PushArtifact $_.FullName
-          pip install $_.FullName
-      }
-      
+      python setup.py instal
+
 test_script:
   - pytest
 
