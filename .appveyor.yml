@@ -111,7 +111,8 @@ build_script:
       }
       $env:Path += ";$MINGW"
       $env:NPY_NUM_BUILD_JOBS = "4"
-      python setup.py build
+      python setup.py build_ext --inplace --fcompiler=gfortran
+      python setup.py install
 
 test_script:
   - pytest
