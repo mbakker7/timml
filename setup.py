@@ -29,7 +29,7 @@ def setup_package():
         packages = ['timml'],
         ext_modules = [
           Extension(
-              'timml.besselaesnew', ['timml/src/besselaesnew.f95'],
+              'timml.besselaesnew', ['timml/src/besselaesnew.pyf'],
               extra_compile_args=compile_args + cputune
               )
           ]
