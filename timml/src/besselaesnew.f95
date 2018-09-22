@@ -516,9 +516,9 @@ contains
     
         implicit none
         ! Input
-        integer, intent(in) :: order, lstype
-        real(kind=8), intent(in) :: Lin, lambda, Rconv
-        complex(kind=8), intent(in) :: zin, z1in, z2in
+        integer :: order, lstype
+        real(kind=8) :: Lin, lambda, Rconv
+        complex(kind=8) :: zin, z1in, z2in
     
         ! Output
         real(kind=8) :: pot
@@ -606,9 +606,9 @@ contains
     
         implicit none
         ! Input
-        integer, intent(in) :: order, lstype
-        real(kind=8), intent(in) :: Lin, lambda, Rconv
-        complex(kind=8), intent(in) :: zin, z1in, z2in
+        integer :: order, lstype
+        real(kind=8) :: Lin, lambda, Rconv
+        complex(kind=8) :: zin, z1in, z2in
 
         ! Output
         complex(kind=8) :: wdis
@@ -766,9 +766,9 @@ contains
     
         implicit none
         ! Input
-        integer, intent(in) :: order
-        real(kind=8), intent(in) :: del0, ra
-        complex(kind=8), intent(in) :: zin
+        integer :: order
+        real(kind=8) :: del0, ra
+        complex(kind=8) :: zin
         
         ! Output
         complex(kind=8) :: comega
@@ -816,9 +816,9 @@ contains
     
         implicit none
         ! Input
-        integer, intent(in) :: order
-        real(kind=8), intent(in) :: del0, ra
-        complex(kind=8), intent(in) :: zin
+        integer :: order
+        real(kind=8) :: del0, ra
+        complex(kind=8) :: zin
     
         ! Output
         complex(kind=8) :: wdis
@@ -867,9 +867,9 @@ contains
     
         implicit none
         ! Input
-        integer, intent(in) :: m1, m2
-        real(kind=8), intent(in) :: Lin, lambda, Rconv
-        complex(kind=8), intent(in) :: zin, z1in, z2in
+        integer :: m1, m2
+        real(kind=8) :: Lin, lambda, Rconv
+        complex(kind=8) :: zin, z1in, z2in
     
         ! Local
         integer :: NLS, j
