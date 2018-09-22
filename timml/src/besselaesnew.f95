@@ -79,7 +79,7 @@ contains
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(naq) :: rv
+        real(kind=8), dimension(naq), intent(out) :: rv
     
         ! Locals
         integer, parameter :: Nterms = 8
@@ -150,7 +150,7 @@ contains
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(order+1, naq) :: pot
+        real(kind=8), dimension(order+1, naq), intent(out) :: pot
         ! locals
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
@@ -180,7 +180,7 @@ contains
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(2,naq) :: rv        
+        real(kind=8), dimension(2,naq), intent(out) :: rv        
     
         ! Locals
         integer :: n, i, lstype
@@ -251,7 +251,7 @@ contains
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(2*(order+1), naq) :: qxqy
+        real(kind=8), dimension(2*(order+1), naq), intent(out) :: qxqy
         ! locals
         integer :: n
         real(kind=8), dimension(2,naq) :: rv
@@ -284,7 +284,7 @@ contains
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(naq) :: rv
+        real(kind=8), dimension(naq), intent(out) :: rv
     
         ! Locals
         integer, parameter :: Nterms = 8
@@ -356,7 +356,7 @@ contains
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(order+1, naq) :: pot
+        real(kind=8), dimension(order+1, naq), intent(out) :: pot
         ! locals
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
@@ -385,7 +385,7 @@ contains
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(2,naq) :: rv
+        real(kind=8), dimension(2,naq), intent(out) :: rv
         
         ! Locals
         integer :: n, i, m1, m2, NLS, lstype
@@ -476,7 +476,7 @@ contains
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(2*(order+1), naq) :: qxqy
+        real(kind=8), dimension(2*(order+1), naq), intent(out) :: qxqy
         ! locals
         integer :: n
         real(kind=8), dimension(2,naq) :: rv
@@ -492,12 +492,12 @@ contains
     
         implicit none
         ! Input
-        integer :: order, lstype
-        real(kind=8) :: Lin, lambda, Rconv
-        complex(kind=8) :: zin, z1in, z2in
+        integer, intent(in) :: order, lstype
+        real(kind=8), intent(in) :: Lin, lambda, Rconv
+        complex(kind=8), intent(in) :: zin, z1in, z2in
     
         ! Out
-        real(kind=8) :: pot
+        real(kind=8), intent(out) :: pot
     
         ! Local
         integer :: NLS,m1,m2, m, n
@@ -582,12 +582,12 @@ contains
     
         implicit none
         ! Input
-        integer :: order, lstype
-        real(kind=8) :: Lin, lambda, Rconv
-        complex(kind=8) :: zin, z1in, z2in
+        integer, intent(in) :: order, lstype
+        real(kind=8), intent(in) :: Lin, lambda, Rconv
+        complex(kind=8), intent(in) :: zin, z1in, z2in
 
         ! Out
-        complex(kind=8) :: wdis
+        complex(kind=8), intent(out) :: wdis
     
         ! Local
         integer :: NLS,m1,m2, m, n
@@ -742,10 +742,13 @@ contains
     
         implicit none
         ! Input
-        integer :: order
-        real(kind=8) :: del0,ra
-        complex(kind=8) :: zin, comega
-    
+        integer, intent(in) :: order
+        real(kind=8), intent(in) :: del0, ra
+        complex(kind=8), intent(in) :: zin
+        
+        ! Output
+        complex(kind=8), intent(out) :: comega
+        
         ! Local
         integer :: m, n
         real(kind=8) :: L
@@ -789,10 +792,13 @@ contains
     
         implicit none
         ! Input
-        integer :: order
-        real(kind=8) :: del0,ra
-        complex(kind=8) :: zin, wdis
+        integer, intent(in) :: order
+        real(kind=8), intent(in) :: del0,ra
+        complex(kind=8), intent(out) :: zin
     
+        ! Output
+        complex(kind=8), intent(out) :: wdis
+        
         ! Local
         integer :: m, n
         real(kind=8) :: L
@@ -837,9 +843,9 @@ contains
     
         implicit none
         ! Input
-        integer :: m1, m2
-        real(kind=8) :: Lin, lambda, Rconv
-        complex(kind=8) :: zin, z1in, z2in
+        integer, intent(in) :: m1, m2
+        real(kind=8), intent(in) :: Lin, lambda, Rconv
+        complex(kind=8), intent(in) :: zin, z1in, z2in
     
         ! Local
         integer :: NLS, j
