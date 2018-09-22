@@ -74,12 +74,14 @@ contains
         !   rv(naq): Potentials. Fist spot is Laplace value if ilap=1
     
         implicit none
-        ! Input / Output
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(naq), intent(out) :: rv
+        
+        ! Output
+        real(kind=8), dimension(naq) :: rv
     
         ! Locals
         integer, parameter :: Nterms = 8
@@ -145,12 +147,17 @@ contains
     
     function potbeslsv(x, y, z1, z2, lab, order, ilap, naq) result(pot)
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(order+1, naq), intent(out) :: pot
+        
+        ! Output
+        real(kind=8), dimension(order+1, naq) :: pot
+        
         ! locals
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
@@ -175,12 +182,14 @@ contains
         !                   and mod.Helmholtz potentials in remaining spots
     
         implicit none
-        ! Input / Output
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(2,naq), intent(out) :: rv        
+        
+        ! Output
+        real(kind=8), dimension(2,naq) :: rv        
     
         ! Locals
         integer :: n, i, lstype
@@ -245,13 +254,19 @@ contains
     end function disbeslsho
     
     function disbeslsv(x, y, z1, z2, lab, order, ilap, naq) result(qxqy)
+        
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(2*(order+1), naq), intent(out) :: qxqy
+        
+        ! Output
+        real(kind=8), dimension(2*(order+1), naq) :: qxqy
+        
         ! locals
         integer :: n
         real(kind=8), dimension(2,naq) :: rv
@@ -279,12 +294,14 @@ contains
     
         implicit none
     
-        ! Input / Output
+        ! Input
         real*8, intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(naq), intent(out) :: rv
+        
+        ! Output
+        real(kind=8), dimension(naq) :: rv
     
         ! Locals
         integer, parameter :: Nterms = 8
@@ -350,13 +367,19 @@ contains
     end function potbesldho
     
     function potbesldv(x, y, z1, z2, lab, order, ilap, naq) result(pot)
+        
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(order+1, naq), intent(out) :: pot
+        
+        ! Output
+        real(kind=8), dimension(order+1, naq) :: pot
+        
         ! locals
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
@@ -380,25 +403,20 @@ contains
         !                   and mod.Helmholtz potentials in remaining spots
     
         implicit none    
-        ! Input / Output
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
-        real(kind=8), dimension(2,naq), intent(out) :: rv
+        
+        ! Output
+        real(kind=8), dimension(2,naq) :: rv
         
         ! Locals
         integer :: n, i, m1, m2, NLS, lstype
         real(kind=8) :: Rconv, Lin, biglab, del0, ra, pot
         complex(kind=8) :: zin, z1in, z2in, z, zplus1, zmin1, z1new, z2new
         complex(kind=8) :: qm, wdis, wdis1, wdis2, wdis3
-    
-        ! Locals
-    
-        !integer :: n, m, i, m1, m2, NLS
-        !real*8 :: Rconv, Lin, biglab, del0, ra, pot
-        !complex*16 :: zin, z1in, z2in, z, z1, z2, zplus1, zmin1
-        !complex*16 :: qm, wdis, wdis1, wdis2, wdis3
         
         ! Radius of convergence
         Rconv = 7.0
@@ -470,13 +488,19 @@ contains
     end function disbesldho
     
     function disbesldv(x, y, z1, z2, lab, order, ilap, naq) result(qxqy)
+        
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
-        real(kind=8), dimension(2*(order+1), naq), intent(out) :: qxqy
+        
+        ! Output
+        real(kind=8), dimension(2*(order+1), naq) :: qxqy
+        
         ! locals
         integer :: n
         real(kind=8), dimension(2,naq) :: rv
@@ -496,8 +520,8 @@ contains
         real(kind=8), intent(in) :: Lin, lambda, Rconv
         complex(kind=8), intent(in) :: zin, z1in, z2in
     
-        ! Out
-        real(kind=8), intent(out) :: pot
+        ! Output
+        real(kind=8) :: pot
     
         ! Local
         integer :: NLS,m1,m2, m, n
@@ -586,8 +610,8 @@ contains
         real(kind=8), intent(in) :: Lin, lambda, Rconv
         complex(kind=8), intent(in) :: zin, z1in, z2in
 
-        ! Out
-        complex(kind=8), intent(out) :: wdis
+        ! Output
+        complex(kind=8) :: wdis
     
         ! Local
         integer :: NLS,m1,m2, m, n
@@ -747,7 +771,7 @@ contains
         complex(kind=8), intent(in) :: zin
         
         ! Output
-        complex(kind=8), intent(out) :: comega
+        complex(kind=8) :: comega
         
         ! Local
         integer :: m, n
@@ -793,11 +817,11 @@ contains
         implicit none
         ! Input
         integer, intent(in) :: order
-        real(kind=8), intent(in) :: del0,ra
-        complex(kind=8), intent(out) :: zin
+        real(kind=8), intent(in) :: del0, ra
+        complex(kind=8), intent(in) :: zin
     
         ! Output
-        complex(kind=8), intent(out) :: wdis
+        complex(kind=8) :: wdis
         
         ! Local
         integer :: m, n
