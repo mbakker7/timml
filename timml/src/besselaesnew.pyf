@@ -1,0 +1,164 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+module besselaesnew ! in besselaesnew.f95
+    integer :: nterms
+    real(kind=8) dimension(9) :: rrange
+    real(kind=8) :: rzero
+    real(kind=8) :: rone
+    real(kind=8) :: rtwo
+    real(kind=8) :: rfour
+    real(kind=8) :: pi
+    real(kind=8) :: tiny
+    real(kind=8) dimension(9,9) :: rbinom
+    real(kind=8) dimension(9) :: ac
+    real(kind=8) dimension(9) :: bc
+    real(kind=8) dimension(9) :: ac1
+    real(kind=8) dimension(9) :: bc1
+    complex(kind=8) :: czero
+    complex(kind=8) :: ci
+    subroutine initialize ! in besselaesnew.f95:besselaesnew
+    end subroutine initialize
+    function potbeslsho(x,y,z1,z2,lambda,order,ilap,naq) result (rv) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lambda
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lambda)>=naq),depend(lambda) :: naq=len(lambda)
+        real(kind=8) dimension(naq) :: rv
+    end function potbeslsho
+    function potbeslsv(x,y,z1,z2,lab,order,ilap,naq) result (pot) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lab
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lab)>=naq),depend(lab) :: naq=len(lab)
+        real(kind=8) dimension(order + 1,naq) :: pot
+    end function potbeslsv
+    function disbeslsho(x,y,z1,z2,lambda,order,ilap,naq) result (rv) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lambda
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lambda)>=naq),depend(lambda) :: naq=len(lambda)
+        real(kind=8) dimension(2,naq) :: rv
+    end function disbeslsho
+    function disbeslsv(x,y,z1,z2,lab,order,ilap,naq) result (qxqy) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lab
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lab)>=naq),depend(lab) :: naq=len(lab)
+        real(kind=8) dimension(2 * order + 2,naq) :: qxqy
+    end function disbeslsv
+    function potbesldho(x,y,z1,z2,lambda,order,ilap,naq) result (rv) ! in besselaesnew.f95:besselaesnew
+        real*8 intent(in) :: x
+        real*8 intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lambda
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lambda)>=naq),depend(lambda) :: naq=len(lambda)
+        real(kind=8) dimension(naq) :: rv
+    end function potbesldho
+    function potbesldv(x,y,z1,z2,lab,order,ilap,naq) result (pot) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lab
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lab)>=naq),depend(lab) :: naq=len(lab)
+        real(kind=8) dimension(order + 1,naq) :: pot
+    end function potbesldv
+    function disbesldho(x,y,z1,z2,lambda,order,ilap,naq) result (rv) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lambda
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lambda)>=naq),depend(lambda) :: naq=len(lambda)
+        real(kind=8) dimension(2,naq) :: rv
+    end function disbesldho
+    function disbesldv(x,y,z1,z2,lab,order,ilap,naq) result (qxqy) ! in besselaesnew.f95:besselaesnew
+        real(kind=8) intent(in) :: x
+        real(kind=8) intent(in) :: y
+        complex(kind=8) intent(in) :: z1
+        complex(kind=8) intent(in) :: z2
+        real(kind=8) dimension(naq),intent(in) :: lab
+        integer intent(in) :: order
+        integer intent(in) :: ilap
+        integer, optional,intent(in),check(len(lab)>=naq),depend(lab) :: naq=len(lab)
+        real(kind=8) dimension(2 * order + 2,naq) :: qxqy
+    end function disbesldv
+    function integralf(zin,z1in,z2in,lin,lambda,order,rconv,lstype) result (pot) ! in besselaesnew.f95:besselaesnew
+        complex(kind=8) :: zin
+        complex(kind=8) :: z1in
+        complex(kind=8) :: z2in
+        real(kind=8) :: lin
+        real(kind=8) :: lambda
+        integer :: order
+        real(kind=8) :: rconv
+        integer :: lstype
+        real(kind=8) :: pot
+    end function integralf
+    function integralg(zin,z1in,z2in,lin,lambda,order,rconv,lstype) result (wdis) ! in besselaesnew.f95:besselaesnew
+        complex(kind=8) :: zin
+        complex(kind=8) :: z1in
+        complex(kind=8) :: z2in
+        real(kind=8) :: lin
+        real(kind=8) :: lambda
+        integer :: order
+        real(kind=8) :: rconv
+        integer :: lstype
+        complex(kind=8) :: wdis
+    end function integralg
+    function integrallaplinedipole(zin,z1,z2,del0,ra,order) result (comega) ! in besselaesnew.f95:besselaesnew
+        complex(kind=8) :: zin
+        complex(kind=8) :: z1
+        complex(kind=8) :: z2
+        real(kind=8) :: del0
+        real(kind=8) :: ra
+        integer :: order
+        complex(kind=8) :: comega
+    end function integrallaplinedipole
+    function integrallaplinedipoledis(zin,z1,z2,del0,ra,order) result (wdis) ! in besselaesnew.f95:besselaesnew
+        complex(kind=8) :: zin
+        complex(kind=8) :: z1
+        complex(kind=8) :: z2
+        real(kind=8) :: del0
+        real(kind=8) :: ra
+        integer :: order
+        complex(kind=8) :: wdis
+    end function integrallaplinedipoledis
+    subroutine findm1m2(zin,z1in,z2in,lin,lambda,rconv,m1,m2,nls) ! in besselaesnew.f95:besselaesnew
+        complex(kind=8) :: zin
+        complex(kind=8) :: z1in
+        complex(kind=8) :: z2in
+        real(kind=8) :: lin
+        real(kind=8) :: lambda
+        real(kind=8) :: rconv
+        integer :: m1
+        integer :: m2
+        integer :: nls
+    end subroutine findm1m2
+end module besselaesnew
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
