@@ -55,9 +55,6 @@ install:
           %CMD_IN_ENV%
           python -c "import sys, platform, struct;
           print(sys.platform, platform.machine(), struct.calcsize('P') * 8, )"
- 
-  # Upgrade to the latest pip.
-  - '%CMD_IN_ENV% python -m pip install -U pip setuptools wheel'
   
   # configure conda and install dependencies
   - conda config --set always_yes yes
@@ -75,7 +72,7 @@ build_script:
           $MINGW = $env:MINGW_64 
       }
       $env:Path += ";$MINGW"
-      python setup.py build_ext --inplace --fcompiler=mingw32
+      python setup.py build_ext --inplace --fcompiler=gnu95 --compiler=mingw32
       python setup.py install
 
 test_script:
