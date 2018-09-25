@@ -72,9 +72,7 @@ build_script:
           $MINGW = $env:MINGW_64 
       }
       $env:Path += ";$MINGW"
-      f2py -c -m timml/src/besselaesnew timml/src/besselaesnew.f95
-      python setup.py build_ext --inplace --fcompiler=gnu95 --compiler=mingw32
-      python setup.py install
+      python setup.py install build_ext --inplace --fcompiler=gnu95 --compiler=mingw32
 
 test_script:
   - pytest
