@@ -20,7 +20,7 @@ platform:
   - x64
   
 matrix:
-  fast_finish: false
+  fast_finish: true
 
 install:
   - if "%PLATFORM%" == "x86" set PATH=%PYTHON%\bin;%PYTHON%\Scripts;%PATH%
@@ -39,3 +39,5 @@ install:
 
 test_script:
   - pytest
+
+build: off
