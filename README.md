@@ -17,7 +17,7 @@ TimML is coded in Python; use is made of FORTRAN extensions to improve performan
 
 **Python versions:**
 
-TimML requires **Python** 3.6 and can be installed from PyPI.
+TimML requires **Python** > 3.5 and can be installed from PyPI.
 The PyPI installation includes compiled versions of the FORTRAN extension
 for both Windows and MacOS.
 
@@ -53,7 +53,7 @@ TimML version 5 has many new features and elements, the code base is Python 3, a
 TimML version 4 remains available through the timml4 branch.
 
 ## Release
-TimML 5.0.0 - alpha release
+TimML 5.0.1 - alpha release
 
 ## Citation
 
