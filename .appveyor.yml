@@ -29,13 +29,15 @@ install:
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
   - activate python%PYTHON_VERSION%
-  - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest
+  - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest conda-build
   - conda install -q --name python%PYTHON_VERSION% -c anaconda libpython
   - conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
   - python.exe setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran
   - python.exe setup.py install
+  - conda build conda-recipe
+  - conda install timml --use-local
 
 test_script:
   - pytest tests/test_import.py
-
+  
 build: off
