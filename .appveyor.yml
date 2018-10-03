@@ -34,7 +34,7 @@ install:
   - conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
   - python.exe setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran
   - python.exe setup.py install
-  - conda build conda-recipe
+  - conda build conda-recipe --numpy 1.12
   - conda install timml --use-local
 
 test_script:
