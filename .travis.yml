@@ -49,13 +49,13 @@ before_install:
   - conda update --quiet conda
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest conda-build anaconda-client
+  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest conda-build anaconda anaconda-client
   - conda info -a
 
 install:
   - python setup.py build_ext --inplace --fcompiler=gfortran
   - python setup.py install
-  - conda build conda-recipe
+  - conda build conda-recipe --numpy 1.12
   - conda install timml --use-local
   
 script: 
