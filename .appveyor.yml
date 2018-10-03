@@ -36,6 +36,6 @@ install:
   - python.exe setup.py install
 
 test_script:
-  - pytest
+  - pytest test_import.py
 
 build: off
