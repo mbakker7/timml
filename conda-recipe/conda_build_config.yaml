@@ -1,3 +1,9 @@
 python:
     - 3.5
     - 3.6
+
+fortran_compiler:
+   - m2w64-toolchain # [win]
+   - gcc # [unix]
+
+        
