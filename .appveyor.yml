@@ -10,8 +10,22 @@ environment:
   matrix:
     - PYTHON: C:\Miniconda35
       PYTHON_VERSION: 3.5
+      BUILD_SCRIPT: "CONDA_BUILD"
     - PYTHON: C:\Miniconda36
       PYTHON_VERSION: 3.6
+      BUILD_SCRIPT: "CONDA_BUILD"
+    - PYTHON: C:\Miniconda35
+      PYTHON_VERSION: 3.5
+      BUILD_SCRIPT: "PYTHON_BUILD"
+    - PYTHON: C:\Miniconda36
+      PYTHON_VERSION: 3.6
+      BUILD_SCRIPT: "PYTHON_BUILD"
+    - PYTHON: C:\Miniconda36
+      PYTHON_VERSION: 3.7
+      BUILD_SCRIPT: "PYTHON_BUILD"
+    - PYTHON: C:\Miniconda36
+      PYTHON_VERSION: 3.7
+      BUILD_SCRIPT: "CONDA_BUILD"
       
 platform:
   - x86
@@ -29,11 +43,17 @@ install:
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
   - activate python%PYTHON_VERSION%
-  - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest conda-build
-  - conda install -q --name python%PYTHON_VERSION% -c anaconda libpython
-  - conda install -q --name python%PYTHON_VERSION% -c msys2 m2w64-toolchain
-  - python.exe setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran
-  - python.exe setup.py install
+  - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest conda-build libpython m2w64-toolchain
+  - ps: |
+     If ($env:BUILD_SCRIPT -eq "PYTHON_BUILD") {
+       python.exe setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran
+       python.exe setup.py install
+     }
+  - ps: |
+     If ($env:BUILD_SCRIPT -eq "CONDA_BUILD") {
+       conda build conda-recipe --numpy 1.15
+       conda install timml --use-local
+     }
 
 test_script:
   - pytest tests/test_import.py

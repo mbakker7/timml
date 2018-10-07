@@ -15,6 +15,12 @@ matrix:
    - os: linux
      python: "3.6"
      env: BUILD_SCRIPT=PYTHON_BUILD
+   - os: linux
+     python: "3.7"
+     env: BUILD_SCRIPT=CONDA_BUILD
+   - os: linux
+     python: "3.7"
+     env: BUILD_SCRIPT=PYTHON_BUILD
    - os: osx
      language: generic
      python: "3.5"
@@ -38,6 +44,18 @@ matrix:
      python: "3.6"
      env: 
         - TRAVIS_PYTHON_VERSION=3.6
+        - BUILD_SCRIPT=CONDA_BUILD
+   - os: osx
+     language: generic
+     python: "3.7"
+     env: 
+        - TRAVIS_PYTHON_VERSION=3.7
+        - BUILD_SCRIPT=PYTHON_BUILD
+   - os: osx
+     language: generic
+     python: "3.7"
+     env: 
+        - TRAVIS_PYTHON_VERSION=3.7
         - BUILD_SCRIPT=CONDA_BUILD
   fast_finish: true
 
@@ -81,7 +99,7 @@ install:
       python setup.py install; 
     fi
   - if [ "$BUILD_SCRIPT" = "CONDA_BUILD" ]; then 
-      conda build conda-recipe --numpy 1.12;
+      conda build conda-recipe --numpy 1.15;
       conda install timml --use-local; 
     fi
   
