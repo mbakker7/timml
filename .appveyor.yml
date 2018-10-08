@@ -28,7 +28,6 @@ environment:
       BUILD_SCRIPT: "CONDA_BUILD"
       
 platform:
-  - x86
   - x64
   
 matrix:
