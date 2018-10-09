@@ -3,6 +3,7 @@ import inspect  # Used for storing the input
 from .element import Element
 from .equation import PotentialEquation
 
+__all__ = ['Constant', 'ConstantStar']
 
 class ConstantBase(Element, PotentialEquation):
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, \

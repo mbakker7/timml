@@ -1,0 +1,11 @@
+python:
+    - 3.5
+    - 3.6
+    - 3.7
+
+fortran_compiler:
+   - m2w64-toolchain # [win]
+   - gcc # [unix]
+
+CONDA_BUILD_SYSROOT:
+  - /opt/MacOSX10.9.sdk        # [osx]        

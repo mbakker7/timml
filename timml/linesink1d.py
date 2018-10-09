@@ -3,6 +3,8 @@ import inspect  # Used for storing the input
 from .element import Element
 from .equation import HeadEquation, MscreenWellEquation, HeadDiffEquation, DisvecDiffEquation
 
+__all__ = ['LineSink1D', 'HeadLineSink1D']
+
 class LineSink1DBase(Element):
 
     def __init__(self, model, xls, sigls=1, layers=0, name="LineSink1DBase", label=None, 

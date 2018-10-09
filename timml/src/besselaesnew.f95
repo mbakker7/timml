@@ -74,11 +74,13 @@ contains
         !   rv(naq): Potentials. Fist spot is Laplace value if ilap=1
     
         implicit none
-        ! Input / Output
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
+        
+        ! Output
         real(kind=8), dimension(naq) :: rv
     
         ! Locals
@@ -145,12 +147,17 @@ contains
     
     function potbeslsv(x, y, z1, z2, lab, order, ilap, naq) result(pot)
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
+        
+        ! Output
         real(kind=8), dimension(order+1, naq) :: pot
+        
         ! locals
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
@@ -175,11 +182,13 @@ contains
         !                   and mod.Helmholtz potentials in remaining spots
     
         implicit none
-        ! Input / Output
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
+        
+        ! Output
         real(kind=8), dimension(2,naq) :: rv        
     
         ! Locals
@@ -245,13 +254,19 @@ contains
     end function disbeslsho
     
     function disbeslsv(x, y, z1, z2, lab, order, ilap, naq) result(qxqy)
+        
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
+        
+        ! Output
         real(kind=8), dimension(2*(order+1), naq) :: qxqy
+        
         ! locals
         integer :: n
         real(kind=8), dimension(2,naq) :: rv
@@ -279,11 +294,13 @@ contains
     
         implicit none
     
-        ! Input / Output
+        ! Input
         real*8, intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
+        
+        ! Output
         real(kind=8), dimension(naq) :: rv
     
         ! Locals
@@ -350,13 +367,19 @@ contains
     end function potbesldho
     
     function potbesldv(x, y, z1, z2, lab, order, ilap, naq) result(pot)
+        
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
+        
+        ! Output
         real(kind=8), dimension(order+1, naq) :: pot
+        
         ! locals
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
@@ -380,11 +403,13 @@ contains
         !                   and mod.Helmholtz potentials in remaining spots
     
         implicit none    
-        ! Input / Output
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq, order, ilap
         real(kind=8), dimension(naq), intent(in) :: lambda
+        
+        ! Output
         real(kind=8), dimension(2,naq) :: rv
         
         ! Locals
@@ -392,13 +417,6 @@ contains
         real(kind=8) :: Rconv, Lin, biglab, del0, ra, pot
         complex(kind=8) :: zin, z1in, z2in, z, zplus1, zmin1, z1new, z2new
         complex(kind=8) :: qm, wdis, wdis1, wdis2, wdis3
-    
-        ! Locals
-    
-        !integer :: n, m, i, m1, m2, NLS
-        !real*8 :: Rconv, Lin, biglab, del0, ra, pot
-        !complex*16 :: zin, z1in, z2in, z, z1, z2, zplus1, zmin1
-        !complex*16 :: qm, wdis, wdis1, wdis2, wdis3
         
         ! Radius of convergence
         Rconv = 7.0
@@ -470,13 +488,19 @@ contains
     end function disbesldho
     
     function disbesldv(x, y, z1, z2, lab, order, ilap, naq) result(qxqy)
+        
         implicit none
+        
+        ! Input
         real(kind=8), intent(in) :: x, y
         complex(kind=8), intent(in) :: z1, z2
         integer, intent(in) :: naq
         real(kind=8), dimension(naq), intent(in) :: lab
         integer, intent(in) :: order, ilap
+        
+        ! Output
         real(kind=8), dimension(2*(order+1), naq) :: qxqy
+        
         ! locals
         integer :: n
         real(kind=8), dimension(2,naq) :: rv
@@ -496,7 +520,7 @@ contains
         real(kind=8) :: Lin, lambda, Rconv
         complex(kind=8) :: zin, z1in, z2in
     
-        ! Out
+        ! Output
         real(kind=8) :: pot
     
         ! Local
@@ -586,7 +610,7 @@ contains
         real(kind=8) :: Lin, lambda, Rconv
         complex(kind=8) :: zin, z1in, z2in
 
-        ! Out
+        ! Output
         complex(kind=8) :: wdis
     
         ! Local
@@ -743,9 +767,12 @@ contains
         implicit none
         ! Input
         integer :: order
-        real(kind=8) :: del0,ra
-        complex(kind=8) :: zin, comega
-    
+        real(kind=8) :: del0, ra
+        complex(kind=8) :: zin
+        
+        ! Output
+        complex(kind=8) :: comega
+        
         ! Local
         integer :: m, n
         real(kind=8) :: L
@@ -790,9 +817,12 @@ contains
         implicit none
         ! Input
         integer :: order
-        real(kind=8) :: del0,ra
-        complex(kind=8) :: zin, wdis
+        real(kind=8) :: del0, ra
+        complex(kind=8) :: zin
     
+        ! Output
+        complex(kind=8) :: wdis
+        
         ! Local
         integer :: m, n
         real(kind=8) :: L

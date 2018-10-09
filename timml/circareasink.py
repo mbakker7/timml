@@ -1,8 +1,9 @@
-
 import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
 from scipy.special import k0, k1, i0, i1
+
+__all__ = ['CircAreaSink']
 
 class CircAreaSink(Element):
     def __init__(self, model, xc=0, yc=0, R=1, N=0.001, layer=0, name='CircAreasink', label=None):

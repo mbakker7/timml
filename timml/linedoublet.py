@@ -2,10 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
-from .besselaesnew import besselaesnew
+from .besselaesnew import *
 besselaesnew.initialize()
 from .controlpoints import controlpoints
 from .equation import DisvecEquation, LeakyWallEquation
+
+__all__ = ['ImpLineDoublet', 'ImpLineDoubletString', 'LeakyLineDoublet', 
+           'LeakyLineDoubletString']
 
 class LineDoubletHoBase(Element):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, delp=0.0, res=0.0, \
