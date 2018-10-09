@@ -6,58 +6,25 @@ matrix:
   include:
    - os: linux
      python: "3.5"
-     env: BUILD_SCRIPT=COND_BUILD
-   - os: linux
-     python: "3.5"
-     env: BUILD_SCRIPT=PYTHON_BUILD         
    - os: linux
      python: "3.6"
-     env: BUILD_SCRIPT=CONDA_BUILD
-   - os: linux
-     python: "3.6"
-     env: BUILD_SCRIPT=PYTHON_BUILD
    - os: linux
      python: "3.7"
-     env: BUILD_SCRIPT=CONDA_BUILD
-   - os: linux
-     python: "3.7"
-     env: BUILD_SCRIPT=PYTHON_BUILD
    - os: osx
      language: generic
      python: "3.5"
      env: 
         - TRAVIS_PYTHON_VERSION=3.5
-        - BUILD_SCRIPT=PYTHON_BUILD
-   - os: osx
-     language: generic
-     python: "3.5"
-     env: 
-        - TRAVIS_PYTHON_VERSION=3.5
-        - BUILD_SCRIPT=CONDA_BUILD
    - os: osx
      language: generic
      python: "3.6"
      env: 
         - TRAVIS_PYTHON_VERSION=3.6
-        - BUILD_SCRIPT=PYTHON_BUILD
-   - os: osx
-     language: generic
-     python: "3.6"
-     env: 
-        - TRAVIS_PYTHON_VERSION=3.6
-        - BUILD_SCRIPT=CONDA_BUILD
    - os: osx
      language: generic
      python: "3.7"
      env: 
         - TRAVIS_PYTHON_VERSION=3.7
-        - BUILD_SCRIPT=PYTHON_BUILD
-   - os: osx
-     language: generic
-     python: "3.7"
-     env: 
-        - TRAVIS_PYTHON_VERSION=3.7
-        - BUILD_SCRIPT=CONDA_BUILD
   fast_finish: true
 
 addons:
@@ -92,17 +59,11 @@ before_install:
   - conda update --quiet conda
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest conda-build anaconda anaconda-client
+  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest
   - conda info -a
 
 install:
-  - if [ "$BUILD_SCRIPT" = "PYTHON_BUILD" ]; then 
-      python setup.py install; 
-    fi
-  - if [ "$BUILD_SCRIPT" = "CONDA_BUILD" ]; then 
-      conda build conda-recipe --numpy 1.15;
-      conda install timml --use-local; 
-    fi
+  - python setup.py install 
   
 script: 
   - pytest
