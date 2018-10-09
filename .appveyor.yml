@@ -16,7 +16,6 @@ environment:
       PYTHON_VERSION: 3.7
       
 platform:
-  - x86
   - x64
   
 matrix:
