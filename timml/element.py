@@ -15,7 +15,7 @@ class Element:
         self.inhomelement = False  # elements used as part of an inhom boundary are tagged
         if self.label is not None:
             assert self.label not in list(self.model.elementdict.keys()),\
-            "TTim error: label " + self.label + " already exists"
+            "timml error: label " + self.label + " already exists"
             
     def initialize(self):
         # must be overloaded

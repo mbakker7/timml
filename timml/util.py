@@ -59,7 +59,7 @@ class PlotTim:
                 if self.aq.ltype[i] == 'a' and self.aq.ltype[i - 1] == 'a':
                     plt.axhspan(ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8])
             
-    def contour(self, win, ngr=20, layers=0, levels=20, layout=True, labels=False,
+    def contour(self, win, ngr=20, layers=0, levels=20, layout=True, labels=True,
                 decimals=0, color=None, newfig=True, figsize=None, legend=True):
         """Contour plot
         
@@ -75,7 +75,7 @@ class PlotTim:
             layers for which grid is returned
         levels : integer or array (default 20)
             levels that are contoured
-        layout : boolean (default True_)
+        layout : boolean (default True)
             plot layout of elements
         labels : boolean (default True)
             print labels along contours

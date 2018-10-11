@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
 from .equation import HeadEquation, PotentialEquation
-#from .besselaes import potbeslsho, potbesonlylsho, disbeslsho, disbesonlylsho
 from .besselaesnew import *
 besselaesnew.initialize()
 from .controlpoints import controlpoints, strengthinf_controlpoints
+
+__all__ = ['LineSinkBase', 'HeadLineSinkZero', 'HeadLineSink', 'LineSinkDitch',
+           'HeadLineSinkString', 'LineSinkDitchString']
 
 class LineSinkChangeTrace:
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax, verbose=False):
