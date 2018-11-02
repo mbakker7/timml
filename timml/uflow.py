@@ -2,6 +2,8 @@ import numpy as np
 import inspect # Used for storing the input
 from .element import Element
 
+__all__ = ['Uflow']
+
 class Uflow(Element):
     """
     Add uniform flow to the model.

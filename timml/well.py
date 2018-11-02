@@ -6,6 +6,7 @@ from .equation import PotentialEquation, MscreenWellEquation
 from .trace import timtracelines
 from scipy.special import k0, k1
 
+__all__ = ['WellBase', 'Well', 'HeadWell']
 
 class WellBase(Element):
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \

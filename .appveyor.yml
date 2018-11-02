@@ -1,0 +1,41 @@
+# Modified https://github.com/timcera/wdmtoolbox/blob/master/appveyor.yml
+
+clone_depth: 50
+
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
+  - '%USERPROFILE%\.cache\matplotlib'
+
+environment:
+  matrix:
+    - PYTHON: C:\Miniconda35
+      PYTHON_VERSION: 3.5
+    - PYTHON: C:\Miniconda36
+      PYTHON_VERSION: 3.6
+    - PYTHON: C:\Miniconda36
+      PYTHON_VERSION: 3.7
+      
+platform:
+  - x86
+  - x64
+  
+matrix:
+  fast_finish: true
+
+install:
+  - if "%PLATFORM%" == "x86" set PATH=%PYTHON%\bin;%PYTHON%\Scripts;%PATH%
+  - if "%PLATFORM%" == "x64" set PATH=%PYTHON%-x64\bin;%PYTHON%-x64\Scripts;%PATH%
+  # configure conda and install dependencies
+  - conda config --set always_yes yes
+  - conda config --add channels conda-forge
+  - conda update -q conda
+  - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
+  - activate python%PYTHON_VERSION%
+  - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest libpython m2w64-toolchain
+  - python.exe setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran
+  - python.exe setup.py install
+
+test_script:
+  - pytest tests/test_import.py
+  
+build: off

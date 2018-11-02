@@ -3,6 +3,8 @@ import inspect  # Used for storing the input
 from .element import Element
 from .equation import DisvecEquation, LeakyWallEquation
 
+__all__ = ['ImpLineDoublet1D', 'LeakyLineDoublet1D']
+
 class LineDoublet1D(Element):
 
     def __init__(self, model, xld, delp=1, layers=0, name="LineDoublet1DBase", label=None, 
