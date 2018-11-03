@@ -12,7 +12,7 @@ environment:
       PYTHON_VERSION: 3.5
     - PYTHON: C:\Miniconda36
       PYTHON_VERSION: 3.6
-    - PYTHON: C:\Miniconda36
+    - PYTHON: C:\Miniconda37
       PYTHON_VERSION: 3.7
       
 platform:
