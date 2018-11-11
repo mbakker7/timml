@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
 from .equation import HeadEquation, PotentialEquation
-from .besselaesnew import *
+from .besselaesnew import besselaesnew
+#import besselaesnew
 besselaesnew.initialize()
 from .controlpoints import controlpoints, strengthinf_controlpoints
 
@@ -158,8 +159,8 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             pot = np.zeros(aq.naq)
-            pot[:] = besselaesnew.potbeslsho(x, y, self.z1, self.z2, aq.lab, 0,
-                                             aq.ilap)
+            pot[:] = besselaesnew.potbeslsho(float(x), float(y), self.z1, self.z2, aq.lab, 0,
+                                             aq.ilap, aq.naq)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
 
@@ -169,8 +170,8 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             qxqy = np.zeros((2, aq.naq))
-            qxqy[:, :] = besselaesnew.disbeslsho(x, y, self.z1, self.z2, aq.lab,
-                                                 0, aq.ilap)
+            qxqy[:, :] = besselaesnew.disbeslsho(float(x), float(y), self.z1, self.z2, aq.lab,
+                                                 0, aq.ilap, aq.naq)
             rv[0] = self.aq.coef[self.layers] * qxqy[0]
             rv[1] = self.aq.coef[self.layers] * qxqy[1]
         return rv
@@ -271,8 +272,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             # clever way of using a reshaped rv here
             potrv = rv.reshape((self.order + 1, self.nlayers, aq.naq))
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = besselaesnew.potbeslsv(x, y, self.z1, self.z2, aq.lab,
-                                               self.order, aq.ilap)
+            pot[:, :] = besselaesnew.potbeslsv(float(x), float(y), self.z1, self.z2, aq.lab,
+                                               self.order, aq.ilap, aq.naq)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
         return rv
 
@@ -291,8 +292,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if aq == self.aq:
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers, aq.naq))
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = besselaesnew.disbeslsv(x, y, self.z1, self.z2, aq.lab,
-                                                self.order, aq.ilap)
+            qxqy[:, :] = besselaesnew.disbeslsv(float(x), float(y), self.z1, self.z2, aq.lab,
+                                                self.order, aq.ilap, aq.naq)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
                                                        np.newaxis, :]
             qxqyrv[1, :] = self.aq.coef[self.layers] * qxqy[self.order + 1:,
