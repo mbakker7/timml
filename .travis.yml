@@ -59,11 +59,14 @@ before_install:
   - conda update --quiet conda
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest
+  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest pytest-cov
   - conda info -a
 
 install:
   - python setup.py install 
   
 script: 
-  - pytest
+  - pytest --cov=timml tests/
+
+after_success:
+  - coveralls
