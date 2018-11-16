@@ -1,5 +1,5 @@
 [![travis][travis-img]](https://travis-ci.org/mbakker7/timml)
-[![appveyor][appveyor-img]](https://ci.appveyor.com/project/mbakker7/timml/branch/master)  
+[![appveyor][appveyor-img]](https://ci.appveyor.com/project/mbakker7/timml/branch/master)
 [![coveralls][coveralls-img]](https://coveralls.io/github/jentjr/timml?branch=master)
 
 [travis-img]: https://img.shields.io/travis/mbakker7/timml/master.svg?label=Linux+/+macOS
