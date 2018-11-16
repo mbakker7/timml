@@ -1,5 +1,11 @@
-[![Build Status](https://travis-ci.org/mbakker7/timml.svg?branch=master)](https://travis-ci.org/mbakker7/timml)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/mbakker7/timml?branch=master&svg=true)](https://ci.appveyor.com/project/mbakker7/timml/branch/master)
+[![travis][travis-img]](https://travis-ci.org/mbakker7/timml)
+[![appveyor][appveyor-img]](https://ci.appveyor.com/project/mbakker7/timml/branch/master)  
+[![coveralls][coveralls-img]](https://coveralls.io/github/jentjr/timml?branch=master)
+
+[travis-img]: https://img.shields.io/travis/mbakker7/timml/master.svg?label=Linux+/+macOS
+[appveyor-img]: https://img.shields.io/appveyor/ci/mbakker7/timml/master.svg?label=Windows
+[coveralls-img]: https://img.shields.io/coveralls/github/jentjr/timml/master.svg?label=coveralls
+
 # TimML, A Multi-Layer, Analytic Element Model
 
 ## Introduction
@@ -16,14 +22,14 @@ TimML is coded in Python; use is made of FORTRAN extensions to improve performan
 
 **Python versions:**
 
-TimML requires **Python** > 3.5 and can be installed from PyPI.
+TimML requires **Python** >= 3.5 and can be installed from PyPI, or conda-forge.
 The PyPI installation includes compiled versions of the FORTRAN extension
 for both Windows and MacOS.
 
 
 **Dependencies:**
 
-TimML requires **NumPy** 1.12 (or higher) and **matplotlib** 2.0 (or higher). 
+TimML requires **NumPy** >=1.12, **Scipy** >=0.19 and **matplotlib** >=2.0. 
 
 **For base Python distributions:**
 
@@ -39,6 +45,20 @@ To uninstall TimML type:
 
     pip uninstall timml
     
+**For Anaconda Python distributions:**
+
+To install
+
+    conda install -c conda-forge timml
+    
+To update
+
+    conda update timml
+    
+To uninstall
+
+    conda uninstall timml
+
 ## Documentation
 
 * The manual is available from the docs directory or can be viewed [here](http://mbakker7.github.io/timml/docs/builddocs/html/index.html).
