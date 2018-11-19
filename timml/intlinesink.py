@@ -1,17 +1,19 @@
 import numpy as np
 from .linesink import LineSinkHoBase
-from .equation import HeadDiffEquation2, DisvecDiffEquation2
+from .equation import HeadDiffEquation2, DisvecDiffEquation2, IntDisVecEquation
 from .controlpoints import controlpoints
 # needed for testing
-#from .equation import DisvecDiffEquation
+# from .equation import DisvecDiffEquation
 
 
 class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
-    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-                 order=0, ndeg=3, layers=0, label=None, addtomodel=True,
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0,
+                 order=0, ndeg=3, layers=None, label=None, addtomodel=True,
                  aq=None, aqin=None, aqout=None):
+        if layers is None:
+            layers = np.arange(model.aq.naq)
         LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-                                layers=np.arange(model.aq.naq), order=order, \
+                                layers=layers, order=order, \
                                 name='IntHeadDiffLineSink', label=label, \
                                 addtomodel=addtomodel, aq=aq)
         self.inhomelement = True
@@ -65,12 +67,14 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
 
 
 class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
-    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, layers=None,
                  order=0, ndeg=3, label=None, addtomodel=True, aq=None,
                  aqin=None, aqout=None):
-        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-                                layers=list(range(model.aq.naq)), order=order,
-                                name='IntFluxDiffLineSink', label=label, \
+        if layers is None:
+            layers = list(range(model.aq.naq))
+        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0,
+                                layers=layers, order=order,
+                                name='IntFluxDiffLineSink', label=label,
                                 addtomodel=addtomodel, aq=aq)
         self.inhomelement = True
         self.ndeg = ndeg
@@ -121,3 +125,53 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
                     changed = True
                     #return True, False, xyztnew
         return changed, False, [xyztnew]
+
+
+class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
+    """Element to set numerically integrated flux
+    along linesink to 0. Used in BuildingPit element
+    """
+
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, layers=None,
+                 order=0, ndeg=3, label=None, addtomodel=True, aq=None,
+                 aqin=None, aqout=None):
+        if layers is None:
+            layers = list(range(model.aq.naq))
+        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0,
+                                layers=layers, order=order,
+                                name='IntFluxDiffLineSink', label=label,
+                                addtomodel=addtomodel, aq=aq)
+        self.inhomelement = True
+        self.ndeg = ndeg
+        self.Xleg, self.wleg = np.polynomial.legendre.leggauss(self.ndeg)
+        self.nunknowns = self.nparam
+        self.aqin = aqin
+        self.aqout = aqout
+
+    def initialize(self):
+        LineSinkHoBase.initialize(self)
+
+        # recalculated with ncp - 1 points instead of ncp points
+        self.xcin, self.ycin = controlpoints(self.ncp - 1, self.z1, self.z2,
+                                             eps=1e-6, include_ends=True)
+        self.xcout, self.ycout = controlpoints(self.ncp - 1, self.z1, self.z2,
+                                               eps=-1e-6, include_ends=True)
+
+        if self.aqin is None:
+            self.aqin = self.model.aq.find_aquifer_data(self.xcin[0],
+                                                        self.ycin[0])
+        if self.aqout is None:
+            self.aqout = self.model.aq.find_aquifer_data(self.xcout[0],
+                                                         self.ycout[0])
+        # set control points x,y depending on which side of
+        # the boundary the element is for
+        if self.aq == self.aqin:
+            self.xc = self.xcin
+            self.yc = self.ycin
+        if self.aq == self.aqout:
+            self.xc = self.xcout
+            self.yc = self.ycout
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+

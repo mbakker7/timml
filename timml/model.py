@@ -10,6 +10,7 @@ from .aquifer import Aquifer
 from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .util import PlotTim
+import multiprocessing as mp
 
 __all__ = ['Model', 'ModelMaq', 'Model3D']
 
@@ -309,7 +310,73 @@ class Model(PlotTim):
             print('.', end='', flush=True)
         if sendback:
             return sol
-        return            
+        return
+
+    def solve_mt(self, nthreads=4, printmat=0, sendback=0, silent=False):
+        '''Compute solution, multiprocessing implementation.
+        Note: estimated speedup approximately by factor of
+        number of physical cores.'''
+        # Initialize elements
+        self.initialize()
+        # Compute number of equations
+        self.neq = np.sum([e.nunknowns for e in self.elementlist])
+        if self.neq == 0: return
+        if silent is False:
+            print('Number of elements, Number of equations:', len(
+                self.elementlist), ',', self.neq)
+        if self.neq == 0:
+            if silent is False: print('No unknowns. Solution complete')
+            return
+        mat = np.empty((self.neq, self.neq))
+        rhs = np.empty(self.neq)
+
+        # start multiprocessing
+        if nthreads is None:
+            nthreads = mp.cpu_count() - 1  # use all but one of the available threads
+        elif nthreads > mp.cpu_count():
+            print("Given 'nproc' exceeds no. of cores on machine. Setting 'nproc' to {}.".format(mp.cpu_count()))
+            nthreads = mp.cpu_count()
+
+        pool = mp.Pool(processes=nthreads)
+        results = []
+        for e in self.elementlist:
+            if e.nunknowns > 0:
+                results.append(pool.apply_async(e.equation))
+            if silent is False:
+                print('.', end='', flush=True)
+
+        pool.close()
+        pool.join()
+
+        mat = np.empty((self.neq, self.neq))
+        rhs = np.zeros(self.neq)
+
+        ieq = 0
+
+        for p in results:
+            imat, irhs = p.get()
+            mat[ieq:ieq + imat.shape[0], :] = imat
+            rhs[ieq:ieq + irhs.shape[0]] = irhs
+            ieq += imat.shape[0]
+
+        # end multiprocessing
+
+        if printmat:
+            return mat, rhs
+        sol = np.linalg.solve(mat, rhs)
+        icount = 0
+        for e in self.elementlist:
+            if e.nunknowns > 0:
+                e.setparams(sol[icount:icount + e.nunknowns])
+                icount += e.nunknowns
+        if silent is False:
+            print()  # needed cause the dots are printed
+            print('solution complete')
+        elif (silent == 'dot') or (silent == '.'):
+            print('.', end='', flush=True)
+        if sendback:
+            return sol
+        return
         
 class ModelMaq(Model):
     """
