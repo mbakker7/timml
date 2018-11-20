@@ -32,7 +32,6 @@ install:
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
   - activate python%PYTHON_VERSION%
   - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest libpython m2w64-toolchain
-  - python.exe setup.py build_ext --inplace --compiler=mingw32 --fcompiler=gfortran
   - python.exe setup.py install
 
 test_script:
