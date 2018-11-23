@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.testing import assert_allclose
-from timml import besselaesnew
+from timml._besselaesnew import *
 
 """
 x=2.0
@@ -18,7 +18,7 @@ lambda is a keyword in Python, so use order of function arguments
 
 
 def potbesldho(x):
-    pot = besselaesnew.potbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0), 
+    pot =potbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0), 
             [0.0, 2.0, 11.0], x, 1, 3)
     return pot
 
@@ -28,24 +28,24 @@ def test_potbesldho():
 
 
 def test_potbesldv():
-    potv = besselaesnew.potbesldv(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
+    potv = potbesldv(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
             [0.0, 2.0, 11.0], 1, 1, 3)
     assert_allclose(potv[0], np.array([-0.31055947, -0.23498503, -0.30327438]))
     assert_allclose(potv[1], np.array([-0.17694283, -0.15257055, -0.17583515]))
 
 def test_disbesldho():
-    qxqy_zero = besselaesnew.disbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
+    qxqy_zero = disbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
                   [0.0, 2.0, 11.0], 0, 1, 3)
     assert_allclose(qxqy_zero[0], np.array([-0.170131146, -0.18423853, -0.173157849]))
     assert_allclose(qxqy_zero[1], np.array([0.0274405074, 0.0888068675, 0.0342656083]))
 
-    qxqy_one = besselaesnew.disbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
+    qxqy_one = disbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
                  [0.0, 2.0, 11.0], 1, 1, 3)
     assert_allclose(qxqy_one[0], np.array([-0.10412493, -0.1084466406, -0.104477618]))
     assert_allclose(qxqy_one[1], np.array([0.106176131, 0.1162738781, 0.1067421121]))
 
 def test_disbesldv():
-    qxqyv = besselaesnew.disbesldv(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
+    qxqyv = disbesldv(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
               [0.0, 2.0, 11.0], 1, 1, 3)
     assert_allclose(qxqyv[0], np.array([-0.17013114606375021, -0.18423853257632447, -0.17315784943727297]))
     assert_allclose(qxqyv[2], np.array([2.7440507429637e-002, 8.880686745447e-002, 3.426560831291e-002]))

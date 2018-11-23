@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
 from .equation import HeadEquation, PotentialEquation
-from .besselaesnew import *
+from ._besselaesnew import potbeslsho, disbeslsho, potbeslsv, disbeslsv
 from .controlpoints import controlpoints, strengthinf_controlpoints
 
 __all__ = ['LineSinkBase', 'HeadLineSinkZero', 'HeadLineSink', 'LineSinkDitch',
