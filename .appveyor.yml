@@ -31,7 +31,7 @@ install:
   - conda update -q conda
   - conda create -q --name python%PYTHON_VERSION% python=%PYTHON_VERSION%
   - activate python%PYTHON_VERSION%
-  - conda install -q --name python%PYTHON_VERSION% setuptools numpy scipy matplotlib jupyter pytest libpython m2w64-toolchain
+  - conda install -q --name python%PYTHON_VERSION% setuptools numpy numba scipy matplotlib jupyter pytest libpython m2w64-toolchain
   - python.exe setup.py install
 
 test_script:

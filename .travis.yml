@@ -59,7 +59,7 @@ before_install:
   - conda update --quiet conda
   # Avoid noise from matplotlib
   - mkdir -p $HOME/.config/matplotlib
-  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib jupyter pytest pytest-cov coveralls
+  - conda install -q python=$TRAVIS_PYTHON_VERSION numpy numba scipy matplotlib jupyter pytest pytest-cov coveralls
   - conda info -a
 
 install:
