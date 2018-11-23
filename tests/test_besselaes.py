@@ -1,8 +1,6 @@
 import numpy as np
 from numpy.testing import assert_allclose
-from timml.besselaesnew import besselaesnew
-
-besselaesnew.initialize()
+from timml import besselaesnew
 
 """
 x=2.0
