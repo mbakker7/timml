@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
-from .besselaesnew import *
+from .besselaesnew import besselaesnew
+#import .besselaesnew
 besselaesnew.initialize()
 from .controlpoints import controlpoints
 from .equation import DisvecEquation, LeakyWallEquation
@@ -79,8 +80,8 @@ class LineDoubletHoBase(Element):
             potrv = rv.reshape((self.order + 1, self.nlayers,
                                 aq.naq))  # clever way of using a reshaped rv here
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = besselaesnew.potbesldv(x, y, self.z1, self.z2, aq.lab,
-                                               self.order, aq.ilap)
+            pot[:, :] = besselaesnew.potbesldv(float(x), float(y), self.z1, self.z2, aq.lab,
+                                               self.order, aq.ilap, aq.naq)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
         return rv
 
@@ -100,8 +101,8 @@ class LineDoubletHoBase(Element):
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers,
                                  aq.naq))  # clever way of using a reshaped rv here
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = besselaesnew.disbesldv(x, y, self.z1, self.z2, aq.lab,
-                                                self.order, aq.ilap)
+            qxqy[:, :] = besselaesnew.disbesldv(float(x), float(y), self.z1, self.z2, aq.lab,
+                                                self.order, aq.ilap, aq.naq)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
                                                        np.newaxis, :]
             qxqyrv[1, :] = self.aq.coef[self.layers] * qxqy[self.order + 1:,
