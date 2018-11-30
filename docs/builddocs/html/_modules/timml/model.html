@@ -354,29 +354,29 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    kaq : float, array or list</span>
-<span class="sd">        hydraulic conductivity of each aquifer from the top down</span>
-<span class="sd">        if float, hydraulic conductivity is the same in all aquifers</span>
+<span class="sd">        Hydraulic conductivity of each aquifer from the top down.</span>
+<span class="sd">        If float, hydraulic conductivity is the same in all aquifers.</span>
 <span class="sd">    z : array or list</span>
-<span class="sd">        elevation tops and bottoms of the aquifers from the top down</span>
-<span class="sd">        leaky layers may have zero thickness</span>
+<span class="sd">        Elevation of tops and bottoms of the aquifers from the top down.</span>
+<span class="sd">        Leaky layers may have zero thickness.</span>
 <span class="sd">           * if topboundary=&#39;conf&#39;: length is 2 * number of aquifers</span>
 <span class="sd">           * if topboundary=&#39;semi&#39;: length is 2 * number of aquifers + 1 as top</span>
-<span class="sd">        of leaky layer on top of systems needs to be specified</span>
+<span class="sd">             of leaky layer on top of systems needs to be specified</span>
 <span class="sd">    c : float, array or list</span>
-<span class="sd">        resistance of leaky layers from the top down</span>
-<span class="sd">        | if float, resistance is the same for all leaky layers</span>
-<span class="sd">        | if topboundary=&#39;conf&#39;: length is number of aquifers - 1</span>
-<span class="sd">        | if topboundary=&#39;semi&#39;: length is number of aquifers</span>
+<span class="sd">        Resistance of leaky layers from the top down.</span>
+<span class="sd">           * if float, resistance is the same for all leaky layers</span>
+<span class="sd">           * if topboundary=&#39;conf&#39;: length is number of aquifers - 1</span>
+<span class="sd">           * if topboundary=&#39;semi&#39;: length is number of aquifers</span>
 <span class="sd">    npor : float, array or list</span>
-<span class="sd">        porosity of all aquifers and leaky layers from the top down</span>
-<span class="sd">        if float, porosity is the same for all layers</span>
-<span class="sd">        if topboundary=&#39;conf&#39;: length is 2 * number of aquifers - 1</span>
-<span class="sd">        if topboundary=&#39;semi&#39;: length is 2 * number of aquifers</span>
+<span class="sd">        Porosity of all aquifers and leaky layers from the top down.</span>
+<span class="sd">           * if float, porosity is the same for all layers</span>
+<span class="sd">           * if topboundary=&#39;conf&#39;: length is 2 * number of aquifers - 1</span>
+<span class="sd">           * if topboundary=&#39;semi&#39;: length is 2 * number of aquifers</span>
 <span class="sd">    topboundary : string, &#39;conf&#39; or &#39;semi&#39; (default is &#39;conf&#39;)</span>
-<span class="sd">        indicating whether the topboundary is confined (&#39;conf&#39;) or</span>
-<span class="sd">        semi-confined (&#39;semi&#39;)</span>
+<span class="sd">        Indicates whether the topboundary is confined (&#39;conf&#39;) or</span>
+<span class="sd">        semi-confined (&#39;semi&#39;).</span>
 <span class="sd">    hstar : float or None (default is None)</span>
-<span class="sd">        head value above semi-confining top, only read if topboundary=&#39;semi&#39;</span>
+<span class="sd">        Head value above semi-confining top, only read if topboundary=&#39;semi&#39;.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>

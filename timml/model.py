@@ -319,29 +319,29 @@ class ModelMaq(Model):
     Parameters
     ----------
     kaq : float, array or list
-        hydraulic conductivity of each aquifer from the top down
-        if float, hydraulic conductivity is the same in all aquifers
+        Hydraulic conductivity of each aquifer from the top down.
+        If float, hydraulic conductivity is the same in all aquifers.
     z : array or list
-        elevation tops and bottoms of the aquifers from the top down
-        leaky layers may have zero thickness
+        Elevation of tops and bottoms of the aquifers from the top down.
+        Leaky layers may have zero thickness.
            * if topboundary='conf': length is 2 * number of aquifers
            * if topboundary='semi': length is 2 * number of aquifers + 1 as top
-        of leaky layer on top of systems needs to be specified
+             of leaky layer on top of systems needs to be specified
     c : float, array or list
-        resistance of leaky layers from the top down
-        | if float, resistance is the same for all leaky layers
-        | if topboundary='conf': length is number of aquifers - 1
-        | if topboundary='semi': length is number of aquifers
+        Resistance of leaky layers from the top down.
+           * if float, resistance is the same for all leaky layers
+           * if topboundary='conf': length is number of aquifers - 1
+           * if topboundary='semi': length is number of aquifers
     npor : float, array or list
-        porosity of all aquifers and leaky layers from the top down
-        if float, porosity is the same for all layers
-        if topboundary='conf': length is 2 * number of aquifers - 1
-        if topboundary='semi': length is 2 * number of aquifers
+        Porosity of all aquifers and leaky layers from the top down.
+           * if float, porosity is the same for all layers
+           * if topboundary='conf': length is 2 * number of aquifers - 1
+           * if topboundary='semi': length is 2 * number of aquifers
     topboundary : string, 'conf' or 'semi' (default is 'conf')
-        indicating whether the topboundary is confined ('conf') or
-        semi-confined ('semi')
+        Indicates whether the topboundary is confined ('conf') or
+        semi-confined ('semi').
     hstar : float or None (default is None)
-        head value above semi-confining top, only read if topboundary='semi'
+        Head value above semi-confining top, only read if topboundary='semi'.
 
     Examples
     --------
