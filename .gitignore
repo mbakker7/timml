@@ -72,6 +72,7 @@ __config__.py
 
 # IPython Notebook
 .ipynb_checkpoints
+.DS_Store
 
 # pyenv
 .python-version
