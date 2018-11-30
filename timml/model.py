@@ -324,14 +324,14 @@ class ModelMaq(Model):
     z : array or list
         elevation tops and bottoms of the aquifers from the top down
         leaky layers may have zero thickness
-        if topboundary='conf': length is 2 * number of aquifers
-        if topboundary='semi': length is 2 * number of aquifers + 1 as top
+           * if topboundary='conf': length is 2 * number of aquifers
+           * if topboundary='semi': length is 2 * number of aquifers + 1 as top
         of leaky layer on top of systems needs to be specified
     c : float, array or list
         resistance of leaky layers from the top down
-        if float, resistance is the same for all leaky layers
-        if topboundary='conf': length is number of aquifers - 1
-        if topboundary='semi': length is number of aquifers
+        | if float, resistance is the same for all leaky layers
+        | if topboundary='conf': length is number of aquifers - 1
+        | if topboundary='semi': length is number of aquifers
     npor : float, array or list
         porosity of all aquifers and leaky layers from the top down
         if float, porosity is the same for all layers

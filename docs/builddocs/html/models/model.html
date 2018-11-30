@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Model &#8212; TimML 5.0.0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '5.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Inhomogeneities" href="../inhoms/inhoms.html" />
@@ -35,13 +24,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="model">
@@ -61,7 +51,7 @@ Use Model3D for multi-layer model of single aquifer</p>
 <li><strong>kaq</strong> (<em>array</em>) – hydraulic conductivity of each aquifer from the top down</li>
 <li><strong>z</strong> (<em>array</em>) – elevation tops and bottoms of all layers
 layers may have zero thickness</li>
-<li><strong>c</strong> (<em>array</em>) – resistance between two consecutive aquifers
+<li><strong>c</strong> (<em>array</em>) – resistance between two consecutive aquifer layers
 if ltype[0]=’a’: length is number of aquifers - 1
 if ltype[0]=’l’: length is number of aquifers</li>
 <li><strong>npor</strong> (<em>array</em>) – porosity of all layers from the top down</li>
@@ -137,7 +127,7 @@ if ltype[0]=’l’: length is number of aquifers</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#timml.model.Model.headgrid2" title="timml.model.Model.headgrid2"><code class="xref py py-func docutils literal"><span class="pre">headgrid2()</span></code></a></p>
+<p class="last"><a class="reference internal" href="#timml.model.Model.headgrid2" title="timml.model.Model.headgrid2"><code class="xref py py-func docutils literal notranslate"><span class="pre">headgrid2()</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -167,7 +157,7 @@ if ltype[0]=’l’: length is number of aquifers</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#timml.model.Model.headgrid" title="timml.model.Model.headgrid"><code class="xref py py-func docutils literal"><span class="pre">headgrid()</span></code></a></p>
+<p class="last"><a class="reference internal" href="#timml.model.Model.headgrid" title="timml.model.Model.headgrid"><code class="xref py py-func docutils literal notranslate"><span class="pre">headgrid()</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -204,7 +194,7 @@ if ltype[0]=’l’: length is number of aquifers</li>
 
 <dl class="method">
 <dt id="timml.model.Model.contour">
-<code class="descname">contour</code><span class="sig-paren">(</span><em>win</em>, <em>ngr=20</em>, <em>layers=0</em>, <em>levels=20</em>, <em>layout=True</em>, <em>labels=False</em>, <em>decimals=0</em>, <em>color=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.contour" title="Permalink to this definition">¶</a></dt>
+<code class="descname">contour</code><span class="sig-paren">(</span><em>win</em>, <em>ngr=20</em>, <em>layers=0</em>, <em>levels=20</em>, <em>layout=True</em>, <em>labels=True</em>, <em>decimals=0</em>, <em>color=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contour plot</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -216,7 +206,7 @@ if ltype[0]=’l’: length is number of aquifers</li>
 if tuple or list: nx, ny, number of grid points in x and y direction</li>
 <li><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layers for which grid is returned</li>
 <li><strong>levels</strong> (<em>integer</em><em> or </em><em>array</em><em> (</em><em>default 20</em><em>)</em>) – levels that are contoured</li>
-<li><strong>layout</strong> (boolean (default <a href="#id1"><span class="problematic" id="id2">True_</span></a>)) – plot layout of elements</li>
+<li><strong>layout</strong> (<em>boolean</em><em> (</em><em>default True</em><em>)</em>) – plot layout of elements</li>
 <li><strong>labels</strong> (<em>boolean</em><em> (</em><em>default True</em><em>)</em>) – print labels along contours</li>
 <li><strong>decimals</strong> (<em>integer</em><em> (</em><em>default 0</em><em>)</em>) – number of decimals of labels along contours</li>
 <li><strong>color</strong> (<em>str</em><em> or </em><em>list of strings</em>) – color of contour lines</li>
@@ -233,7 +223,7 @@ if list of strings: use strings as names in legend</li>
 
 <dl class="method">
 <dt id="timml.model.Model.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>win=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>orientation=’hor’</em>, <em>topfigfrac=0.8</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>win=None</em>, <em>newfig=True</em>, <em>figsize=None</em>, <em>orientation='hor'</em>, <em>topfigfrac=0.8</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot layout</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -247,7 +237,7 @@ if list of strings: use strings as names in legend</li>
 
 <dl class="method">
 <dt id="timml.model.Model.tracelines">
-<code class="descname">tracelines</code><span class="sig-paren">(</span><em>xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1000000000000.0, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.tracelines" title="Permalink to this definition">¶</a></dt>
+<code class="descname">tracelines</code><span class="sig-paren">(</span><em>xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1000000000000.0, nstepmax=100, silent='.', color=None, orientation='hor', win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.tracelines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw trace lines</p>
 </dd></dl>
 
@@ -263,6 +253,7 @@ if list of strings: use strings as names in legend</li>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -312,12 +303,14 @@ if list of strings: use strings as names in legend</li>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -328,8 +321,8 @@ if list of strings: use strings as names in legend</li>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/models/model.rst.txt"
