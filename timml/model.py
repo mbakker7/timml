@@ -312,10 +312,11 @@ class Model(PlotTim):
             return sol
         return
 
-    def solve_mt(self, nthreads=4, printmat=0, sendback=0, silent=False):
+    def solve_mp(self, nproc=4, printmat=0, sendback=0, silent=False):
         '''Compute solution, multiprocessing implementation.
         Note: estimated speedup approximately by factor of
-        number of physical cores.'''
+        number of physical cores. Virtual cores do not improve
+        calculation time.'''
         # Initialize elements
         self.initialize()
         # Compute number of equations
@@ -331,13 +332,13 @@ class Model(PlotTim):
         rhs = np.empty(self.neq)
 
         # start multiprocessing
-        if nthreads is None:
-            nthreads = mp.cpu_count() - 1  # use all but one of the available threads
-        elif nthreads > mp.cpu_count():
-            print("Given 'nproc' exceeds no. of cores on machine. Setting 'nproc' to {}.".format(mp.cpu_count()))
-            nthreads = mp.cpu_count()
+        if nproc is None:
+            nproc = mp.cpu_count() - 1  # make no. of processes equal to 1 less than no. of cores
+        elif nproc > mp.cpu_count():
+            print("Given 'nproc' larger than no. of cores on machine. Setting 'nproc' to {}.".format(mp.cpu_count()))
+            nproc = mp.cpu_count()
 
-        pool = mp.Pool(processes=nthreads)
+        pool = mp.Pool(processes=nproc)
         results = []
         for e in self.elementlist:
             if e.nunknowns > 0:

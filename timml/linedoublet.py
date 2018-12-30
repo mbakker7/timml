@@ -10,11 +10,12 @@ from .equation import DisvecEquation, LeakyWallEquation
 __all__ = ['ImpLineDoublet', 'ImpLineDoubletString', 'LeakyLineDoublet', 
            'LeakyLineDoubletString']
 
+
 class LineDoubletHoBase(Element):
-    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, delp=0.0, res=0.0, \
-                 layers=0, order=0, name='LineDoubletHoBase', \
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, delp=0.0, res=0.0,
+                 layers=0, order=0, name='LineDoubletHoBase',
                  label=None, addtomodel=True, aq=None, zcinout=None):
-        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers, \
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers,
                          name=name, label=label)
         self.x1 = float(x1)
         self.y1 = float(y1)
