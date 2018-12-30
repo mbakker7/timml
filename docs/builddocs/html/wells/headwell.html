@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Well with specified head &#8212; TimML 5.0.0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '5.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Line-sinks" href="../linesinks/linesinkindex.html" />
@@ -35,13 +24,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="well-with-specified-head">
@@ -51,11 +41,11 @@
 <em class="property">class </em><code class="descclassname">timml.well.</code><code class="descname">HeadWell</code><span class="sig-paren">(</span><em>model</em>, <em>xw=0</em>, <em>yw=0</em>, <em>hw=10</em>, <em>rw=0.1</em>, <em>res=0</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/well.html#HeadWell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.well.HeadWell" title="Permalink to this definition">¶</a></dt>
 <dd><p>HeadWell Class to create a well with a specified head inside the well.
 The well may be screened in multiple layers. The resistance of the screen
-may be specified. The head is computed such that the discharge <span class="math">\(Q_i\)</span>
-in layer <span class="math">\(i\)</span> is computed as</p>
-<div class="math">
+may be specified. The head is computed such that the discharge <span class="math notranslate nohighlight">\(Q_i\)</span>
+in layer <span class="math notranslate nohighlight">\(i\)</span> is computed as</p>
+<div class="math notranslate nohighlight">
 \[Q_i = 2\pi r_w(h_i - h_w)/c\]</div>
-<p>where <span class="math">\(c\)</span> is the resistance of the well screen and <span class="math">\(h_w\)</span> is
+<p>where <span class="math notranslate nohighlight">\(c\)</span> is the resistance of the well screen and <span class="math notranslate nohighlight">\(h_w\)</span> is
 the head inside the well.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -77,7 +67,7 @@ the head inside the well.</p>
 </table>
 <dl class="method">
 <dt id="timml.well.HeadWell.capzone">
-<code class="descname">capzone</code><span class="sig-paren">(</span><em>nt=10</em>, <em>zstart=None</em>, <em>hstepmax=10</em>, <em>vstepfrac=0.2</em>, <em>tmax=None</em>, <em>nstepmax=100</em>, <em>silent=’.’</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.capzone" title="Permalink to this definition">¶</a></dt>
+<code class="descname">capzone</code><span class="sig-paren">(</span><em>nt=10</em>, <em>zstart=None</em>, <em>hstepmax=10</em>, <em>vstepfrac=0.2</em>, <em>tmax=None</em>, <em>nstepmax=100</em>, <em>silent='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.capzone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a capture zone</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -140,7 +130,7 @@ screened</td>
 
 <dl class="method">
 <dt id="timml.well.HeadWell.plotcapzone">
-<code class="descname">plotcapzone</code><span class="sig-paren">(</span><em>nt=10, zstart=None, hstepmax=20, vstepfrac=0.2, tmax=365, nstepmax=100, silent=’.’, color=None, orientation=’hor’, win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.plotcapzone" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotcapzone</code><span class="sig-paren">(</span><em>nt=10, zstart=None, hstepmax=20, vstepfrac=0.2, tmax=365, nstepmax=100, silent='.', color=None, orientation='hor', win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.well.HeadWell.plotcapzone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a capture zone</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -173,6 +163,7 @@ screened</td>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -231,12 +222,14 @@ screened</td>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -247,8 +240,8 @@ screened</td>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/wells/headwell.rst.txt"
