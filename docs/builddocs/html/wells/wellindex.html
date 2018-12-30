@@ -4,27 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Wells &#8212; TimML 5.0.0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '5.0.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Well with specified discharge" href="well.html" />
@@ -35,27 +24,28 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="wells">
 <h1>Wells<a class="headerlink" href="#wells" title="Permalink to this headline">¶</a></h1>
 <p>There are two types of wells: wells for which the total discharge is specified and wells for which the head inside the well is specified.
-Both types of wells may have an entry resistance (skin effect) defined by the resistance <span class="math">\(c\)</span> (dimension: time). The discharge <span class="math">\(Q_i\)</span> in layer <span class="math">\(i\)</span> is a function of the head
-<span class="math">\(h_i\)</span> in layer <span class="math">\(i\)</span> just outside the well and the head <span class="math">\(h_w\)</span> inside the well:</p>
+Both types of wells may have an entry resistance (skin effect) defined by the resistance <span class="math notranslate nohighlight">\(c\)</span> (dimension: time). The discharge <span class="math notranslate nohighlight">\(Q_i\)</span> in layer <span class="math notranslate nohighlight">\(i\)</span> is a function of the head
+<span class="math notranslate nohighlight">\(h_i\)</span> in layer <span class="math notranslate nohighlight">\(i\)</span> just outside the well and the head <span class="math notranslate nohighlight">\(h_w\)</span> inside the well:</p>
 <blockquote>
-<div><div class="math">
+<div><div class="math notranslate nohighlight">
 \[Q_i = 2\pi r_w(h_i - h_w)/c\]</div>
 </div></blockquote>
-<p>1. <a class="reference internal" href="well.html#timml.well.Well" title="timml.well.Well"><code class="xref py py-class docutils literal"><span class="pre">Well</span></code></a> is a well for which the total discharge is specified. The total discharge is distributed across the layers in which the
+<p>1. <a class="reference internal" href="well.html#timml.well.Well" title="timml.well.Well"><code class="xref py py-class docutils literal notranslate"><span class="pre">Well</span></code></a> is a well for which the total discharge is specified. The total discharge is distributed across the layers in which the
 well is screened such that the head inside the well is the same in each screened layer.</p>
-<p>2. <a class="reference internal" href="headwell.html#timml.well.HeadWell" title="timml.well.HeadWell"><code class="xref py py-class docutils literal"><span class="pre">HeadWell</span></code></a> is a well for which the head inside the well is specified. The discharge in each layer is computed such that
+<p>2. <a class="reference internal" href="headwell.html#timml.well.HeadWell" title="timml.well.HeadWell"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeadWell</span></code></a> is a well for which the head inside the well is specified. The discharge in each layer is computed such that
 the head in all screened layers is equal to the specified head.</p>
 <div class="toctree-wrapper compound">
 </div>
@@ -63,6 +53,7 @@ the head in all screened layers is equal to the specified head.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -119,12 +110,14 @@ the head in all screened layers is equal to the specified head.</p>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -135,8 +128,8 @@ the head in all screened layers is equal to the specified head.</p>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/wells/wellindex.rst.txt"
