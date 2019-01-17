@@ -95,3 +95,9 @@ ENV/
 
 # pycharm
 .idea/
+
+# f2py
+.plist
+
+# Jupyter
+.DS_Store
