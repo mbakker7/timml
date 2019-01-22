@@ -155,7 +155,6 @@ contains
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
         do n = 0, order
-            !print *, n*naq + 1, (n+1)*naq
             pot(n+1, 1:naq) = potbeslsho(x,y,z1,z2,lab,n,ilap,naq)
         end do
     end function potbeslsv
@@ -207,12 +206,12 @@ contains
         if (ilap == 1) then
             pcor = cZERO ;
             do n=1,(order+1)/2
-                pcor = pcor + float(order-2*n+2) * z**(order+1-2*n) / float(2*n-1) ;
+                pcor = pcor + dble(order-2*n+2) * z**(order+1-2*n) / dble(2*n-1) ;
             end do
             pcor = rTWO * pcor ;
         
             cdum = 1.d0 / (order+1)  ! Without this intermediate statement it didn't seem to work
-            wdis = float(order+1) * z**order * log( (zmin1) / (zplus1) ) + pcor
+            wdis = dble(order+1) * z**order * log( (zmin1) / (zplus1) ) + pcor
             
             wdis = wdis + (z**(order+1) - rONE) / zmin1 - (z**(order+1) - (-rONE)**(order+1)) / zplus1
         
@@ -314,7 +313,7 @@ contains
             comega = z**order * log(zmin1 / zplus1)
             qm = cZERO
             do n=1,(order+1)/2
-                qm = qm + z**(order-rTWO*float(n)+rONE) / (rTWO*float(n) - rONE)
+                qm = qm + z**(order-rTWO*dble(n)+rONE) / (rTWO*dble(n) - rONE)
             end do
             comega = rONE/(rTWO*pi*ci) * ( comega + rTWO * qm )
             rv(1) = real(comega)
@@ -333,10 +332,10 @@ contains
                 call findm1m2(zin,z1in,z2in,Lin,lambda(i),Rconv,m1,m2,NLS)
                 comega = cZERO
                 if (m1 > 0) then   ! Otherwise outside radius of convergence
-                    z1new = z1in + float(m1-1)/float(NLS) * (z2in-z1in)
-                    z2new = z1in + float(m2)/float(NLS)   * (z2in-z1in)
-                    del0 = float(1-m1-m2+NLS)/float(1-m1+m2)
-                    ra = float(NLS) / float(1+m2-m1)
+                    z1new = z1in + dble(m1-1)/dble(NLS) * (z2in-z1in)
+                    z2new = z1in + dble(m2)/dble(NLS)   * (z2in-z1in)
+                    del0 = dble(1-m1-m2+NLS)/dble(1-m1+m2)
+                    ra = dble(NLS) / dble(1+m2-m1)
                     comega = IntegralLapLineDipole(zin,z1new,z2new,del0,ra,order)
                 end if
                 pot = IntegralF(zin,z1in,z2in,Lin,lambda(i),order,Rconv,lstype)
@@ -361,7 +360,6 @@ contains
         integer :: n
         ! Check if endpoints need to be adjusted using the largest lambda (the first one)
         do n = 0, order
-            !print *, n*naq + 1, (n+1)*naq
             pot(n+1, 1:naq) = potbesldho(x,y,z1,z2,lab,n,ilap,naq)
         end do
     end function potbesldv
@@ -420,12 +418,12 @@ contains
             if (order == 0) then
                 wdis = - ( rONE / zmin1 - rONE / zplus1 ) / (pi * ci * (z2in - z1in) )
             else
-                wdis = float(order) * z**(order-1) * log(zmin1/zplus1)
+                wdis = dble(order) * z**(order-1) * log(zmin1/zplus1)
                 wdis = wdis + z**order * ( rONE / zmin1 - rONE / zplus1 )
                 qm = cZERO
                 if (order > 1) then ! To avoid a possible problem of 0 * 0^(-1)
                     do n=1,order/2
-                        qm = qm + float(order-2*n+1) * z**(order-2*n) / float(2*n-1)
+                        qm = qm + dble(order-2*n+1) * z**(order-2*n) / dble(2*n-1)
                     end do
                 end if
                 wdis = - ( wdis + rTWO * qm ) / (pi*ci*(z2in-z1in)) ;
@@ -447,10 +445,10 @@ contains
                 call findm1m2(zin,z1in,z2in,Lin,lambda(i),Rconv,m1,m2,NLS)
                 wdis1 = cZERO
                 if (m1 > 0) then
-                    z1new = z1in + float(m1-1)/float(NLS) * (z2in-z1in)
-                    z2new = z1in + float(m2)/float(NLS)   * (z2in-z1in)
-                    del0 = float(1-m1-m2+NLS)/float(1-m1+m2)
-                    ra = float(NLS) / float(1+m2-m1)
+                    z1new = z1in + dble(m1-1)/dble(NLS) * (z2in-z1in)
+                    z2new = z1in + dble(m2)/dble(NLS)   * (z2in-z1in)
+                    del0 = dble(1-m1-m2+NLS)/dble(1-m1+m2)
+                    ra = dble(NLS) / dble(1+m2-m1)
                     wdis1 = IntegralLapLineDipoleDis(zin,z1new,z2new,del0,ra,order)
                     wdis1 = -rTWO  * wdis1 / (ci*(z2new-z1new))
                 end if
@@ -564,15 +562,15 @@ contains
     
         ! Evaluation of integral, Eq. 25
         cInt = cmplx(0.d0,0.d0,kind=8)
-        del1 = -rONE + rTWO * (float(m1)-rONE) / float(NLS)
-        del2 = -rONE + rTWO * float(m2) / float(NLS)
+        del1 = -rONE + rTWO * (dble(m1)-rONE) / dble(NLS)
+        del2 = -rONE + rTWO * dble(m2) / dble(NLS)
         cd1minz = del1 / biglab - z;  cd2minz = del2 / biglab - z
         if ( abs(cd1minz) < tiny/lambda) cd1minz = cd1minz + tiny
         if ( abs(cd2minz) < tiny/lambda) cd2minz = cd2minz + tiny
         cln1 = log(cd1minz);  cln2 = log(cd2minz)
         do n=0,2*Nterms + order
-            cInt = cInt + ( rTWO * calpha(n) * cln2 - rTWO * calpha(n)/(n+1) + cbeta(n) ) * (cd2minz)**(n+1) / float(n+1)
-            cInt = cInt - ( rTWO * calpha(n) * cln1 - rTWO * calpha(n)/(n+1) + cbeta(n) ) * (cd1minz)**(n+1) / float(n+1)
+            cInt = cInt + ( rTWO * calpha(n) * cln2 - rTWO * calpha(n)/(n+1) + cbeta(n) ) * (cd2minz)**(n+1) / dble(n+1)
+            cInt = cInt - ( rTWO * calpha(n) * cln1 - rTWO * calpha(n)/(n+1) + cbeta(n) ) * (cd1minz)**(n+1) / dble(n+1)
         end do
         pot = real(cInt) * biglab / (rTWO*pi)
     
@@ -629,10 +627,10 @@ contains
         ! Integral g1
         ! Implemented with different z, rather than Delta1 and Delta2
     
-        z1 = z1in + float(m1-1)/float(NLS) * (z2in-z1in)
-        z2 = z1in + float(m2)/float(NLS)   * (z2in-z1in)
-        del0 = float(1-m1-m2+NLS)/float(1-m1+m2)
-        ra = float(NLS) / float(1+m2-m1)
+        z1 = z1in + dble(m1-1)/dble(NLS) * (z2in-z1in)
+        z2 = z1in + dble(m2)/dble(NLS)   * (z2in-z1in)
+        del0 = dble(1-m1-m2+NLS)/dble(1-m1+m2)
+        ra = dble(NLS) / dble(1+m2-m1)
         !comega = cZERO
         comega = IntegralLapLineDipole(zin,z1,z2,del0,ra,order)
         
@@ -641,16 +639,16 @@ contains
             ! Integral g2
             ! Compute hat coefficients
             do n = 0, Nterms-1
-                cahat(n) = float(n+1) * ac(n+1)
-                cbhat(n) = ac(n+1) + float(n+1) * bc(n+1)
+                cahat(n) = dble(n+1) * ac(n+1)
+                cbhat(n) = ac(n+1) + dble(n+1) * bc(n+1)
             end do
         else
             g1 = -ac1(0) * biglabin * comega
             ! Integral g2
             ! Compute hat coefficients
             do n = 0, Nterms-1
-                cahat(n) = float(n+1) * ac1(n+1)
-                cbhat(n) = ac1(n+1) + float(n+1) * bc1(n+1)
+                cahat(n) = dble(n+1) * ac1(n+1)
+                cbhat(n) = ac1(n+1) + dble(n+1) * bc1(n+1)
             end do
         end if
     
@@ -682,15 +680,15 @@ contains
     
         ! Computation of integral
         g2 = cZERO
-        del1 = -rONE + rTWO * (float(m1)-rONE) / float(NLS)
-        del2 = -rONE + rTWO * float(m2) / float(NLS)
+        del1 = -rONE + rTWO * (dble(m1)-rONE) / dble(NLS)
+        del2 = -rONE + rTWO * dble(m2) / dble(NLS)
         cd1minz = del1 / biglab - z;  cd2minz = del2 / biglab - z
         if ( abs(cd1minz) < tiny/lambda) cd1minz = cd1minz + tiny
         if ( abs(cd2minz) < tiny/lambda) cd2minz = cd2minz + tiny
         cln1 = log(cd1minz);  cln2 = log(cd2minz)
         do n = 0, 2*Nterms - 1 + order
-            g2 = g2 - ( calpha(n) * cln2 - calpha(n)/(n+1) + cbeta(n) ) * (cd2minz)**(n+1) / float(n+1)
-            g2 = g2 + ( calpha(n) * cln1 - calpha(n)/(n+1) + cbeta(n) ) * (cd1minz)**(n+1) / float(n+1)
+            g2 = g2 - ( calpha(n) * cln2 - calpha(n)/(n+1) + cbeta(n) ) * (cd2minz)**(n+1) / dble(n+1)
+            g2 = g2 + ( calpha(n) * cln1 - calpha(n)/(n+1) + cbeta(n) ) * (cd1minz)**(n+1) / dble(n+1)
         end do
         g2 = biglabin * g2 / (2*pi)
     
@@ -729,8 +727,8 @@ contains
         cd1minz = conjg(cd1minz); cd2minz = conjg(cd2minz)
         cln1 = conjg(cln1);  cln2 = conjg(cln2)
         do n = 0, 2*Nterms - 1 + order
-            g3 = g3 - ( calpha(n) * cln2 - calpha(n)/(n+1) ) * (cd2minz)**(n+1) / float(n+1)
-            g3 = g3 + ( calpha(n) * cln1 - calpha(n)/(n+1) ) * (cd1minz)**(n+1) / float(n+1)
+            g3 = g3 - ( calpha(n) * cln2 - calpha(n)/(n+1) ) * (cd2minz)**(n+1) / dble(n+1)
+            g3 = g3 + ( calpha(n) * cln1 - calpha(n)/(n+1) ) * (cd1minz)**(n+1) / dble(n+1)
         end do
         g3 = biglabin * g3 / (rTWO*pi)
     
@@ -776,7 +774,7 @@ contains
         do m = 1,order
             qm = cZERO
             do n=1,(m+1)/2
-                qm = qm + z**(m-2*n+1) / float(2*n - 1)
+                qm = qm + z**(m-2*n+1) / dble(2*n - 1)
             end do
             qmtot = qmtot + rTWO * cg(m) * qm
         end do
@@ -814,7 +812,7 @@ contains
     
         zterm1 = cZERO; zterm2 = cZERO
         do n = 1,order
-            zterm1 = zterm1 + cg(n) * float(n) * z**(n-1)
+            zterm1 = zterm1 + cg(n) * dble(n) * z**(n-1)
         enddo
         do n = 0,order
             zterm2 = zterm2 + cg(n) * z**n
@@ -824,7 +822,7 @@ contains
         do m = 2,order
             qm = cZERO
             do n=1,m/2
-                qm = qm + float(m-2*n+1) * z**(m-2*n) / float(2*n - 1)
+                qm = qm + dble(m-2*n+1) * z**(m-2*n) / dble(2*n - 1)
             end do
             qmtot = qmtot + rTWO * cg(m) * qm
         end do
@@ -852,7 +850,7 @@ contains
         NLS = ceiling(Lin/lambda)
         m1 = 0; m2 = 0
         do j = 1, NLS
-            z1 = z1in + float(j-1)/NLS * (z2in-z1in)
+            z1 = z1in + dble(j-1)/NLS * (z2in-z1in)
             z2 = z1 + (z2in-z1in)/NLS
             L = abs(z2-z1)
             biglab = rTWO * lambda / L
@@ -912,6 +910,7 @@ program besseltest
     real(kind=8) :: x, y
     complex(kind=8) :: z1, z2
     real(kind=8), dimension(3) :: lab
+    real(kind=8), dimension(1) :: lab1
     real(kind=8), dimension(3) :: pot
     real(kind=8), dimension(2,3) :: potv
     real(kind=8), dimension(2,3) :: qxqy
@@ -930,27 +929,46 @@ program besseltest
     lab(3) = 11.d0
     order = 1
     ilap = 1
+    pot = potbeslsho(x, y, z1, z2, lab, order, ilap, naq)
+    !pot = potbeslsho(x, y, z1, z2, lab1, 0, 0, 1)
+    !do n = 0, order
+    !    print *, 'n, pot', n, pot
+    !end do
+    !print *, pot
     
-    do n = 0, order
-        pot = potbesldho(x,y,z1,z2,lab,n,ilap,naq)
-        print *, 'n, pot: ', n, pot
-    end do
+    !do n = 0, order
+    !    pot = potbesldho(x,y,z1,z2,lab,n,ilap,naq)
+    !    print *, 'n, pot: ', n, pot
+    !end do
+    !!
+    !potv = potbesldv(x, y, z1, z2, lab, order, ilap, naq)
+    !do n = 0, order
+    !    print *, 'n: ', potv(n+1,1:naq)
+    !end do
     !
-    potv = potbesldv(x, y, z1, z2, lab, order, ilap, naq)
-    do n = 0, order
-        print *, 'n: ', potv(n+1,1:naq)
-    end do
+    !qxqy = disbesldho(x,y,z1,z2,lab,0,ilap,naq)
+    !print *,qxqy(1,1:naq)
+    !print *,qxqy(2,1:naq)
+    !qxqy = disbesldho(x,y,z1,z2,lab,1,ilap,naq)
+    !print *,qxqy(1,1:naq)
+    !print *,qxqy(2,1:naq)
+    !qxqyv = disbesldv(x, y, z1, z2, lab, 1, ilap, naq)
+    !print *,qxqyv(1,1:naq)
+    !print *,qxqyv(1+order+1,1:naq)
+    !print *,qxqyv(2,1:naq)
+    !print *,qxqyv(2+order+1,1:naq)
     
-    qxqy = disbesldho(x,y,z1,z2,lab,0,ilap,naq)
-    print *,qxqy(1,1:naq)
-    print *,qxqy(2,1:naq)
-    qxqy = disbesldho(x,y,z1,z2,lab,1,ilap,naq)
-    print *,qxqy(1,1:naq)
-    print *,qxqy(2,1:naq)
-    qxqyv = disbesldv(x, y, z1, z2, lab, 1, ilap, naq)
-    print *,qxqyv(1,1:naq)
-    print *,qxqyv(1+order+1,1:naq)
-    print *,qxqyv(2,1:naq)
-    print *,qxqyv(2+order+1,1:naq)
+    z1 = dcmplx(-2.d0, -4.d0)
+    z2 = dcmplx(3.d0, 1.d0) 
+    lab(1) = 0.d0
+    lab(2) = 0.4d0
+    lab(3)= 4.d0
+    ilap = 1
+    naq = 3
+    order = 1
+    x = -1.578947368421053d0
+    y = -2.6315789473684212d0
+    qxqy = disbeslsho(x, y, z1, z2, lab, order, ilap, naq)
+    print *, qxqy(1, 2)
 
 end
