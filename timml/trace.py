@@ -21,7 +21,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
     for i in range(nstepmax):
         if terminate: break
         x0, y0, z0, t0 = xyzt[-1]
-        aq = ml.aq.find_aquifer_data(x0, y0)  # find new aquifer 
+        aq = ml.aq.find_aquifer_data(x0, y0)  # find new aquifer
         layer, ltype, modellayer = aq.findlayer(z0)
         layerlist.append(modellayer)
         v0 = ml.velocomp(x0, y0, z0, aq, [layer, ltype]) * direction  # wordt nog gebruikt
@@ -47,7 +47,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                 break
             t1 = t0 + abs((z1 - z0) / vz)
             xyztnew = [np.array([x0, y0, z1, t1])]
-        else:  # in aquifer layer         
+        else:  # in aquifer layer
             vh = np.sqrt(vx ** 2 + vy ** 2)
             if vz > 0:  # flows upward
                 if aq.z[modellayer] - z0 < vstepfrac * aq.Haq[layer]:
@@ -81,9 +81,11 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
             # check if point needs to be changed
             correction = True
             for e in aq.elementlist:
-                changed, terminate, xyztnew = e.changetrace(xyzt[-1], xyzt1, aq, layer, ltype, modellayer, direction, hstepmax)
+                changed, terminate, xyztnew, changemessage = e.changetrace(xyzt[-1], xyzt1, aq, layer, ltype, modellayer, direction, hstepmax)
                 if changed or terminate:
                     correction = False
+                    if changemessage:
+                        message = changemessage
                     break
             if correction:  # correction step
                 vx, vy, vz = 0.5 * (v0 + ml.velocomp(x1, y1, z1, aq, [layer, ltype]) * direction)
@@ -98,7 +100,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                     thstep = hstepmax / vh
                     x1 = x0 + thstep * vx
                     y1 = y0 + thstep * vy
-                    z1 = z0 + thstep * vz        
+                    z1 = z0 + thstep * vz
                 else:
                     thstep = tvstep
                     x1 = x0 + thstep * vx
@@ -132,9 +134,11 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                 xyztnew = [np.array([x1, y1, z1, t1])]
                 # check again if point needs to be changed
                 for e in aq.elementlist:
-                    changed, terminate, xyztchanged = e.changetrace(xyzt[-1], xyztnew[0], aq, layer, ltype, modellayer, direction, hstepmax)
+                    changed, terminate, xyztchanged, changemessage = e.changetrace(xyzt[-1], xyztnew[0], aq, layer, ltype, modellayer, direction, hstepmax)
                     if changed or terminate:
                         xyztnew = xyztchanged
+                        if changemessage:
+                            message = changemessage
                         break
         # check if outside window
         x1, y1, z1, t1 = xyztnew[0]
@@ -159,7 +163,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
             frac = abs((tmax - t0) / (t1 - t0))
             x1, y1, z1, t1 = xyzt[-1] + frac * (xyztnew[0] - xyzt[-1])
             message = 'reached tmax'
-        if frac > 0:  # at least one of the above 5 ifs was true 
+        if frac > 0:  # at least one of the above 5 ifs was true
             terminate = True
             xyztnew = [np.array([x1, y1, z1, t1])]
         xyzt.extend(xyztnew)
@@ -205,7 +209,3 @@ def crossline(xa, ya, xb, yb, z1, z2):
             z = 0.5 * ((z2 - z1) * Z + z1 + z2)
             return True, z.real, z.imag
     return False
-            
-    
-
-                

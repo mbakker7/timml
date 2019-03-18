@@ -83,32 +83,32 @@ class WellBase(Element):
 
     def headinside(self):
         """The head inside the well
-        
+
         Returns
         -------
         array (length number of screens)
             Head inside the well for each screen
-            
+
         """
-        
+
         h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
-    
+
     def discharge(self):
         """The discharge in each layer
-        
+
         Returns
         -------
         array (length number of layers)
             Discharge in each screen with zeros for layers that are not
             screened
-            
+
         """
-        
+
         Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0]
         return Q
-    
+
     #def stoptrace(self, xyzt, layer, ltype, step, direction):
     #    terminate = False
     #    if np.sqrt((xyzt[0] - self.xw) ** 2 + (xyzt[1] - self.yw) ** 2) < (step + self.rw):
@@ -123,11 +123,12 @@ class WellBase(Element):
     #                    tnew = xyzt[3] + tstep
     #                    return True, np.array([xnew, ynew, znew, tnew]), str(self)
     #    return terminate, 0
-    
+
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         if np.sqrt((xyzt2[0] - self.xw) ** 2 + (xyzt2[1] - self.yw) ** 2) < (hstepmax + self.rw):
             if (ltype == 'a'):
                 if (layer == self.layers).any():  # in layer where well is screened
@@ -141,12 +142,16 @@ class WellBase(Element):
                         xyztnew = np.array([xnew, ynew, znew, tnew])
                         changed = True
                         terminate = True
-        return changed, terminate, [xyztnew]
-    
+        if terminate:
+            message = 'reached element of type well'
+            if self.label:
+                message += ' ({lab})'.format(lab=self.label)
+        return changed, terminate, [xyztnew], message
+
     def capzone(self, nt=10, zstart=None, hstepmax=10, vstepfrac=0.2,
                 tmax=None, nstepmax=100, silent='.'):
         """Compute a capture zone
-        
+
         Parameters
         ----------
         nt : int
@@ -164,17 +169,17 @@ class WellBase(Element):
         silent : boolean or string
             True (no messages), False (all messages), or '.'
             (print dot for each path line)
-            
+
         Returns
         -------
         xyzt : list of arrays of x, y, z, and t values
-            
+
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax), \
-                             vstepfrac=0.2, tmax=tmax, nstepmax=100, silent='.')
+                             vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent)
         return xyzt
-    
+
     def capzonestart(self, nt, zstart):
         eps = 1e-1
         angle = np.arange(eps, 2 * np.pi, 2 * np.pi / nt)
@@ -184,16 +189,16 @@ class WellBase(Element):
             zstart = self.aq.zaqbot[self.layers[0]] + 0.5 * self.aq.Haq[self.layers[0]]
         zstart = zstart * np.ones(nt)
         return xstart, ystart, zstart
-    
-    
+
+
     def plot(self):
         plt.plot(self.xw, self.yw, 'k.')
-        
+
     def plotcapzone(self, nt=10, zstart=None, hstepmax=20, vstepfrac=0.2,
                     tmax=365, nstepmax=100, silent='.', color=None, orientation='hor',
                    win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None):
         """Plot a capture zone
-        
+
         Parameters
         ----------
         nt : int
@@ -220,28 +225,28 @@ class WellBase(Element):
             boolean indicating if new figure should be created
         figsize : tuple of integers, optional, default: None
             width, height in inches.
-            
+
         """
-        
+
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         self.model.tracelines(xstart, ystart, zstart, hstepmax=-abs(hstepmax), vstepfrac=vstepfrac,
                    tmax=tmax, nstepmax=nstepmax, silent=silent, color=color, orientation=orientation,
                    win=win, newfig=newfig, figsize=figsize)
-        
+
 class Well(WellBase, MscreenWellEquation):
     """
     Well Class to create a well with a specified discharge. The well
     may be screened in multiple layers. The resistance of the screen may
     be specified. The head is computed such that the discharge :math:`Q_i`
     in layer :math:`i` is computed as
-    
+
     .. math::
         Q_i = 2\pi r_w(h_i - h_w)/c
-        
+
     where :math:`c` is the resistance of the well screen and :math:`h_w` is
     the head inside the well. The total discharge is distributed over the
     screens such that :math:`h_w` is the same in each screened layer.
-    
+
     Parameters
     ----------
     model : Model object
@@ -265,9 +270,9 @@ class Well(WellBase, MscreenWellEquation):
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
     >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
-    
+
     """
-    
+
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
                  res=0.0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
@@ -292,13 +297,13 @@ class HeadWell(WellBase, PotentialEquation):
     The well may be screened in multiple layers. The resistance of the screen
     may be specified. The head is computed such that the discharge :math:`Q_i`
     in layer :math:`i` is computed as
-    
+
     .. math::
         Q_i = 2\pi r_w(h_i - h_w)/c
-        
+
     where :math:`c` is the resistance of the well screen and :math:`h_w` is
     the head inside the well.
-    
+
     Parameters
     ----------
     model : Model object
@@ -317,9 +322,9 @@ class HeadWell(WellBase, PotentialEquation):
         layer (int) or layers (list or array) where well is screened
     label : string (default: None)
         label of the well
-    
+
     """
-    
+
     def __init__(self, model, xw=0, yw=0, hw=10, rw=0.1, \
                  res=0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
@@ -334,4 +339,3 @@ class HeadWell(WellBase, PotentialEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-        

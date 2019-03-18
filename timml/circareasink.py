@@ -58,7 +58,7 @@ class CircAreaSink(Element):
                 else:
                     rv[0] = self.B * self.I1RK0r(r)
         return rv
-    
+
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.nparam, aq.naq))
@@ -92,7 +92,7 @@ class CircAreaSink(Element):
             if r <= self.R:
                 raise 'CircAreaSink should add constant inside inhomogeneity'
         return rv
-    
+
     def K1RI0r(self, rin):
         rv = np.zeros(len(self.lab))
         if self.islarge.any():
@@ -109,7 +109,7 @@ class CircAreaSink(Element):
                 r = rin / self.labsmall[index]
                 rv[~self.islarge * index] = self.k1Roverlab[index] * i0(r)
         return rv
-    
+
     def K1RI1r(self, rin):
         rv = np.zeros(len(self.lab))
         if self.islarge.any():
@@ -126,7 +126,7 @@ class CircAreaSink(Element):
                 r = rin / self.labsmall[index]
                 rv[~self.islarge * index] = self.k1Roverlab[index] * i1(r)
         return rv
-    
+
     def I1RK0r(self, rin):
         rv = np.zeros(len(self.lab))
         if self.islarge.any():
@@ -143,7 +143,7 @@ class CircAreaSink(Element):
                 r = rin / self.labsmall[index]
                 rv[~self.islarge * index] = self.i1Roverlab[index] * k0(r)
         return rv
-    
+
     def I1RK1r(self, rin):
         rv = np.zeros(len(self.lab))
         if self.islarge.any():
@@ -160,7 +160,7 @@ class CircAreaSink(Element):
                 r = rin / self.labsmall[index]
                 rv[~self.islarge * index] = self.i1Roverlab[index] * k1(r)
         return rv
-    
+
     def qztop(self, x, y):
         rv = 0.0
         if np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2) <= self.R:
@@ -171,6 +171,7 @@ class CircAreaSink(Element):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         eps = 1e-8
         r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
         r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
@@ -191,4 +192,4 @@ class CircAreaSink(Element):
             yn = y1 + u * (y2 - y1)
             zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
-        return changed, terminate, xyztnew
+        return changed, terminate, xyztnew, message
