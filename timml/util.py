@@ -187,9 +187,10 @@ class PlotTim:
             ax2 = fig.axes[1]
             xyztlist = []
         for i in range(len(xstart)):
-            xyzt, layerlist = timtraceline(self, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax,
+            trace = timtraceline(self, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax,
                                            vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax,
                                            silent=silent, win=win, returnlayers=True)
+            xyzt, layerlist = trace['trace'], trace['layers']
             if silent == '.':
                 print('.', end='', flush=True)
             if ax1 is not None:

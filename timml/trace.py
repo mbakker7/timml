@@ -176,10 +176,14 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
         message = 'reached nstepmax iterations'
     if not silent:
         print(message)
+    result = {
+        'trace': np.array(xyzt),
+        'message': message,
+        'complete': terminate
+    }
     if returnlayers:
-        return np.array(xyzt), layerlist
-    else:
-        return np.array(xyzt)
+        result['layers'] = layerlist
+    return result
 
 def timtracelines(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12, nstepmax=100,
                   silent='.', win=[-1e30, 1e30, -1e30, 1e30]):
