@@ -7,15 +7,15 @@ plt.rcParams['contour.negative_linestyle'] = 'solid'
 class PlotTim:
     def plot(self, win=None, newfig=True, figsize=None, orientation='hor', topfigfrac=0.8):
         """Plot layout
-        
+
         Parameters
         ----------
-    
+
         win : list or tuple
             [x1, x2, y1, y2]
-            
+
         """
-        
+
         if newfig:
             plt.figure(figsize=figsize)
             ax1 = None
@@ -58,14 +58,14 @@ class PlotTim:
             for i in range(1, self.aq.nlayers):
                 if self.aq.ltype[i] == 'a' and self.aq.ltype[i - 1] == 'a':
                     plt.axhspan(ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8])
-            
+
     def contour(self, win, ngr=20, layers=0, levels=20, layout=True, labels=True,
                 decimals=0, color=None, newfig=True, figsize=None, legend=True):
         """Contour plot
-        
+
         Parameters
         ----------
-    
+
         win : list or tuple
             [x1, x2, y1, y2]
         ngr : scalar, tuple or list
@@ -90,9 +90,9 @@ class PlotTim:
         legend : list or boolean (default True)
             add legend to figure
             if list of strings: use strings as names in legend
-            
+
         """
-        
+
         x1, x2, y1, y2 = win
         if np.isscalar(ngr):
             nx = ny = ngr
@@ -113,7 +113,7 @@ class PlotTim:
             c = color
         if len(c) < len(layers):
             n = np.ceil(self.aq.naq / len(c))
-            c = n * c 
+            c = n * c
         # contour
         cscollectionlist = []
         for i in range(len(layers)):
@@ -131,7 +131,7 @@ class PlotTim:
         if layout:
             self.plot(win=[x1, x2, y1, y2], newfig=False)
         #plt.show()
-        
+
     def vcontour(self, win, n, levels, labels=False, decimals=0, color=None,
                  vinterp=True, nudge=1e-6, newfig=True, figsize=None, layout=True):
         """Vertical contour
@@ -159,10 +159,10 @@ class PlotTim:
             plt.clabel(cs, fmt=fmt)
         if layout:
             self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
-        
+
     def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
                    tmax=1e12, nstepmax=100, silent='.', color=None, orientation='hor',
-                   win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None):
+                   win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None, return_traces=False):
         """Draw trace lines
         """
         if color is None:
@@ -173,7 +173,7 @@ class PlotTim:
             c = color
         if len(c) < self.aq.naq:
             n = int(np.ceil(self.aq.naq / len(c)))
-            c = n * c 
+            c = n * c
         fig = plt.gcf()
         assert len(fig.axes) > 0, 'Error: Need to specify axes in figure before invoking tracelines'
         ax1 = None
@@ -186,10 +186,14 @@ class PlotTim:
         elif orientation[:3] == 'ver':
             ax2 = fig.axes[1]
             xyztlist = []
+        if return_traces:
+            traces = []
         for i in range(len(xstart)):
             trace = timtraceline(self, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax,
                                            vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax,
                                            silent=silent, win=win, returnlayers=True)
+            if return_traces:
+                traces.append(trace)
             xyzt, layerlist = trace['trace'], trace['layers']
             if silent == '.':
                 print('.', end='', flush=True)
@@ -208,7 +212,9 @@ class PlotTim:
                 lc = LineCollection(segments, colors=color)
                 ax2.add_collection(lc)
                 ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
-                
+        if return_traces:
+            return traces
+
     def vcontoursf1D(self, x1, x2, nx, levels, labels=False, decimals=0, color=None,
                      nudge=1e-6, newfig=True, figsize=None, layout=True, ax=None):
         """
