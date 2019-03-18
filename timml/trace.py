@@ -168,6 +168,8 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
         elif len(xyztnew) > 3:
             print('len(xyztnew > 3 !')
             print(xyztnew)
+    else:
+        message = 'reached nstepmax iterations'
     if not silent:
         print(message)
     if returnlayers:
