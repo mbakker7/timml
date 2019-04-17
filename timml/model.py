@@ -40,13 +40,18 @@ class Model(PlotTim):
     
     """
     
-    def __init__(self, kaq, c, z, npor, ltype):
+    def __init__(self, kaq, c, z, npor, ltype, f2py=False):
         # All input variables are numpy arrays
         # That should be checked outside this function
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = 'ml'  # Used for writing out input
+        if f2py:
+            try:
+                from .src import besselaesnew
+            except:
+                print('failed')
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
