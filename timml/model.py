@@ -53,7 +53,7 @@ class Model(PlotTim):
                 from .src import besselaesnew
                 self.f2py = True
             except:
-                print('Failed to load TimML FORTRAN extension. Use f2py=False.')
+                print('FORTRAN extension not found while f2py=True. Using Numba instead')
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
