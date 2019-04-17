@@ -7,7 +7,7 @@ besselaesnumba.initialize()
 try:
     from .src import besselaesnew
     besselaesnew.besselaesnew.initialize()
-    print('succes on f2py')
+    #print('succes on f2py')
 except:
     pass
 from .controlpoints import controlpoints
