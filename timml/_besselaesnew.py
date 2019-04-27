@@ -1,27 +1,38 @@
 import numba
 import numpy as np
 
+__all__ = [
+    "potbesldho",
+    "potbeslsho",
+    "potbesldv",
+    "potbeslsv",
+    "disbesldho",
+    "disbeslsho",
+    "disbesldv",
+    "disbeslsv",
+]
+
 
 def initialize():
     pass
 
 
-@numba.njit
-def make_rbnimon():
+@numba.njit(nogil=True)
+def make_rbinom():
     rrange = np.arange(9.0)
     rbinom = np.zeros((9, 9))
     for n in range(9):
         for m in range(9):
             if m > n:
-                rbinom[n, m] = 1 
+                rbinom[n, m] = 1
             else:
-                rbinom[n, m] = np.prod(rrange[m + 1: n + 1]) / np.prod(
+                rbinom[n, m] = np.prod(rrange[m + 1 : n + 1]) / np.prod(
                     rrange[1 : n - m + 1]
                 )
     return rbinom
 
 
-RBINOM = make_rbnimon()
+RBINOM = make_rbinom()
 AC = np.zeros(9)
 BC = np.zeros(9)
 AC1 = np.zeros(9)
@@ -69,7 +80,7 @@ AC1[8] = 0.573031034976631e-15
 BC1[8] = -0.340195779923156e-14
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def prepare_z(x, y, z1, z2):
     zin = np.complex(x, y)
     z1in = z1
@@ -86,7 +97,7 @@ def prepare_z(x, y, z1, z2):
     return zin, z1in, z2in, Lin, z, zplus1, zmin1
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     """
     Parameters
@@ -101,7 +112,7 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
        rv(naq): Array to store return value (must be pre-allocated)
     Returns
     --------
-       rv(naq): Potentials. Fist spot is Laplace value if ilap=1
+       rv(naq): Potentials. First spot is Laplace value if ilap=1
     """
 
     rv = np.zeros(naq)
@@ -146,7 +157,8 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
             rv[i] = 0.0
     return rv
 
-@numba.njit
+
+@numba.njit(nogil=True)
 def potbeslsv(x, y, z1, z2, lab, order, ilap, naq):
     # Check if endpoints need to be adjusted using the largest labda (the first one)
     pot = np.zeros((order + 1, naq))
@@ -155,7 +167,7 @@ def potbeslsv(x, y, z1, z2, lab, order, ilap, naq):
     return pot
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     # Input:
     #   x,y: Point where discharge is computed
@@ -226,7 +238,7 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     return rv
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def disbeslsv(x, y, z1, z2, lab, order, ilap, naq):
     # locals
     qxqy = np.zeros((2 * (order + 1), naq))
@@ -238,7 +250,7 @@ def disbeslsv(x, y, z1, z2, lab, order, ilap, naq):
     return qxqy
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
 
     # Input:
@@ -251,7 +263,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     #   naq: Number of aquifers
     #   rv(naq): Array to store return value (must be pre-allocated)
     # Output:
-    #   rv(naq): Potentials. Fist spot is Laplace value if ilap=1
+    #   rv(naq): Potentials. First spot is Laplace value if ilap=1
 
     rv = np.zeros(naq)
 
@@ -300,7 +312,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     return rv
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def potbesldv(x, y, z1, z2, lab, order, ilap, naq):
     pot = np.zeros((order + 1, naq))
     # Check if endpoints need to be adjusted using the largest labda (the first one)
@@ -309,7 +321,7 @@ def potbesldv(x, y, z1, z2, lab, order, ilap, naq):
     return pot
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
     # Input:
     #   x,y: Point where discharge is computed
@@ -382,7 +394,7 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
     return rv
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def disbesldv(x, y, z1, z2, lab, order, ilap, naq):
     qxqy = np.zeros((2 * (order + 1), naq))
     # Check if endpoints need to be adjusted using the largest labda (the first one)
@@ -393,7 +405,7 @@ def disbesldv(x, y, z1, z2, lab, order, ilap, naq):
     return qxqy
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     czmzbarp = np.full(NTERMS + 1, np.complex(0.0, 0.0))
     cgamma = np.full((NTERMS + 1, NTERMS + 1), np.complex(0.0, 0.0))
@@ -472,7 +484,7 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     return pot
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     czmzbarp = np.full(NTERMS + 1, np.complex(0.0, 0.0))
     cgamma = np.full((NTERMS + 1, NTERMS + 1), np.complex(0.0, 0.0))
@@ -617,7 +629,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     return wdis
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def IntegralLapLineDipole(zin, z1, z2, del0, ra, order):
     cg = np.full(order + 2, np.complex(0.0, 0.0))
     z = (2.0 * zin - (z1 + z2)) / (z2 - z1)
@@ -644,7 +656,7 @@ def IntegralLapLineDipole(zin, z1, z2, del0, ra, order):
     return comega
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def IntegralLapLineDipoleDis(zin, z1, z2, del0, ra, order):
     cg = np.full(order + 2, np.complex(0.0, 0.0))
 
@@ -676,7 +688,7 @@ def IntegralLapLineDipoleDis(zin, z1, z2, del0, ra, order):
     return wdis
 
 
-@numba.njit
+@numba.njit(nogil=True)
 def findm1m2(zin, z1in, z2in, Lin, labda, Rconv):
     # Break integral up in sections of max one labda
     # and find first (m1) and last (m2) section within radius of convergence

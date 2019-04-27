@@ -7,7 +7,6 @@ TimML is a computer program for the simulation of steady-state
 multiaquifer flow with analytic elements and consists of a
 library of Python scripts and FORTRAN extensions.
 '''
-#from __future__ import division, print_function, absolute_import
 
 #--version number
 __name__='timml'

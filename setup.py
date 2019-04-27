@@ -22,5 +22,5 @@ setup(
     url="https://github.com/mbakker7/timml",
     license="MIT",
     packages=["timml"],
-    install_requires=["numpy", "scipy", "numba", "matplotlib"],
+    install_requires=["numpy>=1.12", "scipy>=0.19", "numba>=0.40", "matplotlib>=2.0"],
 )
