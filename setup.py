@@ -24,4 +24,7 @@ setup(
     packages=["timml", "timml/besselaesnumba"],
     python_requires='>3.5',
     install_requires=["numpy>=1.12", "scipy>=0.19", "numba>=0.40", "matplotlib>=2.0"],
+    classifiers=[
+        'Topic :: Scientific/Engineering :: Hydrology',
+    ],
 )
