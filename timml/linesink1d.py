@@ -130,7 +130,7 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
     def __init__(self, model, xls=0, sigls=1, \
                  layers=0, label=None):
         self.storeinput(inspect.currentframe())
-        LineSink1DBase.__init__(self, model, xls, sigls=0, layers=layers, \
+        LineSink1DBase.__init__(self, model, xls, sigls=sigls, layers=layers, \
                                name="Linesink1D", label=label, \
                                addtomodel=True, res=0, wh=1, aq=None)
         self.Qc = float(sigls)
