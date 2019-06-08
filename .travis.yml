@@ -5,21 +5,7 @@ dist: xenial
 matrix:
   include:
    - os: linux
-     python: "3.5"
-   - os: linux
-     python: "3.6"
-   - os: linux
      python: "3.7"
-   - os: osx
-     language: generic
-     python: "3.5"
-     env: 
-        - TRAVIS_PYTHON_VERSION=3.5
-   - os: osx
-     language: generic
-     python: "3.6"
-     env: 
-        - TRAVIS_PYTHON_VERSION=3.6
    - os: osx
      language: generic
      python: "3.7"
