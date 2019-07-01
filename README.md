@@ -1,10 +1,10 @@
-[![travis][travis-img]](https://travis-ci.org/mbakker7/timml)
+[![Linux+/+macOS](https://travis-ci.org/dbrakenhoff/timml.svg?branch=master)](https://travis-ci.org/dbrakenhoff/timml)
 [![appveyor][appveyor-img]](https://ci.appveyor.com/project/mbakker7/timml/branch/master)
-[![coveralls][coveralls-img]](https://coveralls.io/github/jentjr/timml?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/dbrakenhoff/timml/badge.svg?branch=master)](https://coveralls.io/github/dbrakenhoff/timml?branch=master)
 
-[travis-img]: https://img.shields.io/travis/mbakker7/timml/master.svg?label=Linux+/+macOS
+<!-- [travis-img]: https://img.shields.io/travis/mbakker7/timml/master.svg?label=Linux+/+macOS -->
 [appveyor-img]: https://img.shields.io/appveyor/ci/mbakker7/timml/master.svg?label=Windows
-[coveralls-img]: https://img.shields.io/coveralls/github/jentjr/timml/master.svg?label=coveralls
+<!-- [coveralls-img]: https://img.shields.io/coveralls/github/jentjr/timml/master.svg?label=coveralls -->
 
 # TimML, A Multi-Layer, Analytic Element Model
 
@@ -41,7 +41,7 @@ To update TimML type:
 To uninstall TimML type:
 
     pip uninstall timml
-    
+
 
 ## Documentation
 
