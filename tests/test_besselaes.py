@@ -1,11 +1,7 @@
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
-try:
-    from timml.besselaesnew import besselaesnew
-    besselaesnew.initialize()
-except ModuleNotFoundError:
-    pass
+from timml.besselaesnumba import besselaesnumba as besselaesnew
 
 """
 x=2.0
@@ -22,14 +18,14 @@ lambda is a keyword in Python, so use order of function arguments
 """
 
 
-@pytest.mark.skip(reason="no fortran extension by default")
+# @pytest.mark.skip(reason="no fortran extension by default")
 def potbesldho(x):
     pot = besselaesnew.potbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
                                   [0.0, 2.0, 11.0], x, 1, 3)
     return pot
 
 
-@pytest.mark.skip(reason="no fortran extension by default")
+# @pytest.mark.skip(reason="no fortran extension by default")
 def test_potbesldho():
     assert_allclose(potbesldho(0), np.array(
         [-0.31055947, -0.23498503, -0.30327438]))
@@ -37,7 +33,7 @@ def test_potbesldho():
         [-0.17694283, -0.15257055, -0.17583515]))
 
 
-@pytest.mark.skip(reason="no fortran extension by default")
+# @pytest.mark.skip(reason="no fortran extension by default")
 def test_potbesldv():
     potv = besselaesnew.potbesldv(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
                                   [0.0, 2.0, 11.0], 1, 1, 3)
@@ -45,7 +41,7 @@ def test_potbesldv():
     assert_allclose(potv[1], np.array([-0.17694283, -0.15257055, -0.17583515]))
 
 
-@pytest.mark.skip(reason="no fortran extension by default")
+# @pytest.mark.skip(reason="no fortran extension by default")
 def test_disbesldho():
     qxqy_zero = besselaesnew.disbesldho(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
                                         [0.0, 2.0, 11.0], 0, 1, 3)
@@ -62,7 +58,7 @@ def test_disbesldho():
         [0.106176131, 0.1162738781, 0.1067421121]))
 
 
-@pytest.mark.skip(reason="no fortran extension by default")
+# @pytest.mark.skip(reason="no fortran extension by default")
 def test_disbesldv():
     qxqyv = besselaesnew.disbesldv(2.0, 1.0, np.complex(-3.0, -1.0), np.complex(2.0, 2.0),
                                    [0.0, 2.0, 11.0], 1, 1, 3)
