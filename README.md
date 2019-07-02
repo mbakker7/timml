@@ -1,5 +1,5 @@
-[![Linux+/+macOS](https://travis-ci.org/dbrakenhoff/timml.svg?branch=master)](https://travis-ci.org/dbrakenhoff/timml)
-[![Coverage Status](https://coveralls.io/repos/github/dbrakenhoff/timml/badge.svg?branch=master)](https://coveralls.io/github/dbrakenhoff/timml?branch=master)
+[![Linux+/+macOS](https://travis-ci.org/mbakker7/timml.svg?branch=master)](https://travis-ci.org/mbakker7/timml)
+[![Coverage Status](https://coveralls.io/repos/github/mbakker7/timml/badge.svg?branch=master)](https://coveralls.io/github/mbakker7/timml?branch=master)
 
 # TimML, A Multi-Layer, Analytic Element Model
 
