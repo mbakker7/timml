@@ -13,11 +13,8 @@ install:
   - pip install -r requirements.travis.txt
   - pip install -e .
   - pip install --upgrade pip
-  - pip install codecov &&
-    pip install pytest &&
-    pip install pytest-cov &&
-    pip install coveralls &&
-    conda install jupyter
+  - pip install codecov pytest pytest-cov coveralls
+  - pip install jupyter
 
 script:
   - pytest --cov=timml tests/
