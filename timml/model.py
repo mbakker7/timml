@@ -10,6 +10,7 @@ from .aquifer import Aquifer
 from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .util import PlotTim
+import multiprocessing as mp
 
 __all__ = ['Model', 'ModelMaq', 'Model3D']
 
@@ -40,13 +41,20 @@ class Model(PlotTim):
     
     """
     
-    def __init__(self, kaq, c, z, npor, ltype):
+    def __init__(self, kaq, c, z, npor, ltype, f2py=False):
         # All input variables are numpy arrays
         # That should be checked outside this function
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = 'ml'  # Used for writing out input
+        self.f2py = False
+        if f2py:
+            try:
+                from .src import besselaesnew
+                self.f2py = True
+            except:
+                print('FORTRAN extension not found while f2py=True. Using Numba instead')
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
@@ -309,7 +317,74 @@ class Model(PlotTim):
             print('.', end='', flush=True)
         if sendback:
             return sol
-        return            
+        return
+
+    def solve_mp(self, nproc=4, printmat=0, sendback=0, silent=False):
+        '''Compute solution, multiprocessing implementation.
+        Note: estimated speedup approximately by factor of
+        number of physical cores. Virtual cores do not improve
+        calculation time.'''
+        # Initialize elements
+        self.initialize()
+        # Compute number of equations
+        self.neq = np.sum([e.nunknowns for e in self.elementlist])
+        if self.neq == 0: return
+        if silent is False:
+            print('Number of elements, Number of equations:', len(
+                self.elementlist), ',', self.neq)
+        if self.neq == 0:
+            if silent is False: print('No unknowns. Solution complete')
+            return
+        mat = np.empty((self.neq, self.neq))
+        rhs = np.empty(self.neq)
+
+        # start multiprocessing
+        if nproc is None:
+            nproc = mp.cpu_count() - 1  # make no. of processes equal to 1 less than no. of cores
+        elif nproc > mp.cpu_count():
+            print("Given 'nproc' larger than no. of cores on machine. Setting 'nproc' to {}.".format(mp.cpu_count()))
+            nproc = mp.cpu_count()
+
+        pool = mp.Pool(processes=nproc)
+        results = []
+        for e in self.elementlist:
+            if e.nunknowns > 0:
+                results.append(pool.apply_async(e.equation))
+            if silent is False:
+                print('.', end='', flush=True)
+
+        pool.close()
+        pool.join()
+
+        mat = np.empty((self.neq, self.neq))
+        rhs = np.zeros(self.neq)
+
+        ieq = 0
+
+        for p in results:
+            imat, irhs = p.get()
+            mat[ieq:ieq + imat.shape[0], :] = imat
+            rhs[ieq:ieq + irhs.shape[0]] = irhs
+            ieq += imat.shape[0]
+
+        # end multiprocessing
+
+        if printmat:
+            return mat, rhs
+        sol = np.linalg.solve(mat, rhs)
+        icount = 0
+        for e in self.elementlist:
+            if e.nunknowns > 0:
+                e.setparams(sol[icount:icount + e.nunknowns])
+                icount += e.nunknowns
+        if silent is False:
+            print()  # needed cause the dots are printed
+            print('solution complete')
+        elif (silent == 'dot') or (silent == '.'):
+            print('.', end='', flush=True)
+        if sendback:
+            return sol
+        return
         
 class ModelMaq(Model):
     """
@@ -349,10 +424,10 @@ class ModelMaq(Model):
     
     """
     
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf', hstar=None):
+    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf', hstar=None, f2py=False):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
-        Model.__init__(self, kaq, c, z, npor, ltype)
+        Model.__init__(self, kaq, c, z, npor, ltype, f2py)
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)
@@ -401,7 +476,7 @@ class Model3D(Model):
     
     """
     
-    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, topboundary='conf', topres=0, topthick=0, hstar=0):
+    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, topboundary='conf', topres=0, topthick=0, hstar=0, f2py=False):
         '''Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
@@ -411,7 +486,7 @@ class Model3D(Model):
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == 'semi':
             z = np.hstack((z[0] + topthick, z))
-        Model.__init__(self, kaq, c, z, npor, ltype)
+        Model.__init__(self, kaq, c, z, npor, ltype, f2py)
         self.name = 'Model3D'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)

@@ -21,7 +21,7 @@ from .constant import Constant, ConstantStar
 from .linesink import LineSinkBase, HeadLineSinkZero, HeadLineSink, LineSinkDitch, HeadLineSinkString, LineSinkDitchString
 from .linedoublet import ImpLineDoublet, ImpLineDoubletString, LeakyLineDoublet, LeakyLineDoubletString
 from .circareasink import CircAreaSink
-from .inhomogeneity import PolygonInhomMaq
+from .inhomogeneity import PolygonInhomMaq, BuildingPit
 from .inhomogeneity1d import StripInhomMaq, StripInhom3D
 from .uflow import Uflow
 from .trace import timtraceline, timtracelines

@@ -1,6 +1,4 @@
-include timml/besselaes.f90
-include timml/besselaes.so
-include timml/besselaes.pyd
+include timml/src/besselaesnew.f95
 include LICENSE
 include MANIFEST.in
 include README.md

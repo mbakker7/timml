@@ -246,5 +246,6 @@ class PlotTim:
         if labels:
             fmt = '%1.' + str(decimals) + 'f'
             plt.clabel(cs, fmt=fmt)
+        return ax
         #if layout:
         #    self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)

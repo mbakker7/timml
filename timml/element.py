@@ -1,6 +1,7 @@
 import numpy as np
 import inspect # Used for storing the input
 
+
 class Element:
     def __init__(self, model, nparam, nunknowns, layers, name, label):
         self.model = model
@@ -14,8 +15,8 @@ class Element:
         self.label = label
         self.inhomelement = False  # elements used as part of an inhom boundary are tagged
         if self.label is not None:
-            assert self.label not in list(self.model.elementdict.keys()),\
-            "timml error: label " + self.label + " already exists"
+            assert self.label not in list(self.model.elementdict.keys()), \
+                "timml error: label " + self.label + " already exists"
 
     def initialize(self):
         # must be overloaded
@@ -46,7 +47,7 @@ class Element:
 
     def disvecinf(self, x, y, aq=None):
         '''Returns array of size (2, nparam, naq)'''
-        raise Exception('Must overload Element.disinf()')
+        raise Exception('Must overload Element.disvecinf()')
 
     def disvec(self, x, y, aq=None):
         '''Returns array of size (2, nparam, naq)'''
