@@ -72,6 +72,7 @@ class StripAreaSinkInhom(Element):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         eps = 1e-8
         r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
         r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
@@ -92,7 +93,7 @@ class StripAreaSinkInhom(Element):
             yn = y1 + u * (y2 - y1)
             zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
-        return changed, terminate, xyztnew
+        return changed, terminate, xyztnew, message
 
 class StripAreaSink(Element):
     def __init__(self, model, xleft=-1, xright=1, N=0.001, layer=0, name='StripAreaSink', label=None):
