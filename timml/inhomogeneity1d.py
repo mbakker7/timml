@@ -4,17 +4,19 @@ from .aquifer import AquiferData
 from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .linesink1d import HeadDiffLineSink1D, FluxDiffLineSink1D
+from .stripareasink import StripAreaSinkInhom
 
 __all__ = ['StripInhomMaq', 'StripInhom3D']
 
 class StripInhom(AquiferData):
     tiny = 1e-12
     
-    def __init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar):
+    def __init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar, N):
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
-        self.hstar = hstar
         self.x1 = x1
         self.x2 = x2
+        self.hstar = hstar
+        self.N = N
         self.inhom_number = self.model.aq.add_inhom(self)
         self.addlinesinks = True  # Set to False not to add line-sinks
         
@@ -54,6 +56,9 @@ class StripInhom(AquiferData):
                                    aq=aqin, aqin=aqin, aqout=aqright)
                 FluxDiffLineSink1D(self.model, self.x1, label=None, 
                                    aq=aqin, aqin=aqin, aqout=aqleft)
+            if self.N is not None:
+                assert aqin.ilap, "Error: infiltration can only be added if topboundary='conf'"
+                StripAreaSinkInhom(self.model, self.x1, self.x2, self.N, layer=0)
         if aqin.ltype[0] == 'l':
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(self.model, self.hstar, aq=aqin)
@@ -96,14 +101,16 @@ class StripInhomMaq(StripInhom):
         semi-confined ('semi')
     hstar : float or None (default is None)
         head value above semi-confining top, only read if topboundary='semi'
+    N : float (default is None)
+        infiltration rate, only read if topboundary='conf'
 
     """
     
     def __init__(self, model, x1, x2, kaq=1, z=[1, 0], c=[], npor=0.3, 
-                 topboundary='conf', hstar=None):
+                 topboundary='conf', hstar=None, N=None):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, topboundary)
-        StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar)
+        StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar, N)
 
 
 class StripInhom3D(StripInhom):
@@ -147,13 +154,15 @@ class StripInhom3D(StripInhom):
         thickness of top semi-confining layer, only read if topboundary='semi'
     hstar : float or None (default is None)
         head value above semi-confining top, only read if topboundary='semi'
+    N : float (default is None)
+        infiltration rate, only read if topboundary='conf'
     
     """
         
     def __init__(self, model, x1, x2, kaq, z=[1, 0], kzoverkh=1, npor=0.3, 
-                 topboundary='conf', hstar=None, topres=None, topthick=0.):
+                 topboundary='conf', hstar=None, topres=None, topthick=0.0, N=None):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype, = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary== 'semi':
             z = np.hstack((z[0] + topthick, z))
-        StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar)
+        StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar, N)

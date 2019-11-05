@@ -45,6 +45,7 @@
 <span class="kn">from</span> <span class="nn">.aquifer_parameters</span> <span class="k">import</span> <span class="n">param_maq</span><span class="p">,</span> <span class="n">param_3d</span>
 <span class="kn">from</span> <span class="nn">.constant</span> <span class="k">import</span> <span class="n">ConstantStar</span>
 <span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">PlotTim</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span> <span class="s1">&#39;ModelMaq&#39;</span><span class="p">,</span> <span class="s1">&#39;Model3D&#39;</span><span class="p">]</span>
 
@@ -75,13 +76,20 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># All input variables are numpy arrays</span>
         <span class="c1"># That should be checked outside this function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elementdict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># only elements that have a label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="n">Aquifer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelname</span> <span class="o">=</span> <span class="s1">&#39;ml&#39;</span>  <span class="c1"># Used for writing out input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f2py</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">f2py</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">.src</span> <span class="k">import</span> <span class="n">besselaesnew</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">f2py</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FORTRAN extension not found while f2py=True. Using Numba instead&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># remove inhomogeneity elements (they are added again)</span>
@@ -344,7 +352,74 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sendback</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">sol</span>
-        <span class="k">return</span>            </div></div>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">solve_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nproc</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">printmat</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sendback</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Compute solution, multiprocessing implementation.</span>
+<span class="sd">        Note: estimated speedup approximately by factor of</span>
+<span class="sd">        number of physical cores. Virtual cores do not improve</span>
+<span class="sd">        calculation time.&#39;&#39;&#39;</span>
+        <span class="c1"># Initialize elements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="c1"># Compute number of equations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of elements, Number of equations:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">),</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No unknowns. Solution complete&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">))</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+
+        <span class="c1"># start multiprocessing</span>
+        <span class="k">if</span> <span class="n">nproc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nproc</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># make no. of processes equal to 1 less than no. of cores</span>
+        <span class="k">elif</span> <span class="n">nproc</span> <span class="o">&gt;</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Given &#39;nproc&#39; larger than no. of cores on machine. Setting &#39;nproc&#39; to </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()))</span>
+            <span class="n">nproc</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">equation</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">))</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neq</span><span class="p">)</span>
+
+        <span class="n">ieq</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">imat</span><span class="p">,</span> <span class="n">irhs</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="n">mat</span><span class="p">[</span><span class="n">ieq</span><span class="p">:</span><span class="n">ieq</span> <span class="o">+</span> <span class="n">imat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">imat</span>
+            <span class="n">rhs</span><span class="p">[</span><span class="n">ieq</span><span class="p">:</span><span class="n">ieq</span> <span class="o">+</span> <span class="n">irhs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">irhs</span>
+            <span class="n">ieq</span> <span class="o">+=</span> <span class="n">imat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># end multiprocessing</span>
+
+        <span class="k">if</span> <span class="n">printmat</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+        <span class="n">icount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">setparams</span><span class="p">(</span><span class="n">sol</span><span class="p">[</span><span class="n">icount</span><span class="p">:</span><span class="n">icount</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span><span class="p">])</span>
+                <span class="n">icount</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">nunknowns</span>
+        <span class="k">if</span> <span class="n">silent</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>  <span class="c1"># needed cause the dots are printed</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;solution complete&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">silent</span> <span class="o">==</span> <span class="s1">&#39;dot&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">silent</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sendback</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sol</span>
+        <span class="k">return</span></div>
         
 <div class="viewcode-block" id="ModelMaq"><a class="viewcode-back" href="../../models/modelmaq.html#timml.model.ModelMaq">[docs]</a><span class="k">class</span> <span class="nc">ModelMaq</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -384,10 +459,10 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span> <span class="o">=</span> <span class="n">param_maq</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">topboundary</span><span class="p">)</span>
-        <span class="n">Model</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">)</span>
+        <span class="n">Model</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">f2py</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ModelMaq&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
             <span class="n">ConstantStar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hstar</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">)</span></div>
@@ -436,7 +511,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">topres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">topthick</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">topres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">topthick</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Model3D</span>
 <span class="sd">        for semi-confined aquifers, set top equal to &#39;semi&#39; and provide</span>
 <span class="sd">        topres: resistance of top</span>
@@ -446,7 +521,7 @@
         <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span> <span class="o">=</span> <span class="n">param_3d</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">kzoverkh</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">topboundary</span><span class="p">,</span> <span class="n">topres</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">topboundary</span> <span class="o">==</span> <span class="s1">&#39;semi&#39;</span><span class="p">:</span>
             <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">topthick</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
-        <span class="n">Model</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">)</span>
+        <span class="n">Model</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">f2py</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Model3D&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span>
             <span class="n">ConstantStar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hstar</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="p">)</span></div>

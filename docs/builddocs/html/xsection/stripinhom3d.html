@@ -38,7 +38,7 @@
 <h1>Strip Inhomogeneity 3D<a class="headerlink" href="#strip-inhomogeneity-3d" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.inhomogeneity1d.StripInhom3D">
-<em class="property">class </em><code class="descclassname">timml.inhomogeneity1d.</code><code class="descname">StripInhom3D</code><span class="sig-paren">(</span><em>model, x1, x2, kaq, z=[1, 0], kzoverkh=1, npor=0.3, topboundary='conf', hstar=None, topres=None, topthick=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/inhomogeneity1d.html#StripInhom3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.inhomogeneity1d.StripInhom3D" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">timml.inhomogeneity1d.</code><code class="descname">StripInhom3D</code><span class="sig-paren">(</span><em>model, x1, x2, kaq, z=[1, 0], kzoverkh=1, npor=0.3, topboundary='conf', hstar=None, topres=None, topthick=0.0, N=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/inhomogeneity1d.html#StripInhom3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.inhomogeneity1d.StripInhom3D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a strip inhomogeneity for a multi-layer model consisting of
 many aquifer layers. The resistance between the layers is computed
 from the vertical hydraulic conductivity of the layers.</p>
@@ -70,6 +70,7 @@ semi-confined (‘semi’)</li>
 <li><strong>topres</strong> (<em>float</em>) – resistance of top semi-confining layer, only read if topboundary=’semi’</li>
 <li><strong>topthick</strong> (<em>float</em>) – thickness of top semi-confining layer, only read if topboundary=’semi’</li>
 <li><strong>hstar</strong> (<em>float</em><em> or </em><em>None</em><em> (</em><em>default is None</em><em>)</em>) – head value above semi-confining top, only read if topboundary=’semi’</li>
+<li><strong>N</strong> (<em>float</em><em> (</em><em>default is None</em><em>)</em>) – infiltration rate, only read if topboundary=’conf’</li>
 </ul>
 </td>
 </tr>

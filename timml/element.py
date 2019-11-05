@@ -47,7 +47,7 @@ class Element:
     
     def disvecinf(self, x, y, aq=None):
         '''Returns array of size (2, nparam, naq)'''
-        raise Exception('Must overload Element.disinf()')
+        raise Exception('Must overload Element.disvecinf()')
     
     def disvec(self, x, y, aq=None):
         '''Returns array of size (2, nparam, naq)'''

@@ -99,3 +99,4 @@ ENV/
 
 # f2py
 .plist
+.vscode/settings.json
