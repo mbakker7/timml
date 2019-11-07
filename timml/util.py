@@ -160,9 +160,25 @@ class PlotTim:
         if layout:
             self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
 
-    def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
-                   tmax=1e12, nstepmax=100, silent='.', color=None, orientation='hor',
-                   win=[-1e30, 1e30, -1e30, 1e30], newfig=False, figsize=None, return_traces=False):
+    def tracelines(
+        self,
+        xstart,
+        ystart,
+        zstart,
+        hstepmax,
+        vstepfrac=0.2,
+        tmax=1e12,
+        nstepmax=100,
+        silent=".",
+        color=None,
+        orientation="hor",
+        win=[-1e30, 1e30, -1e30, 1e30],
+        newfig=False,
+        figsize=None,
+        *,
+        return_traces=False,
+        metadata=False,
+    ):
         """Draw trace lines
         """
         if color is None:
@@ -188,15 +204,31 @@ class PlotTim:
             xyztlist = []
         if return_traces:
             traces = []
+        else:
+            metadata = True  # suppress future warning from timtraceline
         for i in range(len(xstart)):
-            trace = timtraceline(self, xstart[i], ystart[i], zstart[i], hstepmax=hstepmax,
-                                           vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax,
-                                           silent=silent, win=win, returnlayers=True)
+            trace = timtraceline(
+                self,
+                xstart[i],
+                ystart[i],
+                zstart[i],
+                hstepmax=hstepmax,
+                vstepfrac=vstepfrac,
+                tmax=tmax,
+                nstepmax=nstepmax,
+                silent=silent,
+                win=win,
+                returnlayers=True,
+                metadata=metadata,
+            )
             if return_traces:
                 traces.append(trace)
-            xyzt, layerlist = trace['trace'], trace['layers']
-            if silent == '.':
-                print('.', end='', flush=True)
+            if metadata:
+                xyzt, layerlist = trace["trace"], trace["layers"]
+            else:
+                xyzt, layerlist = trace
+            if silent == ".":
+                print(".", end="", flush=True)
             if ax1 is not None:
                 #plt.axes(ax1)
                 color = [c[self.aq.layernumber[i]] if self.aq.ltype[i] == 'a' else 'k' for i in layerlist]
@@ -212,6 +244,8 @@ class PlotTim:
                 lc = LineCollection(segments, colors=color)
                 ax2.add_collection(lc)
                 ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
+        if silent == ".":
+            print("")  # Print the final newline after the dots
         if return_traces:
             return traces
 
