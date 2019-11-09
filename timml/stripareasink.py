@@ -8,7 +8,7 @@ class StripAreaSinkInhom(Element):
     """Create a strip area-sink in combination with an inhomogeneity.
     Created automatically using StripInhomMaq or StripInhom3D.
     Can only be created if top boundary is conf.
-    
+
     Parameters
     ----------
     model : Model object
@@ -17,7 +17,7 @@ class StripAreaSinkInhom(Element):
         left boundary of inhomogeneity (may not be -np.inf)
     xright : float
         right boundary of inhomogeneity (may not be np.inf)
-    
+
     """
     def __init__(self, model, xleft=-1, xright=1, N=0.001, layer=0, name='StripAreaSink', label=None):
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \
@@ -53,7 +53,7 @@ class StripAreaSinkInhom(Element):
                 rv[0, 0] = -0.5 * (x ** 2 - 2 * self.xc * x + self.xc ** 2)
                 rv[0, 1:] = self.plabsq
         return rv
-    
+
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.nparam, aq.naq))
@@ -72,6 +72,7 @@ class StripAreaSinkInhom(Element):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         eps = 1e-8
         r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
         r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
@@ -92,7 +93,7 @@ class StripAreaSinkInhom(Element):
             yn = y1 + u * (y2 - y1)
             zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
-        return changed, terminate, xyztnew
+        return changed, terminate, xyztnew, message
 
 class StripAreaSink(Element):
     def __init__(self, model, xleft=-1, xright=1, N=0.001, layer=0, name='StripAreaSink', label=None):
@@ -139,7 +140,7 @@ class StripAreaSink(Element):
                                       np.exp((x - self.xright) / self.lab)) + \
                                       self.plabsq
         return rv
-    
+
     def disvecinf(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.nparam, aq.naq))
@@ -154,7 +155,7 @@ class StripAreaSink(Element):
                 rv[0, 0, 0] = x - self.xc
                 rv[0, 0, 1:] = self.A / self.lab * (
                                    np.exp(-(x - self.xleft) / self.lab) -
-                                   np.exp((x - self.xright) / self.lab)) 
+                                   np.exp((x - self.xright) / self.lab))
         return rv
 
     def qztop(self, x, y):
@@ -167,6 +168,7 @@ class StripAreaSink(Element):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         eps = 1e-8
         r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
         r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
@@ -187,4 +189,4 @@ class StripAreaSink(Element):
             yn = y1 + u * (y2 - y1)
             zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
-        return changed, terminate, xyztnew
+        return changed, terminate, xyztnew, message

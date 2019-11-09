@@ -22,6 +22,7 @@ class LineSinkChangeTrace:
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         if (ltype == 'a'):
             if True:
 #            if (layer == self.layers).any():  # in layer where line-sink is screened
@@ -112,8 +113,12 @@ class LineSinkChangeTrace:
                                 znew2 = aq.z[modellayer + 1] + Qbelow / Qn2 * aq.Haq[layer]
                                 xyztnew = [np.array([xnew, ynew, znew, tnew]), np.array([xnew, ynew, znew2, tnew])]
                             changed = True
-        return changed, terminate, xyztnew
-    
+        if terminate:
+            message = 'reached element of type linesink'
+            if self.label:
+                message += ' ({lab})'.format(lab=self.label)
+        return changed, terminate, xyztnew, message
+
 
 class LineSinkBase(LineSinkChangeTrace, Element):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, Qls=100.0, \
@@ -162,7 +167,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         elif np.isscalar(self.wh):
             self.wh = self.wh * np.ones(self.nlayers)
         self.resfac = self.aq.T[self.layers] * self.res / self.wh
-        
+
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
@@ -185,13 +190,13 @@ class LineSinkBase(LineSinkChangeTrace, Element):
             rv[0] = self.aq.coef[self.layers] * qxqy[0]
             rv[1] = self.aq.coef[self.layers] * qxqy[1]
         return rv
-    
+
     def discharge(self):
         # returns the discharge in each layer
         Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0] * self.L
         return Q
-    
+
     def plot(self):
         plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
@@ -268,7 +273,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         # Not sure if that needs to be here
-        self.parameters[:, 0] = self.Qls / self.L  
+        self.parameters[:, 0] = self.Qls / self.L
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value
@@ -313,10 +318,10 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             qxqyrv[1, :] = self.aq.coef[self.layers] * qxqy[self.order + 1:,
                                                        np.newaxis, :]
         return rv
-   
+
     def plot(self):
         plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
-        
+
     def dischargeinf(self):
         # returns the unit contribution to the discharge in each layer
         # array of length nunknowns
@@ -325,20 +330,20 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
         rv = self.L / 2 * Qdisinf.ravel()
         return rv
-    
+
     def discharge(self):
         # returns the discharge in each layer
         rv = np.zeros(self.aq.naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
         rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.nlayers), 0)
         return rv
-    
+
     def headinside(self, icp=0):
         hinside = self.model.head(self.xc[icp], self.yc[icp])[self.layers[0]] - \
                   np.sum(self.strengthinf[icp] * self.parameters[:, 0]) * self.res / self.wh
         return hinside
-    
-        
+
+
     #def discharge(self):
     #    # returns the discharge in each layer
     #    rv = np.zeros(self.aq.naq)
@@ -348,7 +353,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
     #    Qls = self.parameters[:, 0] * self.L / 2 * Qdisinf.ravel()
     #    rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.nlayers), 0)
     #    return rv
-    
+
     #def strength()
 
 #class HeadLineSinkHoOld(LineSinkHoBase, PotentialEquation):
@@ -380,15 +385,15 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
 #
 #    def setparams(self, sol):
 #        self.parameters[:, 0] = sol
-        
+
 class HeadLineSink(LineSinkHoBase, HeadEquation):
     """
     Create a head-specified line-sink
     which may optionally have a width and resistance
-    
+
     Parameters
     ----------
-    
+
     model : Model object
         Model to which the element is added
     x1 : scalar
@@ -416,17 +421,17 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
-        if list or array: element is placed in all these layers 
+        if list or array: element is placed in all these layers
     label: str or None
         label of element
-    
+
     See Also
     --------
-    
+
     :class:`.HeadLineSinkString`
-    
+
     """
-    
+
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
                  hls=1.0, res=0, wh=1, order=0, layers=0, \
                  label=None, name='HeadLineSink', addtomodel=True):
@@ -461,16 +466,16 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-        
+
 class LineSinkDitch(HeadLineSink):
     """
     Class to create a line-sink for which the total discharge
     is specified, and for which the head along the line-sink
     is uniform but unknown.
-    
+
     Parameters
     ----------
-    
+
     model : Model object
         Model to which the element is added
     x1 : scalar
@@ -495,17 +500,17 @@ class LineSinkDitch(HeadLineSink):
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
-        if list or array: element is placed in all these layers 
+        if list or array: element is placed in all these layers
     label: str or None
         label of element
-    
+
     See Also
     --------
-    
+
     :class:`.LineSinkDitchString`
-    
+
     """
-    
+
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
                  Qls=1, res=0, wh=1, order=0, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
@@ -516,7 +521,7 @@ class LineSinkDitch(HeadLineSink):
 
     def initialize(self):
         HeadLineSink.initialize(self)
-        
+
     def equation(self):
         mat, rhs = HeadLineSink.equation(self)
         for i in range(1, self.nunknowns):
@@ -608,7 +613,7 @@ class LineSinkStringBase(Element):
                     order 1, layer[0]
                     order 1, layer[1]
                     ...
-        '''    
+        '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
         for i in range(self.nls):
@@ -623,20 +628,21 @@ class LineSinkStringBase(Element):
             rv[:, i] = self.lslist[i].disvecinf(x, y, aq)
         rv.shape = (2, self.nparam, aq.naq)
         return rv
-    
+
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         for ls in self.lslist:
-            changed, terminate, xyztnew = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction)
+            changed, terminate, xyztnew, message = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction)
             if changed or terminate:
-                return changed, terminate, xyztnew
-        return changed, terminate, xyztnew
-    
+                return changed, terminate, xyztnew, message
+        return changed, terminate, xyztnew, message
+
     def plot(self):
         plt.plot(self.x, self.y, 'k')
-        
+
 class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0.0, \
                  layers=0, order=0, label=None):
@@ -671,7 +677,7 @@ class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-        
+
 class LineSinkStringBase2(Element):
     '''
     Alternative implementation that loops through line-sinks to build equation
@@ -706,7 +712,7 @@ class LineSinkStringBase2(Element):
         for aq in self.aq:
             aq.add_element(self)
         # Same order for all elements in string
-        #self.ncp = sum(ls.ncp for ls in self.lslist)  
+        #self.ncp = sum(ls.ncp for ls in self.lslist)
         self.nparam = sum(ls.ncp for ls in self.lslist)
         self.nunknowns = self.nparam
         # where are self.xls and self.yls used? self.xls and self.yls removed
@@ -726,7 +732,7 @@ class LineSinkStringBase2(Element):
                     order 1, layer[0]
                     order 1, layer[1]
                     ...
-        '''    
+        '''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
         if aq in self.aq:
@@ -743,17 +749,17 @@ class LineSinkStringBase2(Element):
                 rv[:, i] = ls.disvecinf(x, y, aq)
         rv.shape = (2, self.nparam, aq.naq)
         return rv
-    
-    def dischargeinf(self): 
+
+    def dischargeinf(self):
         rv = np.zeros((self.nls, self.lslist[0].nparam))
         for i, ls in enumerate(self.lslist):
             rv[i] = ls.dischargeinf()
         return rv.ravel()
-   
+
     def discharge(self):
         """Discharge of the element in each layer
         """
-        
+
         rv = np.zeros(self.aq[0].naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
@@ -762,28 +768,29 @@ class LineSinkStringBase2(Element):
             rv[self.layers[i]] += q
             #rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1), self.nlayers), 0)
         return rv
-    
+
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
+        message = None
         for ls in self.lslist:
-            changed, terminate, xyztnew = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax)
+            changed, terminate, xyztnew, message = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax)
             if changed or terminate:
-                return changed, terminate, xyztnew
-        return changed, terminate, xyztnew
-    
+                return changed, terminate, xyztnew, message
+        return changed, terminate, xyztnew, message
+
     def plot(self):
         plt.plot(self.x, self.y, 'k')
-        
+
 class HeadLineSinkString(LineSinkStringBase2):
     """
     Class to create a string of head-specified line-sinks
     which may optionally have a width and resistance
-    
+
     Parameters
     ----------
-    
+
     model : Model object
         Model to which the element is added
     xy : array or list
@@ -807,16 +814,16 @@ class HeadLineSinkString(LineSinkStringBase2):
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
-        if list or array: element is placed in all these layers 
+        if list or array: element is placed in all these layers
     label: str or None
-    
+
     See Also
     --------
-    
+
     :class:`.HeadLineSink`
-    
+
     """
-    
+
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0, \
                  res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkString'):
         self.storeinput(inspect.currentframe())
@@ -858,7 +865,7 @@ class HeadLineSinkString(LineSinkStringBase2):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-        
+
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.empty(self.nunknowns)
@@ -886,16 +893,16 @@ class HeadLineSinkString(LineSinkStringBase2):
                 irow += ls.nlayers
             jcol += ls.nunknowns
         return mat, rhs
-    
+
 class LineSinkDitchString(HeadLineSinkString):
     """
     Class to create a string of LineSinkDitch elements for which the
     total discharge of the string is specified, and for which the head
     along the entire string is uniform but unknown.
-    
+
     Parameters
     ----------
-    
+
     model : Model object
         Model to which the element is added
     xy : array or list
@@ -915,17 +922,17 @@ class LineSinkDitchString(HeadLineSinkString):
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
-        if list or array: element is placed in all these layers 
+        if list or array: element is placed in all these layers
     label: str or None
         label of element
-    
+
     See Also
     --------
-    
+
     :class:`.LineSinkDitch`
-    
+
     """
-    
+
     def __init__(self, model, xy=[(-1, 0), (1, 0)], \
                  Qls=1, res=0, wh=1, order=0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
@@ -936,7 +943,7 @@ class LineSinkDitchString(HeadLineSinkString):
 
     def initialize(self):
         HeadLineSinkString.initialize(self)
-        
+
     def equation(self):
         mat, rhs = HeadLineSinkString.equation(self)
         for i in range(1, self.nunknowns):
@@ -956,4 +963,3 @@ class LineSinkDitchString(HeadLineSinkString):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-

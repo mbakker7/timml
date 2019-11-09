@@ -17,19 +17,19 @@ class Element:
         if self.label is not None:
             assert self.label not in list(self.model.elementdict.keys()), \
                 "timml error: label " + self.label + " already exists"
-            
+
     def initialize(self):
         # must be overloaded
         pass
-    
+
     def potinf(self, x, y, aq=None):
         '''Returns array of size (nparam, naq)'''
         raise Exception('Must overload Element.potinf()')
-    
+
     def potential(self, x, y, aq=None):
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         return np.sum(self.parameters * self.potinf(x, y, aq), 0)
-    
+
     def potinflayers(self, x, y, layers, aq=None):
         '''Returns array of size (len(layers),nparam)
         only used in building equations'''
@@ -37,23 +37,23 @@ class Element:
         pot = self.potinf(x, y, aq)  # nparam rows, naq cols
         rv = np.sum(pot[:,np.newaxis,:] * aq.eigvec, 2).T  # Transopose as the first axes needs to be the number of layers
         return rv[layers,:]
-    
+
     def potentiallayers(self, x, y, layers, aq=None):
         '''Returns array of size len(layers)
         only used in building equations'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         pot = np.sum(self.potential(x, y, aq) * aq.eigvec, 1 )
         return pot[layers]
-    
+
     def disvecinf(self, x, y, aq=None):
         '''Returns array of size (2, nparam, naq)'''
         raise Exception('Must overload Element.disvecinf()')
-    
+
     def disvec(self, x, y, aq=None):
         '''Returns array of size (2, nparam, naq)'''
         if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
         return np.sum(self.parameters * self.disvecinf(x, y, aq), 1)
-    
+
     def disvecinflayers(self, x, y, layers, aq=None):
         '''Returns two arrays of size (len(layers),nparam)
         only used in building equations'''
@@ -62,7 +62,7 @@ class Element:
         qx = np.sum(qxqy[0,:,np.newaxis,:] * aq.eigvec, 2).T  # Transpose as the first axes needs to be the number of layers
         qy = np.sum(qxqy[1,:,np.newaxis,:] * aq.eigvec, 2).T
         return np.array((qx[layers], qy[layers]))
-    
+
     def disveclayers(self, x, y, layers, aq=None):
         '''Returns two arrays of size len(layers)
         only used in building equations'''
@@ -70,7 +70,7 @@ class Element:
         qxqy = self.disvec(x, y, aq)
         rv = np.sum(qxqy[:,np.newaxis,:] * aq.eigvec, 2)
         return rv[:,layers]
-    
+
     def intpot(self, func, x1, y1, x2, y2, layers, aq=None):
         if aq is None: print('error, aquifer needs to be given')
         z1 = x1 + 1j * y1
@@ -82,7 +82,7 @@ class Element:
         for i in range(self.ndeg):
             pot += self.wleg[i] * func(x=x[i], y=y[i], layers=layers, aq=aq)
         return pot
-    
+
     def intflux(self, func, x1, y1, x2, y2, layers, aq=None):
         if aq is None: print('error, aquifer needs to be given')
         thetaNormOut = np.arctan2(y2 - y1, x2 - x1) - np.pi/2.0
@@ -98,25 +98,29 @@ class Element:
             qxqy = func(x=x[i], y=y[i], layers=layers, aq=aq)
             qtot += self.wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
         return qtot
-    
+
     def headinside(self):
         print('headinside not implemented for this element')
-    
+
     def setparams(self, sol):
         raise Exception('Must overload Element.setparams()')
-    
+
     def storeinput(self,frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
-    
+
     #def stoptrace(self, xyz, layer, ltype, step, direction):
     #    return False, 0
-    
+
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
-        return False, False, 0
-        
+        changed = False
+        terminate = False
+        xyztnew = 0
+        message = None
+        return changed, terminate, xyztnew, message
+
     def qztop(self, x, y):
         # given flux at top of aquifer system (as for area-sinks)
         return 0
-    
+
     def plot(self):
         pass
