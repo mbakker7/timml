@@ -334,13 +334,11 @@ class Well(WellBase, MscreenWellEquation):
 
     """
 
-    def __init__(
-        self, model, xw=0, yw=0, Qw=100.0, rw=0.1, res=0.0, layers=0, label=None
-    ):
+    def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
+                 res=0.0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
-        WellBase.__init__(
-            self, model, xw, yw, Qw, rw, res, layers=layers, name="Well", label=label
-        )
+        WellBase.__init__(self, model, xw, yw, Qw, rw, res, \
+                          layers=layers, name="Well", label=label)
         self.Qc = float(Qw)
         if self.nlayers == 1:
             self.nunknowns = 0
