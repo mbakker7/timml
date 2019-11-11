@@ -12,18 +12,8 @@ __all__ = ["WellBase", "Well", "HeadWell"]
 
 
 class WellBase(Element):
-    def __init__(
-        self,
-        model,
-        xw=0,
-        yw=0,
-        Qw=100.0,
-        rw=0.1,
-        res=0.0,
-        layers=0,
-        name="WellBase",
-        label=None,
-    ):
+    def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, res=0.0, layers=0,
+                 name="WellBase", label=None,):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
         )
