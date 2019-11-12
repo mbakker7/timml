@@ -14,9 +14,8 @@ __all__ = ["WellBase", "Well", "HeadWell"]
 class WellBase(Element):
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, res=0.0, layers=0,
                  name="WellBase", label=None,):
-        Element.__init__(
-            self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
-        )
+        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers,
+                         name=name, label=label)
         # Defined here and not in Element as other elements can have multiple
         # parameters per layers
         self.nparam = len(self.layers)
@@ -115,9 +114,8 @@ class WellBase(Element):
         Q[self.layers] = self.parameters[:, 0]
         return Q
 
-    def changetrace(
-        self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
-    ):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer,
+                    direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
@@ -128,8 +126,7 @@ class WellBase(Element):
             if ltype == "a":
                 if (layer == self.layers).any():  # in layer where well is screened
                     if (self.discharge()[layer] > 0 and direction > 0) or (
-                        self.discharge()[layer] < 0 and direction < 0
-                    ):
+                        self.discharge()[layer] < 0 and direction < 0):
                         vx, vy, vz = self.model.velocity(*xyzt1[:-1])
                         tstep = np.sqrt(
                             (xyzt1[0] - self.xw) ** 2 + (xyzt1[1] - self.yw) ** 2
@@ -263,11 +260,8 @@ class WellBase(Element):
         if not return_traces:
             metadata = True  # suppress future warning from timtraceline
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
-        traces = self.model.tracelines(
-            xstart,
-            ystart,
-            zstart,
-            hstepmax=-abs(hstepmax),
+        traces = self.model.tracelines(xstart, ystart, zstart,
+                                       hstepmax=-abs(hstepmax),
             vstepfrac=vstepfrac,
             tmax=tmax,
             nstepmax=nstepmax,
@@ -376,20 +370,11 @@ class HeadWell(WellBase, PotentialEquation):
 
     """
 
-    def __init__(self, model, xw=0, yw=0, hw=10, rw=0.1, res=0, layers=0, label=None):
+    def __init__(self, model, xw=0, yw=0, hw=10, rw=0.1, res=0, layers=0,
+                 label=None):
         self.storeinput(inspect.currentframe())
-        WellBase.__init__(
-            self,
-            model,
-            xw,
-            yw,
-            0.0,
-            rw,
-            res,
-            layers=layers,
-            name="HeadWell",
-            label=label,
-        )
+        WellBase.__init__(self, model, xw, yw, 0.0, rw, res, layers=layers,
+                          name="HeadWell", label=label)
         self.hc = hw
         self.nunknowns = self.nparam
 
