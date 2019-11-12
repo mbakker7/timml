@@ -24,20 +24,22 @@ class WellBase(Element):
         self.Qw = np.atleast_1d(Qw)
         self.rw = float(rw)
         self.res = float(res)
+        self.xc = xc
+        self.yc = yc
         self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " at " + str((self.xw, self.yw))
 
     def initialize(self):
-        if xc is None:
+        if self.xc is None:
             self.xc = np.array([self.xw + self.rw])
         else:
-            self.xc = np.atleast1d(xc)
-        if yc is None:
+            self.xc = np.atleast_1d(self.xc)
+        if self.yc is None:
             self.yc = np.array([self.yw])
         else:
-            self.yc = np.atleast1d(yc)
+            self.yc = np.atleast_1d(self.yc)
         self.ncp = 1
         self.aq = self.model.aq.find_aquifer_data(self.xw, self.yw)
         self.aq.add_element(self)
@@ -180,18 +182,9 @@ class WellBase(Element):
 
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
-        xyzt = timtracelines(
-            self.model,
-            xstart,
-            ystart,
-            zstart,
-            -np.abs(hstepmax),
-            vstepfrac=vstepfrac,
-            tmax=tmax,
-            nstepmax=nstepmax,
-            silent=silent,
-            metadata=metadata,
-        )
+        xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax),
+            vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent,
+            metadata=metadata)
         return xyzt
 
     def capzonestart(self, nt, zstart):
@@ -259,11 +252,10 @@ class WellBase(Element):
             metadata = True  # suppress future warning from timtraceline
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         traces = self.model.tracelines(xstart, ystart, zstart,
-                                       hstepmax=-abs(hstepmax),
-            vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent,
-            color=color, orientation=orientation, win=win, newfig=newfig,
-            figsize=figsize, return_traces=return_traces, metadata=metadata,
-        )
+            hstepmax=-abs(hstepmax), vstepfrac=vstepfrac, tmax=tmax,
+            nstepmax=nstepmax, silent=silent, color=color,
+            orientation=orientation, win=win, newfig=newfig,
+            figsize=figsize, return_traces=return_traces, metadata=metadata)
         if return_traces:
             return traces
 
