@@ -13,7 +13,7 @@ __all__ = ["WellBase", "Well", "HeadWell"]
 
 class WellBase(Element):
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, res=0.0, layers=0,
-                 name="WellBase", label=None,):
+                 name="WellBase", label=None, xc=None, yc=None):
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers,
                          name=name, label=label)
         # Defined here and not in Element as other elements can have multiple
@@ -30,8 +30,14 @@ class WellBase(Element):
         return self.name + " at " + str((self.xw, self.yw))
 
     def initialize(self):
-        self.xc = np.array([self.xw + self.rw])
-        self.yc = np.array([self.yw])
+        if xc is None:
+            self.xc = np.array([self.xw + self.rw])
+        else:
+            self.xc = np.atleast1d(xc)
+        if yc is None:
+            self.yc = np.array([self.yw])
+        else:
+            self.yc = np.atleast1d(yc)
         self.ncp = 1
         self.aq = self.model.aq.find_aquifer_data(self.xw, self.yw)
         self.aq.add_element(self)
@@ -145,16 +151,8 @@ class WellBase(Element):
         return changed, terminate, [xyztnew], message
 
     def capzone(
-        self,
-        nt=10,
-        zstart=None,
-        hstepmax=10,
-        vstepfrac=0.2,
-        tmax=None,
-        nstepmax=100,
-        silent=".",
-        *,
-        metadata=False
+        self, nt=10, zstart=None, hstepmax=10, vstepfrac=0.2, tmax=None,
+        nstepmax=100, silent=".", *, metadata=False
     ):
         """Compute a capture zone
 
@@ -262,17 +260,9 @@ class WellBase(Element):
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         traces = self.model.tracelines(xstart, ystart, zstart,
                                        hstepmax=-abs(hstepmax),
-            vstepfrac=vstepfrac,
-            tmax=tmax,
-            nstepmax=nstepmax,
-            silent=silent,
-            color=color,
-            orientation=orientation,
-            win=win,
-            newfig=newfig,
-            figsize=figsize,
-            return_traces=return_traces,
-            metadata=metadata,
+            vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent,
+            color=color, orientation=orientation, win=win, newfig=newfig,
+            figsize=figsize, return_traces=return_traces, metadata=metadata,
         )
         if return_traces:
             return traces
@@ -310,6 +300,10 @@ class Well(WellBase, MscreenWellEquation):
         layer (int) or layers (list or array) where well is screened
     label : string or None (default: None)
         label of the well
+    xc : float
+        x-location of control point (default None, which puts it at xw)
+    yc : float
+        y-location of control point (default None, which puts it at yw + rw)
 
     Examples
     --------
@@ -319,10 +313,10 @@ class Well(WellBase, MscreenWellEquation):
     """
 
     def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
-                 res=0.0, layers=0, label=None):
+                 res=0.0, layers=0, label=None, xc=None, yc=None):
         self.storeinput(inspect.currentframe())
         WellBase.__init__(self, model, xw, yw, Qw, rw, res, \
-                          layers=layers, name="Well", label=label)
+                          layers=layers, name="Well", label=label, xc=xc, yc=yc)
         self.Qc = float(Qw)
         if self.nlayers == 1:
             self.nunknowns = 0
@@ -367,14 +361,18 @@ class HeadWell(WellBase, PotentialEquation):
         layer (int) or layers (list or array) where well is screened
     label : string (default: None)
         label of the well
+    xc : float
+        x-location of control point (default None, which puts it at xw)
+    yc : float
+        y-location of control point (default None, which puts it at yw + rw)
 
     """
 
     def __init__(self, model, xw=0, yw=0, hw=10, rw=0.1, res=0, layers=0,
-                 label=None):
+                 label=None, xc=None, yc=None):
         self.storeinput(inspect.currentframe())
         WellBase.__init__(self, model, xw, yw, 0.0, rw, res, layers=layers,
-                          name="HeadWell", label=label)
+                          name="HeadWell", label=label, xc=xc, yc=yc)
         self.hc = hw
         self.nunknowns = self.nparam
 
