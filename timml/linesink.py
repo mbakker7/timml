@@ -115,7 +115,7 @@ class LineSinkChangeTrace:
                             changed = True
         if terminate:
             message = 'reached element of type linesink'
-            if self.label:
+            if self.label is not None:
                 message += ' ({lab})'.format(lab=self.label)
         return changed, terminate, xyztnew, message
 
@@ -558,13 +558,13 @@ class LineSinkStringBase(Element):
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
         self.nls = len(self.x) - 1
         for i in range(self.nls):
+            if label is not None:
+                lslabel = label + '_' + str(i)
+            else:
+                lslabel = label
             self.lslist.append(LineSinkHoBase(model, \
-                                              x1=self.x[i], y1=self.y[i],
-                                              x2=self.x[i + 1],
-                                              y2=self.y[i + 1], \
-                                              Qls=0.0, layers=layers,
-                                              order=order, label=label + '_' + str(i),
-                                              addtomodel=False, aq=aq))
+                x1=self.x[i], y1=self.y[i], x2=self.x[i + 1], y2=self.y[i + 1],
+                Qls=0.0, layers=layers, order=order, label=lslabel, addtomodel=False, aq=aq))
 
     def __repr__(self):
         return self.name + ' with nodes ' + str(self.xy)
@@ -853,10 +853,14 @@ class HeadLineSinkString(LineSinkStringBase2):
             print('Error: hls entry not supported')
         self.lslist = []  # start with empty list
         for i in range(self.nls):
+            if self.label is not None:
+                lslabel = self.label + '_' + str(i)
+            else:
+                lslabel = self.label
             self.lslist.append(HeadLineSink(self.model, \
                 x1=self.x[i], y1=self.y[i], x2=self.x[i + 1], y2=self.y[i + 1], 
                 hls=self.hls[i:i + 2], res=self.res, wh=self.wh, layers=self.layers[i],
-                order=self.order, label=self.label + '_' + str(i), addtomodel=False))
+                order=self.order, label=lslabel, addtomodel=False))
         LineSinkStringBase2.initialize(self)
 
     def setparams(self, sol):
