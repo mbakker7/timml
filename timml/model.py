@@ -18,8 +18,8 @@ class Model(PlotTim):
     """
     Model Class to create a model object consisting of an arbitrary
     sequence of aquifer layers and leaky layers.
-    Use ModelMaq for regular sequence of aquifer and leaky layers.
-    Use Model3D for multi-layer model of single aquifer
+    Use ModelMaq for regular sequence of aquifers and leaky layers.
+    Use Model3D for multi-layer model of a single aquifer
     
     Parameters
     ----------

@@ -563,7 +563,7 @@ class LineSinkStringBase(Element):
                                               x2=self.x[i + 1],
                                               y2=self.y[i + 1], \
                                               Qls=0.0, layers=layers,
-                                              order=order, label=label,
+                                              order=order, label=label + '_' + str(i),
                                               addtomodel=False, aq=aq))
 
     def __repr__(self):
@@ -854,13 +854,9 @@ class HeadLineSinkString(LineSinkStringBase2):
         self.lslist = []  # start with empty list
         for i in range(self.nls):
             self.lslist.append(HeadLineSink(self.model, \
-                                              x1=self.x[i], y1=self.y[i],
-                                              x2=self.x[i + 1],
-                                              y2=self.y[i + 1], \
-                                              hls=self.hls[i:i + 2], res=self.res,
-                                              wh=self.wh, layers=self.layers[i],
-                                              order=self.order, label=self.label,
-                                              addtomodel=False))
+                x1=self.x[i], y1=self.y[i], x2=self.x[i + 1], y2=self.y[i + 1], 
+                hls=self.hls[i:i + 2], res=self.res, wh=self.wh, layers=self.layers[i],
+                order=self.order, label=self.label + '_' + str(i), addtomodel=False))
         LineSinkStringBase2.initialize(self)
 
     def setparams(self, sol):
