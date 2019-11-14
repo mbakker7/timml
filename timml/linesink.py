@@ -161,12 +161,12 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.Qls / self.L
         if self.wh == 'H':
-            self.wh = self.aq.Haq[self.layers]
+            self.whfac = self.aq.Haq[self.layers]
         elif self.wh == '2H':
-            self.wh = 2.0 * self.aq.Haq[self.layers]
+            self.whfac = 2.0 * self.aq.Haq[self.layers]
         elif np.isscalar(self.wh):
-            self.wh = self.wh * np.ones(self.nlayers)
-        self.resfac = self.aq.T[self.layers] * self.res / self.wh
+            self.whfac = self.wh * np.ones(self.nlayers)
+        self.resfac = self.aq.T[self.layers] * self.res / self.whfac
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
@@ -340,7 +340,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
 
     def headinside(self, icp=0):
         hinside = self.model.head(self.xc[icp], self.yc[icp])[self.layers[0]] - \
-                  np.sum(self.strengthinf[icp] * self.parameters[:, 0]) * self.res / self.wh
+                  np.sum(self.strengthinf[icp] * self.parameters[:, 0]) * self.res / self.whfac
         return hinside
 
 
@@ -448,12 +448,12 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
     def initialize(self):
         LineSinkHoBase.initialize(self)
         if self.wh == 'H':
-            self.wh = self.aq.Haq[self.layers]
+            self.whfac = self.aq.Haq[self.layers]
         elif self.wh == '2H':
-            self.wh = 2.0 * self.aq.Haq[self.layers]
+            self.whfac = 2.0 * self.aq.Haq[self.layers]
         elif np.isscalar(self.wh):
-            self.wh = self.wh * np.ones(self.nlayers)
-        self.resfac = np.tile(self.res / self.wh, self.ncp) * self.strengthinf
+            self.whfac = self.wh * np.ones(self.nlayers)
+        self.resfac = np.tile(self.res / self.whfac, self.ncp) * self.strengthinf
         self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns)
         if len(self.hls) == 1:
             self.hc = self.hls * np.ones(self.nparam)
@@ -838,19 +838,19 @@ class HeadLineSinkString(LineSinkStringBase2):
         #TO DO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
 
     def initialize(self):
-        if len(self.hls) == 1:
-            self.hls = self.hls * np.ones(self.nls)
-        elif len(self.hls) == 2:
+        if len(self.hls) == 1:  # one value
+            self.hls = self.hls * np.ones(self.nls + 1)  # at all nodes
+        elif len(self.hls) == 2:  # values at beginning and end
             L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
             s = np.hstack((0, np.cumsum(L)))
             self.hls = np.interp(s, [0, s[-1]], self.hls)
-        elif len(self.hls) == len(self.x):
+        elif len(self.hls) == len(self.x):  # values at all nodes may contain nan values
             if np.isnan(self.hls).any():
                 L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
                 s = np.hstack((0, np.cumsum(L)))
                 self.hls = np.interp(s, s[~np.isnan(self.hls)], self.hls[~np.isnan(self.hls)])
         else:
-            print('Error: hls entry not supported')
+            print('Error: hls entry not supported in HeadLineSinkString')
         self.lslist = []  # start with empty list
         for i in range(self.nls):
             if self.label is not None:
