@@ -154,7 +154,7 @@ def compute_z1z2(xy):
     angle = np.sum(np.log(bigZmin1 / bigZplus1).imag)
     if angle < np.pi:  # reverse order
         z1 = z1[::-1]
-        z2 = z2[::-1]
+        z2 = z1[index]
     return z1, z2
 
 
