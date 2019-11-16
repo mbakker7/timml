@@ -119,8 +119,9 @@ class LineDoubletHoBase(Element):
                                                        np.newaxis, :]
         return rv
 
-    def plot(self):
-        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
     """
@@ -294,8 +295,9 @@ class LineDoubletStringBase(Element):
         rv.shape = (2, self.nparam, aq.naq)
         return rv
     
-    def plot(self):
-        plt.plot(self.x, self.y, 'k')
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot(self.x, self.y, 'k')
 
 
 class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
