@@ -136,7 +136,6 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.wh = wh
         self.addtomodel = addtomodel
         if self.addtomodel: self.model.add_element(self)
-        # self.xa,self.ya,self.xb,self.yb,self.np = np.zeros(1),np.zeros(1),np.zeros(1),np.zeros(1),np.zeros(1,'i')  # needed to call bessel.circle_line_intersection
         if self.model.f2py:
             self.bessel = besselaesnew.besselaesnew
         else:
@@ -174,8 +173,8 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             pot = np.zeros(aq.naq)
-            pot[:] = self.bessel.potbeslsho(float(x), float(y), self.z1, self.z2, aq.lab, 0,
-                                            aq.ilap, aq.naq)
+            pot[:] = self.bessel.potbeslsho(float(x), float(y), self.z1,
+                self.z2, aq.lab, 0, aq.ilap, aq.naq)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
 
@@ -185,8 +184,8 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             qxqy = np.zeros((2, aq.naq))
-            qxqy[:, :] = self.bessel.disbeslsho(float(x), float(y), self.z1, self.z2, aq.lab,
-                                                0, aq.ilap, aq.naq)
+            qxqy[:, :] = self.bessel.disbeslsho(float(x), float(y), self.z1,
+                self.z2, aq.lab, 0, aq.ilap, aq.naq)
             rv[0] = self.aq.coef[self.layers] * qxqy[0]
             rv[1] = self.aq.coef[self.layers] * qxqy[1]
         return rv
@@ -197,8 +196,9 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         Q[self.layers] = self.parameters[:, 0] * self.L
         return Q
 
-    def plot(self):
-        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
 class HeadLineSinkZero(LineSinkBase, HeadEquation):
     def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, hls=1.0, \
@@ -250,11 +250,13 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
+        #bchanged minus to plus
         self.theta_norm_out = np.arctan2(self.y2 - self.y1,
-                                       self.x2 - self.x1) + np.pi / 2.0  # changed minus to plus
+                                       self.x2 - self.x1) + np.pi / 2.0
         self.cosnorm = np.cos(self.theta_norm_out) * np.ones(self.ncp)
         self.sinnorm = np.sin(self.theta_norm_out) * np.ones(self.ncp)
-        self.strengthinf = strengthinf_controlpoints(self.ncp, self.nlayers) # array of ncp by nlayers * (order + 1)
+        # array of ncp by nlayers * (order + 1)
+        self.strengthinf = strengthinf_controlpoints(self.ncp, self.nlayers) 
         #
         self.xc, self.yc = controlpoints(self.ncp, self.z1, self.z2, eps=0)
         if self.zcinout is not None:
@@ -291,8 +293,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             # clever way of using a reshaped rv here
             potrv = rv.reshape((self.order + 1, self.nlayers, aq.naq))
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = self.bessel.potbeslsv(float(x), float(y), self.z1, self.z2, aq.lab,
-                                              self.order, aq.ilap, aq.naq)
+            pot[:, :] = self.bessel.potbeslsv(float(x), float(y), self.z1,
+                self.z2, aq.lab, self.order, aq.ilap, aq.naq)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
         return rv
 
@@ -311,16 +313,17 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if aq == self.aq:
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers, aq.naq))
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = self.bessel.disbeslsv(float(x), float(y), self.z1, self.z2, aq.lab,
-                                               self.order, aq.ilap, aq.naq)
+            qxqy[:, :] = self.bessel.disbeslsv(float(x), float(y), self.z1,
+                self.z2, aq.lab, self.order, aq.ilap, aq.naq)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
                                                        np.newaxis, :]
             qxqyrv[1, :] = self.aq.coef[self.layers] * qxqy[self.order + 1:,
                                                        np.newaxis, :]
         return rv
 
-    def plot(self):
-        plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot([self.x1, self.x2], [self.y1, self.y2], 'k')
 
     def dischargeinf(self):
         # returns the unit contribution to the discharge in each layer
@@ -339,52 +342,11 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         return rv
 
     def headinside(self, icp=0):
-        hinside = self.model.head(self.xc[icp], self.yc[icp])[self.layers[0]] - \
-                  np.sum(self.strengthinf[icp] * self.parameters[:, 0]) * self.res / self.whfac
+        hinside = \
+            self.model.head(self.xc[icp], self.yc[icp])[self.layers[0]] \
+            - np.sum(self.strengthinf[icp] * self.parameters[:, 0]) \
+            * self.res / self.whfac
         return hinside
-
-
-    #def discharge(self):
-    #    # returns the discharge in each layer
-    #    rv = np.zeros(self.aq.naq)
-    #    Qdisinf = np.zeros((self.order + 1, self.nlayers))
-    #    for n in range(self.order + 1):
-    #        Qdisinf[n] =  (1 ** (n + 1) - (-1) ** (n + 1)) / (n + 1)
-    #    Qls = self.parameters[:, 0] * self.L / 2 * Qdisinf.ravel()
-    #    rv[self.layers] = np.sum(Qls.reshape(self.order + 1, self.nlayers), 0)
-    #    return rv
-
-    #def strength()
-
-#class HeadLineSinkHoOld(LineSinkHoBase, PotentialEquation):
-#    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, \
-#                 hls=1.0, res=0, wh=1, order=0, layers=0, label=None, name='HeadLineSinkHoOld', addtomodel=True):
-#        self.storeinput(inspect.currentframe())
-#        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0, \
-#                                layers=layers, order=order,
-#                                name='name', label=label, \
-#                                addtomodel=addtomodel)
-#        self.hc = hls
-#        self.res = res
-#        self.wh = wh
-#        self.nunknowns = self.nparam
-#
-#    def initialize(self):
-#        LineSinkHoBase.initialize(self)
-#        if self.wh == 'H':
-#            self.wh = self.aq.Haq[self.layers]
-#        elif self.wh == '2H':
-#            self.wh = 2.0 * self.aq.Haq[self.layers]
-#        elif np.isscalar(self.wh):
-#            self.wh = self.wh * np.ones(self.nlayers)
-#        resfac = self.aq.T[self.layers] * self.res / self.wh
-#        self.resfac = np.tile(resfac, self.ncp) * self.strengthinf
-#        self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns)
-#        self.pc = np.tile(self.hc * self.aq.T[self.layers], self.ncp)  # Needed in solving
-#        self.hc2 = self.hc * np.ones(self.nlayers * self.ncp)
-#
-#    def setparams(self, sol):
-#        self.parameters[:, 0] = sol
 
 class HeadLineSink(LineSinkHoBase, HeadEquation):
     """
@@ -562,9 +524,11 @@ class LineSinkStringBase(Element):
                 lslabel = label + '_' + str(i)
             else:
                 lslabel = label
-            self.lslist.append(LineSinkHoBase(model, \
-                x1=self.x[i], y1=self.y[i], x2=self.x[i + 1], y2=self.y[i + 1],
-                Qls=0.0, layers=layers, order=order, label=lslabel, addtomodel=False, aq=aq))
+            self.lslist.append(LineSinkHoBase(model,
+                x1=self.x[i], y1=self.y[i], 
+                x2=self.x[i + 1], y2=self.y[i + 1],
+                Qls=0.0, layers=layers, order=order, label=lslabel,
+                addtomodel=False, aq=aq))
 
     def __repr__(self):
         return self.name + ' with nodes ' + str(self.xy)
@@ -629,19 +593,22 @@ class LineSinkStringBase(Element):
         rv.shape = (2, self.nparam, aq.naq)
         return rv
 
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer,
+                    direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
         message = None
         for ls in self.lslist:
-            changed, terminate, xyztnew, message = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction)
+            changed, terminate, xyztnew, message = ls.changetrace(
+                xyzt1, xyzt2, aq, layer, ltype, modellayer, direction)
             if changed or terminate:
                 return changed, terminate, xyztnew, message
         return changed, terminate, xyztnew, message
 
-    def plot(self):
-        plt.plot(self.x, self.y, 'k')
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot(self.x, self.y, 'k')
 
 class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
     def __init__(self, model, xy=[(-1, 0), (1, 0)], hls=0.0, \
@@ -661,7 +628,8 @@ class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
         if len(self.hls) == 1:
             self.pc = self.hls * self.aq.T[self.layers] * np.ones(self.nparam)
         elif len(self.hls) == self.nls:  # head specified at centers
-            self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.layers]).flatten()
+            self.pc = (self.hls[:, np.newaxis] *
+                       self.aq.T[self.layers]).flatten()
         elif len(self.hls) == 2:
             L = np.array([ls.L for ls in self.lslist])
             Ltot = np.sum(L)
@@ -670,7 +638,8 @@ class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
             for i in range(1, self.nls):
                 xp[i] = xp[i - 1] + 0.5 * (L[i - 1] + L[i])
             self.hls = np.interp(xp, [0, Ltot], self.hls)
-            self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.layers]).flatten()
+            self.pc = (self.hls[:, np.newaxis] *
+                       self.aq.T[self.layers]).flatten()
         else:
             print('Error: hls entry not supported')
         self.resfac = 0.0
@@ -681,7 +650,8 @@ class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
 class LineSinkStringBase2(Element):
     '''
     Alternative implementation that loops through line-sinks to build equation
-    Has the advantage that it is easier to have different line-sinks in different layers and/or aquifers
+    Has the advantage that it is easier to have different line-sinks in
+    different layers and/or aquifers
     '''
     def __init__(self, model, xy, closed=False, layers=0, order=0,
                  name='LineSinkStringBase', label=None, aq=None):
@@ -771,19 +741,23 @@ class LineSinkStringBase2(Element):
             #rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1), self.nlayers), 0)
         return rv
 
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer,
+                    direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
         message = None
         for ls in self.lslist:
-            changed, terminate, xyztnew, message = ls.changetrace(xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax)
+            changed, terminate, xyztnew, message = ls.changetrace(
+                xyzt1, xyzt2, aq, layer, ltype, modellayer, direction,
+                hstepmax)
             if changed or terminate:
                 return changed, terminate, xyztnew, message
         return changed, terminate, xyztnew, message
 
-    def plot(self):
-        plt.plot(self.x, self.y, 'k')
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot(self.x, self.y, 'k')
 
 class HeadLineSinkString(LineSinkStringBase2):
     """

@@ -8,9 +8,8 @@ plt.rcParams["contour.negative_linestyle"] = "solid"
 
 
 class PlotTim:
-    def plot(
-        self, win=None, newfig=True, figsize=None, orientation="hor", topfigfrac=0.8
-    ):
+    def plot(self, win=None, newfig=True, figsize=None, orientation="hor",
+             topfigfrac=0.8, layer=None):
         """Plot layout
 
         Parameters
@@ -50,7 +49,7 @@ class PlotTim:
         if ax1 is not None:
             plt.sca(ax1)
             for e in self.elementlist:
-                e.plot()
+                e.plot(layer=layer)
             if orientation[:3] == "hor":
                 plt.axis("scaled")
             elif orientation == "both":
@@ -61,29 +60,16 @@ class PlotTim:
             plt.sca(ax2)
             for i in range(self.aq.nlayers):
                 if self.aq.ltype[i] == "l":
-                    plt.axhspan(
-                        ymin=self.aq.z[i + 1], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
-                    )
+                    plt.axhspan(ymin=self.aq.z[i + 1], ymax=self.aq.z[i],
+                                color=[0.8, 0.8, 0.8])
             for i in range(1, self.aq.nlayers):
                 if self.aq.ltype[i] == "a" and self.aq.ltype[i - 1] == "a":
-                    plt.axhspan(
-                        ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
-                    )
+                    plt.axhspan(ymin=self.aq.z[i], ymax=self.aq.z[i], 
+                                color=[0.8, 0.8, 0.8])
 
-    def contour(
-        self,
-        win,
-        ngr=20,
-        layers=0,
-        levels=20,
-        layout=True,
-        labels=True,
-        decimals=0,
-        color=None,
-        newfig=True,
-        figsize=None,
-        legend=True,
-    ):
+    def contour(self, win, ngr=20, layers=0, levels=20, layout=True,
+                labels=True, decimals=0, color=None, newfig=True,
+                figsize=None, legend=True):
         """Contour plot
 
         Parameters
@@ -93,7 +79,8 @@ class PlotTim:
             [x1, x2, y1, y2]
         ngr : scalar, tuple or list
             if scalar: number of grid points in x and y direction
-            if tuple or list: nx, ny, number of grid points in x and y direction
+            if tuple or list: nx, ny, number of grid points in x and y
+            directions
         layers : integer, list or array
             layers for which grid is returned
         levels : integer or array (default 20)
@@ -152,23 +139,12 @@ class PlotTim:
             plt.legend(cscollectionlist, legendlist)
         plt.axis("scaled")
         if layout:
-            self.plot(win=[x1, x2, y1, y2], newfig=False)
+            self.plot(win=[x1, x2, y1, y2], newfig=False, layer=layers)
         # plt.show()
 
-    def vcontour(
-        self,
-        win,
-        n,
-        levels,
-        labels=False,
-        decimals=0,
-        color=None,
-        vinterp=True,
-        nudge=1e-6,
-        newfig=True,
-        figsize=None,
-        layout=True,
-    ):
+    def vcontour(self, win, n, levels, labels=False, decimals=0, color=None,
+                 vinterp=True, nudge=1e-6, newfig=True, figsize=None,
+                 layout=True):
         """Vertical contour
         """
         x1, x2, y1, y2 = win
@@ -197,25 +173,11 @@ class PlotTim:
         if layout:
             self.plot(win=[x1, x2, y1, y2], orientation="ver", newfig=False)
 
-    def tracelines(
-        self,
-        xstart,
-        ystart,
-        zstart,
-        hstepmax,
-        vstepfrac=0.2,
-        tmax=1e12,
-        nstepmax=100,
-        silent=".",
-        color=None,
-        orientation="hor",
-        win=[-1e30, 1e30, -1e30, 1e30],
-        newfig=False,
-        figsize=None,
-        *,
-        return_traces=False,
-        metadata=False,
-    ):
+    def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
+                   tmax=1e12, nstepmax=100, silent=".", color=None,
+                   orientation="hor", win=[-1e30, 1e30, -1e30, 1e30],
+                   newfig=False, figsize=None, *, return_traces=False,
+                   metadata=False):
         """Draw trace lines
         """
         if color is None:
@@ -228,9 +190,8 @@ class PlotTim:
             n = int(np.ceil(self.aq.naq / len(c)))
             c = n * c
         fig = plt.gcf()
-        assert (
-            len(fig.axes) > 0
-        ), "Error: Need to specify axes in figure before invoking tracelines"
+        assert (len(fig.axes) > 0), \
+            "Error: Need to specify axes in figure before invoking tracelines"
         ax1 = None
         ax2 = None
         if orientation == "both":

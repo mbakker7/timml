@@ -197,27 +197,15 @@ class WellBase(Element):
         zstart = zstart * np.ones(nt)
         return xstart, ystart, zstart
 
-    def plot(self):
-        plt.plot(self.xw, self.yw, "k.")
+    def plot(self, layer=None):
+        if (layer is None) or (layer in self.layers):
+            plt.plot(self.xw, self.yw, "k.")
 
-    def plotcapzone(
-        self,
-        nt=10,
-        zstart=None,
-        hstepmax=20,
-        vstepfrac=0.2,
-        tmax=365,
-        nstepmax=100,
-        silent=".",
-        color=None,
-        orientation="hor",
-        win=[-1e30, 1e30, -1e30, 1e30],
-        newfig=False,
-        figsize=None,
-        *,
-        return_traces=False,
-        metadata=False
-    ):
+    def plotcapzone(self, nt=10, zstart=None, hstepmax=20, vstepfrac=0.2,
+                    tmax=365, nstepmax=100, silent=".", color=None,
+                    orientation="hor", win=[-1e30, 1e30, -1e30, 1e30],
+                    newfig=False, figsize=None, *, return_traces=False,
+                    metadata=False):
         """Plot a capture zone
 
         Parameters
