@@ -54,7 +54,8 @@ class Model(PlotTim):
                 from .src import besselaesnew
                 self.f2py = True
             except:
-                print('FORTRAN extension not found while f2py=True. Using Numba instead')
+                print('FORTRAN extension not found while f2py=True')
+                print('Using Numba instead')
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
@@ -120,7 +121,8 @@ class Model(PlotTim):
         -------
         
         h : array length `naq` or `len(layers)`
-            head in all `layers` (if not `None`), or all layers of aquifer (otherwise)
+            head in all `layers` (if not `None`), 
+            or all layers of aquifer (otherwise)
         """
         
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
@@ -400,8 +402,8 @@ class ModelMaq(Model):
         Elevation of tops and bottoms of the aquifers from the top down.
         Leaky layers may have zero thickness.
            * if topboundary='conf': length is 2 * number of aquifers
-           * if topboundary='semi': length is 2 * number of aquifers + 1 as top
-             of leaky layer on top of systems needs to be specified
+           * if topboundary='semi': length is 2 * number of aquifers + 1 
+             as top of leaky layer on top of systems needs to be specified
     c : float, array or list
         Resistance of leaky layers from the top down.
            * if float, resistance is the same for all leaky layers
@@ -424,7 +426,8 @@ class ModelMaq(Model):
     
     """
     
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf', hstar=None, f2py=False):
+    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf',
+                 hstar=None, f2py=False):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
         Model.__init__(self, kaq, c, z, npor, ltype, f2py)
@@ -464,11 +467,11 @@ class Model3D(Model):
         indicating whether the top is confined ('conf') or
         semi-confined ('semi')
     topres : float
-        resistance of top semi-confining layer, only read if topboundary='semi'
+        resistance of top semi-confining layer (read if topboundary='semi')
     topthick: float
-        thickness of top semi-confining layer, only read if topboundary='semi'
+        thickness of top semi-confining layer (read if topboundary='semi')
     hstar : float or None (default is None)
-        head value above semi-confining top, only read if topboundary='semi'
+        head value above semi-confining top (read if topboundary='semi')
 
     Examples
     --------
@@ -476,14 +479,17 @@ class Model3D(Model):
     
     """
     
-    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3, topboundary='conf', topres=0, topthick=0, hstar=0, f2py=False):
+    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3,
+                 topboundary='conf', topres=0, topthick=0, hstar=0,
+                 f2py=False):
         '''Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top
         hstar: head above top'''
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
+        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary,
+                                       topres)
         if topboundary == 'semi':
             z = np.hstack((z[0] + topthick, z))
         Model.__init__(self, kaq, c, z, npor, ltype, f2py)
