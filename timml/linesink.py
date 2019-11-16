@@ -694,9 +694,11 @@ class LineSinkStringBase2(Element):
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
         self.nls = len(self.x) - 1
         if self.layers.ndim == 1:
-            self.layers = self.layers[:, np.newaxis]
-        if len(self.layers) != self.nls:
-            self.layers = np.tile(self.layers, (self.nls, 1))
+            if len(self.layers) == self.nls:
+                self.layers = self.layers[:, np.newaxis]
+            else:  # entire string in these layers
+                self.layers = self.layers * \
+                    np.ones((self.nls, len(self.layers)), dtype='int')
         self.nlayers = len(self.layers[0])
 
     def __repr__(self):
@@ -713,7 +715,7 @@ class LineSinkStringBase2(Element):
             aq.add_element(self)
         # Same order for all elements in string
         #self.ncp = sum(ls.ncp for ls in self.lslist)
-        self.nparam = sum(ls.ncp for ls in self.lslist)
+        self.nparam = sum(ls.nparam for ls in self.lslist)
         self.nunknowns = self.nparam
         # where are self.xls and self.yls used? self.xls and self.yls removed
         self.parameters = np.zeros((self.nparam, 1))
@@ -841,14 +843,17 @@ class HeadLineSinkString(LineSinkStringBase2):
         if len(self.hls) == 1:  # one value
             self.hls = self.hls * np.ones(self.nls + 1)  # at all nodes
         elif len(self.hls) == 2:  # values at beginning and end
-            L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
+            L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 
+                        + (self.y[1:] - self.y[:-1]) ** 2)
             s = np.hstack((0, np.cumsum(L)))
             self.hls = np.interp(s, [0, s[-1]], self.hls)
-        elif len(self.hls) == len(self.x):  # values at all nodes may contain nan values
+        elif len(self.hls) == len(self.x):  # nodes may contain nan values
             if np.isnan(self.hls).any():
-                L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
+                L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 
+                            + (self.y[1:] - self.y[:-1]) ** 2)
                 s = np.hstack((0, np.cumsum(L)))
-                self.hls = np.interp(s, s[~np.isnan(self.hls)], self.hls[~np.isnan(self.hls)])
+                self.hls = np.interp(s, s[~np.isnan(self.hls)],
+                                     self.hls[~np.isnan(self.hls)])
         else:
             print('Error: hls entry not supported in HeadLineSinkString')
         self.lslist = []  # start with empty list
@@ -857,9 +862,12 @@ class HeadLineSinkString(LineSinkStringBase2):
                 lslabel = self.label + '_' + str(i)
             else:
                 lslabel = self.label
-            self.lslist.append(HeadLineSink(self.model, \
-                x1=self.x[i], y1=self.y[i], x2=self.x[i + 1], y2=self.y[i + 1], 
-                hls=self.hls[i:i + 2], res=self.res, wh=self.wh, layers=self.layers[i],
+            self.lslist.append(
+                HeadLineSink(self.model,
+                x1=self.x[i], y1=self.y[i], 
+                x2=self.x[i + 1], y2=self.y[i + 1], 
+                hls=self.hls[i:i + 2], res=self.res, 
+                wh=self.wh, layers=self.layers[i],
                 order=self.order, label=lslabel, addtomodel=False))
         LineSinkStringBase2.initialize(self)
 

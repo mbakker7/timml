@@ -26,17 +26,10 @@ class PlotTim:
             ax1 = None
             ax2 = None
             if orientation == "both":
-                ax1 = plt.axes(
-                    [
-                        0.125,
-                        0.18 + (1 - topfigfrac) * 0.7,
-                        (0.9 - 0.125),
-                        topfigfrac * 0.7,
-                    ]
-                )
-                ax2 = plt.axes(
-                    [0.125, 0.11, (0.9 - 0.125), (1 - topfigfrac) * 0.7], sharex=ax1
-                )
+                ax1 = plt.axes([0.125, 0.18 + (1 - topfigfrac) * 0.7,
+                                (0.9 - 0.125), topfigfrac * 0.7])
+                ax2 = plt.axes([0.125, 0.11, (0.9 - 0.125), 
+                                (1 - topfigfrac) * 0.7], sharex=ax1)
             elif orientation[:3] == "hor":
                 ax1 = plt.subplot()
             elif orientation[:3] == "ver":
