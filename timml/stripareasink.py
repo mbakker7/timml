@@ -65,7 +65,7 @@ class StripAreaSinkInhom(Element):
 
     def qztop(self, x, y):
         rv = 0.0
-        if np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2) <= self.R:
+        if (x > self.xleft) and (x < self.xright):
             rv = -self.parameters[0, 0]  # minus cause the parameter is the infiltration rate
         return rv
 
@@ -162,7 +162,7 @@ class StripAreaSink(Element):
 
     def qztop(self, x, y):
         rv = 0.0
-        if np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2) <= self.R:
+        if (x > self.xleft) and (x < self.xright):
             rv = -self.parameters[0, 0]  # minus cause the parameter is the infiltration rate
         return rv
 
