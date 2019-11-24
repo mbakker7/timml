@@ -8,7 +8,7 @@ from .element import Element
 from .equation import MscreenWellEquation, PotentialEquation
 from .trace import timtracelines
 
-__all__ = ["WellBase", "Well", "HeadWell"]
+__all__ = ["Well", "HeadWell"]
 
 
 class WellBase(Element):
