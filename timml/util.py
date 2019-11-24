@@ -254,21 +254,9 @@ class PlotTim:
         if return_traces:
             return traces
 
-    def vcontoursf1D(
-        self,
-        x1,
-        x2,
-        nx,
-        levels,
-        labels=False,
-        decimals=0,
-        color=None,
-        nudge=1e-6,
-        newfig=True,
-        figsize=None,
-        layout=True,
-        ax=None,
-    ):
+    def vcontoursf1D(self, x1, x2, nx, levels, labels=False, decimals=0,
+                     color=None, nudge=1e-6, newfig=True, figsize=None,
+                     layout=True, ax=None):
         """
         Vertical contour for 1D model
 

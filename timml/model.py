@@ -387,6 +387,28 @@ class Model(PlotTim):
         if sendback:
             return sol
         return
+    
+    def write(self):
+        rv = self.modelname + ' = ' + self.name + '(\n'
+        for key in self.inputargs[1:]:  # The first argument (self) is ignored
+            if isinstance(self.inputvalues[key], np.ndarray):
+                rv += key + ' = ' + np.array2string(self.inputvalues[key], 
+                                                    separator=',') + ',\n'
+            elif isinstance(self.inputvalues[key],str):                
+                rv += key + " = '" + self.inputvalues[key] + "',\n"
+            else:
+                rv += key + ' = ' + str(self.inputvalues[key]) + ',\n'
+        rv += ')\n'
+        return rv
+    
+    def writemodel(self, fname):
+        self.initialize()  # So that the model can be written without solving first
+        f = open(fname, 'w')
+        f.write('from timml import *\n')
+        f.write(self.write())
+        for e in self.elementlist:
+            f.write(e.write())
+        f.close()
         
 class ModelMaq(Model):
     """

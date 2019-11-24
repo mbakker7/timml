@@ -8,7 +8,6 @@ __all__ = ['Constant', 'ConstantStar']
 class ConstantBase(Element, PotentialEquation):
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, \
                  name='ConstantBase', label=None, aq=None):
-        self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=1, layers=layer, \
                          name=name, label=label)
         self.nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers

@@ -124,3 +124,16 @@ class Element:
 
     def plot(self, layer):
         pass
+    
+    def write(self):
+        rv = self.name + '(' + self.model.modelname + ',\n'
+        for key in self.inputargs[2:]:  # The first two are ignored
+            if isinstance(self.inputvalues[key], np.ndarray):
+                rv += key + ' = ' + np.array2string(self.inputvalues[key],
+                                                    separator=',') + ',\n'
+            elif isinstance(self.inputvalues[key], str):                
+                rv += key + " = '" + self.inputvalues[key] + "',\n"
+            else:
+                rv += key + ' = ' + str(self.inputvalues[key]) + ',\n'
+        rv += ')\n'
+        return rv
