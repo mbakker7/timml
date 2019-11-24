@@ -2,7 +2,7 @@ import numpy as np
 import inspect  # Used for storing the input
 from .element import Element
 
-__all__ = ['StripAreaSink']
+__all__ = ["StripAreaSinkInhom", "StripAreaSink"]
 
 class StripAreaSinkInhom(Element):
     """Create a strip area-sink in combination with an inhomogeneity.
@@ -20,6 +20,7 @@ class StripAreaSinkInhom(Element):
 
     """
     def __init__(self, model, xleft=-1, xright=1, N=0.001, layer=0, name='StripAreaSink', label=None):
+        self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \
                          name=name, label=label)
         self.xleft = xleft
@@ -97,6 +98,7 @@ class StripAreaSinkInhom(Element):
 
 class StripAreaSink(Element):
     def __init__(self, model, xleft=-1, xright=1, N=0.001, layer=0, name='StripAreaSink', label=None):
+        self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \
                          name=name, label=label)
         self.xleft = xleft
