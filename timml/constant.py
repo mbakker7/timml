@@ -92,6 +92,7 @@ class ConstantInside(Element):
     # Sets constant at points xc, yc equal to the average of the potential of all elements at points xc, yc
     # Used for the inside of an inhomogeneity
     def __init__(self, model, xc=0, yc=0, label=None):
+        self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=1,
                          layers=list(range(model.aq.naq)), \
                          name='ConstantInside', label=label)
@@ -146,10 +147,9 @@ class ConstantInside(Element):
         self.parameters[:, 0] = sol
 
 
-#class ConstantStar(Element, PotentialEquation):
-# I don't think we need the equation
 class ConstantStar(Element):
     def __init__(self, model, hstar=0.0, label=None, aq=None):
+        self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=0, \
                          name='ConstantStar', label=label)
         assert hstar is not None, 'a value for hstar needs to be specified'
