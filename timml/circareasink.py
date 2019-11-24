@@ -6,7 +6,8 @@ from scipy.special import k0, k1, i0, i1
 __all__ = ['CircAreaSink']
 
 class CircAreaSink(Element):
-    def __init__(self, model, xc=0, yc=0, R=1, N=0.001, layer=0, name='CircAreasink', label=None):
+    def __init__(self, model, xc=0, yc=0, R=1, N=0.001, layer=0, name='CircAreaSink', label=None):
+        self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \
                          name=name, label=label)
         self.xc = xc
