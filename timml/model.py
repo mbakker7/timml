@@ -232,9 +232,25 @@ class Model(PlotTim):
         return h
     
     def disvecalongline(self, x, y, layers=None):
-        '''Returns Qx[Nlayers,len(x)], Qy[Nlayers,len(x)]
-        Assumes same number of layers for each x and y
-        layers may be None or list of layers for which head is computed'''
+        """Discharge vector along a line
+        
+        Parameters
+        ----------
+        x: array
+            x values of line
+        y: array
+            y values of line
+        layers: integer, list, or array
+                Assumes same number of layers for each x and y
+                layers may be None or layers for which head is computed
+        
+        Returns
+        -------
+        Qx: array size `Nlayers, len(x)` 
+        Qy: array size `Nlayers, len(x)`
+
+        """
+        
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -282,7 +298,7 @@ class Model(PlotTim):
         return np.array([vx, vy, vz])
                
     def solve(self, printmat=0, sendback=0, silent=False):
-        '''Compute solution'''
+        """Compute solution"""
         # Initialize elements
         self.initialize()
         # Compute number of equations
@@ -322,10 +338,11 @@ class Model(PlotTim):
         return
 
     def solve_mp(self, nproc=4, printmat=0, sendback=0, silent=False):
-        '''Compute solution, multiprocessing implementation.
+        """Compute solution, multiprocessing implementation.
         Note: estimated speedup approximately by factor of
         number of physical cores. Virtual cores do not improve
-        calculation time.'''
+        calculation time.
+        """
         # Initialize elements
         self.initialize()
         # Compute number of equations
@@ -504,11 +521,6 @@ class Model3D(Model):
     def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3,
                  topboundary='conf', topres=0, topthick=0, hstar=0,
                  f2py=False):
-        '''Model3D
-        for semi-confined aquifers, set top equal to 'semi' and provide
-        topres: resistance of top
-        tophick: thickness of top
-        hstar: head above top'''
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary,
                                        topres)
