@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>timml.circareasink &#8212; TimML 5.0.0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -41,7 +40,31 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CircAreaSink&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="CircAreaSink"><a class="viewcode-back" href="../../areasinks/circareasink.html#timml.circareasink.CircAreaSink">[docs]</a><span class="k">class</span> <span class="nc">CircAreaSink</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to create a circular area-sink.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : Model object</span>
+<span class="sd">        model to which the element is added</span>
+<span class="sd">    xc : float</span>
+<span class="sd">        x-coordinate of center of area-sink</span>
+<span class="sd">    yc : float</span>
+<span class="sd">        y-coordinate of center of area-sink</span>
+<span class="sd">    R : float</span>
+<span class="sd">        radius of area-sink</span>
+<span class="sd">    N : float</span>
+<span class="sd">        uniform infiltration rate of area-sink (positive for water going into</span>
+<span class="sd">        the aquifer)</span>
+<span class="sd">    layer : int</span>
+<span class="sd">        layer where area-sink is applied (commonly layer 0, the top layer)</span>
+<span class="sd">    label : string or None (default: None)</span>
+<span class="sd">        label of the well</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">yc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;CircAreasink&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">Element</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">nparam</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nunknowns</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layer</span><span class="p">,</span> \
                          <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">xc</span>
@@ -93,7 +116,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">rv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">I1RK0r</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rv</span>
-    
+
     <span class="k">def</span> <span class="nf">disvecinf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparam</span><span class="p">,</span> <span class="n">aq</span><span class="o">.</span><span class="n">naq</span><span class="p">))</span>
@@ -127,7 +150,7 @@
             <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="s1">&#39;CircAreaSink should add constant inside inhomogeneity&#39;</span>
         <span class="k">return</span> <span class="n">rv</span>
-    
+
     <span class="k">def</span> <span class="nf">K1RI0r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rin</span><span class="p">):</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lab</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">islarge</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
@@ -144,7 +167,7 @@
                 <span class="n">r</span> <span class="o">=</span> <span class="n">rin</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">labsmall</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
                 <span class="n">rv</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">islarge</span> <span class="o">*</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k1Roverlab</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">i0</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rv</span>
-    
+
     <span class="k">def</span> <span class="nf">K1RI1r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rin</span><span class="p">):</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lab</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">islarge</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
@@ -161,7 +184,7 @@
                 <span class="n">r</span> <span class="o">=</span> <span class="n">rin</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">labsmall</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
                 <span class="n">rv</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">islarge</span> <span class="o">*</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k1Roverlab</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">i1</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rv</span>
-    
+
     <span class="k">def</span> <span class="nf">I1RK0r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rin</span><span class="p">):</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lab</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">islarge</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
@@ -178,7 +201,7 @@
                 <span class="n">r</span> <span class="o">=</span> <span class="n">rin</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">labsmall</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
                 <span class="n">rv</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">islarge</span> <span class="o">*</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i1Roverlab</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">k0</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rv</span>
-    
+
     <span class="k">def</span> <span class="nf">I1RK1r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rin</span><span class="p">):</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lab</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">islarge</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
@@ -195,7 +218,7 @@
                 <span class="n">r</span> <span class="o">=</span> <span class="n">rin</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">labsmall</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
                 <span class="n">rv</span><span class="p">[</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">islarge</span> <span class="o">*</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i1Roverlab</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">k1</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rv</span>
-    
+
     <span class="k">def</span> <span class="nf">qztop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">yc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">:</span>
@@ -206,6 +229,7 @@
         <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">xyztnew</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-8</span>
         <span class="n">r1sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyzt1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xyzt1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">yc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="n">r2sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyzt2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xyzt2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">yc</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
@@ -226,7 +250,7 @@
             <span class="n">yn</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span>
             <span class="n">zn</span> <span class="o">=</span> <span class="n">xyzt1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">xyzt2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">xyzt1</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
             <span class="n">xyztnew</span> <span class="o">=</span> <span class="n">xyzt1</span> <span class="o">+</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">xyzt2</span> <span class="o">-</span> <span class="n">xyzt1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">changed</span><span class="p">,</span> <span class="n">terminate</span><span class="p">,</span> <span class="n">xyztnew</span></div>
+        <span class="k">return</span> <span class="n">changed</span><span class="p">,</span> <span class="n">terminate</span><span class="p">,</span> <span class="n">xyztnew</span><span class="p">,</span> <span class="n">message</span></div>
 </pre></div>
 
           </div>
@@ -272,13 +296,11 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -291,8 +313,8 @@
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

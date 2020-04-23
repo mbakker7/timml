@@ -6,6 +6,29 @@ from scipy.special import k0, k1, i0, i1
 __all__ = ['CircAreaSink']
 
 class CircAreaSink(Element):
+    """
+    Class to create a circular area-sink.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xc : float
+        x-coordinate of center of area-sink
+    yc : float
+        y-coordinate of center of area-sink
+    R : float
+        radius of area-sink
+    N : float
+        uniform infiltration rate of area-sink (positive for water going into
+        the aquifer)
+    layer : int
+        layer where area-sink is applied (commonly layer 0, the top layer)
+    label : string or None (default: None)
+        label of the well
+
+    """
+    
     def __init__(self, model, xc=0, yc=0, R=1, N=0.001, layer=0, name='CircAreasink', label=None):
         self.storeinput(inspect.currentframe())
         Element.__init__(self, model, nparam=1, nunknowns=0, layers=layer, \

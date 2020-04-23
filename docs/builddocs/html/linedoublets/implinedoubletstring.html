@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>String of impermeable wall segments &#8212; TimML 5.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Leaky wall" href="leakylinedoublet.html" />
@@ -38,31 +37,27 @@
 <h1>String of impermeable wall segments<a class="headerlink" href="#string-of-impermeable-wall-segments" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.linedoublet.ImpLineDoubletString">
-<em class="property">class </em><code class="descclassname">timml.linedoublet.</code><code class="descname">ImpLineDoubletString</code><span class="sig-paren">(</span><em>model, xy=[(-1, 0), (1, 0)], layers=0, order=0, label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoubletString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoubletString" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">timml.linedoublet.</code><code class="sig-name descname">ImpLineDoubletString</code><span class="sig-paren">(</span><em class="sig-param">model, xy=[(-1, 0), (1, 0)], layers=0, order=0, label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linedoublet.html#ImpLineDoubletString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linedoublet.ImpLineDoubletString" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a string of impermeable wall segements consisting
 of line-doublets</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
-<li><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
-the segements in the string</li>
-<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</p></li>
+<li><p><strong>xy</strong> (<em>array</em><em> or </em><em>list</em>) – list or array of (x,y) pairs of coordinates of end-points of
+the segements in the string</p></li>
+<li><p><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
-if list or array: element is placed in all these layers</li>
-<li><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order of potential jump along line-doublet
-(head jump if transmissivity is equal on each side of wall)</li>
-<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+if list or array: element is placed in all these layers</p></li>
+<li><p><strong>order</strong> (<em>int</em><em> (</em><em>default is 0</em><em>)</em>) – polynomial order of potential jump along line-doublet
+(head jump if transmissivity is equal on each side of wall)</p></li>
+<li><p><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="implinedoublet.html#timml.linedoublet.ImpLineDoublet" title="timml.linedoublet.ImpLineDoublet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImpLineDoublet</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="implinedoublet.html#timml.linedoublet.ImpLineDoublet" title="timml.linedoublet.ImpLineDoublet"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImpLineDoublet</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -130,13 +125,11 @@ if list or array: element is placed in all these layers</li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -149,8 +142,8 @@ if list or array: element is placed in all these layers</li>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/linedoublets/implinedoubletstring.rst.txt"

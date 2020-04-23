@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Starting a Model &#8212; TimML 5.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ModelMaq" href="modelmaq.html" />
@@ -42,9 +41,9 @@ The top of the system can be either an aquifer or a leaky layer. The head is com
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ml</span> <span class="o">=</span> <span class="n">ModelMaq</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="figure" id="id1">
+<div class="figure align-default" id="id1">
 <img alt="../_images/modelmaq.png" src="../_images/modelmaq.png" />
-<p class="caption"><span class="caption-text">A <cite>ModelMaq</cite> example with three aquifers and two leaky layers</span></p>
+<p class="caption"><span class="caption-text">A <cite>ModelMaq</cite> example with three aquifers and two leaky layers</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
 <p>2. <a class="reference internal" href="model3d.html#timml.model.Model3D" title="timml.model.Model3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model3D</span></code></a>, which is a model consisting of a stack of aquifer layers. The resistance between the aquifer layers is computed
 as the resistance from the middle of one layer to the middle of the next layer. Vertical anisotropy can be specified. The system
@@ -52,9 +51,9 @@ may be bounded on top by a leaky layer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Model3D</span><span class="p">(</span><span class="n">kaq</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.0025</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="figure" id="id2">
+<div class="figure align-default" id="id2">
 <img alt="../_images/model3d.png" src="../_images/model3d.png" />
-<p class="caption"><span class="caption-text">A  <cite>Model3D</cite> example consisting of five layers all treated as aquifers and a vertical anisotropy of 0.1</span></p>
+<p class="caption"><span class="caption-text">A  <cite>Model3D</cite> example consisting of five layers all treated as aquifers and a vertical anisotropy of 0.1</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>3. <a class="reference internal" href="model.html#timml.model.Model" title="timml.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>, which is a model consisting of an arbitrary sequence of leaky layers and aquifers. The resistance between all aquifers needs to be specified by the user.
 This is the most general option, but requires a bit more input.</p>
@@ -62,9 +61,9 @@ This is the most general option, but requires a bit more input.</p>
       <span class="n">npor</span><span class="o">=</span><span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">ltype</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="figure" id="id3">
+<div class="figure align-default" id="id3">
 <img alt="../_images/model.png" src="../_images/model.png" />
-<p class="caption"><span class="caption-text">A <cite>Model</cite> example with four aquifers and one leaky layer</span></p>
+<p class="caption"><span class="caption-text">A <cite>Model</cite> example with four aquifers and one leaky layer</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
@@ -119,13 +118,11 @@ This is the most general option, but requires a bit more input.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -138,8 +135,8 @@ This is the most general option, but requires a bit more input.</p>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/models/modelindex.rst.txt"

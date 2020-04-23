@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Infinitely long line-sink with given head &#8212; TimML 5.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -13,7 +11,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Infinitely long leaky or impermeable wall" href="leakylinedoublet1d.html" />
@@ -38,30 +37,26 @@
 <h1>Infinitely long line-sink with given head<a class="headerlink" href="#infinitely-long-line-sink-with-given-head" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="timml.linesink1d.HeadLineSink1D">
-<em class="property">class </em><code class="descclassname">timml.linesink1d.</code><code class="descname">HeadLineSink1D</code><span class="sig-paren">(</span><em>model</em>, <em>xls=0</em>, <em>hls=1</em>, <em>res=0</em>, <em>wh=1</em>, <em>layers=0</em>, <em>label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink1d.html#HeadLineSink1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink1d.HeadLineSink1D" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">timml.linesink1d.</code><code class="sig-name descname">HeadLineSink1D</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">xls=0</em>, <em class="sig-param">hls=1</em>, <em class="sig-param">res=0</em>, <em class="sig-param">wh=1</em>, <em class="sig-param">layers=0</em>, <em class="sig-param">label=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/linesink1d.html#HeadLineSink1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.linesink1d.HeadLineSink1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an infinitely long line-sink with a given head.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</li>
-<li><strong>xls</strong> (<em>scalar</em>) – x-location of line-sink</li>
-<li><strong>hls</strong> (<em>scalar</em>) – head in line-sink</li>
-<li><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</li>
-<li><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Model object</em>) – Model to which the element is added</p></li>
+<li><p><strong>xls</strong> (<em>scalar</em>) – x-location of line-sink</p></li>
+<li><p><strong>hls</strong> (<em>scalar</em>) – head in line-sink</p></li>
+<li><p><strong>res</strong> (<em>scalar</em><em> (</em><em>default is 0</em><em>)</em>) – resistance of line-sink</p></li>
+<li><p><strong>wh</strong> (<em>scalar</em><em> or </em><em>str</em>) – distance over which water enters line-sink
 if ‘H’: (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
 if ‘2H’: distance is twice the thickness of the aquifer layer (when flow comes from both sides)
-if scalar: the width of the stream that partially penetrates the aquifer layer</li>
-<li><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
+if scalar: the width of the stream that partially penetrates the aquifer layer</p></li>
+<li><p><strong>layers</strong> (<em>scalar</em><em>, </em><em>list</em><em> or </em><em>array</em>) – layer(s) in which element is placed
 if scalar: element is placed in this layer
-if list or array: element is placed in all these layers</li>
-<li><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</li>
+if list or array: element is placed in all these layers</p></li>
+<li><p><strong>label</strong> (<em>str</em><em> or </em><em>None</em>) – label of element</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -119,13 +114,11 @@ if list or array: element is placed in all these layers</li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -138,8 +131,8 @@ if list or array: element is placed in all these layers</li>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/xsection/headlinesink1d.rst.txt"
