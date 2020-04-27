@@ -162,8 +162,8 @@ class WellBase(Element):
         ----------
         nt : int
             number of path lines
-        zstart : scalar
-            starting elevation of the path lines
+        zstart : scalar or None
+            starting elevation of the path lines, middle of aquifer if None
         hstepmax : scalar
             maximum step in horizontal space
         vstepfrac : float
