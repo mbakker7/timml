@@ -472,9 +472,7 @@ class Model3D(Model):
         elevation of top of system followed by bottoms of all layers
         from the top down
         bottom of layer is automatically equal to top of layer below it
-        if topboundary='conf': length is number of layers + 1
-        if topboundary='semi': length is number of layers + 2 as top
-        of leaky layer on top of systems needs to be specified
+        length is number of aquifer layers + 1
     kzoverkh : float
         vertical anisotropy ratio vertical k divided by horizontal k
         if float, value is the same for all layers
