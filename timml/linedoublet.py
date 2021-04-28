@@ -66,7 +66,7 @@ class LineDoubletHoBase(Element):
             self.xcout, self.ycout = controlpoints(self.ncp, self.z1, self.z2,
                                                    eps=-1e-6)
         if self.aq is None:
-            self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
+            self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         self.resfac = self.aq.T[self.layers] / self.res
         if self.addtomodel:
             self.aq.add_element(self)
@@ -262,8 +262,8 @@ class LineDoubletStringBase(Element):
             self.xld[i, :] = [ld.x1, ld.x2]
             self.yld[i, :] = [ld.y1, ld.y2]
         if self.aq is None:
-            self.aq = self.model.aq.find_aquifer_data(self.ldlist[0].xc,
-                                                      self.ldlist[0].yc)
+            self.aq = self.model.aq.find_aquifer_data(self.ldlist[0].xc[0],
+                                                      self.ldlist[0].yc[0])
         self.parameters = np.zeros((self.nparam, 1))
         ## As parameters are only stored for the element not the list, we need to combine the following
         self.xc = np.array([ld.xc for ld in self.ldlist]).flatten()
