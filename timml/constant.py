@@ -61,8 +61,6 @@ class Constant(ConstantBase, PotentialEquation):
         y-coordinate of the point where the head is specified
     hr : float
         specified head
-    rw : float
-        radius of the well
     layer : int
         layer where the head is specified
     label : string or None (default: None)

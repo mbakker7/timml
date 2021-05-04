@@ -18,7 +18,7 @@ class Uflow(Element):
         slope of the head (head drop divided by the distance) in the
         direction of flow
     angle : float
-        direction of flow in degerees (0 degrees is straight East,
+        direction of flow in degrees (0 degrees is straight East,
         counter clock-wise is positive)
     label : string or None (default: None)
         label of the element
