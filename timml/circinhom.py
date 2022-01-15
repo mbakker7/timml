@@ -6,7 +6,7 @@ the GNU LPGL. See the TimML.py file for more details.
 '''
 
 import scipy.special
-from mlelement import *
+from element import *
 from numpy import *
 
 
@@ -450,11 +450,11 @@ class CircleInhom(Element):
 
     def check(self):
         for i in range(self.Ncp):
-            print 'Control point ' + str(i)
-            print 'head inside:  ' + str(self.modelParent.headVector(self.xcp[i], self.ycp[i], self.aqin))
-            print 'head outside: ' + str(self.modelParent.headVector(self.xcp[i], self.ycp[i], self.aqout))
-            print 'Qrad inside:  ' + str(self.modelParent.dischargeNormVector(self.xcp[i], self.ycp[i], self.thetacp[i], self.aqin))
-            print 'Qrad outside: ' + str(self.modelParent.dischargeNormVector(self.xcp[i], self.ycp[i], self.thetacp[i], self.aqout))
+            print('Control point ' + str(i))
+            print('head inside:  ' + str(self.modelParent.headVector(self.xcp[i], self.ycp[i], self.aqin)))
+            print('head outside: ' + str(self.modelParent.headVector(self.xcp[i], self.ycp[i], self.aqout)))
+            print('Qrad inside:  ' + str(self.modelParent.dischargeNormVector(self.xcp[i], self.ycp[i], self.thetacp[i], self.aqin)))
+            print('Qrad outside: ' + str(self.modelParent.dischargeNormVector(self.xcp[i], self.ycp[i], self.thetacp[i], self.aqout)))
 
     def layout(self):
         return [0]
