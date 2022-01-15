@@ -1,6 +1,9 @@
 import os
+import shutil
+import subprocess
+import tempfile
+
 import pytest
-import shutil, tempfile
 
 nbdir = os.path.join('notebooks')
 
