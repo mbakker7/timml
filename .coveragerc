@@ -2,8 +2,4 @@
 omit =
     # omit these files
     timml/besselaesnumba/besselaesnumba_old.py
-    timml/circinhom.py
-    # omit anything in a .local directory anywhere
-    # */.local/*
-    # omit everything in /usr
-    # /usr/*
+    # timml/circinhom.py
