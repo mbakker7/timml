@@ -45,7 +45,7 @@ jobs:
           py.test ./tests
 
       - name: Publish to coveralls.io
-        run: |
-          coveralls
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          coveralls
