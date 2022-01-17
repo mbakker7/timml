@@ -27,6 +27,7 @@ def get_jupyter_kernel():
     
     return kernel    
 
+@pytest.mark.notebooks
 @pytest.mark.parametrize("fn", get_notebooks())
 def test_notebook(fn):
     
