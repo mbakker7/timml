@@ -1,5 +1,4 @@
 [run]
-omit =
-    # omit these files
+omit = 
     timml/besselaesnumba/besselaesnumba_old.py
-    # timml/circinhom.py
+    timml/circinhom.py
