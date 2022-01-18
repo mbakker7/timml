@@ -1,6 +1,9 @@
 import os
+import shutil
+import subprocess
+import tempfile
+
 import pytest
-import shutil, tempfile
 
 nbdir = os.path.join('notebooks')
 
@@ -24,6 +27,7 @@ def get_jupyter_kernel():
     
     return kernel    
 
+@pytest.mark.notebooks
 @pytest.mark.parametrize("fn", get_notebooks())
 def test_notebook(fn):
     

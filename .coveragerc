@@ -1,0 +1,4 @@
+[run]
+omit = 
+    */timml/besselaesnumba/besselaesnumba_old.py
+    */timml/circinhom.py
