@@ -125,18 +125,19 @@ class PlotTim:
             n = np.ceil(self.aq.naq / len(c))
             c = n * c
         # contour
-        cscollectionlist = []
+        cshandlelist = []
         for i in range(len(layers)):
             cs = plt.contour(xg, yg, h[i], levels, colors=c[i])
-            cscollectionlist.append(cs.collections[0])
+            handles, labels = cs.legend_elements()
+            cshandlelist.append(handles[0])
             if labels:
                 fmt = "%1." + str(decimals) + "f"
                 plt.clabel(cs, fmt=fmt)
         if type(legend) is list:
-            plt.legend(cscollectionlist, legend)
+            plt.legend(cshandlelist, legend)
         elif legend:
             legendlist = ["layer " + str(i) for i in layers]
-            plt.legend(cscollectionlist, legendlist)
+            plt.legend(cshandlelist, legendlist)
         plt.axis("scaled")
         if layout:
             self.plot(win=[x1, x2, y1, y2], newfig=False, layer=layers)
