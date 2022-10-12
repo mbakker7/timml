@@ -100,6 +100,11 @@ class PlotTim:
         legend : list or boolean (default True)
             add legend to figure
             if list of strings: use strings as names in legend
+            
+        Returns
+        -------
+        
+        cs : list of contour sets for each contoured layer
 
         """
 
@@ -125,9 +130,11 @@ class PlotTim:
             n = np.ceil(self.aq.naq / len(c))
             c = n * c
         # contour
+        cslist = []
         cshandlelist = []
         for i in range(len(layers)):
             cs = plt.contour(xg, yg, h[i], levels, colors=c[i])
+            cslist.append(cs)
             handles, labels = cs.legend_elements()
             cshandlelist.append(handles[0])
             if labels:
@@ -141,13 +148,20 @@ class PlotTim:
         plt.axis("scaled")
         if layout:
             self.plot(win=[x1, x2, y1, y2], newfig=False, layer=layers)
-        # plt.show()
+        return cslist
 
     def vcontour(self, win, n, levels, labels=False, decimals=0, color=None,
                  vinterp=True, nudge=1e-6, newfig=True, figsize=None,
                  layout=True):
-        """Vertical contour
         """
+        Vertical contour
+        
+        Returns
+        -------
+        
+        cs : contour set
+        """
+        
         x1, x2, y1, y2 = win
         h = self.headalongline(
             np.linspace(x1 + nudge, x2 - nudge, n),
@@ -173,6 +187,7 @@ class PlotTim:
             plt.clabel(cs, fmt=fmt)
         if layout:
             self.plot(win=[x1, x2, y1, y2], orientation="ver", newfig=False)
+        return cs
 
     def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
                    tmax=1e12, nstepmax=100, silent=".", color=None,
