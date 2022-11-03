@@ -114,7 +114,10 @@ class CircAreaSink(Element):
         else:
             r = np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2)
             if r <= self.R:
-                raise 'CircAreaSink should add constant inside inhomogeneity'
+                raise ValueError(
+                    "CircAreaSink should be either fully inside or fully "
+                    "outside of an inhomogeneity"
+                )
         return rv
 
     def K1RI0r(self, rin):
