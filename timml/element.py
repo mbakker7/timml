@@ -111,14 +111,15 @@ class Element:
     #def stoptrace(self, xyz, layer, ltype, step, direction):
     #    return False, 0
 
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax):
+    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, 
+                    direction, hstepmax):
         changed = False
         terminate = False
         xyztnew = 0
         message = None
         return changed, terminate, xyztnew, message
 
-    def qztop(self, x, y):
+    def qztop(self, x, y, aq):
         # given flux at top of aquifer system (as for area-sinks)
         return 0
 

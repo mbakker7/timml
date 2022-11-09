@@ -1,7 +1,7 @@
 import numpy as np
 import inspect  # Used for storing the input
 from .aquifer import AquiferData
-from .aquifer_parameters import param_maq
+from .aquifer_parameters import param_maq, param_3d
 from .element import Element
 from .constant import ConstantInside, ConstantStar
 from .intlinesink import IntHeadDiffLineSink, IntFluxDiffLineSink, IntFluxLineSink
@@ -99,9 +99,8 @@ class PolygonInhomMaq(PolygonInhom):
         model to which the element is added
     xy : array or list
         list or array of (x,y) pairs of coordinates of corners of the
-        inhomogeneity
-        polygonal boundary is automatically closed (so first point
-        is not repeated)
+        inhomogeneity. polygonal boundary is automatically closed (so first 
+        point is not repeated)
     kaq : float, array or list
         hydraulic conductivity of each aquifer from the top down
         if float, hydraulic conductivity is the same in all aquifers
@@ -127,7 +126,8 @@ class PolygonInhomMaq(PolygonInhom):
     hstar : float or None (default is None)
         head value above semi-confining top, only read if topboundary='semi'
     N : float or None (default is None)
-        infiltration rate (L/T) inside inhomogeneity
+        infiltration rate (L/T) inside inhomogeneity. Only possible if 
+        topboundary='conf'
     order : int
         polynomial order of flux along each segment
     ndeg : int
@@ -145,6 +145,72 @@ class PolygonInhomMaq(PolygonInhom):
             "Error: infiltration can only be added if topboundary='conf'"
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, topboundary)
+        PolygonInhom.__init__(self, model, xy, kaq, c, z, npor, ltype,
+                              hstar, N, order, ndeg)
+        
+class PolygonInhom3D(PolygonInhom):
+    """
+    Model3D Class to create a multi-layer model object consisting of
+    many aquifer layers. The resistance between the layers is computed
+    from the vertical hydraulic conductivity of the layers.
+    
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of corners of the
+        inhomogeneity. polygonal boundary is automatically closed (so first 
+        point is not repeated)
+    kaq : float, array or list
+        hydraulic conductivity of each layer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    z : array or list
+        elevation of top of system followed by bottoms of all layers
+        from the top down
+        bottom of layer is automatically equal to top of layer below it
+        length is number of aquifer layers + 1
+    kzoverkh : float
+        vertical anisotropy ratio vertical k divided by horizontal k
+        if float, value is the same for all layers
+        length is number of layers
+    npor : float, array or list
+        porosity of all aquifer layers
+        from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is number of layers
+        if topboundary='semi': length is number of layers + 1
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi')
+    topres : float
+        resistance of top semi-confining layer (read if topboundary='semi')
+    topthick: float
+        thickness of top semi-confining layer (read if topboundary='semi')
+    hstar : float or None (default is None)
+        head value above semi-confining top (read if topboundary='semi')
+    N : float or None (default is None)
+        infiltration rate (L/T) inside inhomogeneity. Only possible if 
+        topboundary='conf'
+    order : int
+        polynomial order of flux along each segment
+    ndeg : int
+        number of points used between two segments to numerically
+        integrate normal discharge
+    
+    """
+    
+    def __init__(self, model, xy, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3,
+                 topboundary='conf', topres=0, topthick=0, hstar=0,
+                 N=None, order=3, ndeg=3):
+        if N is not None:
+            assert topboundary[:4] == 'conf', \
+            "Error: infiltration can only be added if topboundary='conf'"
+        self.storeinput(inspect.currentframe())
+        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary,
+                                       topres)
+        if topboundary == 'semi':
+            z = np.hstack((z[0] + topthick, z))
         PolygonInhom.__init__(self, model, xy, kaq, c, z, npor, ltype,
                               hstar, N, order, ndeg)
 
@@ -348,6 +414,13 @@ class AreaSinkInhom(Element):
         rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             rv[0, 0, 0] = x - self.xc
+        return rv
+    
+    def qztop(self, x, y, aq=None):
+        if aq is None: aq = self.model.aq.find_aquifer_data(x, y)
+        rv = 0.0
+        if aq == self.aq:
+            rv = -self.parameters[0, 0]
         return rv
 
 

@@ -185,7 +185,7 @@ class CircAreaSink(Element):
                 rv[~self.islarge * index] = self.i1Roverlab[index] * k1(r)
         return rv
 
-    def qztop(self, x, y):
+    def qztop(self, x, y, aq):
         rv = 0.0
         if np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2) <= self.R:
             rv = -self.parameters[0, 0]  # minus cause the parameter is the infiltration rate
