@@ -18,4 +18,4 @@ def set_bessel_method(method="numba"):
         raise ValueError("method must be one of ['fortran', 'numba']")
 
 
-bessel = set_bessel_method()
+bessel = None  # is set in timml.__init__ or modified by set_bessel_method()

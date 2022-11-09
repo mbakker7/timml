@@ -2,16 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
-from .besselaesnumba import besselaesnumba
-besselaesnumba.initialize()
-try:
-    from .src import besselaesnew
-    besselaesnew.besselaesnew.initialize()
-    #print('succes on f2py')
-except:
-    pass
 from .controlpoints import controlpoints
 from .equation import DisvecEquation, LeakyWallEquation
+from . import bessel
 
 __all__ = ['ImpLineDoublet', 'ImpLineDoubletString', 'LeakyLineDoublet', 
            'LeakyLineDoubletString']
@@ -35,10 +28,6 @@ class LineDoubletHoBase(Element):
         if addtomodel: self.model.add_element(self)
         self.aq = aq
         self.zcinout = zcinout
-        if self.model.f2py:
-            self.bessel = besselaesnew.besselaesnew
-        else:
-            self.bessel = besselaesnumba
             
     def __repr__(self):
         return self.name + ' from ' + str((self.x1, self.y1)) + ' to ' + str(
@@ -90,7 +79,7 @@ class LineDoubletHoBase(Element):
             potrv = rv.reshape((self.order + 1, self.nlayers,
                                 aq.naq))  # clever way of using a reshaped rv here
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = self.bessel.potbesldv(float(x), float(y), self.z1, self.z2, aq.lab,
+            pot[:, :] = bessel.bessel.potbesldv(float(x), float(y), self.z1, self.z2, aq.lab,
                                               self.order, aq.ilap, aq.naq)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
         return rv
@@ -111,7 +100,7 @@ class LineDoubletHoBase(Element):
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers,
                                  aq.naq))  # clever way of using a reshaped rv here
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = self.bessel.disbesldv(float(x), float(y), self.z1, self.z2, aq.lab,
+            qxqy[:, :] = bessel.bessel.disbesldv(float(x), float(y), self.z1, self.z2, aq.lab,
                                                self.order, aq.ilap, aq.naq)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
                                                        np.newaxis, :]
