@@ -14,6 +14,8 @@ The cross-section is parallel to the x-axis. Strip inhomogeneities may extend to
 
 5. :class:`~timml.linedoublet1d.LeakyLineDoublet1D` is an infinitely long leaky wall. An impermeable wall is created by specifying an infinitely large resistance
 
+6. :class:`~timml.stripareasink.StripAreaSink` is a strip area-sink, which can only be added when the topboundary is 'conf'
+
     
 .. toctree::
     :maxdepth: 1
@@ -24,3 +26,4 @@ The cross-section is parallel to the x-axis. Strip inhomogeneities may extend to
     LineSink1D <linesink1d>
     HeadLineSink1D <headlinesink1d>
     LeakyLineDoublet1D <leakylinedoublet1d>
+    StripAreaSink <stripareasink>

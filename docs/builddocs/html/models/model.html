@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Model &#8212; TimML 5.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Inhomogeneities" href="../inhoms/inhoms.html" />
@@ -33,11 +33,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="model">
+  <section id="model">
 <h1>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="timml.model.Model">
-<em class="property">class </em><code class="sig-prename descclassname">timml.model.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">kaq</em>, <em class="sig-param">c</em>, <em class="sig-param">z</em>, <em class="sig-param">npor</em>, <em class="sig-param">ltype</em>, <em class="sig-param">f2py=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="timml.model.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">timml.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kaq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f2py</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model Class to create a model object consisting of an arbitrary
 sequence of aquifer layers and leaky layers.
 Use ModelMaq for regular sequence of aquifers and leaky layers.
@@ -58,15 +58,15 @@ if ltype[0]=’l’: length is number of aquifers</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="method">
-<dt id="timml.model.Model.remove_element">
-<code class="sig-name descname">remove_element</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.remove_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.remove_element" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.remove_element">
+<span class="sig-name descname"><span class="pre">remove_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.remove_element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.remove_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove element <cite>e</cite> from model</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.disvec">
-<code class="sig-name descname">disvec</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.disvec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.disvec" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.disvec">
+<span class="sig-name descname"><span class="pre">disvec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.disvec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.disvec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Discharge vector at <cite>x</cite>, <cite>y</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -78,9 +78,9 @@ if ltype[0]=’l’: length is number of aquifers</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.head">
-<code class="sig-name descname">head</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">layers=None</em>, <em class="sig-param">aq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.head" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.head" title="Permalink to this definition">¶</a></dt>
 <dd><p>Head at <cite>x</cite>, <cite>y</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -93,9 +93,9 @@ or all layers of aquifer (otherwise)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.headgrid">
-<code class="sig-name descname">headgrid</code><span class="sig-paren">(</span><em class="sig-param">xg</em>, <em class="sig-param">yg</em>, <em class="sig-param">layers=None</em>, <em class="sig-param">printrow=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headgrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.headgrid" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.headgrid">
+<span class="sig-name descname"><span class="pre">headgrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printrow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headgrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.headgrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid of heads</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -119,15 +119,19 @@ or all layers of aquifer (otherwise)</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.headgrid2">
-<code class="sig-name descname">headgrid2</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">nx</em>, <em class="sig-param">y1</em>, <em class="sig-param">y2</em>, <em class="sig-param">ny</em>, <em class="sig-param">layers=None</em>, <em class="sig-param">printrow=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headgrid2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.headgrid2" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.headgrid2">
+<span class="sig-name descname"><span class="pre">headgrid2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printrow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headgrid2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.headgrid2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grid of heads</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x2</strong><strong>, </strong><strong>nx</strong> (<em>x1</em><em>,</em>) – x values are generated as linspace(x1, x2, nx)</p></li>
-<li><p><strong>y2</strong><strong>, </strong><strong>ny</strong> (<em>y1</em><em>,</em>) – y values are generated as linspace(y1, y2, ny)</p></li>
+<li><p><strong>x1</strong> – x values are generated as linspace(x1, x2, nx)</p></li>
+<li><p><strong>x2</strong> – x values are generated as linspace(x1, x2, nx)</p></li>
+<li><p><strong>nx</strong> – x values are generated as linspace(x1, x2, nx)</p></li>
+<li><p><strong>y1</strong> – y values are generated as linspace(y1, y2, ny)</p></li>
+<li><p><strong>y2</strong> – y values are generated as linspace(y1, y2, ny)</p></li>
+<li><p><strong>ny</strong> – y values are generated as linspace(y1, y2, ny)</p></li>
 <li><p><strong>layers</strong> (<em>integer</em><em>, </em><em>list</em><em> or </em><em>array</em><em>, </em><em>optional</em>) – layers for which grid is returned</p></li>
 <li><p><strong>printrow</strong> (<em>boolean</em><em>, </em><em>optional</em>) – prints dot to screen for each row of grid if set to <cite>True</cite></p></li>
 </ul>
@@ -145,9 +149,9 @@ or all layers of aquifer (otherwise)</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.headalongline">
-<code class="sig-name descname">headalongline</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">layers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headalongline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.headalongline" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.headalongline">
+<span class="sig-name descname"><span class="pre">headalongline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.headalongline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.headalongline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Head along line or curve</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -166,15 +170,26 @@ or all layers of aquifer (otherwise)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.solve">
-<code class="sig-name descname">solve</code><span class="sig-paren">(</span><em class="sig-param">printmat=0</em>, <em class="sig-param">sendback=0</em>, <em class="sig-param">silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.model.Model.solve" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">printmat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sendback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/timml/model.html#Model.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.model.Model.solve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute solution</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.contour">
-<code class="sig-name descname">contour</code><span class="sig-paren">(</span><em class="sig-param">win</em>, <em class="sig-param">ngr=20</em>, <em class="sig-param">layers=0</em>, <em class="sig-param">levels=20</em>, <em class="sig-param">layout=True</em>, <em class="sig-param">labels=True</em>, <em class="sig-param">decimals=0</em>, <em class="sig-param">color=None</em>, <em class="sig-param">newfig=True</em>, <em class="sig-param">figsize=None</em>, <em class="sig-param">legend=True</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.contour" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topfigfrac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot layout</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.contour">
+<span class="sig-name descname"><span class="pre">contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contour plot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -195,35 +210,38 @@ directions</p></li>
 if list of strings: use strings as names in legend</p></li>
 </ul>
 </dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="timml.model.Model.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">win=None</em>, <em class="sig-param">newfig=True</em>, <em class="sig-param">figsize=None</em>, <em class="sig-param">orientation='hor'</em>, <em class="sig-param">topfigfrac=0.8</em>, <em class="sig-param">layer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot layout</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>win</strong> (<em>list</em><em> or </em><em>tuple</em>) – [x1, x2, y1, y2]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>cs</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of contour sets for each contoured layer</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.tracelines">
-<code class="sig-name descname">tracelines</code><span class="sig-paren">(</span><em class="sig-param">xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1000000000000.0, nstepmax=100, silent='.', color=None, orientation='hor', win=[-1e+30, 1e+30, -1e+30, 1e+30], newfig=False, figsize=None, *, return_traces=False, metadata=False</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.tracelines" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.vcontour">
+<span class="sig-name descname"><span class="pre">vcontour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vinterp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nudge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.vcontour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertical contour</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>cs</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>contour set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timml.model.Model.tracelines">
+<span class="sig-name descname"><span class="pre">tracelines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ystart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zstart</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hstepmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vstepfrac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nstepmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-</span> <span class="pre">1e+30,</span> <span class="pre">1e+30,</span> <span class="pre">-</span> <span class="pre">1e+30,</span> <span class="pre">1e+30]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newfig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_traces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.tracelines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw trace lines</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="timml.model.Model.vcontour">
-<code class="sig-name descname">vcontour</code><span class="sig-paren">(</span><em class="sig-param">win</em>, <em class="sig-param">n</em>, <em class="sig-param">levels</em>, <em class="sig-param">labels=False</em>, <em class="sig-param">decimals=0</em>, <em class="sig-param">color=None</em>, <em class="sig-param">vinterp=True</em>, <em class="sig-param">nudge=1e-06</em>, <em class="sig-param">newfig=True</em>, <em class="sig-param">figsize=None</em>, <em class="sig-param">layout=True</em><span class="sig-paren">)</span><a class="headerlink" href="#timml.model.Model.vcontour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vertical contour</p>
 </dd></dl>
 
-</dd></dl>
-
-</div>
+</section>
 
 
           </div>
@@ -279,12 +297,12 @@ if list of strings: use strings as names in legend</p></li>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -293,7 +311,7 @@ if list of strings: use strings as names in legend</p></li>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,4 +1,4 @@
-ModelMaq
---------
+PolygonInhomMaq
+---------------
 
 .. autoclass:: timml.inhomogeneity.PolygonInhomMaq
