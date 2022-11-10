@@ -34,7 +34,7 @@ from .linedoublet import (
     LeakyLineDoubletString,
 )
 from .circareasink import CircAreaSink
-from .inhomogeneity import PolygonInhomMaq, BuildingPit
+from .inhomogeneity import PolygonInhomMaq, PolygonInhom3D, BuildingPit
 from .inhomogeneity1d import StripInhomMaq, StripInhom3D
 from .uflow import Uflow
 from .trace import timtraceline, timtracelines

@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Xsection Models &#8212; TimML 5.0.0 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Strip Inhomogeneity Maq" href="stripinhommaq.html" />
@@ -33,20 +33,21 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="xsection-models">
+  <section id="xsection-models">
 <h1>Xsection Models<a class="headerlink" href="#xsection-models" title="Permalink to this headline">¶</a></h1>
 <p>Multi-layer cross-sectional models may consist of strip inhomogeneities, infinitely long line-sinks, and infinitely long line-doublets.
 The cross-section is parallel to the x-axis. Strip inhomogeneities may extend to infinity. The following elements are available:</p>
 <ol class="arabic simple">
 <li><p><a class="reference internal" href="stripinhommaq.html#timml.inhomogeneity1d.StripInhomMaq" title="timml.inhomogeneity1d.StripInhomMaq"><code class="xref py py-class docutils literal notranslate"><span class="pre">StripInhomMaq</span></code></a> is a strip aquifer consisting of a regular sequence of aquifer - leaky layer - aquifer - leaky layer, aquifer, etc., like a ModelMaq.</p></li>
-<li><p><a class="reference internal" href="stripinhom3d.html#timml.inhomogeneity1d.StripInhom3D" title="timml.inhomogeneity1d.StripInhom3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">StripInhom3D</span></code></a> is a strip aquifer consisting of a stack of aquifer layers.</p></li>
+<li><p><a class="reference internal" href=".ipynb_checkpoints/stripinhom3d-checkpoint.html#timml.inhomogeneity1d.StripInhom3D" title="timml.inhomogeneity1d.StripInhom3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">StripInhom3D</span></code></a> is a strip aquifer consisting of a stack of aquifer layers.</p></li>
 <li><p><a class="reference internal" href="linesink1d.html#timml.linesink1d.LineSink1D" title="timml.linesink1d.LineSink1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">LineSink1D</span></code></a> is an infinitely long line-sink for which the discharge per unit length is specified</p></li>
 <li><p><a class="reference internal" href="headlinesink1d.html#timml.linesink1d.HeadLineSink1D" title="timml.linesink1d.HeadLineSink1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeadLineSink1D</span></code></a> is an infinitely long line-sink for which the head and (optionally) a resistance is specified</p></li>
 <li><p><a class="reference internal" href="leakylinedoublet1d.html#timml.linedoublet1d.LeakyLineDoublet1D" title="timml.linedoublet1d.LeakyLineDoublet1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">LeakyLineDoublet1D</span></code></a> is an infinitely long leaky wall. An impermeable wall is created by specifying an infinitely large resistance</p></li>
+<li><p><a class="reference internal" href="stripareasink.html#timml.stripareasink.StripAreaSink" title="timml.stripareasink.StripAreaSink"><code class="xref py py-class docutils literal notranslate"><span class="pre">StripAreaSink</span></code></a> is a strip area-sink, which can only be added when the topboundary is ‘conf’</p></li>
 </ol>
 <div class="toctree-wrapper compound">
 </div>
-</div>
+</section>
 
 
           </div>
@@ -85,6 +86,7 @@ The cross-section is parallel to the x-axis. Strip inhomogeneities may extend to
 <li class="toctree-l2"><a class="reference internal" href="linesink1d.html">LineSink1D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="headlinesink1d.html">HeadLineSink1D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="leakylinedoublet1d.html">LeakyLineDoublet1D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stripareasink.html">StripAreaSink</a></li>
 </ul>
 </li>
 </ul>
@@ -102,12 +104,12 @@ The cross-section is parallel to the x-axis. Strip inhomogeneities may extend to
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -116,7 +118,7 @@ The cross-section is parallel to the x-axis. Strip inhomogeneities may extend to
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

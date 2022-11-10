@@ -103,7 +103,7 @@ class Model(PlotTim):
         rv = 0.0
         if aq.ltype[0] == 'a':  # otherwise recharge cannot be added
             for e in aq.elementlist:
-                rv += e.qztop(x, y)
+                rv += e.qztop(x, y, aq)
         return rv
 
     def head(self, x, y, layers=None, aq=None):

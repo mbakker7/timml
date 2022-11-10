@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Constant &#8212; TimML 5.0.0 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Uniform Flow" href="uflow.html" />
@@ -33,15 +33,15 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="constant">
+  <section id="constant">
 <h1>Constant<a class="headerlink" href="#constant" title="Permalink to this headline">¶</a></h1>
 <p>Every model needs at least one head-specified condition. In addition, the head may be specified at one point in one layer,
 provided this is in an area where the aquifer is confined. This point is historically called the <em>reference point</em>.
 The <em>reference</em> point is useful to control the behavior in the far field, especially in models where the far field is
 not modeled explicitly.</p>
-<dl class="class">
-<dt id="timml.constant.Constant">
-<em class="property">class </em><code class="sig-prename descclassname">timml.constant.</code><code class="sig-name descname">Constant</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">xr=0</em>, <em class="sig-param">yr=0</em>, <em class="sig-param">hr=0.0</em>, <em class="sig-param">layer=0</em>, <em class="sig-param">label=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timml/constant.html#Constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#timml.constant.Constant" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="timml.constant.Constant">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">timml.constant.</span></span><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timml/constant.html#Constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timml.constant.Constant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specify the head at one point in the model in one layer.
 The head may only be specified in an area of the model where
 the aquifer system is confined.</p>
@@ -52,7 +52,6 @@ the aquifer system is confined.</p>
 <li><p><strong>xr</strong> (<em>float</em>) – x-coordinate of the point where the head is specified</p></li>
 <li><p><strong>yr</strong> (<em>float</em>) – y-coordinate of the point where the head is specified</p></li>
 <li><p><strong>hr</strong> (<em>float</em>) – specified head</p></li>
-<li><p><strong>rw</strong> (<em>float</em>) – radius of the well</p></li>
 <li><p><strong>layer</strong> (<em>int</em>) – layer where the head is specified</p></li>
 <li><p><strong>label</strong> (<em>string</em><em> or </em><em>None</em><em> (</em><em>default: None</em><em>)</em>) – label of the element</p></li>
 </ul>
@@ -60,7 +59,7 @@ the aquifer system is confined.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -119,12 +118,12 @@ the aquifer system is confined.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -133,7 +132,7 @@ the aquifer system is confined.</p>
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,18 +1,17 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>timml.model &#8212; TimML 5.0.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -40,10 +39,10 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">inspect</span>  <span class="c1"># Used for storing the input</span>
-<span class="kn">from</span> <span class="nn">.aquifer</span> <span class="k">import</span> <span class="n">Aquifer</span>
-<span class="kn">from</span> <span class="nn">.aquifer_parameters</span> <span class="k">import</span> <span class="n">param_maq</span><span class="p">,</span> <span class="n">param_3d</span>
-<span class="kn">from</span> <span class="nn">.constant</span> <span class="k">import</span> <span class="n">ConstantStar</span>
-<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">PlotTim</span>
+<span class="kn">from</span> <span class="nn">.aquifer</span> <span class="kn">import</span> <span class="n">Aquifer</span>
+<span class="kn">from</span> <span class="nn">.aquifer_parameters</span> <span class="kn">import</span> <span class="n">param_maq</span><span class="p">,</span> <span class="n">param_3d</span>
+<span class="kn">from</span> <span class="nn">.constant</span> <span class="kn">import</span> <span class="n">ConstantStar</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">PlotTim</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span> <span class="s1">&#39;ModelMaq&#39;</span><span class="p">,</span> <span class="s1">&#39;Model3D&#39;</span><span class="p">]</span>
@@ -75,7 +74,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span><span class="p">,</span> <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># All input variables are numpy arrays</span>
         <span class="c1"># That should be checked outside this function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elementlist</span> <span class="o">=</span> <span class="p">[]</span>
@@ -85,7 +84,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">f2py</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">f2py</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">.src</span> <span class="k">import</span> <span class="n">besselaesnew</span>
+                <span class="kn">from</span> <span class="nn">.src</span> <span class="kn">import</span> <span class="n">besselaesnew</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">f2py</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FORTRAN extension not found while f2py=True&#39;</span><span class="p">)</span>
@@ -145,7 +144,7 @@
         <span class="n">rv</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">aq</span><span class="o">.</span><span class="n">ltype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>  <span class="c1"># otherwise recharge cannot be added</span>
             <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">aq</span><span class="o">.</span><span class="n">elementlist</span><span class="p">:</span>
-                <span class="n">rv</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">qztop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="n">rv</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">qztop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">aq</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rv</span>
 
 <div class="viewcode-block" id="Model.head"><a class="viewcode-back" href="../../models/model.html#timml.model.Model.head">[docs]</a>    <span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -271,17 +270,30 @@
 <span class="sd">        layers may be None or list of layers for which head is computed&#39;&#39;&#39;</span>
         <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">Nlayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">naq</span>
+            <span class="n">nlayers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">naq</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Nlayers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">layers</span><span class="p">))</span>
+            <span class="n">nlayers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">layers</span><span class="p">))</span>
         <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xg</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">yg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">yg</span> <span class="o">=</span> <span class="n">yg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
-        <span class="n">Qx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Nlayers</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
-        <span class="n">Qy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Nlayers</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+        <span class="n">Qx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nlayers</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+        <span class="n">Qy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nlayers</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
             <span class="n">Qx</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">Qy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disvec</span><span class="p">(</span><span class="n">xg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">layers</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Qx</span><span class="p">,</span> <span class="n">Qy</span>
+    
+<span class="c1">#    def disvec_direction(self, s, x1, y1, cdirection):</span>
+<span class="c1">#        pass</span>
+<span class="c1">#    </span>
+<span class="c1">#    def discharge_across_line(self, x1, y1, x2,  y2, layers=None):</span>
+<span class="c1">#        if layers is None:</span>
+<span class="c1">#            nlayers = self.aq.find_aquifer_data(x1, y1).naq</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            nlayers = len(np.atleast_1d(layers))</span>
+<span class="c1">#        z1 = x1 + y1 * 1j</span>
+<span class="c1">#        z2 = x2 + y2 * 1j</span>
+<span class="c1">#        normvec = (z2 - z1) / np.abs(z2 - z1) * np.exp(-np.pi * 1j / 2)</span>
+<span class="c1">#        disvec = self.disvec(xg[i], yg[i], layers)</span>
     
     <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocomp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
@@ -482,7 +494,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[],</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span>
                  <span class="n">hstar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">kaq</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">ltype</span> <span class="o">=</span> <span class="n">param_maq</span><span class="p">(</span><span class="n">kaq</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">npor</span><span class="p">,</span> <span class="n">topboundary</span><span class="p">)</span>
@@ -533,7 +545,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kaq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kzoverkh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">npor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
                  <span class="n">topboundary</span><span class="o">=</span><span class="s1">&#39;conf&#39;</span><span class="p">,</span> <span class="n">topres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">topthick</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hstar</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">f2py</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Model3D</span>
@@ -599,12 +611,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -613,7 +625,7 @@
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

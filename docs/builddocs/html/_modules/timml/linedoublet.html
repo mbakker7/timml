@@ -1,18 +1,17 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>timml.linedoublet &#8212; TimML 5.0.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -35,24 +34,24 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">inspect</span>  <span class="c1"># Used for storing the input</span>
-<span class="kn">from</span> <span class="nn">.element</span> <span class="k">import</span> <span class="n">Element</span>
-<span class="kn">from</span> <span class="nn">.besselaesnumba</span> <span class="k">import</span> <span class="n">besselaesnumba</span>
+<span class="kn">from</span> <span class="nn">.element</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="kn">from</span> <span class="nn">.besselaesnumba</span> <span class="kn">import</span> <span class="n">besselaesnumba</span>
 <span class="n">besselaesnumba</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.src</span> <span class="k">import</span> <span class="n">besselaesnew</span>
+    <span class="kn">from</span> <span class="nn">.src</span> <span class="kn">import</span> <span class="n">besselaesnew</span>
     <span class="n">besselaesnew</span><span class="o">.</span><span class="n">besselaesnew</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
     <span class="c1">#print(&#39;succes on f2py&#39;)</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="kn">from</span> <span class="nn">.controlpoints</span> <span class="k">import</span> <span class="n">controlpoints</span>
-<span class="kn">from</span> <span class="nn">.equation</span> <span class="k">import</span> <span class="n">DisvecEquation</span><span class="p">,</span> <span class="n">LeakyWallEquation</span>
+<span class="kn">from</span> <span class="nn">.controlpoints</span> <span class="kn">import</span> <span class="n">controlpoints</span>
+<span class="kn">from</span> <span class="nn">.equation</span> <span class="kn">import</span> <span class="n">DisvecEquation</span><span class="p">,</span> <span class="n">LeakyWallEquation</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ImpLineDoublet&#39;</span><span class="p">,</span> <span class="s1">&#39;ImpLineDoubletString&#39;</span><span class="p">,</span> <span class="s1">&#39;LeakyLineDoublet&#39;</span><span class="p">,</span> 
            <span class="s1">&#39;LeakyLineDoubletString&#39;</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">LineDoubletHoBase</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delp</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delp</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;LineDoubletHoBase&#39;</span><span class="p">,</span>
                  <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zcinout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">Element</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">nparam</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nunknowns</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
@@ -74,7 +73,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bessel</span> <span class="o">=</span> <span class="n">besselaesnumba</span>
             
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; to &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">))</span>
 
@@ -100,7 +99,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">xcout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ycout</span> <span class="o">=</span> <span class="n">controlpoints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ncp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z2</span><span class="p">,</span>
                                                    <span class="n">eps</span><span class="o">=-</span><span class="mf">1e-6</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">yc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resfac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">addtomodel</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -192,7 +191,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
                  <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">LineDoubletHoBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">delp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
@@ -246,7 +245,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>\
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>\
                  <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">LineDoubletHoBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">delp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> \
@@ -263,7 +262,7 @@
 
 
 <span class="k">class</span> <span class="nc">LineDoubletStringBase</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;LineDoubletStringBase&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">Element</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">nparam</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nunknowns</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span> \
                          <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
@@ -280,7 +279,7 @@
                                   <span class="n">y2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">delp</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
                                   <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">addtomodel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aq</span><span class="o">=</span><span class="n">aq</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; with nodes &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xy</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -296,8 +295,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">xld</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ld</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">ld</span><span class="o">.</span><span class="n">x2</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">yld</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ld</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="n">ld</span><span class="o">.</span><span class="n">y2</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ldlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xc</span><span class="p">,</span>
-                                                      <span class="bp">self</span><span class="o">.</span><span class="n">ldlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">yc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">aq</span><span class="o">.</span><span class="n">find_aquifer_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ldlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">ldlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">yc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nparam</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="c1">## As parameters are only stored for the element not the list, we need to combine the following</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ld</span><span class="o">.</span><span class="n">xc</span> <span class="k">for</span> <span class="n">ld</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ldlist</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -365,7 +364,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> \
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> \
                  <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">LineDoubletStringBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -413,7 +412,7 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">res</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>\
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">res</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>\
                  <span class="n">layers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storeinput</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span>
         <span class="n">LineDoubletStringBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -476,12 +475,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -490,7 +489,7 @@
       &copy;2017, Mark Bakker.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
