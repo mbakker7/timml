@@ -6,7 +6,7 @@ Both types of wells may have an entry resistance (skin effect) defined by the re
 :math:`h_i` in layer :math:`i` just outside the well and the head :math:`h_w` inside the well:
 
     .. math::
-        Q_i = 2\pi r_w(h_i - h_w)/c
+        Q_i = 2\pi r_w H_i(h_i - h_w)/c
 
 1. :class:`~timml.well.Well` is a well for which the total discharge is specified. The total discharge is distributed across the layers in which the
 well is screened such that the head inside the well is the same in each screened layer. 
