@@ -28,7 +28,6 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.ci.txt ]; then pip install -r requirements.ci.txt; fi
           pip install flake8 pytest
-          pip install codecov
           pip install pytest-cov
           pip install coveralls
           pip install -e .
@@ -45,6 +44,6 @@ jobs:
           py.test ./tests
 
       - name: Publish to coveralls.io
-        run: coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
