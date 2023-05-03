@@ -71,7 +71,7 @@ BC1[8] = -0.340195779923156e-14
 
 @numba.njit
 def prepare_z(x, y, z1, z2):
-    zin = np.complex(x, y)
+    zin = complex(x, y)
     z1in = z1
     z2in = z2
     Lin = abs(z2in - z1in)
@@ -120,7 +120,7 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     # Laplace linesink
     if ilap == 1:
         power = order + 1
-        pcor = np.complex(0.0, 0.0)
+        pcor = complex(0.0, 0.0)
         for n in range(1, int((power + 1) / 2) + 1):
             pcor = pcor + z ** (power - 2 * n + 1) / (2 * n - 1)
         pcor = 2.0 * pcor
@@ -181,7 +181,7 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     pcor = 0.0
     # Laplace linesink
     if ilap == 1:
-        pcor = np.complex(0.0, 0.0)
+        pcor = complex(0.0, 0.0)
         for n in range(1, int((order + 1) / 2) + 1):
             pcor = pcor + float(order - 2 * n + 2) * z ** (order + 1 - 2 * n) / float(
                 2 * n - 1
@@ -206,7 +206,7 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
         rv[1, 0] = -np.imag(wdis)
 
     for i in range(ilap, naq):
-        wdis = np.complex(0.0, 0.0)
+        wdis = complex(0.0, 0.0)
 
         # Check whether entire linesink is outside radius of convergence
         # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L, or |zeta|>1/biglab+7 (zeta is called z here)
@@ -265,11 +265,11 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     # Laplace line-doublet
     if ilap == 1:
         comega = z ** order * np.log(zmin1 / zplus1)
-        qm = np.complex(0.0, 0.0)
+        qm = complex(0.0, 0.0)
         for n in range(1, int((order + 1) / 2) + 1):
             qm = qm + z ** (order - 2.0 * float(n) + 1.0) / (2.0 * float(n) - 1.0)
 
-        comega = 1.0 / (2.0 * np.pi * np.complex(0.0, 1.0)) * (comega + 2.0 * qm)
+        comega = 1.0 / (2.0 * np.pi * complex(0.0, 1.0)) * (comega + 2.0 * qm)
         rv[0] = np.real(comega)
 
     # N-1 leakage factors
@@ -282,7 +282,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
 
         if abs(z) < (Rconv + 1.0 / biglab):
             m1, m2, NLS = findm1m2(zin, z1in, z2in, Lin, labda[i], Rconv)
-            comega = np.complex(0.0, 0.0)
+            comega = complex(0.0, 0.0)
             if m1 > 0:  # Otherwise outside radius of convergence
                 z1new = z1in + float(m1 - 1) / float(NLS) * (z2in - z1in)
                 z2new = z1in + float(m2) / float(NLS) * (z2in - z1in)
@@ -292,7 +292,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
 
             pot = IntegralF(zin, z1in, z2in, Lin, labda[i], order, Rconv, lstype)
             rv[i] = (
-                np.real(comega / np.complex(0.0, 1.0)) + np.imag(z) / biglab * pot
+                np.real(comega / complex(0.0, 1.0)) + np.imag(z) / biglab * pot
             )  # Note that z is really zeta in analysis
         else:
             rv[i] = 0.0
@@ -331,30 +331,30 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
     zin, z1in, z2in, Lin, z, zplus1, zmin1 = prepare_z(x, y, z1, z2)
 
     # Laplace line-doublet
-    qm = np.complex(0.0, 0.0)
+    qm = complex(0.0, 0.0)
     if ilap == 1:
         if order == 0:
             wdis = -(1.0 / zmin1 - 1.0 / zplus1) / (
-                np.pi * np.complex(0.0, 1.0) * (z2in - z1in)
+                np.pi * complex(0.0, 1.0) * (z2in - z1in)
             )
         else:
             wdis = float(order) * z ** (order - 1) * np.log(zmin1 / zplus1)
             wdis = wdis + z ** order * (1.0 / zmin1 - 1.0 / zplus1)
-            qm = np.complex(0.0, 0.0)
+            qm = complex(0.0, 0.0)
             if order > 1:  # To avoid a possible problem of 0 * 0^(-1)
                 for n in range(1, int(order / 2) + 1):
                     qm = qm + float(order - 2 * n + 1) * z ** (order - 2 * n) / float(
                         2 * n - 1
                     )
 
-            wdis = -(wdis + 2.0 * qm) / (np.pi * np.complex(0.0, 1.0) * (z2in - z1in))
+            wdis = -(wdis + 2.0 * qm) / (np.pi * complex(0.0, 1.0) * (z2in - z1in))
 
         rv[0, 0] = np.real(wdis)
         rv[1, 0] = -np.imag(wdis)
 
     # N-1 or N leakage factors
     for i in range(ilap, naq):
-        wdis = np.complex(0.0, 0.0)
+        wdis = complex(0.0, 0.0)
 
         # Check whether entire line-doublet is outside radius of convergence
         # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L, or |zeta|>1/biglab+7 (zeta is called z here)
@@ -363,18 +363,18 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
 
         if abs(z) < (Rconv + 1.0 / biglab):
             m1, m2, NLS = findm1m2(zin, z1in, z2in, Lin, labda[i], Rconv)
-            wdis1 = np.complex(0.0, 0.0)
+            wdis1 = complex(0.0, 0.0)
             if m1 > 0:
                 z1new = z1in + float(m1 - 1) / float(NLS) * (z2in - z1in)
                 z2new = z1in + float(m2) / float(NLS) * (z2in - z1in)
                 del0 = float(1 - m1 - m2 + NLS) / float(1 - m1 + m2)
                 ra = float(NLS) / float(1 + m2 - m1)
                 wdis1 = IntegralLapLineDipoleDis(zin, z1new, z2new, del0, ra, order)
-                wdis1 = -2.0 * wdis1 / (np.complex(0.0, 1.0) * (z2new - z1new))
+                wdis1 = -2.0 * wdis1 / (complex(0.0, 1.0) * (z2new - z1new))
 
             pot = IntegralF(zin, z1in, z2in, Lin, labda[i], order, Rconv, lstype)
             wdis2 = IntegralG(zin, z1in, z2in, Lin, labda[i], order, Rconv, lstype)
-            wdis3 = pot / (2.0 * np.complex(0.0, 1.0)) + wdis2 * np.imag(z)
+            wdis3 = pot / (2.0 * complex(0.0, 1.0)) + wdis2 * np.imag(z)
 
             wdis = wdis1 - 4.0 * wdis3 / (biglab ** 2 * (z2in - z1in))
         rv[0, i] = np.real(wdis)
@@ -395,13 +395,13 @@ def disbesldv(x, y, z1, z2, lab, order, ilap, naq):
 
 @numba.njit
 def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
-    czmzbarp = np.full(NTERMS + 1, np.complex(0.0, 0.0))
-    cgamma = np.full((NTERMS + 1, NTERMS + 1), np.complex(0.0, 0.0))
-    calphat = np.full(2 * NTERMS + 1, np.complex(0.0, 0.0))
-    cbetat = np.full(2 * NTERMS + 1, np.complex(0.0, 0.0))
-    cc = np.full(order + 2, np.complex(0.0, 0.0))
-    calpha = np.full(2 * NTERMS + order + 1, np.complex(0.0, 0.0))
-    cbeta = np.full(2 * NTERMS + order + 1, np.complex(0.0, 0.0))
+    czmzbarp = np.full(NTERMS + 1, complex(0.0, 0.0))
+    cgamma = np.full((NTERMS + 1, NTERMS + 1), complex(0.0, 0.0))
+    calphat = np.full(2 * NTERMS + 1, complex(0.0, 0.0))
+    cbetat = np.full(2 * NTERMS + 1, complex(0.0, 0.0))
+    cc = np.full(order + 2, complex(0.0, 0.0))
+    calpha = np.full(2 * NTERMS + order + 1, complex(0.0, 0.0))
+    cbeta = np.full(2 * NTERMS + order + 1, complex(0.0, 0.0))
 
     m1, m2, NLS = findm1m2(zin, z1in, z2in, Lin, labda, Rconv)
     if m1 == 0:
@@ -425,8 +425,8 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     # Eq. 23 These coefficients should be modified for a higher order linesink
     for n in range(0, 2 * NTERMS + 1):
-        calphat[n] = np.complex(0.0, 0.0)
-        cbetat[n] = np.complex(0.0, 0.0)
+        calphat[n] = complex(0.0, 0.0)
+        cbetat[n] = complex(0.0, 0.0)
         for m in range(max(0, n - NTERMS), int(n / 2) + 1):
             if lstype == 1:
                 calphat[n] = calphat[n] + AC[n - m] * cgamma[n - m, m]
@@ -440,8 +440,8 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
         cc[m] = RBINOM[order, m] * z ** (order - m) * biglab ** order
     if order > 0:
         for n in range(0, 2 * NTERMS + order + 1):
-            calpha[n] = np.complex(0.0, 0.0)
-            cbeta[n] = np.complex(0.0, 0.0)
+            calpha[n] = complex(0.0, 0.0)
+            cbeta[n] = complex(0.0, 0.0)
             for m in range(max(0, n - 2 * NTERMS), min(n, order) + 1):
                 calpha[n] = calpha[n] + cc[m] * calphat[n - m]
                 cbeta[n] = cbeta[n] + cc[m] * cbetat[n - m]
@@ -450,7 +450,7 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
         cbeta = cbetat
 
     # Evaluation of integral, Eq. 25
-    cInt = np.complex(0.0, 0.0)
+    cInt = complex(0.0, 0.0)
     del1 = -1.0 + 2.0 * (float(m1) - 1.0) / float(NLS)
     del2 = -1.0 + 2.0 * float(m2) / float(NLS)
     cd1minz = del1 / biglab - z
@@ -474,22 +474,22 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
 @numba.njit
 def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
-    czmzbarp = np.full(NTERMS + 1, np.complex(0.0, 0.0))
-    cgamma = np.full((NTERMS + 1, NTERMS + 1), np.complex(0.0, 0.0))
-    cahat = np.full(2 * (NTERMS - 1) + 1, np.complex(0.0, 0.0))
-    cbhat = np.full(2 * (NTERMS - 1) + 1, np.complex(0.0, 0.0))
-    calphat = np.full(2 * NTERMS + 1, np.complex(0.0, 0.0))
-    cbetat = np.full(2 * NTERMS + 1, np.complex(0.0, 0.0))
-    cc = np.full(order + 2, np.complex(0.0, 0.0))
-    calpha = np.full(2 * NTERMS + order + 1, np.complex(0.0, 0.0))
-    cbeta = np.full(2 * NTERMS + order + 1, np.complex(0.0, 0.0))
+    czmzbarp = np.full(NTERMS + 1, complex(0.0, 0.0))
+    cgamma = np.full((NTERMS + 1, NTERMS + 1), complex(0.0, 0.0))
+    cahat = np.full(2 * (NTERMS - 1) + 1, complex(0.0, 0.0))
+    cbhat = np.full(2 * (NTERMS - 1) + 1, complex(0.0, 0.0))
+    calphat = np.full(2 * NTERMS + 1, complex(0.0, 0.0))
+    cbetat = np.full(2 * NTERMS + 1, complex(0.0, 0.0))
+    cc = np.full(order + 2, complex(0.0, 0.0))
+    calpha = np.full(2 * NTERMS + order + 1, complex(0.0, 0.0))
+    cbeta = np.full(2 * NTERMS + order + 1, complex(0.0, 0.0))
 
     biglabin = 2.0 * labda / Lin
 
     m1, m2, NLS = findm1m2(zin, z1in, z2in, Lin, labda, Rconv)
     if m1 == 0:
-        # wdis = np.complex(0.0, 0.0)
-        return np.complex(0.0, 0.0)
+        # wdis = complex(0.0, 0.0)
+        return complex(0.0, 0.0)
 
     # Compute zeta (called z here). This is the regular value of the entire element
     L = abs(z2in - z1in)
@@ -512,7 +512,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     z2 = z1in + float(m2) / float(NLS) * (z2in - z1in)
     del0 = float(1 - m1 - m2 + NLS) / float(1 - m1 + m2)
     ra = float(NLS) / float(1 + m2 - m1)
-    # comega = np.complex(0.0, 0.0)
+    # comega = complex(0.0, 0.0)
     comega = IntegralLapLineDipole(zin, z1, z2, del0, ra, order)
 
     if lstype == 1:
@@ -532,8 +532,8 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     # Eq. 23
     for n in range(0, 2 * NTERMS):
-        calphat[n] = np.complex(0.0, 0.0)
-        cbetat[n] = np.complex(0.0, 0.0)
+        calphat[n] = complex(0.0, 0.0)
+        cbetat[n] = complex(0.0, 0.0)
         for m in range(max(0, n - NTERMS + 1), int((n + 1) / 2) + 1):
             calphat[n] = calphat[n] + cahat[n - m] * cgamma[n - m + 1, m]
             cbetat[n] = cbetat[n] + cbhat[n - m] * cgamma[n - m + 1, m]
@@ -543,8 +543,8 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
         cc[m] = RBINOM[order, m] * z ** (order - m) * biglab ** order
     if order > 0:
         for n in range(0, 2 * NTERMS + order):
-            calpha[n] = np.complex(0.0, 0.0)
-            cbeta[n] = np.complex(0.0, 0.0)
+            calpha[n] = complex(0.0, 0.0)
+            cbeta[n] = complex(0.0, 0.0)
             for m in range(max(0, n - 2 * NTERMS + 1), min(n, order) + 1):
                 calpha[n] = calpha[n] + cc[m] * calphat[n - m]
                 cbeta[n] = cbeta[n] + cc[m] * cbetat[n - m]
@@ -553,7 +553,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
         cbeta = cbetat
 
     # Computation of integral
-    g2 = np.complex(0.0, 0.0)
+    g2 = complex(0.0, 0.0)
     del1 = -1.0 + 2.0 * (float(m1) - 1.0) / float(NLS)
     del2 = -1.0 + 2.0 * float(m2) / float(NLS)
     cd1minz = del1 / biglab - z
@@ -575,9 +575,9 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     # Integral g3
     # Eq. 23
-    calphat[0] = np.complex(0.0, 0.0)
+    calphat[0] = complex(0.0, 0.0)
     for n in range(1, 2 * NTERMS):  # Loop start at 1, because of bug in Digital Fortran
-        calphat[n] = np.complex(0.0, 0.0)
+        calphat[n] = complex(0.0, 0.0)
         for m in range(max(0, n - NTERMS), int((n - 1) / 2) + 1):
             calphat[n] = calphat[n] + cahat[n - m - 1] * cgamma[n - m - 1, m] * (
                 -1.0
@@ -589,14 +589,14 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     if order > 0:
         for n in range(0, 2 * NTERMS + order):
-            calpha[n] = np.complex(0.0, 0.0)
+            calpha[n] = complex(0.0, 0.0)
             for m in range(max(0, n - 2 * NTERMS + 1), min(n, order) + 1):
                 calpha[n] = calpha[n] + cc[m] * calphat[n - m]
     else:
         calpha = calphat
 
     # Computation of integral
-    g3 = np.complex(0.0, 0.0)
+    g3 = complex(0.0, 0.0)
     # cd1minz = del1 / biglab - zbar  cd2minz = del2 / biglab - zbar
     # if ( abs(cd1minz) < 1.0e-8) cd1minz = cd1minz + 1.0e-8
     # if ( abs(cd2minz) < 1.0e-8) cd2minz = cd2minz + 1.0e-8
@@ -619,7 +619,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
 @numba.njit
 def IntegralLapLineDipole(zin, z1, z2, del0, ra, order):
-    cg = np.full(order + 2, np.complex(0.0, 0.0))
+    cg = np.full(order + 2, complex(0.0, 0.0))
     z = (2.0 * zin - (z1 + z2)) / (z2 - z1)
     zplus1 = z + 1.0
     zmin1 = z - 1.0
@@ -629,13 +629,13 @@ def IntegralLapLineDipole(zin, z1, z2, del0, ra, order):
     for m in range(0, order + 1):
         cg[m] = RBINOM[order, m] * (-del0) ** (order - m) / ra ** order
 
-    zterm = np.complex(0.0, 0.0)
+    zterm = complex(0.0, 0.0)
     for n in range(0, order + 1):
         zterm = zterm + cg[n] * z ** n
 
-    qmtot = np.complex(0.0, 0.0)
+    qmtot = complex(0.0, 0.0)
     for m in range(1, order + 1):
-        qm = np.complex(0.0, 0.0)
+        qm = complex(0.0, 0.0)
         for n in range(1, int((m + 1) / 2) + 1):
             qm = qm + z ** (m - 2 * n + 1) / float(2 * n - 1)
         qmtot = qmtot + 2.0 * cg[m] * qm
@@ -646,7 +646,7 @@ def IntegralLapLineDipole(zin, z1, z2, del0, ra, order):
 
 @numba.njit
 def IntegralLapLineDipoleDis(zin, z1, z2, del0, ra, order):
-    cg = np.full(order + 2, np.complex(0.0, 0.0))
+    cg = np.full(order + 2, complex(0.0, 0.0))
 
     z = (2.0 * zin - (z1 + z2)) / (z2 - z1)
     zplus1 = z + 1.0
@@ -656,16 +656,16 @@ def IntegralLapLineDipoleDis(zin, z1, z2, del0, ra, order):
     for m in range(0, order + 1):
         cg[m] = RBINOM[order, m] * (-del0) ** (order - m) / ra ** order
 
-    zterm1 = np.complex(0.0, 0.0)
-    zterm2 = np.complex(0.0, 0.0)
+    zterm1 = complex(0.0, 0.0)
+    zterm2 = complex(0.0, 0.0)
     for n in range(1, order + 1):
         zterm1 = zterm1 + cg[n] * float(n) * z ** (n - 1)
     for n in range(0, order + 1):
         zterm2 = zterm2 + cg[n] * z ** n
 
-    qmtot = np.complex(0.0, 0.0)
+    qmtot = complex(0.0, 0.0)
     for m in range(2, order + 1):
-        qm = np.complex(0.0, 0.0)
+        qm = complex(0.0, 0.0)
         for n in range(1, int(m / 2) + 1):
             qm = qm + float(m - 2 * n + 1) * z ** (m - 2 * n) / float(2 * n - 1)
         qmtot = qmtot + 2.0 * cg[m] * qm
