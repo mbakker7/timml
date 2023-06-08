@@ -321,3 +321,91 @@ class IntDisVecEquation:
                     rhs[istart:istart + self.nlayers] -= flux
 
         return mat, rhs
+
+
+class LeakyIntHeadDiffEquation:
+    def equation(self):
+        mat = np.empty((self.nunknowns, self.model.neq))
+        rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
+        for icp in range(self.ncp):
+            istart = icp * self.nlayers
+            ieq = 0
+            for e in self.model.elementlist:
+                if e.nunknowns > 0:
+                    flux = self.intflux(
+                        e.disvecinflayers, 
+                        self.xc[icp],
+                        self.yc[icp],
+                        self.xc[icp + 1],
+                        self.yc[icp + 1],
+                        self.layers,
+                        aq=self.aq,
+                    )
+                    headin = (
+                        self.intpot(
+                            e.potinflayers,
+                            self.xcin[icp],
+                            self.ycin[icp],
+                            self.xcin[icp + 1],
+                            self.ycin[icp + 1],
+                            self.layers,
+                            aq=self.aqin,
+                        )
+                        / self.aqin.Tcol[self.layers]
+                    )
+                    headout = (
+                        self.intpot(
+                            e.potinflayers,
+                            self.xcout[icp],
+                            self.ycout[icp],
+                            self.xcout[icp + 1],
+                            self.ycout[icp + 1],
+                            self.layers,
+                            aq=self.aqout,
+                        )
+                        / self.aqout.Tcol[self.layers]
+                    )
+
+                    mat[
+                        istart : istart + self.nlayers, ieq : ieq + e.nunknowns
+                    ] = flux - self.resfac * (headin - headout)
+                    ieq += e.nunknowns
+                else:
+                    flux = self.intflux(
+                        e.disvecinflayers, 
+                        self.xc[icp],
+                        self.yc[icp],
+                        self.xc[icp + 1],
+                        self.yc[icp + 1],
+                        self.layers,
+                        aq=self.aq,
+                    )
+                    headin = (
+                        self.intpot(
+                            e.potentiallayers,
+                            self.xcin[icp],
+                            self.ycin[icp],
+                            self.xcin[icp + 1],
+                            self.ycin[icp + 1],
+                            self.layers,
+                            aq=self.aqin,
+                        )
+                        / self.aqin.T[self.layers]
+                    )
+                    headout = (
+                        self.intpot(
+                            e.potentiallayers,
+                            self.xcout[icp],
+                            self.ycout[icp],
+                            self.xcout[icp + 1],
+                            self.ycout[icp + 1],
+                            self.layers,
+                            aq=self.aqout,
+                        )
+                        / self.aqout.T[self.layers]
+                    )
+
+                    rhs[istart : istart + self.nlayers] -= (flux[0] -
+                        self.resfac * (headin - headout) 
+                    )
+        return mat, rhs
