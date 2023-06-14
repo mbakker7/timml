@@ -45,7 +45,7 @@ class LineSink1DBase(Element):
             self.wh = 2.0 * self.aq.Haq[self.layers]
         elif np.isscalar(self.wh):
             self.wh = self.wh * np.ones(self.nlayers)
-        self.resfac = self.aq.T[self.layers] * self.res / self.wh
+        self.resfac = self.aq.Haq[self.layers] * self.res / self.wh
 
     def potinf(self, x, y, aq=None):
         if aq is None: 

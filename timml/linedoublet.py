@@ -67,7 +67,7 @@ class LineDoubletHoBase(Element):
                                                    eps=-1e-6)
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
-        self.resfac = self.aq.T[self.layers] / self.res
+        self.resfac = self.aq.Haq[self.layers] / self.res
         if self.addtomodel:
             self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))

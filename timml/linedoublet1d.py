@@ -36,7 +36,7 @@ class LineDoublet1D(Element):
         self.theta_norm_out = np.zeros(1)
         self.cosnorm = np.cos(self.theta_norm_out) * np.ones(self.ncp)
         self.sinnorm = np.sin(self.theta_norm_out) * np.ones(self.ncp)
-        self.resfac = self.aq.T[self.layers] / self.res
+        self.resfac = self.aq.Haq[self.layers] / self.res
 
     def potinf(self, x, y, aq=None):
         if aq is None: 

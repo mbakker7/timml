@@ -171,7 +171,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
             self.whfac = 2.0 * self.aq.Haq[self.layers]
         elif np.isscalar(self.wh):
             self.whfac = self.wh * np.ones(self.nlayers)
-        self.resfac = self.aq.T[self.layers] * self.res / self.whfac
+        self.resfac = self.aq.Haq[self.layers] * self.res / self.whfac
 
     def potinf(self, x, y, aq=None):
         '''Can be called with only one x,y value'''
