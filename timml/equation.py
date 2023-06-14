@@ -372,7 +372,7 @@ class LeakyIntHeadDiffEquation:
                     ieq += e.nunknowns
                 else:
                     flux = self.intflux(
-                        e.disvecinflayers, 
+                        e.disveclayers, 
                         self.xc[icp],
                         self.yc[icp],
                         self.xc[icp + 1],
@@ -405,7 +405,7 @@ class LeakyIntHeadDiffEquation:
                         / self.aqout.T[self.layers]
                     )
 
-                    rhs[istart : istart + self.nlayers] -= (flux[0] -
+                    rhs[istart : istart + self.nlayers] += -(flux -
                         self.resfac * (headin - headout) 
                     )
         return mat, rhs
