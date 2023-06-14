@@ -69,7 +69,7 @@ class PlotTim:
 
     def contour(self, win, ngr=20, layers=0, levels=20, layout=True,
                 labels=True, decimals=0, color=None, newfig=True,
-                figsize=None, legend=True):
+                figsize=None, legend=True, **kwargs):
         """Contour plot
 
         Parameters
@@ -133,7 +133,7 @@ class PlotTim:
         cslist = []
         cshandlelist = []
         for i in range(len(layers)):
-            cs = plt.contour(xg, yg, h[i], levels, colors=c[i])
+            cs = plt.contour(xg, yg, h[i], levels, colors=c[i], **kwargs)
             cslist.append(cs)
             handles, labels = cs.legend_elements()
             cshandlelist.append(handles[0])
