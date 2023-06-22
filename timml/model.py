@@ -106,6 +106,59 @@ class Model(PlotTim):
         rv = np.sum(rv[:, np.newaxis, :] * aq.eigvec, 2)
         return rv
     
+    def disvecnorm(self, x, y, theta):
+        qxqy = self.disvec(x, y)
+        cosnorm = np.cos(theta - np.pi/2)
+        sinnorm = np.sin(theta - np.pi/2)
+        return (cosnorm * qxqy[0] + sinnorm * qxqy[1])
+
+    def _disvecnorm_integrand(self, r, theta, x1, y1):
+        x = r * np.cos(theta) + x1
+        y = r * np.sin(theta) + y1
+        return self.disvecnorm(x, y, theta)
+    
+    def intdisvecnorm(self, x1, x2, y1, y2, method="legendre", ndeg=3):
+        """Integrated normal (perpendicular) flux over specified line.
+
+        Parameters
+        ----------
+        x1 : float
+        x2 : float
+        y1 : float
+        y2 : float
+        method : str, optional
+            integration method, either "quad" (numerical integration using scipy)
+            or "legendre" (approximate integral using Gauss-Legendre quadrature),
+            by default "legendre".
+        ndeg : int, optional
+            degree for legendre polynomial, by default 3, 
+            only used when method="legendre"
+
+        Returns
+        -------
+        Qn : np.array
+            integrated normal flux along specified line
+        """
+        theta = np.arctan2(y2 - y1, x2 - x1)
+        if method == "quad":
+            rmax = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+            return quad(self._disvecnorm_integrand, 0, rmax, args=(theta, x1, y1))[0]
+        if method == "legendre":
+            Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
+            theta_norm_out = theta - np.pi/2.0
+            cosnorm = np.cos(theta_norm_out)
+            sinnorm = np.sin(theta_norm_out)
+            z1 = x1 + 1j * y1
+            z2 = x2 + 1j * y2
+            z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
+            x = z.real
+            y = z.imag
+            qn = 0.0
+            for i in range(ndeg):
+                qxqy = self.disvec(x=x[i], y=y[i])
+                qn += wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
+            return 0.5 * np.abs(z2 - z1) * qn
+
     def qztop(self, x, y, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
         rv = 0.0
