@@ -105,20 +105,22 @@ class Model(PlotTim):
             rv += e.disvec(x, y, aq)
         rv = np.sum(rv[:, np.newaxis, :] * aq.eigvec, 2)
         return rv
-    
-    def disvecnorm(self, x, y, theta):
-        qxqy = self.disvec(x, y)
-        cosnorm = np.cos(theta - np.pi/2)
-        sinnorm = np.sin(theta - np.pi/2)
-        return (cosnorm * qxqy[0] + sinnorm * qxqy[1])
 
-    def _disvecnorm_integrand(self, r, theta, x1, y1):
-        x = r * np.cos(theta) + x1
-        y = r * np.sin(theta) + y1
-        return self.disvecnorm(x, y, theta)
-    
-    def intdisvecnorm(self, x1, x2, y1, y2, method="legendre", ndeg=3):
+    def normflux(self, x, y, theta_norm):
+        qxqy = self.disvec(x, y)
+        cosnorm = np.cos(theta_norm)
+        sinnorm = np.sin(theta_norm)
+        return cosnorm * qxqy[0] + sinnorm * qxqy[1]
+
+    def _normflux_integrand(self, l, theta_norm, x1, y1):
+        x = l * np.cos(theta_norm + np.pi / 2) + x1
+        y = l * np.sin(theta_norm + np.pi / 2) + y1
+        return self.normflux(x, y, theta_norm)
+
+    def intnormflux(self, x1, x2, y1, y2, method="legendre", ndeg=10):
         """Integrated normal (perpendicular) flux over specified line.
+
+        Flux to the left is positive when going from (x1, y1) to (x2, y2).
 
         Parameters
         ----------
@@ -131,7 +133,7 @@ class Model(PlotTim):
             or "legendre" (approximate integral using Gauss-Legendre quadrature),
             by default "legendre".
         ndeg : int, optional
-            degree for legendre polynomial, by default 3, 
+            degree for legendre polynomial, by default 10,
             only used when method="legendre"
 
         Returns
@@ -139,20 +141,22 @@ class Model(PlotTim):
         Qn : np.array
             integrated normal flux along specified line
         """
-        theta = np.arctan2(y2 - y1, x2 - x1)
+        z1 = x1 + y1 * 1j
+        z2 = x2 + y2 * 1j
+        normvec = (z2 - z1) / np.abs(z2 - z1) * np.exp(-np.pi * 1j / 2)
+        theta_norm = np.angle(normvec)
         if method == "quad":
-            rmax = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-            return quad(self._disvecnorm_integrand, 0, rmax, args=(theta, x1, y1))[0]
+            L = np.abs(z2 - z1)
+            return quad_vec(self._normflux_integrand, 0, L, args=(theta_norm, x1, y1))[
+                0
+            ]
         if method == "legendre":
             Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
-            theta_norm_out = theta - np.pi/2.0
-            cosnorm = np.cos(theta_norm_out)
-            sinnorm = np.sin(theta_norm_out)
-            z1 = x1 + 1j * y1
-            z2 = x2 + 1j * y2
             z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
             x = z.real
             y = z.imag
+            cosnorm = np.cos(theta_norm)
+            sinnorm = np.sin(theta_norm)
             qn = 0.0
             for i in range(ndeg):
                 qxqy = self.disvec(x=x[i], y=y[i])
