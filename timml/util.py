@@ -135,7 +135,7 @@ class PlotTim:
         for i in range(len(layers)):
             cs = plt.contour(xg, yg, h[i], levels, colors=c[i], **kwargs)
             cslist.append(cs)
-            handles, labels = cs.legend_elements()
+            handles, _ = cs.legend_elements()
             cshandlelist.append(handles[0])
             if labels:
                 fmt = "%1." + str(decimals) + "f"
