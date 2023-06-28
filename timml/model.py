@@ -10,6 +10,7 @@ from .aquifer import Aquifer
 from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .util import PlotTim
+from scipy.integrate import quad_vec
 import multiprocessing as mp
 
 __all__ = ['Model', 'ModelMaq', 'Model3D']
