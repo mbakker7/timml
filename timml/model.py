@@ -114,11 +114,11 @@ class Model(PlotTim):
         return cosnorm * qxqy[0] + sinnorm * qxqy[1]
 
     def _normflux_integrand(self, l, theta_norm, x1, y1):
-        x = l * np.cos(theta_norm + np.pi / 2) + x1
-        y = l * np.sin(theta_norm + np.pi / 2) + y1
+        x = l * np.cos(theta_norm - np.pi / 2) + x1
+        y = l * np.sin(theta_norm - np.pi / 2) + y1
         return self.normflux(x, y, theta_norm)
 
-    def intnormflux(self, x1, x2, y1, y2, method="legendre", ndeg=10):
+    def intnormflux(self, x1, y1, x2, y2, method="legendre", ndeg=10):
         """Integrated normal (perpendicular) flux over specified line.
 
         Flux to the left is positive when going from (x1, y1) to (x2, y2).
@@ -126,8 +126,8 @@ class Model(PlotTim):
         Parameters
         ----------
         x1 : float
-        x2 : float
         y1 : float
+        x2 : float
         y2 : float
         method : str, optional
             integration method, either "quad" (numerical integration using scipy)
@@ -145,24 +145,24 @@ class Model(PlotTim):
         z1 = x1 + y1 * 1j
         z2 = x2 + y2 * 1j
         normvec = (z2 - z1) / np.abs(z2 - z1) * np.exp(-np.pi * 1j / 2)
-        theta_norm = np.angle(normvec)
+        theta_norm = np.angle(normvec) - np.pi
+        L = np.abs(z2 - z1)
         if method == "quad":
-            L = np.abs(z2 - z1)
-            return quad_vec(self._normflux_integrand, 0, L, args=(theta_norm, x1, y1))[
-                0
-            ]
+            return quad_vec(
+                self._normflux_integrand,
+                0,
+                L,
+                args=(theta_norm, x1, y1),
+            )[0]
         if method == "legendre":
             Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
             z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
             x = z.real
             y = z.imag
-            cosnorm = np.cos(theta_norm)
-            sinnorm = np.sin(theta_norm)
             qn = 0.0
             for i in range(ndeg):
-                qxqy = self.disvec(x=x[i], y=y[i])
-                qn += wleg[i] * (qxqy[0] * cosnorm + qxqy[1] * sinnorm)
-            return 0.5 * np.abs(z2 - z1) * qn
+                qn += wleg[i] * self.normflux(x=x[i], y=y[i], theta_norm=theta_norm)
+            return L * qn / 2.0
 
     def qztop(self, x, y, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
