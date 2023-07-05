@@ -4,7 +4,7 @@ from .equation import (
     HeadDiffEquation2, 
     DisvecDiffEquation2, 
     IntDisVecEquation, 
-    LeakyIntHeadDiffEquation,
+    IntLeakyWallEquation,
 )
 from .controlpoints import controlpoints
 # needed for testing
@@ -185,7 +185,7 @@ class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
         self.parameters[:, 0] = sol
 
 
-class LeakyIntHeadDiffLineSink(LineSinkHoBase, LeakyIntHeadDiffEquation):
+class LeakyIntHeadDiffLineSink(LineSinkHoBase, IntLeakyWallEquation):
     """Element to set numerically integrated head
     along linesink to equal to:
         Qnormal = H * (headin - headout) / res
