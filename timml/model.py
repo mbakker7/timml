@@ -107,10 +107,25 @@ class Model(PlotTim):
         rv = np.sum(rv[:, np.newaxis, :] * aq.eigvec, 2)
         return rv
 
-    def normflux(self, x, y, theta_norm):
+    def normflux(self, x, y, theta):
+        """flux at point x, y in direction of angle theta.
+
+        Parameters
+        ----------
+        x : float
+        y : float
+        theta : float
+            angle for which to calculate flux,
+            defined relative to positive x-axis.
+
+        Returns
+        -------
+        flux
+            flux in direction theta
+        """
         qxqy = self.disvec(x, y)
-        cosnorm = np.cos(theta_norm)
-        sinnorm = np.sin(theta_norm)
+        cosnorm = np.cos(theta)
+        sinnorm = np.sin(theta)
         return cosnorm * qxqy[0] + sinnorm * qxqy[1]
 
     def _normflux_integrand(self, l, theta_norm, x1, y1):
@@ -161,7 +176,7 @@ class Model(PlotTim):
             y = z.imag
             qn = 0.0
             for i in range(ndeg):
-                qn += wleg[i] * self.normflux(x=x[i], y=y[i], theta_norm=theta_norm)
+                qn += wleg[i] * self.normflux(x=x[i], y=y[i], theta=theta_norm)
             return L * qn / 2.0
 
     def qztop(self, x, y, aq=None):
