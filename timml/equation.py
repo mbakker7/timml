@@ -323,7 +323,7 @@ class IntDisVecEquation:
         return mat, rhs
 
 
-class LeakyIntHeadDiffEquation:
+class IntLeakyWallEquation:
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -405,7 +405,7 @@ class LeakyIntHeadDiffEquation:
                         / self.aqout.T[self.layers]
                     )
 
-                    rhs[istart : istart + self.nlayers] += -(flux -
+                    rhs[istart : istart + self.nlayers] += (-flux +
                         self.resfac * (headin - headout) 
                     )
         return mat, rhs
