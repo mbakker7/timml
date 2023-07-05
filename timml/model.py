@@ -42,21 +42,13 @@ class Model(PlotTim):
     
     """
     
-    def __init__(self, kaq, c, z, npor, ltype, f2py=False):
+    def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = 'ml'  # Used for writing out input
-        self.f2py = False
-        if f2py:
-            try:
-                from .src import besselaesnew
-                self.f2py = True
-            except:
-                print('FORTRAN extension not found while f2py=True')
-                print('Using Numba instead')
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
@@ -535,10 +527,10 @@ class ModelMaq(Model):
     """
     
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf',
-                 hstar=None, f2py=False):
+                 hstar=None):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
-        Model.__init__(self, kaq, c, z, npor, ltype, f2py)
+        Model.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'ModelMaq'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)
@@ -586,8 +578,7 @@ class Model3D(Model):
     """
     
     def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3,
-                 topboundary='conf', topres=0, topthick=0, hstar=0,
-                 f2py=False):
+                 topboundary='conf', topres=0, topthick=0, hstar=0):
         '''Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
@@ -598,7 +589,7 @@ class Model3D(Model):
                                        topres)
         if topboundary == 'semi':
             z = np.hstack((z[0] + topthick, z))
-        Model.__init__(self, kaq, c, z, npor, ltype, f2py)
+        Model.__init__(self, kaq, c, z, npor, ltype)
         self.name = 'Model3D'
         if self.aq.ltype[0] == 'l':
             ConstantStar(self, hstar, aq=self.aq)

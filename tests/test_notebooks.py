@@ -10,7 +10,8 @@ nbdir = os.path.join('notebooks')
 testdir = tempfile.mkdtemp()
 
 def get_notebooks():
-    return [f for f in os.listdir(nbdir) if f.endswith('.ipynb')]
+    skip = ["benchmarking_besselaes.ipynb"]
+    return [f for f in os.listdir(nbdir) if f.endswith('.ipynb') and f not in skip]
 
 def get_jupyter_kernel():
     try:

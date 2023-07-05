@@ -3,19 +3,13 @@ import matplotlib.pyplot as plt
 import inspect  # Used for storing the input
 from .element import Element
 from .equation import HeadEquation, PotentialEquation
-from .besselaesnumba import besselaesnumba
-besselaesnumba.initialize()
-try:
-    from .src import besselaesnew
-    besselaesnew.besselaesnew.initialize()
-    #print('succes on f2py')
-except:
-    pass
-
 from .controlpoints import controlpoints, strengthinf_controlpoints
+from . import bessel
+
 
 __all__ = ['LineSinkBase', 'HeadLineSinkZero', 'HeadLineSink', 'LineSinkDitch',
            'HeadLineSinkString', 'LineSinkDitchString']
+
 
 class LineSinkChangeTrace:
     def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax, verbose=False):
@@ -142,10 +136,6 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.wh = wh
         self.addtomodel = addtomodel
         if self.addtomodel: self.model.add_element(self)
-        if self.model.f2py:
-            self.bessel = besselaesnew.besselaesnew
-        else:
-            self.bessel = besselaesnumba
 
     def __repr__(self):
         return self.name + ' from ' + str((self.x1, self.y1)) + ' to ' + str(
@@ -179,7 +169,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             pot = np.zeros(aq.naq)
-            pot[:] = self.bessel.potbeslsho(float(x), float(y), self.z1,
+            pot[:] = bessel.bessel.potbeslsho(float(x), float(y), self.z1,
                 self.z2, aq.lab, 0, aq.ilap, aq.naq)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
@@ -190,7 +180,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             qxqy = np.zeros((2, aq.naq))
-            qxqy[:, :] = self.bessel.disbeslsho(float(x), float(y), self.z1,
+            qxqy[:, :] = bessel.bessel.disbeslsho(float(x), float(y), self.z1,
                 self.z2, aq.lab, 0, aq.ilap, aq.naq)
             rv[0] = self.aq.coef[self.layers] * qxqy[0]
             rv[1] = self.aq.coef[self.layers] * qxqy[1]
@@ -242,10 +232,6 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if addtomodel: self.model.add_element(self)
         self.aq = aq
         self.zcinout = zcinout
-        if self.model.f2py:
-            self.bessel = besselaesnew.besselaesnew
-        else:
-            self.bessel = besselaesnumba
             
     def __repr__(self):
         return self.name + ' from ' + str((self.x1, self.y1)) + ' to ' + str(
@@ -299,7 +285,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             # clever way of using a reshaped rv here
             potrv = rv.reshape((self.order + 1, self.nlayers, aq.naq))
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = self.bessel.potbeslsv(float(x), float(y), self.z1,
+            pot[:, :] = bessel.bessel.potbeslsv(float(x), float(y), self.z1,
                 self.z2, aq.lab, self.order, aq.ilap, aq.naq)
             potrv[:] = self.aq.coef[self.layers] * pot[:, np.newaxis, :]
         return rv
@@ -319,7 +305,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if aq == self.aq:
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers, aq.naq))
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = self.bessel.disbeslsv(float(x), float(y), self.z1,
+            qxqy[:, :] = bessel.bessel.disbeslsv(float(x), float(y), self.z1,
                 self.z2, aq.lab, self.order, aq.ilap, aq.naq)
             qxqyrv[0, :] = self.aq.coef[self.layers] * qxqy[:self.order + 1,
                                                        np.newaxis, :]
