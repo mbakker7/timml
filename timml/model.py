@@ -10,6 +10,7 @@ from .aquifer import Aquifer
 from .aquifer_parameters import param_maq, param_3d
 from .constant import ConstantStar
 from .util import PlotTim
+from scipy.integrate import quad_vec
 import multiprocessing as mp
 
 __all__ = ['Model', 'ModelMaq', 'Model3D']
@@ -97,7 +98,79 @@ class Model(PlotTim):
             rv += e.disvec(x, y, aq)
         rv = np.sum(rv[:, np.newaxis, :] * aq.eigvec, 2)
         return rv
-    
+
+    def normflux(self, x, y, theta):
+        """flux at point x, y in direction of angle theta.
+
+        Parameters
+        ----------
+        x : float
+        y : float
+        theta : float
+            angle for which to calculate flux,
+            defined relative to positive x-axis.
+
+        Returns
+        -------
+        flux
+            flux in direction theta
+        """
+        qxqy = self.disvec(x, y)
+        cosnorm = np.cos(theta)
+        sinnorm = np.sin(theta)
+        return cosnorm * qxqy[0] + sinnorm * qxqy[1]
+
+    def _normflux_integrand(self, l, theta_norm, x1, y1):
+        x = l * np.cos(theta_norm - np.pi / 2) + x1
+        y = l * np.sin(theta_norm - np.pi / 2) + y1
+        return self.normflux(x, y, theta_norm)
+
+    def intnormflux(self, x1, y1, x2, y2, method="legendre", ndeg=10):
+        """Integrated normal (perpendicular) flux over specified line.
+
+        Flux to the left is positive when going from (x1, y1) to (x2, y2).
+
+        Parameters
+        ----------
+        x1 : float
+        y1 : float
+        x2 : float
+        y2 : float
+        method : str, optional
+            integration method, either "quad" (numerical integration using scipy)
+            or "legendre" (approximate integral using Gauss-Legendre quadrature),
+            by default "legendre".
+        ndeg : int, optional
+            degree for legendre polynomial, by default 10,
+            only used when method="legendre"
+
+        Returns
+        -------
+        Qn : np.array
+            integrated normal flux along specified line
+        """
+        z1 = x1 + y1 * 1j
+        z2 = x2 + y2 * 1j
+        normvec = (z2 - z1) / np.abs(z2 - z1) * np.exp(-np.pi * 1j / 2)
+        theta_norm = np.angle(normvec) - np.pi
+        L = np.abs(z2 - z1)
+        if method == "quad":
+            return quad_vec(
+                self._normflux_integrand,
+                0,
+                L,
+                args=(theta_norm, x1, y1),
+            )[0]
+        if method == "legendre":
+            Xleg, wleg = np.polynomial.legendre.leggauss(ndeg)
+            z = 0.5 * Xleg * (z2 - z1) + 0.5 * (z1 + z2)
+            x = z.real
+            y = z.imag
+            qn = 0.0
+            for i in range(ndeg):
+                qn += wleg[i] * self.normflux(x=x[i], y=y[i], theta=theta_norm)
+            return L * qn / 2.0
+
     def qztop(self, x, y, aq=None):
         if aq is None: aq = self.aq.find_aquifer_data(x, y)
         rv = 0.0

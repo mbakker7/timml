@@ -4,3 +4,4 @@ numba>=0.39
 matplotlib>=2.0,<3.5.0
 pytest>=4.6
 jupyter>=1.0.0
+shapely

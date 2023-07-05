@@ -1,6 +1,11 @@
 import numpy as np
 from .linesink import LineSinkHoBase
-from .equation import HeadDiffEquation2, DisvecDiffEquation2, IntDisVecEquation
+from .equation import (
+    HeadDiffEquation2, 
+    DisvecDiffEquation2, 
+    IntDisVecEquation, 
+    IntLeakyWallEquation,
+)
 from .controlpoints import controlpoints
 # needed for testing
 # from .equation import DisvecDiffEquation
@@ -175,6 +180,61 @@ class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
         if self.aq == self.aqout:
             self.xc = self.xcout
             self.yc = self.ycout
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+
+
+class LeakyIntHeadDiffLineSink(LineSinkHoBase, IntLeakyWallEquation):
+    """Element to set numerically integrated head
+    along linesink to equal to:
+        Qnormal = H * (headin - headout) / res
+    Used in LeakyBuildingPit element
+    """
+
+    def __init__(self, model, x1=-1, y1=0, x2=1, y2=0, res=np.inf, layers=None,
+                 order=0, ndeg=3, label=None, addtomodel=True, aq=None,
+                 aqin=None, aqout=None):
+        if layers is None:
+            layers = list(range(model.aq.naq))
+        LineSinkHoBase.__init__(self, model, x1, y1, x2, y2, Qls=0,
+                                layers=layers, order=order,
+                                name='LeakyIntHeadDiffLineSink', label=label,
+                                addtomodel=addtomodel, aq=aq)
+        self.res = res
+        self.inhomelement = True
+        self.ndeg = ndeg
+        self.Xleg, self.wleg = np.polynomial.legendre.leggauss(self.ndeg)
+        self.nunknowns = self.nparam
+        self.aqin = aqin
+        self.aqout = aqout
+
+    def initialize(self):
+        LineSinkHoBase.initialize(self)
+
+        # recalculated with ncp - 1 points instead of ncp points
+        self.xcin, self.ycin = controlpoints(self.ncp - 1, self.z1, self.z2,
+                                             eps=1e-6, include_ends=True)
+        self.xcout, self.ycout = controlpoints(self.ncp - 1, self.z1, self.z2,
+                                               eps=-1e-6, include_ends=True)
+
+        if self.aqin is None:
+            self.aqin = self.model.aq.find_aquifer_data(self.xcin[0],
+                                                        self.ycin[0])
+        if self.aqout is None:
+            self.aqout = self.model.aq.find_aquifer_data(self.xcout[0],
+                                                         self.ycout[0])
+        # set control points x,y depending on which side of
+        # the boundary the element is for
+        if self.aq == self.aqin:
+            self.xc = self.xcin
+            self.yc = self.ycin
+        if self.aq == self.aqout:
+            self.xc = self.xcout
+            self.yc = self.ycout
+
+        # set resistance factor
+        self.resfac = self.aq.Haq[self.layers] / self.res
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol

@@ -4,8 +4,12 @@ from .aquifer import AquiferData
 from .aquifer_parameters import param_maq, param_3d
 from .element import Element
 from .constant import ConstantInside, ConstantStar
-from .intlinesink import IntHeadDiffLineSink, IntFluxDiffLineSink, IntFluxLineSink
-from .controlpoints import controlpoints
+from .intlinesink import (
+    IntHeadDiffLineSink,
+    IntFluxDiffLineSink,
+    IntFluxLineSink,
+    LeakyIntHeadDiffLineSink,
+)
 
 __all__ = ['PolygonInhomMaq']
 
@@ -147,7 +151,8 @@ class PolygonInhomMaq(PolygonInhom):
         kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, topboundary)
         PolygonInhom.__init__(self, model, xy, kaq, c, z, npor, ltype,
                               hstar, N, order, ndeg)
-        
+
+
 class PolygonInhom3D(PolygonInhom):
     """
     Model3D Class to create a multi-layer model object consisting of
@@ -332,7 +337,8 @@ class BuildingPit(AquiferData):
                 return rv
             angles = np.log(bigZmin1 / bigZplus1).imag
             angle = np.sum(angles)
-            if angle > np.pi: rv = 1
+            if angle > np.pi: 
+                rv = 1
         return rv
 
     def create_elements(self):
@@ -357,20 +363,20 @@ class BuildingPit(AquiferData):
                                 order=self.order, ndeg=self.ndeg,
                                 label=None, addtomodel=True,
                                 aq=aqout, aqin=aqin, aqout=aqout)
-
-                # use these conditions for layers without impermeable walls
-                IntHeadDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
-                                    x2=self.x[i + 1], y2=self.y[i + 1],
-                                    layers=self.nonimplayers,
-                                    order=self.order, ndeg=self.ndeg,
-                                    label=None, addtomodel=True,
-                                    aq=aqin, aqin=aqin, aqout=aqout)
-                IntFluxDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
-                                    x2=self.x[i + 1], y2=self.y[i + 1],
-                                    layers=self.nonimplayers,
-                                    order=self.order, ndeg=self.ndeg,
-                                    label=None, addtomodel=True,
-                                    aq=aqout, aqin=aqin, aqout=aqout)
+                if len(self.nonimplayers) > 0:
+                    # use these conditions for layers without impermeable or leaky walls
+                    IntHeadDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
+                                        x2=self.x[i + 1], y2=self.y[i + 1],
+                                        layers=self.nonimplayers,
+                                        order=self.order, ndeg=self.ndeg,
+                                        label=None, addtomodel=True,
+                                        aq=aqin, aqin=aqin, aqout=aqout)
+                    IntFluxDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
+                                        x2=self.x[i + 1], y2=self.y[i + 1],
+                                        layers=self.nonimplayers,
+                                        order=self.order, ndeg=self.ndeg,
+                                        label=None, addtomodel=True,
+                                        aq=aqout, aqin=aqin, aqout=aqout)
 
         if aqin.ltype[0] == 'a':  # add constant on inside
             c = ConstantInside(self.model, self.zcin.real, self.zcin.imag)
@@ -379,7 +385,75 @@ class BuildingPit(AquiferData):
             assert self.hstar is not None, 'Error: hstar needs to be set'
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
-            
+
+
+class LeakyBuildingPit(BuildingPit):
+    def __init__(self, model, xy, kaq=1, z=[1, 0], c=[], npor=0.3,
+                 topboundary="conf", hstar=None, order=3,
+                 ndeg=3, layers=[0], res=np.inf):
+        super().__init__(
+            model=model,
+            xy=xy,
+            kaq=kaq,
+            z=z,
+            c=c,
+            npor=npor,
+            topboundary=topboundary,
+            hstar=hstar,
+            order=order,
+            ndeg=ndeg,
+            layers=layers,
+        )
+        self.res = res
+
+    def create_elements(self):
+        aqin = self.model.aq.find_aquifer_data(self.zcin[0].real,
+                                               self.zcin[0].imag)
+        for i in range(self.Nsides):
+            aqout = self.model.aq.find_aquifer_data(self.zcout[i].real,
+                                                    self.zcout[i].imag)
+            if (aqout == self.model.aq) or (
+                aqout.inhom_number > self.inhom_number):
+
+                # Conditions for layers with impermeable walls
+                LeakyIntHeadDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
+                                         x2=self.x[i + 1], y2=self.y[i + 1],
+                                         res=self.res, layers=self.layers,
+                                         order=self.order, ndeg=self.ndeg,
+                                         label=None, addtomodel=True,
+                                         aq=aqin, aqin=aqin, aqout=aqout)
+                
+                LeakyIntHeadDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
+                                         x2=self.x[i + 1], y2=self.y[i + 1],
+                                         res=self.res, layers=self.layers,
+                                         order=self.order, ndeg=self.ndeg,
+                                         label=None, addtomodel=True,
+                                         aq=aqout, aqin=aqin, aqout=aqout)
+                
+                if len(self.nonimplayers) > 0:
+                    # use these conditions for layers without impermeable or leaky walls
+                    IntHeadDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
+                                        x2=self.x[i + 1], y2=self.y[i + 1],
+                                        layers=self.nonimplayers,
+                                        order=self.order, ndeg=self.ndeg,
+                                        label=None, addtomodel=True,
+                                        aq=aqin, aqin=aqin, aqout=aqout)
+                    IntFluxDiffLineSink(self.model, x1=self.x[i], y1=self.y[i],
+                                        x2=self.x[i + 1], y2=self.y[i + 1],
+                                        layers=self.nonimplayers,
+                                        order=self.order, ndeg=self.ndeg,
+                                        label=None, addtomodel=True,
+                                        aq=aqout, aqin=aqin, aqout=aqout)
+
+        if aqin.ltype[0] == 'a':  # add constant on inside
+            c = ConstantInside(self.model, self.zcin.real, self.zcin.imag)
+            c.inhomelement = True
+        if aqin.ltype[0] == 'l':
+            assert self.hstar is not None, 'Error: hstar needs to be set'
+            c = ConstantStar(self.model, self.hstar, aq=aqin)
+            c.inhomelement = True
+        
+
 class AreaSinkInhom(Element):
     def __init__(self, model, N, xc, \
                  name='AreaSinkInhom', label=None, aq=None):
