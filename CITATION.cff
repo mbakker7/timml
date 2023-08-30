@@ -20,5 +20,6 @@ preferred-citation:
   title: "Analytic elements for multiaquifer flow"
   volume: 271
   number: 1
-  pages: 119-129
+  start: 119
+  end: 129
   year: 2003
