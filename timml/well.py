@@ -12,10 +12,23 @@ __all__ = ["WellBase", "Well", "HeadWell"]
 
 
 class WellBase(Element):
-    def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, res=0.0, layers=0,
-                 name="WellBase", label=None, xc=None, yc=None):
-        Element.__init__(self, model, nparam=1, nunknowns=0, layers=layers,
-                         name=name, label=label)
+    def __init__(
+        self,
+        model,
+        xw=0,
+        yw=0,
+        Qw=100.0,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        name="WellBase",
+        label=None,
+        xc=None,
+        yc=None,
+    ):
+        Element.__init__(
+            self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
+        )
         # Defined here and not in Element as other elements can have multiple
         # parameters per layers
         self.nparam = len(self.layers)
@@ -77,7 +90,7 @@ class WellBase(Element):
             yminyw = y - self.yw
             if r < self.rw:
                 r = self.rw
-                rsq = r ** 2
+                rsq = r**2
                 xminxw = self.rw
                 yminyw = 0.0
             if aq.ilap:
@@ -122,8 +135,9 @@ class WellBase(Element):
         Q[self.layers] = self.parameters[:, 0]
         return Q
 
-    def changetrace(self, xyzt1, xyzt2, aq, layer, ltype, modellayer,
-                    direction, hstepmax):
+    def changetrace(
+        self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
+    ):
         changed = False
         terminate = False
         xyztnew = 0
@@ -134,11 +148,12 @@ class WellBase(Element):
             if ltype == "a":
                 if (layer == self.layers).any():  # in layer where well is screened
                     if (self.discharge()[layer] > 0 and direction > 0) or (
-                        self.discharge()[layer] < 0 and direction < 0):
+                        self.discharge()[layer] < 0 and direction < 0
+                    ):
                         vx, vy, vz = self.model.velocity(*xyzt1[:-1])
                         tstep = np.sqrt(
                             (xyzt1[0] - self.xw) ** 2 + (xyzt1[1] - self.yw) ** 2
-                        ) / np.sqrt(vx ** 2 + vy ** 2)
+                        ) / np.sqrt(vx**2 + vy**2)
                         xnew = self.xw
                         ynew = self.yw
                         znew = xyzt1[2] + tstep * vz * direction
@@ -153,8 +168,16 @@ class WellBase(Element):
         return changed, terminate, [xyztnew], message
 
     def capzone(
-        self, nt=10, zstart=None, hstepmax=10, vstepfrac=0.2, tmax=None,
-        nstepmax=100, silent=".", *, metadata=False
+        self,
+        nt=10,
+        zstart=None,
+        hstepmax=10,
+        vstepfrac=0.2,
+        tmax=None,
+        nstepmax=100,
+        silent=".",
+        *,
+        metadata=False
     ):
         """Compute a capture zone
 
@@ -182,9 +205,18 @@ class WellBase(Element):
 
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
-        xyzt = timtracelines(self.model, xstart, ystart, zstart, -np.abs(hstepmax),
-            vstepfrac=vstepfrac, tmax=tmax, nstepmax=nstepmax, silent=silent,
-            metadata=metadata)
+        xyzt = timtracelines(
+            self.model,
+            xstart,
+            ystart,
+            zstart,
+            -np.abs(hstepmax),
+            vstepfrac=vstepfrac,
+            tmax=tmax,
+            nstepmax=nstepmax,
+            silent=silent,
+            metadata=metadata,
+        )
         return xyzt
 
     def capzonestart(self, nt, zstart):
@@ -201,11 +233,24 @@ class WellBase(Element):
         if (layer is None) or (layer in self.layers):
             plt.plot(self.xw, self.yw, "k.")
 
-    def plotcapzone(self, nt=10, zstart=None, hstepmax=20, vstepfrac=0.2,
-                    tmax=365, nstepmax=100, silent=".", color=None,
-                    orientation="hor", win=[-1e30, 1e30, -1e30, 1e30],
-                    newfig=False, figsize=None, *, return_traces=False,
-                    metadata=False):
+    def plotcapzone(
+        self,
+        nt=10,
+        zstart=None,
+        hstepmax=20,
+        vstepfrac=0.2,
+        tmax=365,
+        nstepmax=100,
+        silent=".",
+        color=None,
+        orientation="hor",
+        win=[-1e30, 1e30, -1e30, 1e30],
+        newfig=False,
+        figsize=None,
+        *,
+        return_traces=False,
+        metadata=False
+    ):
         """Plot a capture zone
 
         Parameters
@@ -239,11 +284,23 @@ class WellBase(Element):
         if not return_traces:
             metadata = True  # suppress future warning from timtraceline
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
-        traces = self.model.tracelines(xstart, ystart, zstart,
-            hstepmax=-abs(hstepmax), vstepfrac=vstepfrac, tmax=tmax,
-            nstepmax=nstepmax, silent=silent, color=color,
-            orientation=orientation, win=win, newfig=newfig,
-            figsize=figsize, return_traces=return_traces, metadata=metadata)
+        traces = self.model.tracelines(
+            xstart,
+            ystart,
+            zstart,
+            hstepmax=-abs(hstepmax),
+            vstepfrac=vstepfrac,
+            tmax=tmax,
+            nstepmax=nstepmax,
+            silent=silent,
+            color=color,
+            orientation=orientation,
+            win=win,
+            newfig=newfig,
+            figsize=figsize,
+            return_traces=return_traces,
+            metadata=metadata,
+        )
         if return_traces:
             return traces
 
@@ -292,11 +349,34 @@ class Well(WellBase, MscreenWellEquation):
 
     """
 
-    def __init__(self, model, xw=0, yw=0, Qw=100.0, rw=0.1, \
-                 res=0.0, layers=0, label=None, xc=None, yc=None):
+    def __init__(
+        self,
+        model,
+        xw=0,
+        yw=0,
+        Qw=100.0,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        label=None,
+        xc=None,
+        yc=None,
+    ):
         self.storeinput(inspect.currentframe())
-        WellBase.__init__(self, model, xw, yw, Qw, rw, res, \
-                          layers=layers, name="Well", label=label, xc=xc, yc=yc)
+        WellBase.__init__(
+            self,
+            model,
+            xw,
+            yw,
+            Qw,
+            rw,
+            res,
+            layers=layers,
+            name="Well",
+            label=label,
+            xc=xc,
+            yc=yc,
+        )
         self.Qc = float(Qw)
         if self.nlayers == 1:
             self.nunknowns = 0
@@ -348,11 +428,34 @@ class HeadWell(WellBase, PotentialEquation):
 
     """
 
-    def __init__(self, model, xw=0, yw=0, hw=10, rw=0.1, res=0, layers=0,
-                 label=None, xc=None, yc=None):
+    def __init__(
+        self,
+        model,
+        xw=0,
+        yw=0,
+        hw=10,
+        rw=0.1,
+        res=0,
+        layers=0,
+        label=None,
+        xc=None,
+        yc=None,
+    ):
         self.storeinput(inspect.currentframe())
-        WellBase.__init__(self, model, xw, yw, 0.0, rw, res, layers=layers,
-                          name="HeadWell", label=label, xc=xc, yc=yc)
+        WellBase.__init__(
+            self,
+            model,
+            xw,
+            yw,
+            0.0,
+            rw,
+            res,
+            layers=layers,
+            name="HeadWell",
+            label=label,
+            xc=xc,
+            yc=yc,
+        )
         self.hc = hw
         self.nunknowns = self.nparam
 
