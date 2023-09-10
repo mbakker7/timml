@@ -376,7 +376,7 @@ class BuildingPit(AquiferData):
         self.order = order
         self.ndeg = ndeg
 
-        self.layers = layers  # layers with impermeable wall
+        self.layers = np.atleast_1d(layers)  # layers with impermeable wall
         self.nonimplayers = list(
             set(range(self.model.aq.naq)) - set(self.layers)
         )  # layers without wall
