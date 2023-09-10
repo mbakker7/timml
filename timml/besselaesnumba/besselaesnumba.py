@@ -101,7 +101,7 @@ def prepare_z(x, y, z1, z2):
 def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     """
     Parameters
-    ---------- 
+    ----------
        x,y: Point where potential is computed
        z1: Complex begin point of line-sink
        z2: Complex end point of line-sink
@@ -136,7 +136,7 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
             pcor = pcor + z ** (power - 2 * n + 1) / (2 * n - 1)
         pcor = 2.0 * pcor
         comega = (
-            z ** power * np.log((zmin1) / (zplus1))
+            z**power * np.log((zmin1) / (zplus1))
             + pcor
             - np.log(zmin1)
             + (-1.0) ** power * np.log(zplus1)
@@ -204,7 +204,7 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
         cdum = 1.0 / (
             order + 1
         )  # Without this intermediate statement it didn't seem to work
-        wdis = float(order + 1) * z ** order * np.log((zmin1) / (zplus1)) + pcor
+        wdis = float(order + 1) * z**order * np.log((zmin1) / (zplus1)) + pcor
 
         wdis = (
             wdis
@@ -252,7 +252,6 @@ def disbeslsv(x, y, z1, z2, lab, order, ilap, naq):
 
 @numba.njit(nogil=True, cache=True)
 def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
-
     # Input:
     #   x,y: Point where potential is computed
     #   z1: Complex begin point of line-doublet
@@ -276,7 +275,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
 
     # Laplace line-doublet
     if ilap == 1:
-        comega = z ** order * np.log(zmin1 / zplus1)
+        comega = z**order * np.log(zmin1 / zplus1)
         qm = complex(0.0, 0.0)
         for n in range(1, int((order + 1) / 2) + 1):
             qm = qm + z ** (order - 2.0 * float(n) + 1.0) / (2.0 * float(n) - 1.0)
@@ -351,7 +350,7 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
             )
         else:
             wdis = float(order) * z ** (order - 1) * np.log(zmin1 / zplus1)
-            wdis = wdis + z ** order * (1.0 / zmin1 - 1.0 / zplus1)
+            wdis = wdis + z**order * (1.0 / zmin1 - 1.0 / zplus1)
             qm = complex(0.0, 0.0)
             if order > 1:  # To avoid a possible problem of 0 * 0^(-1)
                 for n in range(1, int(order / 2) + 1):
@@ -388,7 +387,7 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
             wdis2 = IntegralG(zin, z1in, z2in, Lin, labda[i], order, Rconv, lstype)
             wdis3 = pot / (2.0 * complex(0.0, 1.0)) + wdis2 * np.imag(z)
 
-            wdis = wdis1 - 4.0 * wdis3 / (biglab ** 2 * (z2in - z1in))
+            wdis = wdis1 - 4.0 * wdis3 / (biglab**2 * (z2in - z1in))
         rv[0, i] = np.real(wdis)
         rv[1, i] = -1.0 * np.imag(wdis)
     return rv
@@ -449,7 +448,7 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     # Compute coefficients of delta^p
     for m in range(0, order + 1):
-        cc[m] = RBINOM[order, m] * z ** (order - m) * biglab ** order
+        cc[m] = RBINOM[order, m] * z ** (order - m) * biglab**order
     if order > 0:
         for n in range(0, 2 * NTERMS + order + 1):
             calpha[n] = complex(0.0, 0.0)
@@ -552,7 +551,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     # Compute coefficients of delta^p
     for m in range(0, order + 1):
-        cc[m] = RBINOM[order, m] * z ** (order - m) * biglab ** order
+        cc[m] = RBINOM[order, m] * z ** (order - m) * biglab**order
     if order > 0:
         for n in range(0, 2 * NTERMS + order):
             calpha[n] = complex(0.0, 0.0)
@@ -597,7 +596,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
 
     # Compute coefficients of delta^p
     for m in range(0, order + 1):
-        cc[m] = RBINOM[order, m] * zbar ** (order - m) * biglab ** order
+        cc[m] = RBINOM[order, m] * zbar ** (order - m) * biglab**order
 
     if order > 0:
         for n in range(0, 2 * NTERMS + order):
@@ -639,11 +638,11 @@ def IntegralLapLineDipole(zin, z1, z2, del0, ra, order):
     # We don't always have to do this, so maybe put in condition?
     # Determine coefficients of powers of Delta
     for m in range(0, order + 1):
-        cg[m] = RBINOM[order, m] * (-del0) ** (order - m) / ra ** order
+        cg[m] = RBINOM[order, m] * (-del0) ** (order - m) / ra**order
 
     zterm = complex(0.0, 0.0)
     for n in range(0, order + 1):
-        zterm = zterm + cg[n] * z ** n
+        zterm = zterm + cg[n] * z**n
 
     qmtot = complex(0.0, 0.0)
     for m in range(1, order + 1):
@@ -666,14 +665,14 @@ def IntegralLapLineDipoleDis(zin, z1, z2, del0, ra, order):
 
     # Determine coefficients of powers of Delta for [ (Delta-Delta_0)/a ] ^ p
     for m in range(0, order + 1):
-        cg[m] = RBINOM[order, m] * (-del0) ** (order - m) / ra ** order
+        cg[m] = RBINOM[order, m] * (-del0) ** (order - m) / ra**order
 
     zterm1 = complex(0.0, 0.0)
     zterm2 = complex(0.0, 0.0)
     for n in range(1, order + 1):
         zterm1 = zterm1 + cg[n] * float(n) * z ** (n - 1)
     for n in range(0, order + 1):
-        zterm2 = zterm2 + cg[n] * z ** n
+        zterm2 = zterm2 + cg[n] * z**n
 
     qmtot = complex(0.0, 0.0)
     for m in range(2, order + 1):

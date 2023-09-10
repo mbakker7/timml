@@ -1,7 +1,10 @@
-import numpy as np
 import inspect  # Used for storing the input
+
+import numpy as np
+
 from .aquifer_parameters import param_maq
 from .constant import ConstantStar
+
 
 class AquiferData:
     def __init__(self, model, kaq, c, z, npor, ltype):
@@ -20,34 +23,36 @@ class AquiferData:
         self.npor = np.atleast_1d(npor)
         self.ltype = np.atleast_1d(ltype)
         # tag indicating whether an aquifer is Laplace (confined on top)
-        if self.ltype[0] == 'a':
+        if self.ltype[0] == "a":
             self.ilap = 1
         else:
             self.ilap = 0
         #
         self.area = 1e200  # Smaller than default of ml.aq so that inhom is found
-        self.layernumber = np.zeros(self.nlayers, dtype='int')
-        self.layernumber[self.ltype == 'a'] = np.arange(self.naq)
-        self.layernumber[self.ltype == 'l'] = np.arange(self.nlayers - self.naq)
-        if self.ltype[0] == 'a':
-            self.layernumber[self.ltype == 'l'] += 1  # first leaky layer below first aquifer layer
-        self.zaqtop = self.z[:-1][self.ltype == 'a']
-        self.zaqbot = self.z[1:][self.ltype == 'a']
+        self.layernumber = np.zeros(self.nlayers, dtype="int")
+        self.layernumber[self.ltype == "a"] = np.arange(self.naq)
+        self.layernumber[self.ltype == "l"] = np.arange(self.nlayers - self.naq)
+        if self.ltype[0] == "a":
+            self.layernumber[
+                self.ltype == "l"
+            ] += 1  # first leaky layer below first aquifer layer
+        self.zaqtop = self.z[:-1][self.ltype == "a"]
+        self.zaqbot = self.z[1:][self.ltype == "a"]
         self.Haq = self.zaqtop - self.zaqbot
         self.T = self.kaq * self.Haq
         self.Tcol = self.T[:, np.newaxis]
-        self.zlltop = self.z[:-1][self.ltype == 'l']
-        self.zllbot = self.z[1:][self.ltype == 'l']
-        if self.ltype[0] == 'a':
+        self.zlltop = self.z[:-1][self.ltype == "l"]
+        self.zllbot = self.z[1:][self.ltype == "l"]
+        if self.ltype[0] == "a":
             self.zlltop = np.hstack((self.z[0], self.zlltop))
             self.zllbot = np.hstack((self.z[0], self.zllbot))
         self.Hll = self.zlltop - self.zllbot
-        self.nporaq = self.npor[self.ltype == 'a']
-        if self.ltype[0] == 'a':
-            self.nporll =  np.ones(len(self.npor[self.ltype == 'l']) + 1)
-            self.nporll[1:] = self.npor[self.ltype == 'l']
+        self.nporaq = self.npor[self.ltype == "a"]
+        if self.ltype[0] == "a":
+            self.nporll = np.ones(len(self.npor[self.ltype == "l"]) + 1)
+            self.nporll[1:] = self.npor[self.ltype == "l"]
         else:
-            self.nporll = self.npor[self.ltype == 'l']
+            self.nporll = self.npor[self.ltype == "l"]
 
     def initialize(self):
         self.elementlist = []  # Elementlist of aquifer
@@ -64,7 +69,9 @@ class AquiferData:
         if self.ilap:
             self.lab = np.zeros(self.naq)
             self.lab[1:] = 1.0 / np.sqrt(w[1:])
-            self.zeropluslab = self.lab  # to be deprecated when new lambda is fully implemented
+            self.zeropluslab = (
+                self.lab
+            )  # to be deprecated when new lambda is fully implemented
             v[:, 0] = self.T / np.sum(self.T)  # first column is normalized T
         else:
             self.lab = 1.0 / np.sqrt(w)
@@ -77,24 +84,24 @@ class AquiferData:
             self.hstar = e.hstar
 
     def isinside(self, x, y):
-        raise Exception('Must overload AquiferData.isinside()')
+        raise Exception("Must overload AquiferData.isinside()")
 
     def storeinput(self, frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
-        
+
     def findlayer(self, z):
-        '''
-        Returns layer-number, layer-type and model-layer-number'''
+        """
+        Returns layer-number, layer-type and model-layer-number"""
         if z > self.z[0]:
-            modellayer, ltype = -1, 'above'
+            modellayer, ltype = -1, "above"
             layernumber = None
         elif z < self.z[-1]:
-            modellayer, ltype = len(self.layernumber), 'below'
+            modellayer, ltype = len(self.layernumber), "below"
             layernumber = None
         else:
             modellayer = np.argwhere((z <= self.z[:-1]) & (z >= self.z[1:]))[0, 0]
             layernumber = self.layernumber[modellayer]
-            ltype = self.ltype[modellayer] 
+            ltype = self.ltype[modellayer]
         return layernumber, ltype, modellayer
 
 
@@ -131,6 +138,3 @@ class Aquifer(AquiferData):
         #            if inhom.area < rv.area:
         #                rv = i
         #    return rv
-
-
-        
