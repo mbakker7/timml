@@ -24,7 +24,7 @@ def timtraceline(
     silent=False,
     returnlayers=False,
     *,
-    metadata=False
+    metadata=False,
 ):
     verbose = False  # used for debugging
     if not metadata:
@@ -257,7 +257,7 @@ def timtracelines(
     silent=".",
     win=[-1e30, 1e30, -1e30, 1e30],
     *,
-    metadata=False
+    metadata=False,
 ):
     xyztlist = []
     for x, y, z in zip(xstart, ystart, zstart):

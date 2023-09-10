@@ -96,7 +96,7 @@ class PlotTim:
         newfig=True,
         figsize=None,
         legend=True,
-        **kwargs
+        **kwargs,
     ):
         """Contour plot
 
@@ -245,7 +245,7 @@ class PlotTim:
         figsize=None,
         *,
         return_traces=False,
-        metadata=False
+        metadata=False,
     ):
         """Draw trace lines"""
         if color is None:

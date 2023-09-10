@@ -177,7 +177,7 @@ class WellBase(Element):
         nstepmax=100,
         silent=".",
         *,
-        metadata=False
+        metadata=False,
     ):
         """Compute a capture zone
 
@@ -249,7 +249,7 @@ class WellBase(Element):
         figsize=None,
         *,
         return_traces=False,
-        metadata=False
+        metadata=False,
     ):
         """Plot a capture zone
 
