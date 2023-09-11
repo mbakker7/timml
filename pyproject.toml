@@ -15,7 +15,7 @@ maintainers = [
     { name = "Davíd Brakenhoff", email = "d.brakenhoff@artesia-water.nl" },
 ]
 requires-python = ">= 3.7"
-dependencies = ["numpy>=1.12", "scipy>=0.19", "numba>=0.39", "matplotlib>=3.0"]
+dependencies = ["numpy>=1.20", "scipy>=0.19", "numba>=0.39", "matplotlib>=3.0"]
 
 keywords = ["hydrology", "groundwater", "model", "analytic element method"]
 classifiers = [
@@ -46,8 +46,11 @@ documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 [project.optional-dependencies]
 ci = [
     "pytest>=4.6",
+    "pytest-cov",
     "jupyter>=1.0.0",
     "shapely",
+    "flake8",
+    "coveralls",
 ]
 
 [tool.setuptools]
