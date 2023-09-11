@@ -11,9 +11,21 @@ _future_warning_metadata = (
 )
 
 
-def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
-                 nstepmax=100, win=[-1e30, 1e30, -1e30, 1e30], silent=False, 
-                 returnlayers=False, *, metadata=False):
+def timtraceline(
+    ml,
+    xstart,
+    ystart,
+    zstart,
+    hstepmax,
+    vstepfrac=0.2,
+    tmax=1e12,
+    nstepmax=100,
+    win=[-1e30, 1e30, -1e30, 1e30],
+    silent=False,
+    returnlayers=False,
+    *,
+    metadata=False,
+):
     verbose = False  # used for debugging
     if not metadata:
         warnings.warn(_future_warning_metadata, FutureWarning, stacklevel=2)
@@ -31,7 +43,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
     layer, ltype, modellayer = aq.findlayer(zstart)
     # slightly alter starting location not to get stuck in surpring points
     # starting at time 0
-    xyzt = [np.array([xstart * (1 + eps), ystart * (1 + eps), zstart, 0])]  
+    xyzt = [np.array([xstart * (1 + eps), ystart * (1 + eps), zstart, 0])]
     layerlist = []  # to keep track of layers for plotting with colors
     for _ in range(nstepmax):
         if terminate:
@@ -42,8 +54,8 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
         layerlist.append(modellayer)
         v0 = ml.velocomp(x0, y0, z0, aq, [layer, ltype]) * direction
         if verbose:
-            print('xyz, layer', x0, y0, z0, layer)
-            print('v0, layer, ltype', v0, layer, ltype)
+            print("xyz, layer", x0, y0, z0, layer)
+            print("v0, layer, ltype", v0, layer, ltype)
         vx, vy, vz = v0
         if ltype == "l":  # in leaky layer
             if vz > 0:  # upward through leaky layer
@@ -69,7 +81,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
             t1 = t0 + abs((z1 - z0) / vz)
             xyztnew = [np.array([x0, y0, z1, t1])]
         else:  # in aquifer layer
-            vh = np.sqrt(vx ** 2 + vy ** 2)
+            vh = np.sqrt(vx**2 + vy**2)
             if vz > 0:  # flows upward
                 if aq.z[modellayer] - z0 < vstepfrac * aq.Haq[layer]:
                     # just below top
@@ -91,7 +103,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                 message = "at point of zero velocity"
                 terminate = True
                 break
-            if vh * tvstep > hstepmax:  
+            if vh * tvstep > hstepmax:
                 # max horizonal step smaller than max vertical step
                 thstep = hstepmax / vh
                 z1 = z0 + thstep * vz
@@ -106,26 +118,27 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
             correction = True
             for e in aq.elementlist:
                 changed, terminate, xyztnew, changemessage = e.changetrace(
-                    xyzt[-1], xyzt1, aq, layer, ltype, modellayer, 
-                    direction, hstepmax)
+                    xyzt[-1], xyzt1, aq, layer, ltype, modellayer, direction, hstepmax
+                )
                 if changed or terminate:
                     correction = False
                     if changemessage:
                         message = changemessage
                     break
             if correction:  # correction step
-                vx, vy, vz = 0.5 * (v0 + direction * \
-                                    ml.velocomp(x1, y1, z1, aq, [layer, ltype]))
+                vx, vy, vz = 0.5 * (
+                    v0 + direction * ml.velocomp(x1, y1, z1, aq, [layer, ltype])
+                )
                 if verbose:
-                    print('xyz1, layer', x1, y1, z1, layer)
-                    print('correction vx, vy, vz', vx, vy, vz)
-                vh = np.sqrt(vx ** 2 + vy ** 2)
+                    print("xyz1, layer", x1, y1, z1, layer)
+                    print("correction vx, vy, vz", vx, vy, vz)
+                vh = np.sqrt(vx**2 + vy**2)
                 if vz > 0:  # flows upward
-                    tvstep = min(aq.z[modellayer] - z0, 
-                                 vstepfrac * aq.Haq[layer]) / vz
+                    tvstep = min(aq.z[modellayer] - z0, vstepfrac * aq.Haq[layer]) / vz
                 elif vz < 0:
-                    tvstep = min(z0 - aq.z[modellayer + 1], 
-                                 vstepfrac * aq.Haq[layer]) / abs(vz)
+                    tvstep = min(
+                        z0 - aq.z[modellayer + 1], vstepfrac * aq.Haq[layer]
+                    ) / abs(vz)
                 else:  # vz=0
                     tvstep = np.inf
                 if vh * tvstep > hstepmax:
@@ -147,8 +160,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                             else:
                                 modellayer -= 1
                                 # just above new bottom
-                                z1 = aq.z[modellayer + 1] + \
-                                     eps * aq.Hlayer[modellayer]
+                                z1 = aq.z[modellayer + 1] + eps * aq.Hlayer[modellayer]
                         else:
                             z1 = z0 + thstep * vz
                     else:
@@ -160,8 +172,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                             else:
                                 modellayer += 1
                                 # just below new top
-                                z1 = aq.z[modellayer] - \
-                                     eps * aq.Hlayer[modellayer]
+                                z1 = aq.z[modellayer] - eps * aq.Hlayer[modellayer]
                         else:
                             z1 = z0 + thstep * vz
                     if not terminate:
@@ -171,9 +182,16 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
                 xyztnew = [np.array([x1, y1, z1, t1])]
                 # check again if point needs to be changed
                 for e in aq.elementlist:
-                    changed, terminate, xyztchanged, changemessage = \
-                        e.changetrace(xyzt[-1],  xyztnew[0], aq, layer, ltype,
-                                      modellayer, direction, hstepmax)
+                    changed, terminate, xyztchanged, changemessage = e.changetrace(
+                        xyzt[-1],
+                        xyztnew[0],
+                        aq,
+                        layer,
+                        ltype,
+                        modellayer,
+                        direction,
+                        hstepmax,
+                    )
                     if changed or terminate:
                         xyztnew = xyztchanged
                         if changemessage:
@@ -216,8 +234,7 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
     if not silent:
         print(message)
     if metadata:
-        result = {"trace": np.array(xyzt), "message": message, 
-                  "complete": terminate}
+        result = {"trace": np.array(xyzt), "message": message, "complete": terminate}
         if returnlayers:
             result["layers"] = layerlist
     else:
@@ -228,15 +245,36 @@ def timtraceline(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, tmax=1e12,
     return result
 
 
-def timtracelines(ml, xstart, ystart, zstart, hstepmax, vstepfrac=0.2, 
-                  tmax=1e12, nstepmax=100, silent=".", 
-                  win=[-1e30, 1e30, -1e30, 1e30], *, metadata=False):
+def timtracelines(
+    ml,
+    xstart,
+    ystart,
+    zstart,
+    hstepmax,
+    vstepfrac=0.2,
+    tmax=1e12,
+    nstepmax=100,
+    silent=".",
+    win=[-1e30, 1e30, -1e30, 1e30],
+    *,
+    metadata=False,
+):
     xyztlist = []
     for x, y, z in zip(xstart, ystart, zstart):
         xyztlist.append(
-            timtraceline(ml, x, y, z, hstepmax=hstepmax, vstepfrac=vstepfrac,
-                         tmax=tmax, nstepmax=nstepmax, silent=silent, win=win,
-                         metadata=metadata)
+            timtraceline(
+                ml,
+                x,
+                y,
+                z,
+                hstepmax=hstepmax,
+                vstepfrac=vstepfrac,
+                tmax=tmax,
+                nstepmax=nstepmax,
+                silent=silent,
+                win=win,
+                metadata=metadata,
+            )
         )
         if silent == ".":
             print(".", end="", flush=True)

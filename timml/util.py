@@ -8,8 +8,15 @@ plt.rcParams["contour.negative_linestyle"] = "solid"
 
 
 class PlotTim:
-    def plot(self, win=None, newfig=True, figsize=None, orientation="hor",
-             topfigfrac=0.8, layer=None):
+    def plot(
+        self,
+        win=None,
+        newfig=True,
+        figsize=None,
+        orientation="hor",
+        topfigfrac=0.8,
+        layer=None,
+    ):
         """Plot layout
 
         Parameters
@@ -25,10 +32,17 @@ class PlotTim:
             ax1 = None
             ax2 = None
             if orientation == "both":
-                ax1 = plt.axes([0.125, 0.18 + (1 - topfigfrac) * 0.7,
-                                (0.9 - 0.125), topfigfrac * 0.7])
-                ax2 = plt.axes([0.125, 0.11, (0.9 - 0.125), 
-                                (1 - topfigfrac) * 0.7], sharex=ax1)
+                ax1 = plt.axes(
+                    [
+                        0.125,
+                        0.18 + (1 - topfigfrac) * 0.7,
+                        (0.9 - 0.125),
+                        topfigfrac * 0.7,
+                    ]
+                )
+                ax2 = plt.axes(
+                    [0.125, 0.11, (0.9 - 0.125), (1 - topfigfrac) * 0.7], sharex=ax1
+                )
             elif orientation[:3] == "hor":
                 ax1 = plt.subplot()
             elif orientation[:3] == "ver":
@@ -60,16 +74,30 @@ class PlotTim:
             plt.sca(ax2)
             for i in range(self.aq.nlayers):
                 if self.aq.ltype[i] == "l":
-                    plt.axhspan(ymin=self.aq.z[i + 1], ymax=self.aq.z[i],
-                                color=[0.8, 0.8, 0.8])
+                    plt.axhspan(
+                        ymin=self.aq.z[i + 1], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
+                    )
             for i in range(1, self.aq.nlayers):
                 if self.aq.ltype[i] == "a" and self.aq.ltype[i - 1] == "a":
-                    plt.axhspan(ymin=self.aq.z[i], ymax=self.aq.z[i], 
-                                color=[0.8, 0.8, 0.8])
+                    plt.axhspan(
+                        ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
+                    )
 
-    def contour(self, win, ngr=20, layers=0, levels=20, layout=True,
-                labels=True, decimals=0, color=None, newfig=True,
-                figsize=None, legend=True, **kwargs):
+    def contour(
+        self,
+        win,
+        ngr=20,
+        layers=0,
+        levels=20,
+        layout=True,
+        labels=True,
+        decimals=0,
+        color=None,
+        newfig=True,
+        figsize=None,
+        legend=True,
+        **kwargs,
+    ):
         """Contour plot
 
         Parameters
@@ -100,10 +128,10 @@ class PlotTim:
         legend : list or boolean (default True)
             add legend to figure
             if list of strings: use strings as names in legend
-            
+
         Returns
         -------
-        
+
         cs : list of contour sets for each contoured layer
 
         """
@@ -150,18 +178,29 @@ class PlotTim:
             self.plot(win=[x1, x2, y1, y2], newfig=False, layer=layers)
         return cslist
 
-    def vcontour(self, win, n, levels, labels=False, decimals=0, color=None,
-                 vinterp=True, nudge=1e-6, newfig=True, figsize=None,
-                 layout=True):
+    def vcontour(
+        self,
+        win,
+        n,
+        levels,
+        labels=False,
+        decimals=0,
+        color=None,
+        vinterp=True,
+        nudge=1e-6,
+        newfig=True,
+        figsize=None,
+        layout=True,
+    ):
         """
         Vertical contour
-        
+
         Returns
         -------
-        
+
         cs : contour set
         """
-        
+
         x1, x2, y1, y2 = win
         h = self.headalongline(
             np.linspace(x1 + nudge, x2 - nudge, n),
@@ -189,13 +228,26 @@ class PlotTim:
             self.plot(win=[x1, x2, y1, y2], orientation="ver", newfig=False)
         return cs
 
-    def tracelines(self, xstart, ystart, zstart, hstepmax, vstepfrac=0.2,
-                   tmax=1e12, nstepmax=100, silent=".", color=None,
-                   orientation="hor", win=[-1e30, 1e30, -1e30, 1e30],
-                   newfig=False, figsize=None, *, return_traces=False,
-                   metadata=False):
-        """Draw trace lines
-        """
+    def tracelines(
+        self,
+        xstart,
+        ystart,
+        zstart,
+        hstepmax,
+        vstepfrac=0.2,
+        tmax=1e12,
+        nstepmax=100,
+        silent=".",
+        color=None,
+        orientation="hor",
+        win=[-1e30, 1e30, -1e30, 1e30],
+        newfig=False,
+        figsize=None,
+        *,
+        return_traces=False,
+        metadata=False,
+    ):
+        """Draw trace lines"""
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         elif type(color) is str:
@@ -206,8 +258,9 @@ class PlotTim:
             n = int(np.ceil(self.aq.naq / len(c)))
             c = n * c
         fig = plt.gcf()
-        assert (len(fig.axes) > 0), \
-            "Error: Need to specify axes in figure before invoking tracelines"
+        assert (
+            len(fig.axes) > 0
+        ), "Error: Need to specify axes in figure before invoking tracelines"
         ax1 = None
         ax2 = None
         if orientation == "both":
@@ -270,9 +323,21 @@ class PlotTim:
         if return_traces:
             return traces
 
-    def vcontoursf1D(self, x1, x2, nx, levels, labels=False, decimals=0,
-                     color=None, nudge=1e-6, newfig=True, figsize=None,
-                     layout=True, ax=None):
+    def vcontoursf1D(
+        self,
+        x1,
+        x2,
+        nx,
+        levels,
+        labels=False,
+        decimals=0,
+        color=None,
+        nudge=1e-6,
+        newfig=True,
+        figsize=None,
+        layout=True,
+        ax=None,
+    ):
         """
         Vertical contour for 1D model
 

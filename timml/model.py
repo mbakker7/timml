@@ -3,17 +3,20 @@ Model classes
 
 """
 
-import numpy as np
-import sys
 import inspect  # Used for storing the input
+import multiprocessing as mp
+import sys
+
+import numpy as np
+from scipy.integrate import quad_vec
+
 from .aquifer import Aquifer
-from .aquifer_parameters import param_maq, param_3d
+from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
 from .util import PlotTim
-from scipy.integrate import quad_vec
-import multiprocessing as mp
 
-__all__ = ['Model', 'ModelMaq', 'Model3D']
+__all__ = ["Model", "ModelMaq", "Model3D"]
+
 
 class Model(PlotTim):
     """
@@ -21,7 +24,7 @@ class Model(PlotTim):
     sequence of aquifer layers and leaky layers.
     Use ModelMaq for regular sequence of aquifers and leaky layers.
     Use Model3D for multi-layer model of a single aquifer
-    
+
     Parameters
     ----------
     kaq : array
@@ -39,16 +42,16 @@ class Model(PlotTim):
         array indicating for each layer whether it is
         'a' aquifer layer
         'l' leaky layer
-    
+
     """
-    
+
     def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
-        self.modelname = 'ml'  # Used for writing out input
+        self.modelname = "ml"  # Used for writing out input
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
@@ -59,40 +62,43 @@ class Model(PlotTim):
 
     def add_element(self, e):
         self.elementlist.append(e)
-        if e.label is not None: self.elementdict[e.label] = e
+        if e.label is not None:
+            self.elementdict[e.label] = e
 
     def remove_element(self, e):
-        """Remove element `e` from model
-        """
-        
-        if e.label is not None: self.elementdict.pop(e.label)
+        """Remove element `e` from model"""
+
+        if e.label is not None:
+            self.elementdict.pop(e.label)
         self.elementlist.remove(e)
 
     def storeinput(self, frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
 
     def potential(self, x, y, aq=None):
-        if aq is None: aq = self.aq.find_aquifer_data(x, y)
+        if aq is None:
+            aq = self.aq.find_aquifer_data(x, y)
         pot = np.zeros(aq.naq)
         for e in aq.elementlist:
             pot += e.potential(x, y, aq)
         rv = np.sum(pot * aq.eigvec, 1)
-        if aq.ltype[0] == 'l':
+        if aq.ltype[0] == "l":
             # potential for head above leaky layer
             rv += aq.constantstar.potstar
         return rv
 
     def disvec(self, x, y, aq=None):
         """Discharge vector at `x`, `y`
-        
+
         Returns
         -------
-        
+
         qxqy : array size (2, naq)
             first row is Qx in each aquifer layer, second row is Qy
         """
-        
-        if aq is None: aq = self.aq.find_aquifer_data(x, y)
+
+        if aq is None:
+            aq = self.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, aq.naq))
         for e in aq.elementlist:
             rv += e.disvec(x, y, aq)
@@ -172,25 +178,27 @@ class Model(PlotTim):
             return L * qn / 2.0
 
     def qztop(self, x, y, aq=None):
-        if aq is None: aq = self.aq.find_aquifer_data(x, y)
+        if aq is None:
+            aq = self.aq.find_aquifer_data(x, y)
         rv = 0.0
-        if aq.ltype[0] == 'a':  # otherwise recharge cannot be added
+        if aq.ltype[0] == "a":  # otherwise recharge cannot be added
             for e in aq.elementlist:
                 rv += e.qztop(x, y, aq)
         return rv
 
     def head(self, x, y, layers=None, aq=None):
         """Head at `x`, `y`
-        
+
         Returns
         -------
-        
+
         h : array length `naq` or `len(layers)`
-            head in all `layers` (if not `None`), 
+            head in all `layers` (if not `None`),
             or all layers of aquifer (otherwise)
         """
-        
-        if aq is None: aq = self.aq.find_aquifer_data(x, y)
+
+        if aq is None:
+            aq = self.aq.find_aquifer_data(x, y)
         rv = self.potential(x, y, aq) / aq.T
         if layers is None:
             return rv
@@ -199,7 +207,7 @@ class Model(PlotTim):
 
     def headgrid(self, xg, yg, layers=None, printrow=False):
         """Grid of heads
-        
+
         Parameters
         ----------
         xg : array
@@ -210,18 +218,18 @@ class Model(PlotTim):
             layers for which grid is returned
         printrow : boolean, optional
             prints dot to screen for each row of grid if set to `True`
-        
+
         Returns
         -------
         h : array size `nlayers, ny, nx`
-        
+
         See also
         --------
-        
+
         :func:`~timml.model.Model.headgrid2`
 
         """
-        
+
         nx, ny = len(xg), len(yg)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -230,44 +238,44 @@ class Model(PlotTim):
         h = np.empty((Nlayers, ny, nx))
         for j in range(ny):
             if printrow:
-                print('.', end='', flush=True)
+                print(".", end="", flush=True)
             for i in range(nx):
                 h[:, j, i] = self.head(xg[i], yg[j], layers)
         if printrow:
-            print('', flush=True)
+            print("", flush=True)
         return h
 
     def headgrid2(self, x1, x2, nx, y1, y2, ny, layers=None, printrow=False):
         """Grid of heads
-        
+
         Parameters
         ----------
-        x1, x2, nx : 
+        x1, x2, nx :
             x values are generated as linspace(x1, x2, nx)
-        y1, y2, ny : 
+        y1, y2, ny :
             y values are generated as linspace(y1, y2, ny)
         layers : integer, list or array, optional
             layers for which grid is returned
         printrow : boolean, optional
             prints dot to screen for each row of grid if set to `True`
-        
+
         Returns
         -------
         h : array size `nlayers, ny, nx`
-        
+
         See also
         --------
-        
+
         :func:`~timml.model.Model.headgrid`
-        
+
         """
-        
+
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
         return self.headgrid(xg, yg, layers=layers, printrow=printrow)
 
     def headalongline(self, x, y, layers=None):
         """Head along line or curve
-        
+
         Parameters
         ----------
         x : array
@@ -276,13 +284,13 @@ class Model(PlotTim):
             y values of line
         layers : integer, list or array, optional
             layers for which grid is returned
-        
+
         Returns
         -------
         h : array size `nlayers, nx`
 
         """
-        
+
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -295,11 +303,11 @@ class Model(PlotTim):
         for i in range(nx):
             h[:, i] = self.head(xg[i], yg[i], layers)
         return h
-    
+
     def disvecalongline(self, x, y, layers=None):
-        '''Returns Qx[Nlayers,len(x)], Qy[Nlayers,len(x)]
+        """Returns Qx[Nlayers,len(x)], Qy[Nlayers,len(x)]
         Assumes same number of layers for each x and y
-        layers may be None or list of layers for which head is computed'''
+        layers may be None or list of layers for which head is computed"""
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -313,25 +321,26 @@ class Model(PlotTim):
         for i in range(nx):
             Qx[:, i], Qy[:, 1] = self.disvec(xg[i], yg[i], layers)
         return Qx, Qy
-    
-#    def disvec_direction(self, s, x1, y1, cdirection):
-#        pass
-#    
-#    def discharge_across_line(self, x1, y1, x2,  y2, layers=None):
-#        if layers is None:
-#            nlayers = self.aq.find_aquifer_data(x1, y1).naq
-#        else:
-#            nlayers = len(np.atleast_1d(layers))
-#        z1 = x1 + y1 * 1j
-#        z2 = x2 + y2 * 1j
-#        normvec = (z2 - z1) / np.abs(z2 - z1) * np.exp(-np.pi * 1j / 2)
-#        disvec = self.disvec(xg[i], yg[i], layers)
-    
+
+    #    def disvec_direction(self, s, x1, y1, cdirection):
+    #        pass
+    #
+    #    def discharge_across_line(self, x1, y1, x2,  y2, layers=None):
+    #        if layers is None:
+    #            nlayers = self.aq.find_aquifer_data(x1, y1).naq
+    #        else:
+    #            nlayers = len(np.atleast_1d(layers))
+    #        z1 = x1 + y1 * 1j
+    #        z2 = x2 + y2 * 1j
+    #        normvec = (z2 - z1) / np.abs(z2 - z1) * np.exp(-np.pi * 1j / 2)
+    #        disvec = self.disvec(xg[i], yg[i], layers)
+
     def velocity(self, x, y, z):
         return self.velocomp(x, y, z)
-    
+
     def velocomp(self, x, y, z, aq=None, layer_ltype=None):
-        if aq is None: aq = self.aq.find_aquifer_data(x, y)
+        if aq is None:
+            aq = self.aq.find_aquifer_data(x, y)
         assert z <= aq.z[0] and z >= aq.z[-1], "z value not inside aquifer"
         if layer_ltype is None:
             layer, ltype, dummy = aq.findlayer(z)
@@ -341,9 +350,9 @@ class Model(PlotTim):
         # qz between aquifer layers
         qzlayer = np.zeros(aq.naq + 1)
         qzlayer[1:-1] = (h[1:] - h[:-1]) / aq.c[1:]
-        if aq.ltype[0] == 'l':
+        if aq.ltype[0] == "l":
             qzlayer[0] = (h[0] - aq.hstar) / aq.c[0]
-        if ltype == 'l':
+        if ltype == "l":
             vz = qzlayer[layer] / aq.nporll[layer]
             vx = 0
             vy = 0
@@ -351,78 +360,99 @@ class Model(PlotTim):
             qzbot = qzlayer[layer + 1]
             qztop = qzlayer[layer]
             if layer == 0:
-                qztop += self.qztop(x, y)   
-            vz = (qzbot + (z - aq.zaqbot[layer]) / aq.Haq[layer] * \
-                 (qztop - qzbot)) / aq.nporaq[layer]        
+                qztop += self.qztop(x, y)
+            vz = (
+                qzbot + (z - aq.zaqbot[layer]) / aq.Haq[layer] * (qztop - qzbot)
+            ) / aq.nporaq[layer]
             qx, qy = self.disvec(x, y, aq=aq)
             vx = qx[layer] / (aq.Haq[layer] * aq.nporaq[layer])
             vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
         return np.array([vx, vy, vz])
-               
+
     def solve(self, printmat=0, sendback=0, silent=False):
-        '''Compute solution'''
+        """Compute solution"""
         # Initialize elements
         self.initialize()
         # Compute number of equations
         self.neq = np.sum([e.nunknowns for e in self.elementlist])
-        if self.neq == 0: return
-        if silent is False:
-            print('Number of elements, Number of equations:', len(
-                self.elementlist), ',', self.neq)
         if self.neq == 0:
-            if silent is False: print('No unknowns. Solution complete')
+            return
+        if silent is False:
+            print(
+                "Number of elements, Number of equations:",
+                len(self.elementlist),
+                ",",
+                self.neq,
+            )
+        if self.neq == 0:
+            if silent is False:
+                print("No unknowns. Solution complete")
             return
         mat = np.empty((self.neq, self.neq))
         rhs = np.empty(self.neq)
         ieq = 0
         for e in self.elementlist:
             if e.nunknowns > 0:
-                mat[ieq:ieq + e.nunknowns, :], rhs[ieq:ieq + e.nunknowns] = \
-                e.equation()
+                (
+                    mat[ieq : ieq + e.nunknowns, :],
+                    rhs[ieq : ieq + e.nunknowns],
+                ) = e.equation()
                 ieq += e.nunknowns
             if silent is False:
-                print('.', end='', flush=True)
+                print(".", end="", flush=True)
         if printmat:
             return mat, rhs
         sol = np.linalg.solve(mat, rhs)
         icount = 0
         for e in self.elementlist:
             if e.nunknowns > 0:
-                e.setparams(sol[icount:icount + e.nunknowns])
+                e.setparams(sol[icount : icount + e.nunknowns])
                 icount += e.nunknowns
         if silent is False:
             print()  # needed cause the dots are printed
-            print('solution complete')
-        elif (silent == 'dot') or (silent == '.'):
-            print('.', end='', flush=True)
+            print("solution complete")
+        elif (silent == "dot") or (silent == "."):
+            print(".", end="", flush=True)
         if sendback:
             return sol
         return
 
     def solve_mp(self, nproc=4, printmat=0, sendback=0, silent=False):
-        '''Compute solution, multiprocessing implementation.
+        """Compute solution, multiprocessing implementation.
         Note: estimated speedup approximately by factor of
         number of physical cores. Virtual cores do not improve
-        calculation time.'''
+        calculation time."""
         # Initialize elements
         self.initialize()
         # Compute number of equations
         self.neq = np.sum([e.nunknowns for e in self.elementlist])
-        if self.neq == 0: return
-        if silent is False:
-            print('Number of elements, Number of equations:', len(
-                self.elementlist), ',', self.neq)
         if self.neq == 0:
-            if silent is False: print('No unknowns. Solution complete')
+            return
+        if silent is False:
+            print(
+                "Number of elements, Number of equations:",
+                len(self.elementlist),
+                ",",
+                self.neq,
+            )
+        if self.neq == 0:
+            if silent is False:
+                print("No unknowns. Solution complete")
             return
         mat = np.empty((self.neq, self.neq))
         rhs = np.empty(self.neq)
 
         # start multiprocessing
         if nproc is None:
-            nproc = mp.cpu_count() - 1  # make no. of processes equal to 1 less than no. of cores
+            nproc = (
+                mp.cpu_count() - 1
+            )  # make no. of processes equal to 1 less than no. of cores
         elif nproc > mp.cpu_count():
-            print("Given 'nproc' larger than no. of cores on machine. Setting 'nproc' to {}.".format(mp.cpu_count()))
+            print(
+                "Given 'nproc' larger than no. of cores on machine. Setting 'nproc' to {}.".format(
+                    mp.cpu_count()
+                )
+            )
             nproc = mp.cpu_count()
 
         pool = mp.Pool(processes=nproc)
@@ -431,7 +461,7 @@ class Model(PlotTim):
             if e.nunknowns > 0:
                 results.append(pool.apply_async(e.equation))
             if silent is False:
-                print('.', end='', flush=True)
+                print(".", end="", flush=True)
 
         pool.close()
         pool.join()
@@ -443,8 +473,8 @@ class Model(PlotTim):
 
         for p in results:
             imat, irhs = p.get()
-            mat[ieq:ieq + imat.shape[0], :] = imat
-            rhs[ieq:ieq + irhs.shape[0]] = irhs
+            mat[ieq : ieq + imat.shape[0], :] = imat
+            rhs[ieq : ieq + irhs.shape[0]] = irhs
             ieq += imat.shape[0]
 
         # end multiprocessing
@@ -455,44 +485,49 @@ class Model(PlotTim):
         icount = 0
         for e in self.elementlist:
             if e.nunknowns > 0:
-                e.setparams(sol[icount:icount + e.nunknowns])
+                e.setparams(sol[icount : icount + e.nunknowns])
                 icount += e.nunknowns
         if silent is False:
             print()  # needed cause the dots are printed
-            print('solution complete')
-        elif (silent == 'dot') or (silent == '.'):
-            print('.', end='', flush=True)
+            print("solution complete")
+        elif (silent == "dot") or (silent == "."):
+            print(".", end="", flush=True)
         if sendback:
             return sol
         return
-    
+
     def write(self):
-        rv = self.modelname + ' = ' + self.name + '(\n'
+        rv = self.modelname + " = " + self.name + "(\n"
         for key in self.inputargs[1:]:  # The first argument (self) is ignored
             if isinstance(self.inputvalues[key], np.ndarray):
-                rv += key + ' = ' + np.array2string(self.inputvalues[key], 
-                                                    separator=',') + ',\n'
-            elif isinstance(self.inputvalues[key],str):                
+                rv += (
+                    key
+                    + " = "
+                    + np.array2string(self.inputvalues[key], separator=",")
+                    + ",\n"
+                )
+            elif isinstance(self.inputvalues[key], str):
                 rv += key + " = '" + self.inputvalues[key] + "',\n"
             else:
-                rv += key + ' = ' + str(self.inputvalues[key]) + ',\n'
-        rv += ')\n'
+                rv += key + " = " + str(self.inputvalues[key]) + ",\n"
+        rv += ")\n"
         return rv
-    
+
     def writemodel(self, fname):
         self.initialize()  # So that the model can be written without solving first
-        f = open(fname, 'w')
-        f.write('from timml import *\n')
+        f = open(fname, "w")
+        f.write("from timml import *\n")
         f.write(self.write())
         for e in self.elementlist:
             f.write(e.write())
         f.close()
-        
+
+
 class ModelMaq(Model):
     """
     Create a Model object by specifying a mult-aquifer sequence of
     aquifer-leakylayer-aquifer-leakylayer-aquifer etc
-    
+
     Parameters
     ----------
     kaq : float, array or list
@@ -502,7 +537,7 @@ class ModelMaq(Model):
         Elevation of tops and bottoms of the aquifers from the top down.
         Leaky layers may have zero thickness.
            * if topboundary='conf': length is 2 * number of aquifers
-           * if topboundary='semi': length is 2 * number of aquifers + 1 
+           * if topboundary='semi': length is 2 * number of aquifers + 1
              as top of leaky layer on top of systems needs to be specified
     c : float, array or list
         Resistance of leaky layers from the top down.
@@ -523,24 +558,24 @@ class ModelMaq(Model):
     Examples
     --------
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
-    
+
     """
-    
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary='conf',
-                 hstar=None):
+
+    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary="conf", hstar=None):
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
         Model.__init__(self, kaq, c, z, npor, ltype)
-        self.name = 'ModelMaq'
-        if self.aq.ltype[0] == 'l':
+        self.name = "ModelMaq"
+        if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
-            
+
+
 class Model3D(Model):
     """
     Model3D Class to create a multi-layer model object consisting of
     many aquifer layers. The resistance between the layers is computed
     from the vertical hydraulic conductivity of the layers.
-    
+
     Parameters
     ----------
     kaq : float, array or list
@@ -574,23 +609,30 @@ class Model3D(Model):
     Examples
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    
+
     """
-    
-    def __init__(self, kaq=1, z=[1, 0], kzoverkh=1, npor=0.3,
-                 topboundary='conf', topres=0, topthick=0, hstar=0):
-        '''Model3D
+
+    def __init__(
+        self,
+        kaq=1,
+        z=[1, 0],
+        kzoverkh=1,
+        npor=0.3,
+        topboundary="conf",
+        topres=0,
+        topthick=0,
+        hstar=0,
+    ):
+        """Model3D
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top
-        hstar: head above top'''
+        hstar: head above top"""
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary,
-                                       topres)
-        if topboundary == 'semi':
+        kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
+        if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
         Model.__init__(self, kaq, c, z, npor, ltype)
-        self.name = 'Model3D'
-        if self.aq.ltype[0] == 'l':
+        self.name = "Model3D"
+        if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
-

@@ -1,0 +1,65 @@
+[build-system]
+# Minimum requirements for the build system to execute
+requires = ["setuptools>64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timml"
+dynamic = ["version"]
+description = "Steady multi-layer AEM Model"
+license = { file = "LICENSE" }
+readme = "README.md"
+authors = [{ name = "Mark Bakker" }]
+maintainers = [
+    { name = "Mark Bakker", email = "markbak@gmail.com" },
+    { name = "Davíd Brakenhoff", email = "d.brakenhoff@artesia-water.nl" },
+]
+requires-python = ">= 3.7"
+dependencies = ["numpy>=1.12", "scipy>=0.19", "numba>=0.39", "matplotlib>=3.0"]
+
+keywords = ["hydrology", "groundwater", "model", "analytic element method"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Other Audience",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Hydrology",
+]
+
+[project.urls]
+homepage = "https://github.com/mbakker7/timml"
+repository = "https://github.com/mbakker7/timml"
+documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
+
+[project.optional-dependencies]
+ci = [
+    "pytest>=4.6",
+    "jupyter>=1.0.0",
+    "shapely",
+]
+
+[tool.setuptools]
+packages= ["timml", "timml.besselaesnumba"]
+
+[tool.setuptools.dynamic]
+version = { attr = "timml.version.__version__" }
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+src_paths = ["timml"]
+line_length = 88

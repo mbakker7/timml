@@ -1,16 +1,19 @@
-import numpy as np
 import inspect  # user for storing the input
+
+import numpy as np
+
 from .aquifer import AquiferData
-from .aquifer_parameters import param_maq, param_3d
+from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
-from .linesink1d import HeadDiffLineSink1D, FluxDiffLineSink1D
+from .linesink1d import FluxDiffLineSink1D, HeadDiffLineSink1D
 from .stripareasink import StripAreaSinkInhom
 
-__all__ = ['StripInhomMaq', 'StripInhom3D']
+__all__ = ["StripInhomMaq", "StripInhom3D"]
+
 
 class StripInhom(AquiferData):
     tiny = 1e-12
-    
+
     def __init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar, N):
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.x1 = x1
@@ -19,10 +22,10 @@ class StripInhom(AquiferData):
         self.N = N
         self.inhom_number = self.model.aq.add_inhom(self)
         self.addlinesinks = True  # Set to False not to add line-sinks
-        
+
     def __repr__(self):
         return "Inhom1D: " + str(list([self.x1, self.x2]))
-        
+
     def isinside(self, x, y):
         return (x >= self.x1) and (x < self.x2)
 
@@ -34,16 +37,23 @@ class StripInhom(AquiferData):
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutright = self.model.aq.find_aquifer_data(xoutright, 0)
             if self.addlinesinks:
-                HeadDiffLineSink1D(self.model, self.x2, label=None, 
-                                   aq=aqin, aqin=aqin, aqout=aqoutright)
+                HeadDiffLineSink1D(
+                    self.model,
+                    self.x2,
+                    label=None,
+                    aq=aqin,
+                    aqin=aqin,
+                    aqout=aqoutright,
+                )
         elif self.x2 == np.inf:
             xin = self.x1 + self.tiny * abs(self.x1) + self.tiny
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutleft = self.model.aq.find_aquifer_data(xoutleft, 0)
-            if self.addlinesinks:   
-                FluxDiffLineSink1D(self.model, self.x1, label=None, 
-                                   aq=aqin, aqin=aqin, aqout=aqoutleft)
+            if self.addlinesinks:
+                FluxDiffLineSink1D(
+                    self.model, self.x1, label=None, aq=aqin, aqin=aqin, aqout=aqoutleft
+                )
         else:
             xin = 0.5 * (self.x1 + self.x2)
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
@@ -52,23 +62,27 @@ class StripInhom(AquiferData):
             aqleft = self.model.aq.find_aquifer_data(xoutleft, 0)
             aqright = self.model.aq.find_aquifer_data(xoutright, 0)
             if self.addlinesinks:
-                HeadDiffLineSink1D(self.model, self.x2, label=None, 
-                                   aq=aqin, aqin=aqin, aqout=aqright)
-                FluxDiffLineSink1D(self.model, self.x1, label=None, 
-                                   aq=aqin, aqin=aqin, aqout=aqleft)
+                HeadDiffLineSink1D(
+                    self.model, self.x2, label=None, aq=aqin, aqin=aqin, aqout=aqright
+                )
+                FluxDiffLineSink1D(
+                    self.model, self.x1, label=None, aq=aqin, aqin=aqin, aqout=aqleft
+                )
             if self.N is not None:
-                assert aqin.ilap, "Error: infiltration can only be added if topboundary='conf'"
+                assert (
+                    aqin.ilap
+                ), "Error: infiltration can only be added if topboundary='conf'"
                 StripAreaSinkInhom(self.model, self.x1, self.x2, self.N, layer=0)
-        if aqin.ltype[0] == 'l':
+        if aqin.ltype[0] == "l":
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
-        
+
 
 class StripInhomMaq(StripInhom):
     """Create a strip inhomogeneity for a mult-aquifer sequence of
     aquifer-leakylayer-aquifer-leakylayer-aquifer etc
-    
+
     Parameters
     ----------
     model : Model object
@@ -105,11 +119,27 @@ class StripInhomMaq(StripInhom):
         infiltration rate, only read if topboundary='conf'
 
     """
-    
-    def __init__(self, model, x1, x2, kaq=1, z=[1, 0], c=[], npor=0.3, 
-                 topboundary='conf', hstar=None, N=None):
+
+    def __init__(
+        self,
+        model,
+        x1,
+        x2,
+        kaq=1,
+        z=[1, 0],
+        c=[],
+        npor=0.3,
+        topboundary="conf",
+        hstar=None,
+        N=None,
+    ):
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype, = param_maq(kaq, z, c, npor, topboundary)
+        (
+            kaq,
+            c,
+            npor,
+            ltype,
+        ) = param_maq(kaq, z, c, npor, topboundary)
         StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar, N)
 
 
@@ -117,7 +147,7 @@ class StripInhom3D(StripInhom):
     """Create a strip inhomogeneity for a multi-layer model consisting of
     many aquifer layers. The resistance between the layers is computed
     from the vertical hydraulic conductivity of the layers.
-    
+
     Parameters
     ----------
     model : Model object
@@ -156,13 +186,31 @@ class StripInhom3D(StripInhom):
         head value above semi-confining top, only read if topboundary='semi'
     N : float (default is None)
         infiltration rate, only read if topboundary='conf'
-    
+
     """
-        
-    def __init__(self, model, x1, x2, kaq, z=[1, 0], kzoverkh=1, npor=0.3, 
-                 topboundary='conf', hstar=None, topres=None, topthick=0.0, N=None):
+
+    def __init__(
+        self,
+        model,
+        x1,
+        x2,
+        kaq,
+        z=[1, 0],
+        kzoverkh=1,
+        npor=0.3,
+        topboundary="conf",
+        hstar=None,
+        topres=None,
+        topthick=0.0,
+        N=None,
+    ):
         self.storeinput(inspect.currentframe())
-        kaq, c, npor, ltype, = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
-        if topboundary== 'semi':
+        (
+            kaq,
+            c,
+            npor,
+            ltype,
+        ) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
+        if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
         StripInhom.__init__(self, model, x1, x2, kaq, c, z, npor, ltype, hstar, N)
