@@ -1123,7 +1123,7 @@ class HeadLineSinkString(LineSinkStringBase2):
         # assign parameters to individual linesinks
         i = 0
         for ls in self.lslist:
-            ls.parameters = np.atleast_2d(sol[i : i + ls.nparam]).T
+            ls.parameters[:, 0] = sol[i : i + ls.nparam]
             i += ls.nparam
 
     def equation(self):
