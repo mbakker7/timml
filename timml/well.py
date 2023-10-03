@@ -230,7 +230,7 @@ class WellBase(Element):
         return xstart, ystart, zstart
 
     def plot(self, layer=None):
-        if (layer is None) or (layer in self.layers):
+        if (layer is None) or np.isin(layer, self.layers).any():
             plt.plot(self.xw, self.yw, "k.")
 
     def plotcapzone(
