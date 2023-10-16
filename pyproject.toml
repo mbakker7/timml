@@ -15,7 +15,14 @@ maintainers = [
     { name = "Davíd Brakenhoff", email = "d.brakenhoff@artesia-water.nl" },
 ]
 requires-python = ">= 3.7"
-dependencies = ["numpy>=1.20", "scipy>=0.19", "numba>=0.39", "matplotlib>=3.0"]
+dependencies = [
+    "numpy>=1.17",
+    "scipy>=1.5",
+    "numba>=0.5",
+    "matplotlib>=3.1",
+    "lmfit>=1.0",
+    "pandas>=1.1",
+]
 
 keywords = ["hydrology", "groundwater", "model", "analytic element method"]
 classifiers = [
@@ -29,7 +36,6 @@ classifiers = [
     "Operating System :: MacOS",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -48,13 +54,20 @@ ci = [
     "pytest>=4.6",
     "pytest-cov",
     "jupyter>=1.0.0",
-    "shapely",
     "flake8",
     "coveralls",
 ]
+docs = [
+    "timml[ci]",
+    "sphinx>=3.1, <6.0",
+    "sphinx-design",
+    "pydata-sphinx-theme",
+    "numpydoc",
+    "myst_nb",
+]
 
 [tool.setuptools]
-packages= ["timml", "timml.besselaesnumba"]
+packages = ["timml", "timml.besselaesnumba"]
 
 [tool.setuptools.dynamic]
 version = { attr = "timml.version.__version__" }
