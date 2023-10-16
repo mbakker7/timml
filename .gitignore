@@ -101,6 +101,6 @@ ENV/
 .plist
 .vscode/settings.json
 
-olddocs/
+# docs
 _build/
 docs/api/generated
