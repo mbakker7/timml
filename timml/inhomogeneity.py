@@ -533,7 +533,14 @@ class LeakyBuildingPit(BuildingPit):
             ndeg=ndeg,
             layers=layers,
         )
-        self.res = res
+        if isinstance(res, (int, float, np.integer)):
+            self.res = res * np.ones(self.Nsides)
+        elif len(res) == self.Nsides:
+            self.res = np.atleast_1d(res)
+        else:
+            raise ValueError(
+                f"Resistance `res` must be float or array of size {self.Nsides}"
+            )
 
     def create_elements(self):
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
