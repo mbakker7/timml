@@ -951,6 +951,23 @@ class LineSinkStringBase2(Element):
             rv[i] = ls.dischargeinf()
         return rv.ravel()
 
+    def discharge_per_linesink(self):
+        """Discharge of the linesinks in each layer.
+
+        Returns
+        -------
+        rv : np.array
+            array of shape (nlay, nlinesinks)
+        """
+
+        Qls = self.parameters[:, 0] * self.dischargeinf()
+        Qls.shape = (self.nls, self.nlayers, self.order + 1)
+        Qls = Qls.sum(axis=2)
+        rv = np.zeros((self.model.aq.naq, self.nls))
+        for i, q in enumerate(Qls):
+            rv[self.layers[i], i] += q
+        return rv
+
     def discharge(self):
         """Discharge of the element in each layer"""
 
@@ -1103,6 +1120,11 @@ class HeadLineSinkString(LineSinkStringBase2):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+        # assign parameters to individual linesinks
+        i = 0
+        for ls in self.lslist:
+            ls.parameters[:, 0] = sol[i : i + ls.nparam]
+            i += ls.nparam
 
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
