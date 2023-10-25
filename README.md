@@ -18,11 +18,11 @@ TimML is coded in Python and uses numba to speed up evaluation of the bessel lin
 
 **Python versions:**
 
-TimML requires **Python** >= 3.6 and can be installed from PyPI.
+TimML requires **Python** >= 3.7 and can be installed from PyPI.
 
 **Dependencies:**
 
-TimML requires **NumPy** >=1.12, **Scipy** >=0.19 and **matplotlib** >=2.0, **numba>=0.4**
+TimML requires **numpy** >=1.17, **scipy** >=1.5 and **matplotlib** >=3.1, **numba>=0.5**.
 
 **Installation:**
 
@@ -41,7 +41,7 @@ To uninstall TimML type:
 
 ## Documentation
 
-* The manual is available from the docs directory or can be viewed [here](http://mbakker7.github.io/timml/docs/builddocs/html/index.html).
+* The documentation is hosted on [readthedocs](https://timml.readthedocs.io/).
 * Example Notebooks are available from the notebooks directory on github, of from [here](https://github.com/mbakker7/timml/tree/master/notebooks).
 
 ## TimML Version 6
