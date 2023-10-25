@@ -9,9 +9,6 @@ from .equation import (
 )
 from .linesink import LineSinkHoBase
 
-# needed for testing
-# from .equation import DisvecDiffEquation
-
 
 class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
     def __init__(
@@ -264,10 +261,12 @@ class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
 
 
 class LeakyIntHeadDiffLineSink(LineSinkHoBase, IntLeakyWallEquation):
-    """Element to set numerically integrated head
-    along linesink to equal to:
+    """Element to set numerically integrated head along linesink to equal to:
+
         Qnormal = H * (headin - headout) / res
+
     Used in LeakyBuildingPit element
+
     """
 
     def __init__(

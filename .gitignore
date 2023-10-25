@@ -100,3 +100,7 @@ ENV/
 # f2py
 .plist
 .vscode/settings.json
+
+# docs
+_build/
+docs/api/generated
