@@ -131,8 +131,8 @@ class Model(PlotTim):
         y = l * np.sin(theta_norm - np.pi / 2) + y1
         return self.normflux(x, y, theta_norm)
 
-    def intnormflux(self, x1, y1, x2, y2, method="legendre", ndeg=10):
-        """Integrated normal (perpendicular) flux over specified line.
+    def intnormflux_segment(self, x1, y1, x2, y2, method="legendre", ndeg=10):
+        """Integrated normal (perpendicular) flux over specified line segment.
 
         Flux to the left is positive when going from (x1, y1) to (x2, y2).
 
@@ -176,6 +176,37 @@ class Model(PlotTim):
             for i in range(ndeg):
                 qn += wleg[i] * self.normflux(x=x[i], y=y[i], theta=theta_norm)
             return L * qn / 2.0
+
+    def intnormflux(self, xy, method="legendre", ndeg=10):
+        """Integrated normal (perpendicular) flux over polyline
+
+        Flux to the left is positive when going from (x1, y1) to (x2, y2).
+
+        Parameters
+        ----------
+        xy : list [(x0, y0), (x1, y1),... , (xn, yn)] or 2D array with x in first column and y in second column
+        method : str, optional
+            integration method, either "quad" (numerical integration using scipy)
+            or "legendre" (approximate integral using Gauss-Legendre quadrature),
+            by default "legendre".
+        ndeg : int, optional
+            degree for legendre polynomial, by default 10,
+            only used when method="legendre"
+
+        Returns
+        -------
+        Qn : np.array of length naq
+            integrated normal flux along specified polyline
+        """
+
+        xy = np.array(xy) # convert to array
+        Qn = np.zeros(self.aq.naq)
+        for i in range(len(xy) - 1):
+            x0, y0 = xy[i]
+            x1, y1 = xy[i + 1]
+            Qn += self.intnormflux_segment(x0, y0, x1, y1, 
+                                           method=method, ndeg=ndeg)
+        return Qn
 
     def qztop(self, x, y, aq=None):
         if aq is None:
