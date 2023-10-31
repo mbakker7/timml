@@ -100,3 +100,4 @@ intersphinx_mapping = {
 
 nb_execution_allow_errors = True  # Allow errors in notebooks, to see the error online
 nb_execution_mode = "auto"
+nb_merge_streams = True

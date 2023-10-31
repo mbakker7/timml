@@ -10,20 +10,34 @@ computed analytically at any point in the aquifer system. The Dupuit approximati
 
 .. grid::
 
-    .. grid-item-card:: User Guide
-        :link: userguide/index
+    .. grid-item-card:: Tutorials
+        :link: 00tutorials/index
         :link-type: doc
 
-        User guide on the basic concepts of TimML.
+        Tutorials for getting started with TimML.
+
+    .. grid-item-card:: How-to guides
+        :link: 01howto/index
+        :link-type: doc
+
+        How-to guides for more advanced modeling with TimML.
+
+    .. grid-item-card:: Concepts
+        :link: 02concepts/index
+        :link-type: doc
+
+        TimML basic concepts explained.
+
+.. grid::
 
     .. grid-item-card:: Examples
-        :link: examples/index
+        :link: 03examples/index
         :link-type: doc
 
-        Examples of TimML usage.
+        TimML example notebooks.
 
-    .. grid-item-card:: Code Reference
-        :link: api/index
+    .. grid-item-card:: Code reference
+        :link: 04api/index
         :link-type: doc
 
         TimML code reference.
@@ -72,6 +86,8 @@ Quick Example
    :maxdepth: 2
    :hidden:
 
-    User Guide <userguide/index>
-    Examples <examples/index>
-    Code reference <api/index>
+    Tutorials <00tutorials/index>
+    How-to guides <01howto/index>
+    Concepts <02concepts/index>
+    Examples <03examples/index>
+    Code reference <04api/index>

@@ -2,7 +2,7 @@ Getting started with TimML
 ==========================
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     create_basic_model
     models

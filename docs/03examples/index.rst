@@ -6,7 +6,6 @@ TimML example notebooks.
 .. toctree::
     :maxdepth: 4
     :hidden:
-    :glob:
 
     timml_notebook0_sol
 
