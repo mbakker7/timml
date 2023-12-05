@@ -336,7 +336,7 @@ class LeakyIntHeadDiffLineSink(LineSinkHoBase, IntLeakyWallEquation):
             self.yc = self.ycout
 
         # set resistance factor
-        self.resfac = self.aq.Haq[self.layers] / self.res
+        self.resfac = np.atleast_2d(self.aq.Haq[self.layers] / self.res).T
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
