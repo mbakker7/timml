@@ -18,8 +18,10 @@ from . import bessel
 from .circareasink import CircAreaSink
 from .constant import Constant, ConstantStar
 from .inhomogeneity import (
-    BuildingPit,
-    LeakyBuildingPit,
+    BuildingPit3D,
+    BuildingPitMaq,
+    LeakyBuildingPit3D,
+    LeakyBuildingPitMaq,
     PolygonInhom3D,
     PolygonInhomMaq,
 )
