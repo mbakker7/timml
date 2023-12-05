@@ -1,4 +1,4 @@
-Code reference
+Code Reference
 ==============
 This section contains the documentation of TimML code. The information in
 this section is automatically generated from the documentation strings in original
