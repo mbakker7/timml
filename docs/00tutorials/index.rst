@@ -8,9 +8,11 @@ TimML tutorials.
     :hidden:
     :glob:
 
-    tutorial0_well_single_layer
+    tutorial0_well_single_layer_aquifer
+    tutorial1_well_multi_layer_aquifer
 
 
-`Tutorial 1 - Well in a single aquifer`_
+`Tutorial 0 - Well in a single aquifer`_
 
-.. _Tutorial 1 - Well in a single aquifer: tutorial0_well_single_layer.html
+.. _Tutorial 0 - Well in a single aquifer: tutorial0_well_single_layer_aquifer.html
+.. _Tutorial 1 - Well in a multi aquifer system: tutorial1_well_multi_layer_aquifer.html
