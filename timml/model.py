@@ -178,7 +178,8 @@ class Model(PlotTim):
             return L * qn / 2.0
 
     def intnormflux(self, xy, method="legendre", ndeg=10):
-        """Integrated normal (perpendicular) flux over polyline
+        """Integrated normal (perpendicular) flux over polyline giving
+        the flux per segment and per aquifer.
 
         Flux to the left is positive when going from (x1, y1) to (x2, y2).
 
@@ -196,8 +197,13 @@ class Model(PlotTim):
 
         Returns
         -------
-        Qn : np.array of length naq
+        Qn : np.array of shape (naq, nsegments)
             integrated normal flux along specified polyline
+
+        Example
+        -------
+        Total flow across polyline can be obtained using np.sum(Qn)
+        Total flow across segments summed over aquifers using np.sum(Qn, axis=0)
         """
 
         xy = np.array(xy)  # convert to array
