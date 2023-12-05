@@ -184,7 +184,8 @@ class Model(PlotTim):
 
         Parameters
         ----------
-        xy : list [(x0, y0), (x1, y1),... , (xn, yn)] or 2D array with x in first column and y in second column
+        xy : list [(x0, y0), (x1, y1),... , (xn, yn)] or 2D array
+            if 2D-array, x in first column and y in second column
         method : str, optional
             integration method, either "quad" (numerical integration using scipy)
             or "legendre" (approximate integral using Gauss-Legendre quadrature),
@@ -199,13 +200,18 @@ class Model(PlotTim):
             integrated normal flux along specified polyline
         """
 
-        xy = np.array(xy) # convert to array
-        Qn = np.zeros(self.aq.naq)
+        xy = np.array(xy)  # convert to array
+        if np.all(xy[-1] == xy[0]):
+            Nsides = len(xy) - 1
+        else:
+            Nsides = len(xy)
+        Qn = np.zeros((self.aq.naq, Nsides))
         for i in range(len(xy) - 1):
             x0, y0 = xy[i]
             x1, y1 = xy[i + 1]
-            Qn += self.intnormflux_segment(x0, y0, x1, y1, 
-                                           method=method, ndeg=ndeg)
+            Qn[:, i] += self.intnormflux_segment(
+                x0, y0, x1, y1, method=method, ndeg=ndeg
+            )
         return Qn
 
     def qztop(self, x, y, aq=None):
