@@ -1,29 +1,43 @@
 Introduction
 ============
 
-TimML is a Python pacakge for the modeling of steady-state multi-layer groundwater flow
+TimML is a Python package for the modeling of steady-state multi-layer groundwater flow
 with analytic elements.
 
-TimML may be applied to an arbitrary number of layers and arbitrary sequence of
+TimML may be applied to an arbitrary number of layers and an arbitrary sequence of
 aquifers and leaky layers. The head, flow, and leakage between aquifer layers may be
-computed analytically at any point in the aquifer system.
+computed analytically at any point in the aquifer system. The Dupuit approximation is applied to flow in aquifer layers (i.e., the resistance to flow in the vertical direction is neglected), while flow in leaky layers is approximated as vertical.
 
 .. grid::
 
-    .. grid-item-card:: User Guide
-        :link: userguide/index
+    .. grid-item-card:: Tutorials
+        :link: 00tutorials/index
         :link-type: doc
 
-        User guide on the basic concepts of TimML.
+        Tutorials for getting started with TimML.
+
+    .. grid-item-card:: How-to guides
+        :link: 01howto/index
+        :link-type: doc
+
+        How-to guides for more advanced modeling with TimML.
+
+    .. grid-item-card:: Concepts
+        :link: 02concepts/index
+        :link-type: doc
+
+        TimML basic concepts explained.
+
+.. grid::
 
     .. grid-item-card:: Examples
-        :link: examples/index
+        :link: 03examples/index
         :link-type: doc
 
-        Examples of TimML usage.
+        TimML example notebooks.
 
-    .. grid-item-card:: Code Reference
-        :link: api/index
+    .. grid-item-card:: Code reference
+        :link: 04api/index
         :link-type: doc
 
         TimML code reference.
@@ -40,25 +54,25 @@ Quick Example
 
         .. code-block:: python
 
-            # Import python packages
+            # import python packages
             import numpy as np
             import timml
 
-            # Create model
-            ml = timml.ModelMaq(kaq=10, z=[20, 0])
+            # create model
+            ml = timml.ModelMaq(kaq=10, z=[20, 0]) # single layer model
             
-            # Add a river with a fixed water level
-            yls = np.arange(-100.0, 101, 20)
-            xls = 50.0 * np.ones_like(yls)
+            # add a river with a fixed water level
+            yls = np.arange(-100, 101, 20) # 20 points, so 19 segments
+            xls = 50 * np.ones_like(yls)
             river = timml.HeadLineSinkString(ml, xy=list(zip(xls, yls)), hls=0.0)
             
-            # Add a well
-            well = timml.Well(ml, 0.0, 0.0, rw=0.3, Qw=1000)
+            # add a well
+            well = timml.Well(ml, 0, 0, rw=0.3, Qw=1000)
             
-            # Solve model
+            # solve model
             ml.solve()
 
-            # Plot head contours at t=2 days
+            # plot head contours
             ml.contour(win=[-30, 55, -30, 30], ngr=40, labels=True, decimals=1)
             
 
@@ -68,18 +82,12 @@ Quick Example
             :figwidth: 500px
 
 
-Approximations
---------------
-
-The Dupuit approximation is applied to aquifer layers, while flow in leaky layers is
-approximated as vertical.
-
-
-
 .. toctree::
    :maxdepth: 2
    :hidden:
 
-    User Guide <userguide/index>
-    Examples <examples/index>
-    Code reference <api/index>
+    Tutorials <00tutorials/index>
+    How-to guides <01howto/index>
+    Concepts <02concepts/index>
+    Examples <03examples/index>
+    Code reference <04api/index>
