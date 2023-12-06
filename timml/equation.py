@@ -523,9 +523,9 @@ class IntLeakyWallEquation:
                         / self.aqout.Tcol[self.layers]
                     )
 
-                    mat[
-                        istart : istart + self.nlayers, ieq : ieq + e.nunknowns
-                    ] = flux - self.resfac * (headin - headout)
+                    mat[istart : istart + self.nlayers, ieq : ieq + e.nunknowns] = (
+                        flux - self.resfac * (headin - headout)
+                    )
                     ieq += e.nunknowns
                 else:
                     flux = self.intflux(
@@ -562,7 +562,7 @@ class IntLeakyWallEquation:
                         / self.aqout.T[self.layers]
                     )
 
-                    rhs[istart : istart + self.nlayers] += -flux + self.resfac * (
-                        headin - headout
+                    rhs[istart : istart + self.nlayers] += (
+                        -flux + self.resfac.squeeze() * (headin - headout)
                     )
         return mat, rhs
