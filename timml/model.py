@@ -178,13 +178,15 @@ class Model(PlotTim):
             return L * qn / 2.0
 
     def intnormflux(self, xy, method="legendre", ndeg=10):
-        """Integrated normal (perpendicular) flux over polyline
+        """Integrated normal (perpendicular) flux over polyline giving
+        the flux per segment and per aquifer.
 
         Flux to the left is positive when going from (x1, y1) to (x2, y2).
 
         Parameters
         ----------
-        xy : list [(x0, y0), (x1, y1),... , (xn, yn)] or 2D array with x in first column and y in second column
+        xy : list [(x0, y0), (x1, y1),... , (xn, yn)] or 2D array
+            if 2D-array, x in first column and y in second column
         method : str, optional
             integration method, either "quad" (numerical integration using scipy)
             or "legendre" (approximate integral using Gauss-Legendre quadrature),
@@ -195,17 +197,27 @@ class Model(PlotTim):
 
         Returns
         -------
-        Qn : np.array of length naq
+        Qn : np.array of shape (naq, nsegments)
             integrated normal flux along specified polyline
+
+        Example
+        -------
+        Total flow across polyline can be obtained using np.sum(Qn)
+        Total flow across segments summed over aquifers using np.sum(Qn, axis=0)
         """
 
-        xy = np.array(xy) # convert to array
-        Qn = np.zeros(self.aq.naq)
+        xy = np.array(xy)  # convert to array
+        if np.all(xy[-1] == xy[0]):
+            Nsides = len(xy) - 1
+        else:
+            Nsides = len(xy)
+        Qn = np.zeros((self.aq.naq, Nsides))
         for i in range(len(xy) - 1):
             x0, y0 = xy[i]
             x1, y1 = xy[i + 1]
-            Qn += self.intnormflux_segment(x0, y0, x1, y1, 
-                                           method=method, ndeg=ndeg)
+            Qn[:, i] += self.intnormflux_segment(
+                x0, y0, x1, y1, method=method, ndeg=ndeg
+            )
         return Qn
 
     def qztop(self, x, y, aq=None):
