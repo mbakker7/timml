@@ -27,6 +27,7 @@ extensions = [
     "myst_nb",
     "sphinx_design",
     "sphinx.ext.autosectionlabel",
+    "sphinxcontrib.bibtex",
 ]
 
 templates_path = ["_templates"]
@@ -48,7 +49,7 @@ html_show_sourcelink = True
 html_theme_options = {
     "github_url": "https://github.com/mbakker7/timml",
     "use_edit_page_button": True,
-    "header_links_before_dropdown": 6,
+    "header_links_before_dropdown": 7,
     # "icon_links": [
     #     {
     #         "name": "GitHub",  # Label for this link
@@ -105,5 +106,5 @@ nb_merge_streams = True
 # -- bibtex options ------------------------------------------------------------------
 
 # Add some settings for bibtex
-bibtex_bibfiles = ["05about/publications.bib"]
+bibtex_bibfiles = ["06about/publications.bib"]
 bibtex_reference_style = "author_year"
