@@ -200,10 +200,15 @@ class Model(PlotTim):
         Qn : np.array of shape (naq, nsegments)
             integrated normal flux along specified polyline
 
-        Example
-        -------
-        Total flow across polyline can be obtained using np.sum(Qn)
-        Total flow across segments summed over aquifers using np.sum(Qn, axis=0)
+        Examples
+        --------
+        Total flow across polyline can be obtained using:
+
+        >>> np.sum(Qn)
+        
+        Total flow across segments summed over aquifers using 
+
+        >>> np.sum(Qn, axis=0)
         """
 
         xy = np.array(xy)  # convert to array
