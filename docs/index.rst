@@ -16,17 +16,17 @@ computed analytically at any point in the aquifer system. The Dupuit approximati
 
         Tutorials for getting started with TimML.
 
-    .. grid-item-card:: How-to guides
-        :link: 01howto/index
-        :link-type: doc
-
-        How-to guides for more advanced modeling with TimML.
-
     .. grid-item-card:: Concepts
         :link: 02concepts/index
         :link-type: doc
 
         TimML basic concepts explained.
+
+    .. grid-item-card:: How-to guides
+        :link: 01howto/index
+        :link-type: doc
+
+        How-to guides for more advanced modeling with TimML.
 
 .. grid::
 
@@ -36,8 +36,14 @@ computed analytically at any point in the aquifer system. The Dupuit approximati
 
         TimML example notebooks.
 
+    .. grid-item-card:: Cross-sections
+        :link: 04xsections/index
+        :link-type: doc
+
+        Cross-sectional models explained.
+
     .. grid-item-card:: Code reference
-        :link: 04api/index
+        :link: 05api/index
         :link-type: doc
 
         TimML code reference.
@@ -78,6 +84,8 @@ Quick Example
 
     .. tab-item:: Result
 
+        In this example a well is modelled near a river in a single aquifer.
+
         .. figure:: _static/example_output.png
             :figwidth: 500px
 
@@ -90,4 +98,6 @@ Quick Example
     How-to guides <01howto/index>
     Concepts <02concepts/index>
     Examples <03examples/index>
-    Code reference <04api/index>
+    Cross-sections <04xsections/index>
+    Code reference <05api/index>
+    Cite <06about/index>
