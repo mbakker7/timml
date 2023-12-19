@@ -103,4 +103,4 @@ ENV/
 
 # docs
 _build/
-docs/04api/generated
+docs/05api/generated
