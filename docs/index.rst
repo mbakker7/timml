@@ -16,17 +16,17 @@ computed analytically at any point in the aquifer system. The Dupuit approximati
 
         Tutorials for getting started with TimML.
 
-    .. grid-item-card:: Concepts
-        :link: 02concepts/index
-        :link-type: doc
-
-        TimML basic concepts explained.
-
     .. grid-item-card:: How-to guides
         :link: 01howto/index
         :link-type: doc
 
         How-to guides for more advanced modeling with TimML.
+
+    .. grid-item-card:: Concepts
+        :link: 02concepts/index
+        :link-type: doc
+
+        TimML basic concepts explained.
 
 .. grid::
 
