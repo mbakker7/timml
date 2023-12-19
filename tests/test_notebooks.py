@@ -46,7 +46,7 @@ def get_jupyter_kernel():
 
 
 @pytest.mark.notebooks
-@pytest.mark.parametrize("fn", get_notebooks())
+@pytest.mark.parametrize("pth", get_notebooks())
 def test_notebook(pth):
     kernel = get_jupyter_kernel()
     print("available jupyter kernel {}".format(kernel))
