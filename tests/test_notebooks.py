@@ -5,14 +5,26 @@ import tempfile
 
 import pytest
 
-nbdir = os.path.join("notebooks")
+nbdirs = [
+    os.path.join("docs/00tutorials"),
+    os.path.join("docs/03examples"),
+    os.path.join("docs/04xsections"),
+    os.path.join("notebooks"),
+]
 
 testdir = tempfile.mkdtemp()
 
 
 def get_notebooks():
     skip = ["benchmarking_besselaes.ipynb"]
-    return [f for f in os.listdir(nbdir) if f.endswith(".ipynb") and f not in skip]
+    nblist = []
+    for nbdir in nbdirs:
+        nblist += [
+            os.path.join(nbdir, f)
+            for f in os.listdir(nbdir)
+            if f.endswith(".ipynb") and f not in skip
+        ]
+    return nblist
 
 
 def get_jupyter_kernel():
@@ -34,12 +46,12 @@ def get_jupyter_kernel():
 
 
 @pytest.mark.notebooks
-@pytest.mark.parametrize("fn", get_notebooks())
-def test_notebook(fn):
+@pytest.mark.parametrize("pth", get_notebooks())
+def test_notebook(pth):
     kernel = get_jupyter_kernel()
     print("available jupyter kernel {}".format(kernel))
 
-    pth = os.path.join(nbdir, fn)
+    fn = os.path.basename(pth)
 
     cmd = (
         "jupyter "
