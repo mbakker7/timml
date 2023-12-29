@@ -48,29 +48,38 @@ class Model(PlotTim):
     def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
-        self.elementlist = []
+        self.elements = []  # elements added by user
+        self.elementlist = []  # computation elements
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
 
     def initialize(self):
+        elementlist = []
+        for e in self.elements:
+            # refine
+            if hasattr(e, "_refine") and e.refine:
+                refined_elements = e._refine()
+                elementlist += refined_elements
+            else:
+                elementlist.append(e)
+
         # remove inhomogeneity elements (they are added again)
-        self.elementlist = [e for e in self.elementlist if not e.inhomelement]
+        self.elementlist = [e for e in elementlist if not e.inhomelement]
         self.aq.initialize()
         for e in self.elementlist:
             e.initialize()
 
     def add_element(self, e):
-        self.elementlist.append(e)
+        self.elements.append(e)
         if e.label is not None:
             self.elementdict[e.label] = e
 
     def remove_element(self, e):
         """Remove element `e` from model"""
-
         if e.label is not None:
             self.elementdict.pop(e.label)
-        self.elementlist.remove(e)
+        self.elements.remove(e)
 
     def storeinput(self, frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
@@ -540,7 +549,7 @@ class Model(PlotTim):
         return
 
     def write(self):
-        rv = self.modelname + " = " + self.name + "(\n"
+        rv = "tml." + self.modelname + " = " + self.name + "(\n"
         for key in self.inputargs[1:]:  # The first argument (self) is ignored
             if isinstance(self.inputvalues[key], np.ndarray):
                 rv += (
@@ -559,7 +568,7 @@ class Model(PlotTim):
     def writemodel(self, fname):
         self.initialize()  # So that the model can be written without solving first
         f = open(fname, "w")
-        f.write("from timml import *\n")
+        f.write("import timml as tml\n")
         f.write(self.write())
         for e in self.elementlist:
             f.write(e.write())
