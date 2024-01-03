@@ -568,7 +568,9 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         label=None,
         name="HeadLineSink",
         addtomodel=True,
+        refine_level=1,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         self.storeinput(inspect.currentframe())
         LineSinkHoBase.__init__(
             self,
@@ -583,14 +585,16 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
             name=name,
             label=label,
             addtomodel=addtomodel,
+            refine_level=refine_level,
         )
         self.hls = np.atleast_1d(hls)
         self.res = res
         self.wh = wh
         self.nunknowns = self.nparam
+        self._input = _input
 
-    def initialize(self):
-        LineSinkHoBase.initialize(self)
+    def initialize(self, addtoaq=True):
+        LineSinkHoBase.initialize(self, addtoaq=addtoaq)
         if self.wh == "H":
             self.whfac = self.aq.Haq[self.layers]
         elif self.wh == "2H":
@@ -610,6 +614,38 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        # refine xy
+        xy = np.array([(self.x1, self.y1), (self.x2, self.y2)])
+        xyr, _ = refine_n_segments(xy, "line", n_segments=n)
+        # get input arguments
+        input_args = deepcopy(self._input)
+        cls = input_args.pop("__class__", self.__class__)
+        input_args["model"] = self.model
+        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
+        input_args["addtomodel"] = False
+        # build new elements
+        refined_elements = []
+        hls = np.atleast_1d(input_args.pop("hls"))
+        s = np.sqrt((xyr[:, 0] - xyr[0, 0]) ** 2 + (xyr[:, 1] - xyr[0, 1]) ** 2)
+        for ils in range(n):
+            (input_args["x1"], input_args["y1"]) = xyr[ils]
+            (input_args["x2"], input_args["y2"]) = xyr[ils + 1]
+            # refine head-specification if possible
+            if len(hls) == 1:
+                input_args["hls"] = hls
+            elif len(hls) == 2:
+                input_args["hls"] = np.interp(s, [0, s[-1]], self.hls)[ils : ils + 2]
+            elif len(hls) == self.order + 1:
+                # this is never well-defined, so raise error
+                raise NotImplementedError(
+                    "Cannot refine HeadLineSink when hls is defined at control points."
+                )
+            refined_elements.append(cls(**input_args))
+        return refined_elements
 
 
 class LineSinkDitch(HeadLineSink):
