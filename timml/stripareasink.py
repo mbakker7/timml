@@ -1,5 +1,3 @@
-import inspect  # Used for storing the input
-
 import numpy as np
 
 from .element import Element
@@ -32,6 +30,7 @@ class StripAreaSinkInhom(Element):
         layer=0,
         name="StripAreaSink",
         label=None,
+        addtomodel=True,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
@@ -39,7 +38,9 @@ class StripAreaSinkInhom(Element):
         self.xleft = xleft
         self.xright = xright
         self.N = N
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " between " + str((self.xleft, self.xright))
@@ -118,9 +119,9 @@ class StripAreaSinkInhom(Element):
                 u = u1 * (1.0 + eps)  # Go just beyond circle
             else:
                 u = u2 * (1.0 + eps)  # Go just beyond circle
-            xn = x1 + u * (x2 - x1)
-            yn = y1 + u * (y2 - y1)
-            zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
+            # xn = x1 + u * (x2 - x1)
+            # yn = y1 + u * (y2 - y1)
+            # zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
         return changed, terminate, xyztnew, message
 
@@ -135,6 +136,7 @@ class StripAreaSink(Element):
         layer=0,
         name="StripAreaSink",
         label=None,
+        addtomodel=True,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
@@ -142,7 +144,9 @@ class StripAreaSink(Element):
         self.xleft = xleft
         self.xright = xright
         self.N = N
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " at " + str((self.xc, self.yc))
@@ -248,8 +252,8 @@ class StripAreaSink(Element):
                 u = u1 * (1.0 + eps)  # Go just beyond circle
             else:
                 u = u2 * (1.0 + eps)  # Go just beyond circle
-            xn = x1 + u * (x2 - x1)
-            yn = y1 + u * (y2 - y1)
-            zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
+            # xn = x1 + u * (x2 - x1)
+            # yn = y1 + u * (y2 - y1)
+            # zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
         return changed, terminate, xyztnew, message
