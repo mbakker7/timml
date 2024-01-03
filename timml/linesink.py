@@ -904,7 +904,7 @@ class LineSinkStringBase(Element):
             plt.plot(self.x, self.y, "k")
 
 
-class HeadLineSinkString(LineSinkStringBase2):
+class HeadLineSinkString(LineSinkStringBase):
     """
     Class to create a string of head-specified line-sinks
     which may optionally have a width and resistance
@@ -940,6 +940,9 @@ class HeadLineSinkString(LineSinkStringBase2):
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
     label: str or None
+    refine_level : int, optional
+        partition each linesink reach into refine_level segments, default is 1, which
+        means no refinement is applied.
 
     See Also
     --------
@@ -959,9 +962,10 @@ class HeadLineSinkString(LineSinkStringBase2):
         layers=0,
         label=None,
         name="HeadLineSinkString",
+        refine_level=1,
     ):
         self.storeinput(inspect.currentframe())
-        LineSinkStringBase2.__init__(
+        LineSinkStringBase.__init__(
             self,
             model,
             xy,
@@ -971,33 +975,40 @@ class HeadLineSinkString(LineSinkStringBase2):
             name=name,
             label=label,
             aq=None,
+            refine_level=refine_level,
         )
-        self.hls = np.atleast_1d(hls)
+        # TODO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
         self.res = res
         self.wh = wh
         self.model.add_element(self)
-        # TO DO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
+        self.hls = np.atleast_1d(hls)
+
+        # set hls for computation, copy so that _refine
+        # can potentially overwrite these attributes without modifying original input
+        self._hls = self.hls.copy()
 
     def initialize(self):
-        if len(self.hls) == 1:  # one value
-            self.hls = self.hls * np.ones(self.nls + 1)  # at all nodes
-        elif len(self.hls) == 2:  # values at beginning and end
+        if len(self._hls) == 1:  # one value
+            self._hls = self._hls * np.ones(self.nls + 1)  # at all nodes
+        elif len(self._hls) == 2:  # values at beginning and end
             L = np.sqrt(
-                (self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2
+                (self._x[1:] - self._x[:-1]) ** 2 + (self._y[1:] - self._y[:-1]) ** 2
             )
             s = np.hstack((0, np.cumsum(L)))
-            self.hls = np.interp(s, [0, s[-1]], self.hls)
-        elif len(self.hls) == len(self.x):  # nodes may contain nan values
-            if np.isnan(self.hls).any():
+            self._hls = np.interp(s, [0, s[-1]], self._hls)
+        elif len(self._hls) == len(self.x):  # nodes may contain nan values
+            if np.isnan(self._hls).any():
                 L = np.sqrt(
-                    (self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2
+                    (self._x[1:] - self._x[:-1]) ** 2
+                    + (self._y[1:] - self._y[:-1]) ** 2
                 )
                 s = np.hstack((0, np.cumsum(L)))
-                self.hls = np.interp(
-                    s, s[~np.isnan(self.hls)], self.hls[~np.isnan(self.hls)]
+                self._hls = np.interp(
+                    s, s[~np.isnan(self._hls)], self._hls[~np.isnan(self._hls)]
                 )
         else:
             print("Error: hls entry not supported in HeadLineSinkString")
+
         self.lslist = []  # start with empty list
         for i in range(self.nls):
             if self.label is not None:
@@ -1007,20 +1018,20 @@ class HeadLineSinkString(LineSinkStringBase2):
             self.lslist.append(
                 HeadLineSink(
                     self.model,
-                    x1=self.x[i],
-                    y1=self.y[i],
-                    x2=self.x[i + 1],
-                    y2=self.y[i + 1],
-                    hls=self.hls[i : i + 2],
+                    x1=self._x[i],
+                    y1=self._y[i],
+                    x2=self._x[i + 1],
+                    y2=self._y[i + 1],
+                    hls=self._hls[i : i + 2],
                     res=self.res,
                     wh=self.wh,
-                    layers=self.layers[i],
+                    layers=self._layers[i],
                     order=self.order,
                     label=lslabel,
                     addtomodel=False,
                 )
             )
-        LineSinkStringBase2.initialize(self)
+        LineSinkStringBase.initialize(self)
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
@@ -1059,6 +1070,31 @@ class HeadLineSinkString(LineSinkStringBase2):
                 irow += ls.nlayers
             jcol += ls.nunknowns
         return mat, rhs
+
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        xyr, reindexer = refine_n_segments(self.xy, "line", n_segments=n)
+
+        # update attributes
+        self._xy = xyr
+        self._x = xyr[:, 0]
+        self._y = xyr[:, 1]
+
+        # refining logic for hls
+        if len(self.hls) == 1:
+            self._hls = self.hls.copy()  # initialize will set hls for each segment
+        elif len(self.hls == 2):
+            self._hls = self.hls.copy()  # initialize will set hls for each segment
+        elif len(self.hls) == len(self.x):
+            self._hls = self.hls[reindexer]  # reindex user-specified hls
+            mask = ~(np.diff(reindexer, prepend=[-1]).astype(bool))
+            self._hls[mask] = np.nan
+
+        self._layers = self.layers[reindexer]
+        self.nlayers = len(self._layers[0])
+        self.nls = len(self._x) - 1
+        return [self]
 
 
 class LineSinkDitchString(HeadLineSinkString):
@@ -1110,6 +1146,7 @@ class LineSinkDitchString(HeadLineSinkString):
         order=0,
         layers=0,
         label=None,
+        refine_level=1,
     ):
         self.storeinput(inspect.currentframe())
         HeadLineSinkString.__init__(
@@ -1123,6 +1160,7 @@ class LineSinkDitchString(HeadLineSinkString):
             layers=layers,
             label=label,
             name="LineSinkDitchString",
+            refine_level=refine_level,
         )
         self.Qls = Qls
 
@@ -1149,6 +1187,15 @@ class LineSinkDitchString(HeadLineSinkString):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
 
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        xyr, _ = refine_n_segments(self.xy, "line", n_segments=n)
+        # update attributes
+        self._x = xyr[:, 0]
+        self._y = xyr[:, 1]
+        return [self]
+
 
 class LineSinkContainer(Element):
     """
@@ -1168,7 +1215,13 @@ class LineSinkContainer(Element):
         aq=None,
     ):
         Element.__init__(
-            self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
+            self,
+            model,
+            nparam=1,
+            nunknowns=0,
+            layers=layers,
+            name=name,
+            label=label,
         )
         self.order = order
 
