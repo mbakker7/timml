@@ -1,12 +1,14 @@
 import inspect  # Used for storing the input
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import bessel
-from .controlpoints import controlpoints, strengthinf_controlpoints
-from .element import Element
-from .equation import HeadEquation, PotentialEquation
+from timml import bessel
+from timml.controlpoints import controlpoints, strengthinf_controlpoints
+from timml.element import Element
+from timml.equation import HeadEquation
+from timml.util import refine_n_segments
 
 __all__ = [
     "LineSinkBase",
@@ -1393,7 +1395,7 @@ class HeadLineSinkContainer(LineSinkContainer):
         self.res = res
         self.wh = wh
         self.model.add_element(self)
-        # TO DO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
+        # TODO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
 
     def initialize(self):
         self.lslist = []
@@ -1407,6 +1409,10 @@ class HeadLineSinkContainer(LineSinkContainer):
             self.xls.append(xy[:, 0])
             self.yls.append(xy[:, 1])
             for i in range(len(xy) - 1):
+                if self.label is not None:
+                    lslabel = self.label + "_" + str(i)
+                else:
+                    lslabel = self.label
                 x1, y1 = xy[i]
                 x2, y2 = xy[i + 1]
                 ls = HeadLineSink(
@@ -1420,16 +1426,11 @@ class HeadLineSinkContainer(LineSinkContainer):
                     wh=self.wh,
                     layers=layers[i],
                     order=self.order,
-                    label=None,
+                    label=lslabel,
                     addtomodel=False,
                 )
                 self.lslist.append(ls)
         self.nls = len(self.lslist)
-        for i in range(self.nls):
-            if self.label is not None:
-                lslabel = self.label + "_" + str(i)
-            else:
-                lslabel = self.label
         LineSinkContainer.initialize(self)
 
     def setparams(self, sol):
