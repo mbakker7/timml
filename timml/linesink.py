@@ -767,6 +767,7 @@ class LineSinkStringBase(Element):
         name="LineSinkStringBase",
         label=None,
         aq=None,
+        refine_level=1,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -783,16 +784,24 @@ class LineSinkStringBase(Element):
                 self.layers = self.layers[:, np.newaxis]
             else:  # entire string in these layers
                 self.layers = self.layers * np.ones(
-                    (self.nls, len(self.layers)), dtype="int"
+                    (self.nls, len(self.layers)), dtype=int
                 )
         self.nlayers = len(self.layers[0])
+        self.refine_level = refine_level
+
+        # set _x, _y and _layers so that _refine can potentially overwrite
+        # these attributes without modifying original input
+        self._xy = self.xy.copy()
+        self._x = self.x.copy()
+        self._y = self.y.copy()
+        self._layers = self.layers.copy()
 
     def __repr__(self):
-        return self.name + " with nodes " + str(self.xy)
+        return self.name + " with nodes " + str(self._xy)
 
     def initialize(self):
         for ls in self.lslist:
-            ls.initialize()
+            ls.initialize(addtoaq=False)
         self.aq = []
         for ls in self.lslist:
             if ls.aq not in self.aq:
@@ -860,7 +869,7 @@ class LineSinkStringBase(Element):
         Qls = Qls.sum(axis=2)
         rv = np.zeros((self.model.aq.naq, self.nls))
         for i, q in enumerate(Qls):
-            rv[self.layers[i], i] += q
+            rv[self._layers[i], i] += q
         return rv
 
     def discharge(self):
@@ -871,7 +880,7 @@ class LineSinkStringBase(Element):
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
         Qls = np.sum(Qls, 2)
         for i, q in enumerate(Qls):
-            rv[self.layers[i]] += q
+            rv[self._layers[i]] += q
             # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1), self.nlayers), 0)
         return rv
 
@@ -891,7 +900,7 @@ class LineSinkStringBase(Element):
         return changed, terminate, xyztnew, message
 
     def plot(self, layer=None):
-        if (layer is None) or (layer in self.layers):
+        if (layer is None) or (layer in self._layers):
             plt.plot(self.x, self.y, "k")
 
 
