@@ -2,7 +2,6 @@ import inspect  # Used for storing the input
 
 import numpy as np
 
-from .aquifer_parameters import param_maq
 from .constant import ConstantStar
 
 
@@ -55,7 +54,8 @@ class AquiferData:
             self.nporll = self.npor[self.ltype == "l"]
 
     def initialize(self):
-        self.elementlist = []  # Elementlist of aquifer
+        self.elementlist = []  # computation element list of aquifer
+
         d0 = 1.0 / (self.c * self.T)
         d0[:-1] += 1.0 / (self.c[1:] * self.T[:-1])
         dp1 = -1.0 / (self.c[1:] * self.T[1:])
@@ -108,33 +108,35 @@ class AquiferData:
 class Aquifer(AquiferData):
     def __init__(self, model, kaq, c, z, npor, ltype):
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
-        self.inhomlist = []
+        self.inhoms = []  # user added inhoms
         self.area = 1e300  # Needed to find smallest inhom
 
-    def initialize(self):
-        # cause we are going to call initialize for inhoms
+    def initialize(self, refine_level=None):
+        self.inhomlist = []  # compute list for inhoms
+        # because we are going to call initialize for inhoms
         AquiferData.initialize(self)
+        for inhom in self.inhoms:
+            inhom.initialize()  # always initialize original element
+            if hasattr(inhom, "_refine") and (
+                inhom.refine_level > 1 or refine_level is not None
+            ):
+                refined_inhom = inhom._refine(n=refine_level)  # create refined element
+                refined_inhom.initialize()
+                self.inhomlist.append(refined_inhom)
+            else:
+                self.inhomlist.append(inhom)
         for inhom in self.inhomlist:
-            inhom.initialize()
-        for inhom in self.inhomlist:
-            inhom.create_elements()
+            inhom_elements = inhom.create_elements()  # create elements
+            self.model.elementlist += inhom_elements  # add elements to compute list
 
     def add_inhom(self, inhom):
-        self.inhomlist.append(inhom)
-        return len(self.inhomlist) - 1  # returns number in the list
+        self.inhoms.append(inhom)
+        return len(self.inhoms) - 1  # returns number in the list
 
     def find_aquifer_data(self, x, y):
         rv = self
-        for inhom in self.inhomlist:
+        for inhom in self.inhoms:
             if inhom.isinside(x, y):
                 if inhom.area < rv.area:
                     rv = inhom
         return rv
-        # Not used anymore I think 5 Nov 2015
-        # def find_aquifer_number(self, x, y):
-        #    rv = -1
-        #    for i,inhom in enumerate(self.inhomlist):
-        #        if inhom.isinside(x, y):
-        #            if inhom.area < rv.area:
-        #                rv = i
-        #    return rv
