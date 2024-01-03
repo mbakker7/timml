@@ -7,17 +7,17 @@ TimML is a computer program for the simulation of steady-state
 multiaquifer flow with analytic elements and consists of a
 library of Python scripts and FORTRAN extensions.
 """
-# from __future__ import division, print_function, absolute_import
+# ruff : noqa
 
-# --version number
 __name__ = "timml"
 __author__ = "Mark Bakker"
-from . import bessel
+
 
 # Import all classes and functions
-from .circareasink import CircAreaSink
-from .constant import Constant, ConstantStar
-from .inhomogeneity import (
+from timml import bessel, util
+from timml.circareasink import CircAreaSink
+from timml.constant import Constant, ConstantStar
+from timml.inhomogeneity import (
     BuildingPit3D,
     BuildingPitMaq,
     LeakyBuildingPit3D,
@@ -25,15 +25,15 @@ from .inhomogeneity import (
     PolygonInhom3D,
     PolygonInhomMaq,
 )
-from .inhomogeneity1d import StripInhom3D, StripInhomMaq
-from .linedoublet import (
+from timml.inhomogeneity1d import StripInhom3D, StripInhomMaq
+from timml.linedoublet import (
     ImpLineDoublet,
     ImpLineDoubletString,
     LeakyLineDoublet,
     LeakyLineDoubletString,
 )
-from .linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
-from .linesink import (
+from timml.linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
+from timml.linesink import (
     HeadLineSink,
     HeadLineSinkContainer,
     HeadLineSinkString,
@@ -42,13 +42,13 @@ from .linesink import (
     LineSinkDitch,
     LineSinkDitchString,
 )
-from .linesink1d import HeadLineSink1D, LineSink1D
-from .model import Model, Model3D, ModelMaq
-from .stripareasink import StripAreaSink
-from .trace import timtraceline, timtracelines
-from .uflow import Uflow
-from .version import __version__
-from .well import HeadWell, Well, WellBase
+from timml.linesink1d import HeadLineSink1D, LineSink1D
+from timml.model import Model, Model3D, ModelMaq
+from timml.stripareasink import StripAreaSink
+from timml.trace import timtraceline, timtracelines
+from timml.uflow import Uflow
+from timml.version import __version__
+from timml.well import HeadWell, Well, WellBase
 
 __all__ = [s for s in dir() if not s.startswith("_")]
 

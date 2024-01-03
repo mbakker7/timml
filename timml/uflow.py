@@ -29,9 +29,10 @@ class Uflow(Element):
     """
 
     def __init__(self, model, slope, angle, label=None):
-        assert (
-            model.aq.ilap
-        ), "TimML Error: Uflow can only be added to model with background confined aquifer"
+        assert model.aq.ilap, (
+            "TimML Error: Uflow can only be added to model "
+            "with background confined aquifer"
+        )
         self.storeinput(inspect.currentframe())
         Element.__init__(
             self, model, nparam=2, nunknowns=0, layers=0, name="Uflow", label=label
