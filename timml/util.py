@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import LineCollection
 
-from .trace import timtraceline, timtracelines
+from .controlpoints import controlpoints
+from .trace import timtraceline
 
 plt.rcParams["contour.negative_linestyle"] = "solid"
 
