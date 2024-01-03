@@ -104,7 +104,7 @@ class Constant(ConstantBase, PotentialEquation):
 class ConstantInside(Element):
     # Sets constant at points xc, yc equal to the average of the potential of all elements at points xc, yc
     # Used for the inside of an inhomogeneity
-    def __init__(self, model, xc=0, yc=0, label=None):
+    def __init__(self, model, xc=0, yc=0, label=None, addtomodel=True):
         Element.__init__(
             self,
             model,
@@ -117,7 +117,9 @@ class ConstantInside(Element):
         self.xc = np.atleast_1d(xc)
         self.yc = np.atleast_1d(yc)
         self.parameters = np.zeros((1, 1))
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name
@@ -170,7 +172,7 @@ class ConstantInside(Element):
 # class ConstantStar(Element, PotentialEquation):
 # I don't think we need the equation
 class ConstantStar(Element):
-    def __init__(self, model, hstar=0.0, label=None, aq=None):
+    def __init__(self, model, hstar=0.0, label=None, aq=None, addtomodel=True):
         Element.__init__(
             self,
             model,
@@ -183,7 +185,9 @@ class ConstantStar(Element):
         assert hstar is not None, "a value for hstar needs to be specified"
         self.hstar = hstar
         self.aq = aq
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " with head  " + str(self.hstar)
