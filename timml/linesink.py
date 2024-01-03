@@ -348,6 +348,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         addtomodel=True,
         aq=None,
         zcinout=None,
+        refine_level=1,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -364,6 +365,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             self.model.add_element(self)
         self.aq = aq
         self.zcinout = zcinout
+        self.refine_level = refine_level
 
     def __repr__(self):
         return (
@@ -374,7 +376,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             + str((self.x2, self.y2))
         )
 
-    def initialize(self):
+    def initialize(self, addtoaq=True):
         self.ncp = self.order + 1
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
@@ -403,7 +405,9 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             )
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
-        if self.addtomodel:
+        # also respect addtomodel here to prevent sub-elements (e.g. parts of
+        # HeadLineSinkString) from being added to the aquifer elementlists
+        if (addtoaq is None and self.addtomodel) or addtoaq:
             self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         # Not sure if that needs to be here
