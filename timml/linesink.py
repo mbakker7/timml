@@ -172,7 +172,9 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         name="LineSinkBase",
         label=None,
         addtomodel=True,
+        refine_level=1,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
         )
@@ -185,8 +187,10 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.res = float(res)
         self.wh = wh
         self.addtomodel = addtomodel
+        self.refine_level = refine_level
         if self.addtomodel:
             self.model.add_element(self)
+        self._input = _input
 
     def __repr__(self):
         return (
@@ -257,6 +261,33 @@ class LineSinkBase(LineSinkChangeTrace, Element):
     def plot(self, layer=None):
         if (layer is None) or (layer in self.layers):
             plt.plot([self.x1, self.x2], [self.y1, self.y2], "k")
+
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+
+        # refine xy
+        xy = np.array([(self.x1, self.y1), (self.x2, self.y2)])
+        xyr, _ = refine_n_segments(xy, "line", n_segments=n)
+
+        # get input arguments
+        input_args = deepcopy(self._input)
+        cls = input_args.pop("__class__", self.__class__)
+        input_args["model"] = self.model
+        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
+        input_args["addtomodel"] = False  # these are internally created elements
+
+        # build new elements
+        refined_elements = []
+        Qls = input_args.pop("Qls")
+        L = np.sqrt((xyr[1:, 0] - xyr[:-1, 0]) ** 2 + (xyr[1:, 1] - xyr[:-1, 1]) ** 2)
+        for ils in range(n):
+            (input_args["x1"], input_args["y1"]) = xyr[ils]
+            (input_args["x2"], input_args["y2"]) = xyr[ils + 1]
+            # distribute discharge evenly according to new segment lengths
+            input_args["Qls"] = Qls * L[ils] / np.sum(L)
+            refined_elements.append(cls(**input_args))
+        return refined_elements
 
 
 class HeadLineSinkZero(LineSinkBase, HeadEquation):
