@@ -33,6 +33,7 @@ class LineDoubletHoBase(Element):
         addtomodel=True,
         aq=None,
         zcinout=None,
+        refine_level=1,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -50,6 +51,7 @@ class LineDoubletHoBase(Element):
             self.model.add_element(self)
         self.aq = aq
         self.zcinout = zcinout
+        self.refine_level = refine_level
 
     def __repr__(self):
         return (
@@ -60,7 +62,7 @@ class LineDoubletHoBase(Element):
             + str((self.x2, self.y2))
         )
 
-    def initialize(self):
+    def initialize(self, addtoaq=True):
         self.ncp = self.order + 1
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
@@ -87,7 +89,9 @@ class LineDoubletHoBase(Element):
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         self.resfac = self.aq.Haq[self.layers] / self.res
-        if self.addtomodel:
+        # also respect addtomodel here to prevent sub-elements (e.g. parts of
+        # LineDoubletString) from being added to the aquifer elementlists
+        if (addtoaq is None and self.addtomodel) or addtoaq:
             self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         # Not sure if this needs to be here
@@ -164,6 +168,26 @@ class LineDoubletHoBase(Element):
         if (layer is None) or (layer in self.layers):
             plt.plot([self.x1, self.x2], [self.y1, self.y2], "k")
 
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        # refine xy
+        xy = np.array([(self.x1, self.y1), (self.x2, self.y2)])
+        xyr, _ = refine_n_segments(xy, "line", n_segments=n)
+        # get input args
+        input_args = deepcopy(self._input)
+        cls = input_args.pop("__class__", self.__class__)
+        input_args["model"] = self.model
+        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
+        input_args["addtomodel"] = False
+        # build new elements
+        refined_elements = []
+        for ils in range(n):
+            (input_args["x1"], input_args["y1"]) = xyr[ils]
+            (input_args["x2"], input_args["y2"]) = xyr[ils + 1]
+            refined_elements.append(cls(**input_args))
+        return refined_elements
+
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
     """
@@ -211,7 +235,9 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
         layers=0,
         label=None,
         addtomodel=True,
+        refine_level=1,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         self.storeinput(inspect.currentframe())
         LineDoubletHoBase.__init__(
             self,
@@ -227,7 +253,9 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
             name="ImpLineDoublet",
             label=label,
             addtomodel=addtomodel,
+            refine_level=refine_level,
         )
+        self._input = _input
         self.nunknowns = self.nparam
 
     def initialize(self):
@@ -288,7 +316,9 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
         layers=0,
         label=None,
         addtomodel=True,
+        refine_level=1,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         self.storeinput(inspect.currentframe())
         LineDoubletHoBase.__init__(
             self,
@@ -304,7 +334,9 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
             name="ImpLineDoublet",
             label=label,
             addtomodel=addtomodel,
+            refine_level=refine_level,
         )
+        self._input = _input
         self.nunknowns = self.nparam
 
     def initialize(self):
