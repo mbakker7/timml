@@ -1,12 +1,14 @@
 import inspect  # Used for storing the input
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import bessel
-from .controlpoints import controlpoints
-from .element import Element
-from .equation import DisvecEquation, LeakyWallEquation
+from timml import bessel
+from timml.controlpoints import controlpoints
+from timml.element import Element
+from timml.equation import DisvecEquation, LeakyWallEquation
+from timml.util import refine_n_segments
 
 __all__ = [
     "ImpLineDoublet",
