@@ -1,24 +1,42 @@
 import inspect  # Used for storing the input
+from copy import deepcopy
 from warnings import warn
 
 import numpy as np
 
-from .aquifer import AquiferData
-from .aquifer_parameters import param_3d, param_maq
-from .constant import ConstantInside, ConstantStar
-from .element import Element
-from .intlinesink import (
+from timml.aquifer import AquiferData
+from timml.aquifer_parameters import param_3d, param_maq
+from timml.constant import ConstantInside, ConstantStar
+from timml.element import Element
+from timml.intlinesink import (
     IntFluxDiffLineSink,
     IntFluxLineSink,
     IntHeadDiffLineSink,
     LeakyIntHeadDiffLineSink,
 )
+from timml.util import compute_z1z2, refine_n_segments
 
 
 class PolygonInhom(AquiferData):
     tiny = 1e-8
 
-    def __init__(self, model, xy, kaq, c, z, npor, ltype, hstar, N, order, ndeg):
+    def __init__(
+        self,
+        model,
+        xy,
+        kaq,
+        c,
+        z,
+        npor,
+        ltype,
+        hstar,
+        N,
+        order,
+        ndeg,
+        refine_level=1,
+        addtomodel=True,
+    ):
+        self._input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         # All input variables except model should be numpy arrays
         # That should be checked outside this function):
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
@@ -26,8 +44,11 @@ class PolygonInhom(AquiferData):
         self.ndeg = ndeg
         self.hstar = hstar
         self.N = N
-        self.inhom_number = self.model.aq.add_inhom(self)
-        self.z1, self.z2 = compute_z1z2(xy)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.inhom_number = self.model.aq.add_inhom(self)
+        self.xy = xy
+        self.z1, self.z2 = compute_z1z2(self.xy)
         self.Nsides = len(self.z1)
         Zin = 1e-6j
         Zout = -1e-6j
@@ -45,6 +66,7 @@ class PolygonInhom(AquiferData):
         self.xmax = max(self.x)
         self.ymin = min(self.y)
         self.ymax = max(self.y)
+        self.refine_level = refine_level
 
     def __repr__(self):
         return "PolygonInhom: " + str(list(zip(self.x, self.y)))
@@ -74,12 +96,13 @@ class PolygonInhom(AquiferData):
 
     def create_elements(self):
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
+        inhom_elements = []
         for i in range(self.Nsides):
             aqout = self.model.aq.find_aquifer_data(
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
-                ls = IntHeadDiffLineSink(
+                ls_in = IntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -93,7 +116,7 @@ class PolygonInhom(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
-                ls = IntFluxDiffLineSink(
+                ls_out = IntFluxDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -107,6 +130,7 @@ class PolygonInhom(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
+                inhom_elements += [ls_in, ls_out]
         if aqin.ltype[0] == "a":  # add constant on inside
             c = ConstantInside(self.model, self.zcin.real, self.zcin.imag)
             c.inhomelement = True
@@ -117,6 +141,21 @@ class PolygonInhom(AquiferData):
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
+        inhom_elements += [c]
+        return inhom_elements
+
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        xyr, _ = refine_n_segments(self.xy, "polygon", n_segments=n)
+        input_args = deepcopy(self._input)
+        cls = input_args.pop("__class__", self.__class__)
+        input_args["model"] = self.model
+        # overwrite some input args for refined element
+        input_args["xy"] = xyr
+        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
+        input_args["addtomodel"] = False
+        return cls(**input_args)
 
 
 class PolygonInhomMaq(PolygonInhom):
@@ -179,7 +218,10 @@ class PolygonInhomMaq(PolygonInhom):
         N=None,
         order=3,
         ndeg=3,
+        refine_level=1,
+        addtomodel=True,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -192,8 +234,22 @@ class PolygonInhomMaq(PolygonInhom):
             ltype,
         ) = param_maq(kaq, z, c, npor, topboundary)
         PolygonInhom.__init__(
-            self, model, xy, kaq, c, z, npor, ltype, hstar, N, order, ndeg
+            self,
+            model,
+            xy,
+            kaq,
+            c,
+            z,
+            npor,
+            ltype,
+            hstar,
+            N,
+            order,
+            ndeg,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
+        self._input = _input
 
 
 class PolygonInhom3D(PolygonInhom):
@@ -261,7 +317,10 @@ class PolygonInhom3D(PolygonInhom):
         N=None,
         order=3,
         ndeg=3,
+        refine_level=1,
+        addtomodel=True,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -271,29 +330,22 @@ class PolygonInhom3D(PolygonInhom):
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
         PolygonInhom.__init__(
-            self, model, xy, kaq, c, z, npor, ltype, hstar, N, order, ndeg
+            self,
+            model,
+            xy,
+            kaq,
+            c,
+            z,
+            npor,
+            ltype,
+            hstar,
+            N,
+            order,
+            ndeg,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
-
-
-def compute_z1z2(xy):
-    # Returns z1 and z2 of polygon, in clockwise order
-    x, y = list(zip(*xy))
-    if x[0] == x[-1] and y[0] == y[-1]:  # In case last point is repeated
-        x = x[:-1]
-        y = y[:-1]
-    z1 = np.array(x) + np.array(y) * 1j
-    index = list(range(1, len(z1))) + [0]
-    z2 = z1[index]
-    Z = 1e-6j
-    z = Z * (z2[0] - z1[0]) / 2.0 + 0.5 * (z1[0] + z2[0])
-    bigZ = (2.0 * z - (z1 + z2)) / (z2 - z1)
-    bigZmin1 = bigZ - 1.0
-    bigZplus1 = bigZ + 1.0
-    angle = np.sum(np.log(bigZmin1 / bigZplus1).imag)
-    if angle < np.pi:  # reverse order
-        z1 = z1[::-1]
-        z2 = z1[index]
-    return z1, z2
+        self._input = _input
 
 
 class BuildingPit(AquiferData):
@@ -312,6 +364,8 @@ class BuildingPit(AquiferData):
         order=3,
         ndeg=3,
         layers=[0],
+        refine_level=1,
+        addtomodel=True,
     ):
         """Element to simulate a building pit with an impermeable wall.
 
@@ -352,22 +406,32 @@ class BuildingPit(AquiferData):
         ndeg : int
             number of points used between two segments to numerically
             integrate normal discharge
-        layers: list or np.array
+        layers : list or np.array
             layers in which impermeable wall is present.
+        refine_level : int, optional
+            refine element by partitioning each side into refine_level segments, default
+            is 1, which means no refinement is applied.
         """
+        self._input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.order = order
         self.ndeg = ndeg
-
+        self.xy = xy
         self.layers = np.atleast_1d(layers)  # layers with impermeable wall
         self.nonimplayers = list(
             set(range(self.model.aq.naq)) - set(self.layers)
         )  # layers without wall
-
         self.hstar = hstar
+        self.refine_level = refine_level
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.inhom_number = self.model.aq.add_inhom(self)
 
-        self.inhom_number = self.model.aq.add_inhom(self)
-        self.z1, self.z2 = compute_z1z2(xy)
+        # compute derived params
+        self.compute_derived_params()
+
+    def compute_derived_params(self):
+        self.z1, self.z2 = compute_z1z2(self.xy)
         self.Nsides = len(self.z1)
         Zin = 1e-6j
         Zout = -1e-6j
@@ -386,10 +450,10 @@ class BuildingPit(AquiferData):
 
     def __repr__(self):
         return (
-            "BuildingPit: layers "
+            f"{self.__class__.__name__}: layers "
             + str(list(self.layers))
             + ", "
-            + str(list(self.x, self.y))
+            + str(list(zip(self.x, self.y)))
         )
 
     def isinside(self, x, y):
@@ -417,13 +481,14 @@ class BuildingPit(AquiferData):
 
     def create_elements(self):
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
+        inhom_elements = []
         for i in range(self.Nsides):
             aqout = self.model.aq.find_aquifer_data(
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
                 # Conditions for layers with impermeable walls
-                IntFluxLineSink(
+                ils_in = IntFluxLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -438,7 +503,7 @@ class BuildingPit(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
-                IntFluxLineSink(
+                ils_out = IntFluxLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -453,9 +518,11 @@ class BuildingPit(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
+                inhom_elements += [ils_in, ils_out]
+
                 if len(self.nonimplayers) > 0:
                     # use these conditions for layers without impermeable or leaky walls
-                    IntHeadDiffLineSink(
+                    ihdls_in = IntHeadDiffLineSink(
                         self.model,
                         x1=self.x[i],
                         y1=self.y[i],
@@ -470,7 +537,7 @@ class BuildingPit(AquiferData):
                         aqin=aqin,
                         aqout=aqout,
                     )
-                    IntFluxDiffLineSink(
+                    ihdls_out = IntFluxDiffLineSink(
                         self.model,
                         x1=self.x[i],
                         y1=self.y[i],
@@ -485,6 +552,7 @@ class BuildingPit(AquiferData):
                         aqin=aqin,
                         aqout=aqout,
                     )
+                    inhom_elements += [ihdls_in, ihdls_out]
 
         if aqin.ltype[0] == "a":  # add constant on inside
             c = ConstantInside(self.model, self.zcin.real, self.zcin.imag)
@@ -493,6 +561,22 @@ class BuildingPit(AquiferData):
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
+        inhom_elements += [c]
+
+        return inhom_elements
+
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        xyr, _ = refine_n_segments(self.xy, "polygon", n_segments=n)
+        input_args = deepcopy(self._input)
+        cls = input_args.pop("__class__")
+        input_args["model"] = self.model
+        # overwrite some input args for refined element
+        input_args["xy"] = xyr
+        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
+        input_args["addtomodel"] = False
+        return cls(**input_args)
 
 
 class BuildingPitMaq(BuildingPit):
@@ -509,6 +593,8 @@ class BuildingPitMaq(BuildingPit):
         order=3,
         ndeg=3,
         layers=[0],
+        refine_level=1,
+        addtomodel=True,
     ):
         """Element to simulate a building pit with an impermeable wall in ModelMaq.
 
@@ -553,7 +639,11 @@ class BuildingPitMaq(BuildingPit):
             integrate normal discharge
         layers: list or np.array
             layers in which impermeable wall is present.
+        refine_level : int, optional
+            refine element by splitting up each side into refine_level segments, default
+            is 1, which means no refinement is applied.
         """
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -567,7 +657,10 @@ class BuildingPitMaq(BuildingPit):
             order=order,
             ndeg=ndeg,
             layers=layers,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
+        self._input = _input
 
 
 class BuildingPit3D(BuildingPit):
@@ -586,6 +679,8 @@ class BuildingPit3D(BuildingPit):
         order=3,
         ndeg=3,
         layers=[0],
+        refine_level=1,
+        addtomodel=True,
     ):
         """Element to simulate a building pit with an impermeable wall in Model3D.
 
@@ -632,7 +727,11 @@ class BuildingPit3D(BuildingPit):
             integrate normal discharge
         layers: list or np.array
             layers in which impermeable wall is present.
+        refine_level : int, optional
+            refine element by partitioning each side into refine_level segments, default
+            is 1, which means no refinement is applied.
         """
+        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -648,7 +747,10 @@ class BuildingPit3D(BuildingPit):
             order=order,
             ndeg=ndeg,
             layers=layers,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
+        self._input = _input
 
 
 class LeakyBuildingPit(BuildingPit):
@@ -666,6 +768,8 @@ class LeakyBuildingPit(BuildingPit):
         ndeg=3,
         layers=[0],
         res=np.inf,
+        refine_level=1,
+        addtomodel=True,
     ):
         """Element to simulate a building pit with a leaky wall.
 
@@ -712,8 +816,10 @@ class LeakyBuildingPit(BuildingPit):
             resistance of leaky wall, if passed as an array must be either
             shape (n_segments,) or (n_layers, n_segments). Default is np.inf,
             which simulates an impermeable wall.
+        refine_level : int, optional
+            refine element by partitioning each side into refine_level segments, default
+            is 1, which means no refinement is applied.
         """
-
         super().__init__(
             model,
             xy,
@@ -726,7 +832,10 @@ class LeakyBuildingPit(BuildingPit):
             order=order,
             ndeg=ndeg,
             layers=layers,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
+        self._input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         if isinstance(res, (int, float, np.integer)):
             # make 2D so indexing resistance works for all cases
             self.res = res * np.ones((1, self.Nsides))
@@ -748,23 +857,16 @@ class LeakyBuildingPit(BuildingPit):
             )
             self.res[self.res < self.tiny] = self.tiny
 
-    def __repr__(self):
-        return (
-            "LeakyBuildingPit: layers "
-            + str(list(self.layers))
-            + ", "
-            + str(list(self.x, self.y))
-        )
-
     def create_elements(self):
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
+        inhom_elements = []
         for i in range(self.Nsides):
             aqout = self.model.aq.find_aquifer_data(
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
                 # Conditions for layers with leaky walls
-                LeakyIntHeadDiffLineSink(
+                ilhdls_in = LeakyIntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -775,13 +877,13 @@ class LeakyBuildingPit(BuildingPit):
                     order=self.order,
                     ndeg=self.ndeg,
                     label=None,
-                    addtomodel=True,
+                    addtomodel=False,
                     aq=aqin,
                     aqin=aqin,
                     aqout=aqout,
                 )
 
-                LeakyIntHeadDiffLineSink(
+                ilhdls_out = LeakyIntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -792,15 +894,16 @@ class LeakyBuildingPit(BuildingPit):
                     order=self.order,
                     ndeg=self.ndeg,
                     label=None,
-                    addtomodel=True,
+                    addtomodel=False,
                     aq=aqout,
                     aqin=aqin,
                     aqout=aqout,
                 )
+                inhom_elements += [ilhdls_in, ilhdls_out]
 
                 if len(self.nonimplayers) > 0:
                     # use these conditions for layers without leaky walls
-                    IntHeadDiffLineSink(
+                    ihdls_in = IntHeadDiffLineSink(
                         self.model,
                         x1=self.x[i],
                         y1=self.y[i],
@@ -810,12 +913,12 @@ class LeakyBuildingPit(BuildingPit):
                         order=self.order,
                         ndeg=self.ndeg,
                         label=None,
-                        addtomodel=True,
+                        addtomodel=False,
                         aq=aqin,
                         aqin=aqin,
                         aqout=aqout,
                     )
-                    IntFluxDiffLineSink(
+                    ihdls_out = IntFluxDiffLineSink(
                         self.model,
                         x1=self.x[i],
                         y1=self.y[i],
@@ -825,19 +928,39 @@ class LeakyBuildingPit(BuildingPit):
                         order=self.order,
                         ndeg=self.ndeg,
                         label=None,
-                        addtomodel=True,
+                        addtomodel=False,
                         aq=aqout,
                         aqin=aqin,
                         aqout=aqout,
                     )
+                    inhom_elements += [ihdls_in, ihdls_out]
 
         if aqin.ltype[0] == "a":  # add constant on inside
-            c = ConstantInside(self.model, self.zcin.real, self.zcin.imag)
+            c = ConstantInside(
+                self.model, self.zcin.real, self.zcin.imag, addtomodel=False
+            )
             c.inhomelement = True
         if aqin.ltype[0] == "l":
             assert self.hstar is not None, "Error: hstar needs to be set"
-            c = ConstantStar(self.model, self.hstar, aq=aqin)
+            c = ConstantStar(self.model, self.hstar, aq=aqin, addtomodel=False)
             c.inhomelement = True
+        inhom_elements += [c]
+
+        return inhom_elements
+
+    def _refine(self, n=None):
+        if n is None:
+            n = self.refine_level
+        xyr, reindexer = refine_n_segments(self.xy, "polygon", n_segments=n)
+        input_args = deepcopy(self._input)
+        cls = input_args.pop("__class__")
+        input_args["model"] = self.model
+        # overwrite some input args for refined element
+        input_args["xy"] = xyr
+        input_args["res"] = self.res[:, reindexer]
+        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
+        input_args["addtomodel"] = False
+        return cls(**input_args)
 
 
 class LeakyBuildingPitMaq(LeakyBuildingPit):
@@ -888,6 +1011,9 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
         resistance of leaky wall, if passed as an array must be either
         shape (n_segments,) or (n_segments, n_layers). Default is np.inf,
         which simulates an impermeable wall.
+    refine_level : int, optional
+        refine element by partitioning each side into refine_level segments, default
+        is 1, which means no refinement is applied.
     """
 
     def __init__(
@@ -904,7 +1030,10 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
         ndeg=3,
         layers=[0],
         res=np.inf,
+        refine_level=1,
+        addtomodel=True,
     ):
+        _input = {k: v for k, v in locals().items() if k not in ["self"]}
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -919,7 +1048,10 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
             ndeg=ndeg,
             layers=layers,
             res=res,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
+        self._input = _input
 
 
 class LeakyBuildingPit3D(LeakyBuildingPit):
@@ -939,6 +1071,8 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
         ndeg=3,
         layers=[0],
         res=np.inf,
+        refine_level=1,
+        addtomodel=True,
     ):
         """Element to simulate a building pit with a leaky wall in Model3D.
 
@@ -989,7 +1123,11 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
             resistance of leaky wall, if passed as an array must be either
             shape (n_segments,) or (n_segments, n_layers). Default is np.inf,
             which simulates an impermeable wall.
+        refine_level : int, optional
+            refine element by partitioning each side into refine_level segments, default
+            is 1, which means no refinement is applied.
         """
+        _input = {k: v for k, v in locals().items() if k not in ["self"]}
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -1006,7 +1144,10 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
             ndeg=ndeg,
             layers=layers,
             res=res,
+            refine_level=refine_level,
+            addtomodel=addtomodel,
         )
+        self._input = _input
 
 
 class AreaSinkInhom(Element):
