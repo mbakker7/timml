@@ -21,7 +21,6 @@ class StripInhom(AquiferData):
         self.hstar = hstar
         self.N = N
         self.inhom_number = self.model.aq.add_inhom(self)
-        self.addlinesinks = False
 
     def __repr__(self):
         return "Inhom1D: " + str(list([self.x1, self.x2]))
@@ -37,7 +36,6 @@ class StripInhom(AquiferData):
             xoutright = self.x2 + self.tiny * abs(self.x2) + self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutright = self.model.aq.find_aquifer_data(xoutright, 0)
-            # if self.addlinesinks:
             hdls_right = HeadDiffLineSink1D(
                 self.model,
                 self.x2,
@@ -53,7 +51,6 @@ class StripInhom(AquiferData):
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutleft = self.model.aq.find_aquifer_data(xoutleft, 0)
-            # if self.addlinesinks:
             fdls_left = FluxDiffLineSink1D(
                 self.model,
                 self.x1,
@@ -71,7 +68,6 @@ class StripInhom(AquiferData):
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqleft = self.model.aq.find_aquifer_data(xoutleft, 0)
             aqright = self.model.aq.find_aquifer_data(xoutright, 0)
-            # if self.addlinesinks:
             hdls_right = HeadDiffLineSink1D(
                 self.model,
                 self.x2,
