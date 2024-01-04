@@ -36,7 +36,6 @@ class PolygonInhom(AquiferData):
         refine_level=1,
         addtomodel=True,
     ):
-        self._input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         # All input variables except model should be numpy arrays
         # That should be checked outside this function):
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
@@ -52,8 +51,6 @@ class PolygonInhom(AquiferData):
 
         # introduce internal vars that can be modified by _refine()
         self._xy = self.xy.copy()
-
-        self.compute_derived_params()
 
     def compute_derived_params(self):
         self.z1, self.z2 = compute_z1z2(self._xy)
@@ -103,6 +100,8 @@ class PolygonInhom(AquiferData):
         return rv
 
     def create_elements(self):
+        # update derived parameters
+        self.compute_derived_params()
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
         inhom_elements = []
         for i in range(self.Nsides):
@@ -158,8 +157,9 @@ class PolygonInhom(AquiferData):
         # refine xy
         xyr, _ = refine_n_segments(self.xy, "polygon", n_segments=n)
         self._xy = xyr
-        # update derived parameters
-        self.compute_derived_params()
+
+    def _reset(self):
+        self._xy = self.xy.copy()
 
 
 class PolygonInhomMaq(PolygonInhom):
@@ -225,7 +225,6 @@ class PolygonInhomMaq(PolygonInhom):
         refine_level=1,
         addtomodel=True,
     ):
-        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -253,7 +252,6 @@ class PolygonInhomMaq(PolygonInhom):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = _input
 
 
 class PolygonInhom3D(PolygonInhom):
@@ -324,7 +322,6 @@ class PolygonInhom3D(PolygonInhom):
         refine_level=1,
         addtomodel=True,
     ):
-        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -349,7 +346,6 @@ class PolygonInhom3D(PolygonInhom):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = _input
 
 
 class BuildingPit(AquiferData):
@@ -420,6 +416,7 @@ class BuildingPit(AquiferData):
         self.order = order
         self.ndeg = ndeg
         self.xy = xy
+        self.Nsides = len(self.xy)
         self.layers = np.atleast_1d(layers)  # layers with impermeable wall
         self.nonimplayers = list(
             set(range(self.model.aq.naq)) - set(self.layers)
@@ -432,9 +429,6 @@ class BuildingPit(AquiferData):
 
         # introduce internal var that can be updated by _refine()
         self._xy = self.xy.copy()
-
-        # compute derived params
-        self.compute_derived_params()
 
     def compute_derived_params(self):
         self.z1, self.z2 = compute_z1z2(self._xy)
@@ -487,6 +481,8 @@ class BuildingPit(AquiferData):
         return rv
 
     def create_elements(self):
+        # update derived parameters
+        self.compute_derived_params()
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
         inhom_elements = []
         for i in range(self.Nsides):
@@ -578,8 +574,9 @@ class BuildingPit(AquiferData):
         # refine xy
         xyr, _ = refine_n_segments(self.xy, "polygon", n_segments=n)
         self._xy = xyr
-        # update derived params
-        self.compute_derived_params()
+
+    def _reset(self):
+        self._xy = self.xy.copy()
 
 
 class BuildingPitMaq(BuildingPit):
@@ -834,6 +831,7 @@ class LeakyBuildingPit(BuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
+        self.compute_derived_params()  # calculate Nsides
         if isinstance(res, (int, float, np.integer)):
             # make 2D so indexing resistance works for all cases
             self.res = res * np.ones((1, self.Nsides))
@@ -860,6 +858,8 @@ class LeakyBuildingPit(BuildingPit):
         self._res = self.res.copy()
 
     def create_elements(self):
+        # update derived parameters
+        self.compute_derived_params()
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
         inhom_elements = []
         for i in range(self.Nsides):
@@ -958,8 +958,10 @@ class LeakyBuildingPit(BuildingPit):
         self._xy = xyr
         # update input args
         self._res = self.res[:, reindexer]
-        # update derived parameters
-        self.compute_derived_params()
+
+    def _reset(self):
+        self._xy = self.xy.copy()
+        self._res = self.res.copy()
 
 
 class LeakyBuildingPitMaq(LeakyBuildingPit):

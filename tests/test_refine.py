@@ -332,5 +332,40 @@ def test_multiple_solves():
     tml.HeadLineSink(ml, refine_level=3)
     ml.solve(silent=True)
     assert len(ml.elementlist) == 4
-    ml.solve(silent=True)
-    assert len(ml.elementlist) == 4
+    ml.solve(silent=True, refine_level=1)
+    assert len(ml.elementlist) == 2
+
+
+def test_reset_headlinesinkstring():
+    ml = modelmaq()
+    hls = tml.HeadLineSinkString(ml, refine_level=2)
+    ml.initialize()
+    assert len(hls.lslist) == 2
+    ml.initialize(refine_level=1)
+    assert len(hls.lslist) == 1
+
+
+def test_reset_leakybuildingpitmaq():
+    ml = modelmaq()
+    xy = [
+        (-10, -5),
+        (10, -5),
+        (10, 5),
+        (-10, 5),
+        (-10, -5),
+    ]
+    tml.LeakyBuildingPitMaq(
+        ml,
+        xy,
+        kaq=ml.aq.kaq,
+        z=ml.aq.z[1:],
+        c=ml.aq.c[1:],
+        res=[100, 100, 1, 100],
+        topboundary="conf",
+        refine_level=2,
+    )
+    tml.Well(ml, 0, 0)
+    ml.initialize()
+    assert len(ml.elementlist) == 35
+    ml.initialize(refine_level=1)
+    assert len(ml.elementlist) == 19

@@ -905,6 +905,12 @@ class LineSinkStringBase(Element):
         if (layer is None) or (layer in self._layers):
             plt.plot(self.x, self.y, "k")
 
+    def _reset(self):
+        self._xy = self.xy.copy()
+        self._x = self.x.copy()
+        self._y = self.y.copy()
+        self._layers = self.layers.copy()
+
 
 class HeadLineSinkString(LineSinkStringBase):
     """
@@ -1097,6 +1103,10 @@ class HeadLineSinkString(LineSinkStringBase):
         self.nlayers = len(self._layers[0])
         self.nls = len(self._x) - 1
         return [self]
+
+    def _reset(self):
+        super()._reset()
+        self._hls = self.hls.copy()
 
 
 class LineSinkDitchString(HeadLineSinkString):

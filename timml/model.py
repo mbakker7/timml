@@ -63,6 +63,8 @@ class Model(PlotTim):
                 refined_element = e._refine(n=refine_level)
                 elementlist += refined_element
             else:
+                if hasattr(e, "_reset"):
+                    e._reset()  # reset variables in case _refine was previously called
                 elementlist.append(e)
 
         # remove inhomogeneity elements (they are added again)
