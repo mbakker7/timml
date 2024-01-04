@@ -575,7 +575,7 @@ class Model(PlotTim):
     def writemodel(self, fname):
         self.initialize()  # So that the model can be written without solving first
         f = open(fname, "w")
-        f.write("import timml as tml\n")
+        f.write("import timml\n")
         f.write(self.write())
         for e in self.elementlist:
             f.write(e.write())
