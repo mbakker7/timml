@@ -51,6 +51,7 @@ class PolygonInhom(AquiferData):
 
         # introduce internal vars that can be modified by _refine()
         self._xy = self.xy.copy()
+        self.compute_derived_params()  # needed for isinside calls
 
     def compute_derived_params(self):
         self.z1, self.z2 = compute_z1z2(self._xy)
@@ -429,6 +430,7 @@ class BuildingPit(AquiferData):
 
         # introduce internal var that can be updated by _refine()
         self._xy = self.xy.copy()
+        self.compute_derived_params()  # needed for isinside calls
 
     def compute_derived_params(self):
         self.z1, self.z2 = compute_z1z2(self._xy)
@@ -831,7 +833,6 @@ class LeakyBuildingPit(BuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self.compute_derived_params()  # calculate Nsides
         if isinstance(res, (int, float, np.integer)):
             # make 2D so indexing resistance works for all cases
             self.res = res * np.ones((1, self.Nsides))

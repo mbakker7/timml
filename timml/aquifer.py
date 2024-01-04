@@ -120,7 +120,7 @@ class Aquifer(AquiferData):
                 inhom.refine_level > 1 or refine_level is not None
             ):
                 inhom._refine(n=refine_level)  # refine element
-            else:
+            elif hasattr(inhom, "_reset"):
                 # potentially reset refined parameters if initialize
                 # has already been called with refine_level > 1
                 inhom._reset()
