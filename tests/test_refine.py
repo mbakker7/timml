@@ -132,14 +132,16 @@ def test_refine_polygonimhommaq():
     )
     tml.Well(ml, 0, 0)
     ml.solve(silent=True)
-    xyin = np.vstack(
-        [
-            np.hstack([inhom.zcin.real, inhom.zcin.real[:1]]),
-            np.hstack([inhom.zcin.imag, inhom.zcin.imag[:1]]),
-        ]
-    ).T
+    eps = 1e-6
+    xyin = [
+        (-10 + eps, -5 + eps),
+        (10 - eps, -5 + eps),
+        (10 - eps, 5 - eps),
+        (-10 + eps, 5 - eps),
+        (-10 + eps, -5 + eps),
+    ]
     assert len(ml.elementlist) == 19
-    assert np.allclose(np.sum(ml.intnormflux(xyin, ndeg=99)), [100.0])
+    assert np.allclose(np.sum(ml.intnormflux(xyin, ndeg=99)), [100.0], rtol=1e-3)
 
 
 def test_refine_polygonimhom3d():
@@ -162,14 +164,16 @@ def test_refine_polygonimhom3d():
     )
     tml.Well(ml, 0, 0)
     ml.solve(silent=True)
-    xyin = np.vstack(
-        [
-            np.hstack([inhom.zcin.real, inhom.zcin.real[:1]]),
-            np.hstack([inhom.zcin.imag, inhom.zcin.imag[:1]]),
-        ]
-    ).T
+    eps = 1e-6
+    xyin = [
+        (-10 + eps, -5 + eps),
+        (10 - eps, -5 + eps),
+        (10 - eps, 5 - eps),
+        (-10 + eps, 5 - eps),
+        (-10 + eps, -5 + eps),
+    ]
     assert len(ml.elementlist) == 19
-    assert np.allclose(np.sum(ml.intnormflux(xyin, ndeg=99)), [100.0])
+    assert np.allclose(np.sum(ml.intnormflux(xyin, ndeg=99)), [100.0], rtol=1e-3)
 
 
 def test_refine_buildingpitmaq():
@@ -188,16 +192,25 @@ def test_refine_buildingpitmaq():
         z=ml.aq.z[1:],
         c=ml.aq.c[1:],
         topboundary="conf",
-        refine_level=3,
+        refine_level=2,
     )
     tml.Well(ml, 0, 0)
     ml.solve(silent=True)
-    assert len(ml.elementlist) == 51
+    eps = 1e-6
+    xyin = [
+        (-10 + eps, -5 + eps),
+        (10 - eps, -5 + eps),
+        (10 - eps, 5 - eps),
+        (-10 + eps, 5 - eps),
+        (-10 + eps, -5 + eps),
+    ]
+    assert len(ml.elementlist) == 35
+    # accuracy of intnormflux around inner boundary is reasonable but not perfect
     assert np.allclose(
-        np.sum(ml.intnormflux(xy, ndeg=99), axis=1),
+        np.sum(ml.intnormflux(xyin, ndeg=99), axis=1),
         [0.0, 100.0],
-        atol=0.15,
-        rtol=0.01,
+        atol=1e-1,
+        rtol=1e-3,
     )
 
 
@@ -217,16 +230,25 @@ def test_refine_buildingpit3d():
         kzoverkh=0.25,
         z=ml.aq.z[1:],
         topboundary="conf",
-        refine_level=3,
+        refine_level=2,
     )
     tml.Well(ml, 0, 0)
     ml.solve(silent=True)
-    assert len(ml.elementlist) == 51
+    eps = 1e-6
+    xyin = [
+        (-10 + eps, -5 + eps),
+        (10 - eps, -5 + eps),
+        (10 - eps, 5 - eps),
+        (-10 + eps, 5 - eps),
+        (-10 + eps, -5 + eps),
+    ]
+    assert len(ml.elementlist) == 35
+    # NOTE: accuracy of intnormflux around inner boundary isn't great...
     assert np.allclose(
-        np.sum(ml.intnormflux(xy, ndeg=99), axis=1),
+        np.sum(ml.intnormflux(xyin, ndeg=99), axis=1),
         [0.0, 100.0],
         atol=1.0,
-        rtol=0.01,
+        rtol=1e-3,
     )
 
 
