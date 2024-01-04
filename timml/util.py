@@ -400,7 +400,7 @@ def compute_z1z2(xy):
 def refine_n_segments(xy, shape_type, n_segments):
     """Refine line segments into n_segments each.
 
-    Use controlpoints half-circle approach to determine new segment lengths.
+    Use cosine-rule to determine new segment lengths.
 
     Parameters
     ----------
