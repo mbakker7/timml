@@ -48,7 +48,15 @@ class PolygonInhom(AquiferData):
         if self.addtomodel:
             self.inhom_number = self.model.aq.add_inhom(self)
         self.xy = xy
-        self.z1, self.z2 = compute_z1z2(self.xy)
+        self.refine_level = refine_level
+
+        # introduce internal vars that can be modified by _refine()
+        self._xy = self.xy.copy()
+
+        self.compute_derived_params()
+
+    def compute_derived_params(self):
+        self.z1, self.z2 = compute_z1z2(self._xy)
         self.Nsides = len(self.z1)
         Zin = 1e-6j
         Zout = -1e-6j
@@ -66,7 +74,7 @@ class PolygonInhom(AquiferData):
         self.xmax = max(self.x)
         self.ymin = min(self.y)
         self.ymax = max(self.y)
-        self.refine_level = refine_level
+        self.extent = [self.xmin, self.xmax, self.ymin, self.ymax]
 
     def __repr__(self):
         return "PolygonInhom: " + str(list(zip(self.x, self.y)))
@@ -147,15 +155,11 @@ class PolygonInhom(AquiferData):
     def _refine(self, n=None):
         if n is None:
             n = self.refine_level
+        # refine xy
         xyr, _ = refine_n_segments(self.xy, "polygon", n_segments=n)
-        input_args = deepcopy(self._input)
-        cls = input_args.pop("__class__", self.__class__)
-        input_args["model"] = self.model
-        # overwrite some input args for refined element
-        input_args["xy"] = xyr
-        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
-        input_args["addtomodel"] = False
-        return cls(**input_args)
+        self._xy = xyr
+        # update derived parameters
+        self.compute_derived_params()
 
 
 class PolygonInhomMaq(PolygonInhom):
@@ -412,7 +416,6 @@ class BuildingPit(AquiferData):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
-        self._input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.order = order
         self.ndeg = ndeg
@@ -427,11 +430,14 @@ class BuildingPit(AquiferData):
         if self.addtomodel:
             self.inhom_number = self.model.aq.add_inhom(self)
 
+        # introduce internal var that can be updated by _refine()
+        self._xy = self.xy.copy()
+
         # compute derived params
         self.compute_derived_params()
 
     def compute_derived_params(self):
-        self.z1, self.z2 = compute_z1z2(self.xy)
+        self.z1, self.z2 = compute_z1z2(self._xy)
         self.Nsides = len(self.z1)
         Zin = 1e-6j
         Zout = -1e-6j
@@ -447,6 +453,7 @@ class BuildingPit(AquiferData):
         self.xmax = max(self.x)
         self.ymin = min(self.y)
         self.ymax = max(self.y)
+        self.extent = [self.xmin, self.xmax, self.ymin, self.ymax]
 
     def __repr__(self):
         return (
@@ -568,15 +575,11 @@ class BuildingPit(AquiferData):
     def _refine(self, n=None):
         if n is None:
             n = self.refine_level
+        # refine xy
         xyr, _ = refine_n_segments(self.xy, "polygon", n_segments=n)
-        input_args = deepcopy(self._input)
-        cls = input_args.pop("__class__")
-        input_args["model"] = self.model
-        # overwrite some input args for refined element
-        input_args["xy"] = xyr
-        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
-        input_args["addtomodel"] = False
-        return cls(**input_args)
+        self._xy = xyr
+        # update derived params
+        self.compute_derived_params()
 
 
 class BuildingPitMaq(BuildingPit):
@@ -643,7 +646,6 @@ class BuildingPitMaq(BuildingPit):
             refine element by splitting up each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
-        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -660,7 +662,6 @@ class BuildingPitMaq(BuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = _input
 
 
 class BuildingPit3D(BuildingPit):
@@ -731,7 +732,6 @@ class BuildingPit3D(BuildingPit):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
-        _input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -750,7 +750,6 @@ class BuildingPit3D(BuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = _input
 
 
 class LeakyBuildingPit(BuildingPit):
@@ -835,7 +834,6 @@ class LeakyBuildingPit(BuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = {k: v for k, v in locals().items() if k not in ["self", "model"]}
         if isinstance(res, (int, float, np.integer)):
             # make 2D so indexing resistance works for all cases
             self.res = res * np.ones((1, self.Nsides))
@@ -857,6 +855,10 @@ class LeakyBuildingPit(BuildingPit):
             )
             self.res[self.res < self.tiny] = self.tiny
 
+        # introduce vars that can be modified by _refine()
+        self._xy = self.xy.copy()
+        self._res = self.res.copy()
+
     def create_elements(self):
         aqin = self.model.aq.find_aquifer_data(self.zcin[0].real, self.zcin[0].imag)
         inhom_elements = []
@@ -872,7 +874,7 @@ class LeakyBuildingPit(BuildingPit):
                     y1=self.y[i],
                     x2=self.x[i + 1],
                     y2=self.y[i + 1],
-                    res=self.res[:, i],
+                    res=self._res[:, i],
                     layers=self.layers,
                     order=self.order,
                     ndeg=self.ndeg,
@@ -889,7 +891,7 @@ class LeakyBuildingPit(BuildingPit):
                     y1=self.y[i],
                     x2=self.x[i + 1],
                     y2=self.y[i + 1],
-                    res=self.res[:, i],
+                    res=self._res[:, i],
                     layers=self.layers,
                     order=self.order,
                     ndeg=self.ndeg,
@@ -951,16 +953,13 @@ class LeakyBuildingPit(BuildingPit):
     def _refine(self, n=None):
         if n is None:
             n = self.refine_level
+        # refine xy
         xyr, reindexer = refine_n_segments(self.xy, "polygon", n_segments=n)
-        input_args = deepcopy(self._input)
-        cls = input_args.pop("__class__")
-        input_args["model"] = self.model
-        # overwrite some input args for refined element
-        input_args["xy"] = xyr
-        input_args["res"] = self.res[:, reindexer]
-        input_args["refine_level"] = 1  # set to 1 to prevent further refinement
-        input_args["addtomodel"] = False
-        return cls(**input_args)
+        self._xy = xyr
+        # update input args
+        self._res = self.res[:, reindexer]
+        # update derived parameters
+        self.compute_derived_params()
 
 
 class LeakyBuildingPitMaq(LeakyBuildingPit):
@@ -1033,7 +1032,6 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
         refine_level=1,
         addtomodel=True,
     ):
-        _input = {k: v for k, v in locals().items() if k not in ["self"]}
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -1051,7 +1049,6 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = _input
 
 
 class LeakyBuildingPit3D(LeakyBuildingPit):
@@ -1127,7 +1124,6 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
-        _input = {k: v for k, v in locals().items() if k not in ["self"]}
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -1147,7 +1143,6 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
             refine_level=refine_level,
             addtomodel=addtomodel,
         )
-        self._input = _input
 
 
 class AreaSinkInhom(Element):

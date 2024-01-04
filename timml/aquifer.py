@@ -116,15 +116,12 @@ class Aquifer(AquiferData):
         # because we are going to call initialize for inhoms
         AquiferData.initialize(self)
         for inhom in self.inhoms:
-            inhom.initialize()  # always initialize original element
             if hasattr(inhom, "_refine") and (
                 inhom.refine_level > 1 or refine_level is not None
             ):
-                refined_inhom = inhom._refine(n=refine_level)  # create refined element
-                refined_inhom.initialize()
-                self.inhomlist.append(refined_inhom)
-            else:
-                self.inhomlist.append(inhom)
+                inhom._refine(n=refine_level)  # refine element
+            inhom.initialize()
+            self.inhomlist.append(inhom)
         for inhom in self.inhomlist:
             inhom_elements = inhom.create_elements()  # create elements
             self.model.elementlist += inhom_elements  # add elements to compute list
