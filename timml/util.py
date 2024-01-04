@@ -83,6 +83,9 @@ class PlotTim:
                     plt.axhspan(
                         ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
                     )
+            # for e in self.elementlist:
+            #     if hasattr(e, "xsec"):
+            #         e.xsec()
 
     def contour(
         self,
