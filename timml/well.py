@@ -5,7 +5,7 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-from .equation import MscreenWellEquation, PotentialEquation
+from .equation import MscreenWellEquation, PotentialEquation, MscreenWellNoflowEquation
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -462,6 +462,82 @@ class HeadWell(WellBase, PotentialEquation):
     def initialize(self):
         WellBase.initialize(self)
         self.pc = self.hc * self.aq.T[self.layers]  # Needed in solving
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+
+class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
+    """
+    Experimental class for radial flow to large diameter well
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xw : float
+        x-coordinate of the well
+    yw : float
+        y-coordinate of the well
+    Qw : float
+        total discharge of the well
+    rw : float
+        radius of the well
+    res : float
+        resistance of the well screen
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    label : string or None (default: None)
+        label of the well
+    xc : float
+        x-location of control point (default None, which puts it at xw)
+    yc : float
+        y-location of control point (default None, which puts it at yw + rw)
+
+    Examples
+    --------
+    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+
+    """
+
+    def __init__(
+        self,
+        model,
+        xw=0,
+        yw=0,
+        Qw=100.0,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        label=None,
+        xc=None,
+        yc=None,
+    ):
+        self.storeinput(inspect.currentframe())
+        WellBase.__init__(
+            self,
+            model,
+            xw,
+            yw,
+            Qw,
+            rw,
+            res,
+            layers=np.arange(model.aq.nlayers),
+            name="Well",
+            label=label,
+            xc=xc,
+            yc=yc,
+        )
+        self.Qc = float(Qw)
+        self.screened = layers # layers where well is screened
+        self.nscreened = len(self.screened)
+        if self.nlayers == 1:
+            self.nunknowns = 0
+        else:
+            self.nunknowns = self.nparam
+
+    def initialize(self):
+        WellBase.initialize(self)
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol

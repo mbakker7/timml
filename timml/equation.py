@@ -123,6 +123,45 @@ class MscreenWellEquation:
                 rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
         return mat, rhs
 
+class MscreenWellNoflowEquation:
+    def equation(self):
+        """Mix-in class that returns matrix rows for mscreen condition with no flow in the 
+        non-screened layers. Specifically developed for radial flow to a large diameter well.
+        Mscreen condition applied at each control point separately (so not like in ditch).
+        Only works for radial flow.
+        Returns matrix part (nunknowns,neq)
+        Returns rhs part (nunknowns)
+        """
+        mat = np.zeros((self.nunknowns, self.model.neq))
+        rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
+        rhs[:] = 0.0
+        rhs[self.nscreened - 1] = -self.Qc
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                head = (
+                    e.potinflayers(self.xc, self.yc, self.screened)
+                    / self.aq.Tcol[self.screened, :]
+                )
+                mat[0 : self.nscreened - 1, ieq : ieq + e.nunknowns] = (
+                    head[:-1] - head[1:]
+                )
+                if e == self:
+                    qx, qy = e.disvecinflayers(self.xc, self.yc, self.layers)
+                    qxscreen = qx[self.screened]
+                    qxnoflow = np.delete(qx, self.screened, axis=0)
+                    mat[self.nscreened - 1, ieq : ieq + self.nlayers] = \
+                        np.sum(qxscreen, 0) * 2 * np.pi * self.rw
+                    mat[self.nscreened:, ieq : ieq + self.nlayers] = qxnoflow
+                ieq += e.nunknowns
+            else:
+                head = (
+                    e.potentiallayers(self.xc, self.yc, self.layers)
+                    / self.aq.T[self.layers]
+                )
+                rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
+        return mat, rhs
+
 
 class DisvecEquation:
     def equation(self):

@@ -48,7 +48,7 @@ from .stripareasink import StripAreaSink
 from .trace import timtraceline, timtracelines
 from .uflow import Uflow
 from .version import __version__
-from .well import HeadWell, Well, WellBase
+from .well import HeadWell, Well, WellBase, LargeDiameterWell
 
 __all__ = [s for s in dir() if not s.startswith("_")]
 
