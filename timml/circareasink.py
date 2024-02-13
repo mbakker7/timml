@@ -9,8 +9,7 @@ __all__ = ["CircAreaSink"]
 
 
 class CircAreaSink(Element):
-    """
-    Class to create a circular area-sink.
+    """Class to create a circular area-sink.
 
     Parameters
     ----------
@@ -29,7 +28,6 @@ class CircAreaSink(Element):
         layer where area-sink is applied (commonly layer 0, the top layer)
     label : string or None (default: None)
         label of the well
-
     """
 
     def __init__(

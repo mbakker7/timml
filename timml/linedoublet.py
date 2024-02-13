@@ -100,14 +100,18 @@ class LineDoubletHoBase(Element):
         self.parameters[:, 0] = self.delp
 
     def potinf(self, x, y, aq=None):
-        """Can be called with only one x,y value
-        Returns array(nparam, self.aq.naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
+        """Can be called with only one x,y value.
+
+        Returns
+        -------
+        array
+            (nparam, self.aq.naq) with order
+            order 0, layer[0]
+            order 0, layer[1]
+            ...
+            order 1, layer[0]
+            order 1, layer[1]
+            etc.
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -131,14 +135,18 @@ class LineDoubletHoBase(Element):
         return rv
 
     def disvecinf(self, x, y, aq=None):
-        """Can be called with only one x,y value
-        Returns array(nparam, self.aq.naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
+        """Can be called with only one x,y value.
+
+        Returns
+        -------
+        array
+            (nparam, self.aq.naq) with order
+            order 0, layer[0]
+            order 0, layer[1]
+            ...
+            order 1, layer[0]
+            order 1, layer[1]
+            etc.
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -192,9 +200,7 @@ class LineDoubletHoBase(Element):
 
 
 class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
-    """
-    Create a segment of an impermeable wall, which is
-    simulated with a line-doublet
+    """Create a segment of an impermeable wall, which is simulated with a line-doublet.
 
     Parameters
     ----------
@@ -223,7 +229,6 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
     --------
 
     :class:`.ImpLineDoubletString`
-
     """
 
     def __init__(
@@ -268,11 +273,11 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
 
 
 class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
-    """
-    Create a segment of a leaky wall, which is
-    simulated with a line-doublet. The specific discharge through
-    the wall is equal to the head difference across the wall
-    divided by the resistance of the wall.
+    """Create a segment of a leaky wall, which is simulated with a line-doublet.
+
+    The specific discharge through the wall is equal to the head difference across the
+    wall divided by the resistance of the wall.
+
 
     Parameters
     ----------
@@ -303,7 +308,6 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
     --------
 
     :class:`.LeakyLineDoubletString`
-
     """
 
     def __init__(
@@ -479,9 +483,7 @@ class LineDoubletStringBase(Element):
 
 
 class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
-    """
-    Create a string of impermeable wall segements consisting
-    of line-doublets
+    """Create a string of impermeable wall segements consisting of line-doublets.
 
     Parameters
     ----------
@@ -505,7 +507,6 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
     --------
 
     :class:`.ImpLineDoublet`
-
     """
 
     def __init__(
@@ -542,9 +543,7 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
 
 
 class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
-    """
-    Create a string of leaky wall segements consisting
-    of line-doublets
+    """Create a string of leaky wall segements consisting of line-doublets.
 
     Parameters
     ----------
@@ -570,7 +569,6 @@ class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
     --------
 
     :class:`.ImpLineDoublet`
-
     """
 
     def __init__(

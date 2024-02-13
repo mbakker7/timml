@@ -5,7 +5,7 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-from .equation import MscreenWellEquation, PotentialEquation
+from .equation import MscreenWellEquation, PotentialEquation, MscreenWellNoflowEquation
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -108,27 +108,24 @@ class WellBase(Element):
         return rv
 
     def headinside(self):
-        """The head inside the well
+        """The head inside the well.
 
         Returns
         -------
         array (length number of screens)
             Head inside the well for each screen
-
         """
 
         h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
 
     def discharge(self):
-        """The discharge in each layer
+        """The discharge in each layer.
 
         Returns
         -------
         array (length number of layers)
-            Discharge in each screen with zeros for layers that are not
-            screened
-
+            Discharge in each screen with zeros for layers that are not screened
         """
 
         Q = np.zeros(self.aq.naq)
@@ -179,7 +176,7 @@ class WellBase(Element):
         *,
         metadata=False,
     ):
-        """Compute a capture zone
+        """Compute a capture zone.
 
         Parameters
         ----------
@@ -202,7 +199,6 @@ class WellBase(Element):
         Returns
         -------
         xyzt : list of arrays of x, y, z, and t values
-
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         xyzt = timtracelines(
@@ -251,7 +247,7 @@ class WellBase(Element):
         return_traces=False,
         metadata=False,
     ):
-        """Plot a capture zone
+        """Plot a capture zone.
 
         Parameters
         ----------
@@ -279,7 +275,6 @@ class WellBase(Element):
             boolean indicating if new figure should be created
         figsize : tuple of integers, optional, default: None
             width, height in inches.
-
         """
         if not return_traces:
             metadata = True  # suppress future warning from timtraceline
@@ -306,11 +301,14 @@ class WellBase(Element):
 
 
 class Well(WellBase, MscreenWellEquation):
-    """
-    Well Class to create a well with a specified discharge. The well
-    may be screened in multiple layers. The resistance of the screen may
-    be specified. The head is computed such that the discharge :math:`Q_i`
-    in layer :math:`i` is computed as
+    """Well Class to create a well with a specified discharge.
+
+    Notes
+    -----
+    The well may be screened in multiple layers.
+    The resistance of the screen may be specified.
+    The head is computed such that the discharge :math:`Q_i` in layer :math:`i`
+    is computed as.
 
     .. math::
         Q_i = 2\pi r_w(h_i - h_w)/c
@@ -346,7 +344,6 @@ class Well(WellBase, MscreenWellEquation):
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
     >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
-
     """
 
     def __init__(
@@ -391,11 +388,14 @@ class Well(WellBase, MscreenWellEquation):
 
 
 class HeadWell(WellBase, PotentialEquation):
-    """
-    HeadWell Class to create a well with a specified head inside the well.
-    The well may be screened in multiple layers. The resistance of the screen
-    may be specified. The head is computed such that the discharge :math:`Q_i`
-    in layer :math:`i` is computed as
+    """HeadWell Class to create a well with a specified head inside the well.
+
+    Notes
+    -----
+    The well may be screened in multiple layers.
+    The resistance of the screen may be specified.
+    The head is computed such that the discharge :math:`Q_i` in layer :math:`i` is
+    computed as:
 
     .. math::
         Q_i = 2\pi r_w(h_i - h_w)/c
@@ -425,7 +425,6 @@ class HeadWell(WellBase, PotentialEquation):
         x-location of control point (default None, which puts it at xw)
     yc : float
         y-location of control point (default None, which puts it at yw + rw)
-
     """
 
     def __init__(
@@ -465,3 +464,127 @@ class HeadWell(WellBase, PotentialEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
+
+class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
+    """Experimental class for radial flow to large diameter well.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xw : float
+        x-coordinate of the well
+    yw : float
+        y-coordinate of the well
+    Qw : float
+        total discharge of the well
+    rw : float
+        radius of the well
+    res : float
+        resistance of the well screen
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    label : string or None (default: None)
+        label of the well
+    xc : float
+        x-location of control point (default None, which puts it at xw)
+    yc : float
+        y-location of control point (default None, which puts it at yw + rw)
+
+    Examples
+    --------
+    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+    """
+
+    def __init__(
+        self,
+        model,
+        xw=0,
+        yw=0,
+        Qw=100.0,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        label=None,
+        xc=None,
+        yc=None,
+    ):
+        self.storeinput(inspect.currentframe())
+        WellBase.__init__(
+            self,
+            model,
+            xw,
+            yw,
+            Qw,
+            rw,
+            res,
+            layers=np.arange(model.aq.nlayers),
+            name="Well",
+            label=label,
+            xc=xc,
+            yc=yc,
+        )
+        self.Qc = float(Qw)
+        self.screened = layers  # layers where well is screened
+        self.nscreened = len(self.screened)
+        if self.nlayers == 1:
+            self.nunknowns = 0
+        else:
+            self.nunknowns = self.nparam
+
+    def initialize(self):
+        WellBase.initialize(self)
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+
+    def potinf(self, x, y, aq=None):
+        if aq is None:
+            aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((self.nparam, aq.naq))
+        if aq == self.aq:
+            pot = np.zeros(aq.naq)
+            r = np.sqrt((x - self.xw) ** 2 + (y - self.yw) ** 2)
+            if r < self.rw:
+                r = self.rw  # If at well, set to at radius
+            if aq.ilap:
+                pot[0] = np.log(r / self.rw) / (2 * np.pi)
+                pot[1:] = -k0(r / aq.lab[1:]) / (2 * np.pi) / k0(self.rw / aq.lab[1:])
+            else:
+                pot[:] = -k0(r / aq.lab) / (2 * np.pi) / k0(self.rw / aq.lab)
+            rv[:] = self.aq.coef[self.layers] * pot
+            # rv[:] = pot
+        return rv
+
+    def disvecinf(self, x, y, aq=None):
+        if aq is None:
+            aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, self.nparam, aq.naq))
+        if aq == self.aq:
+            qx = np.zeros(aq.naq)
+            qy = np.zeros(aq.naq)
+            rsq = (x - self.xw) ** 2 + (y - self.yw) ** 2
+            r = np.sqrt(rsq)
+            xminxw = x - self.xw
+            yminyw = y - self.yw
+            if r < self.rw:
+                r = self.rw
+                rsq = r**2
+                xminxw = self.rw
+                yminyw = 0.0
+            if aq.ilap:
+                qx[0] = -1 / (2 * np.pi) * xminxw / rsq
+                qy[0] = -1 / (2 * np.pi) * yminyw / rsq
+                kone = k1(r / aq.lab[1:]) / k0(self.rw / aq.lab[1:])
+                qx[1:] = -kone * xminxw / (r * aq.lab[1:]) / (2 * np.pi)
+                qy[1:] = -kone * yminyw / (r * aq.lab[1:]) / (2 * np.pi)
+            else:
+                kone = k1(r / aq.lab) / k0(self.rw / aq.lab)
+                qx[:] = -kone * xminxw / (r * aq.lab) / (2 * np.pi)
+                qy[:] = -kone * yminyw / (r * aq.lab) / (2 * np.pi)
+            rv[0] = self.aq.coef[self.layers] * qx
+            rv[1] = self.aq.coef[self.layers] * qy
+            #rv[0], rv[1] = qx, qy
+        return rv

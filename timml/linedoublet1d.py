@@ -97,10 +97,7 @@ class LineDoublet1D(Element):
 
 
 class ImpLineDoublet1D(LineDoublet1D, DisvecEquation):
-    """
-    Create 1D impermeable wall
-
-    """
+    """Create 1D impermeable wall."""
 
     def __init__(self, model, xld=0, layers=0, label=None):
         self.storeinput(inspect.currentframe())
@@ -126,8 +123,7 @@ class ImpLineDoublet1D(LineDoublet1D, DisvecEquation):
 
 
 class LeakyLineDoublet1D(LineDoublet1D, LeakyWallEquation):
-    """
-    Create an infinitely long leaky or impermeable wall
+    """Create an infinitely long leaky or impermeable wall.
 
     Parameters
     ----------
@@ -146,7 +142,6 @@ class LeakyLineDoublet1D(LineDoublet1D, LeakyWallEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
-
     """
 
     tiny = 1e-6

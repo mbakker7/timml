@@ -114,8 +114,7 @@ class StripInhom(AquiferData):
 
 
 class StripInhomMaq(StripInhom):
-    """Create a strip inhomogeneity for a mult-aquifer sequence of
-    aquifer-leakylayer-aquifer-leakylayer-aquifer etc
+    """Create a strip inhomogeneity for a mult-aquifer sequence of aquifer-leaky layer.
 
     Parameters
     ----------
@@ -151,7 +150,6 @@ class StripInhomMaq(StripInhom):
         head value above semi-confining top, only read if topboundary='semi'
     N : float (default is None)
         infiltration rate, only read if topboundary='conf'
-
     """
 
     def __init__(
@@ -178,9 +176,11 @@ class StripInhomMaq(StripInhom):
 
 
 class StripInhom3D(StripInhom):
-    """Create a strip inhomogeneity for a multi-layer model consisting of
-    many aquifer layers. The resistance between the layers is computed
-    from the vertical hydraulic conductivity of the layers.
+    """Create a strip inhomogeneity for a multi-layer model consisting of stacked
+    aquifer layers.
+
+    The resistance between the layers is computed from the vertical hydraulic
+    conductivity of the layers.
 
     Parameters
     ----------
@@ -220,7 +220,6 @@ class StripInhom3D(StripInhom):
         head value above semi-confining top, only read if topboundary='semi'
     N : float (default is None)
         infiltration rate, only read if topboundary='conf'
-
     """
 
     def __init__(

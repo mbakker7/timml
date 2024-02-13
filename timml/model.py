@@ -1,7 +1,4 @@
-"""
-Model classes
-
-"""
+"""Model classes."""
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
@@ -18,11 +15,13 @@ __all__ = ["Model", "ModelMaq", "Model3D"]
 
 
 class Model(PlotTim):
-    """
-    Model Class to create a model object consisting of an arbitrary
-    sequence of aquifer layers and leaky layers.
+    """Class to create a model object consisting of an arbitrary sequence of aquifer
+    layers and leaky layers.
+
+    Notes
+    -----
     Use ModelMaq for regular sequence of aquifers and leaky layers.
-    Use Model3D for multi-layer model of a single aquifer
+    Use Model3D for multi-layer model of a single aquifer.
 
     Parameters
     ----------
@@ -41,7 +40,6 @@ class Model(PlotTim):
         array indicating for each layer whether it is
         'a' aquifer layer
         'l' leaky layer
-
     """
 
     def __init__(self, kaq, c, z, npor, ltype):
@@ -80,7 +78,8 @@ class Model(PlotTim):
             self.elementdict[e.label] = e
 
     def remove_element(self, e):
-        """Remove element `e` from model"""
+        """Remove element `e` from model."""
+
         if e.label is not None:
             self.elementdict.pop(e.label)
         self.elements.remove(e)
@@ -119,7 +118,7 @@ class Model(PlotTim):
         return rv
 
     def normflux(self, x, y, theta):
-        """flux at point x, y in direction of angle theta.
+        """Flux at point x, y in direction of angle theta.
 
         Parameters
         ----------
@@ -191,8 +190,8 @@ class Model(PlotTim):
             return L * qn / 2.0
 
     def intnormflux(self, xy, method="legendre", ndeg=10):
-        """Integrated normal (perpendicular) flux over polyline giving
-        the flux per segment and per aquifer.
+        """Integrated normal (perpendicular) flux over polyline giving the flux per
+        segment and per aquifer.
 
         Flux to the left is positive when going from (x1, y1) to (x2, y2).
 
@@ -267,7 +266,7 @@ class Model(PlotTim):
             return rv[layers]
 
     def headgrid(self, xg, yg, layers=None, printrow=False):
-        """Grid of heads
+        """Grid of heads.
 
         Parameters
         ----------
@@ -288,7 +287,6 @@ class Model(PlotTim):
         --------
 
         :func:`~timml.model.Model.headgrid2`
-
         """
 
         nx, ny = len(xg), len(yg)
@@ -307,7 +305,7 @@ class Model(PlotTim):
         return h
 
     def headgrid2(self, x1, x2, nx, y1, y2, ny, layers=None, printrow=False):
-        """Grid of heads
+        """Grid of heads.
 
         Parameters
         ----------
@@ -328,14 +326,13 @@ class Model(PlotTim):
         --------
 
         :func:`~timml.model.Model.headgrid`
-
         """
 
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
         return self.headgrid(xg, yg, layers=layers, printrow=printrow)
 
     def headalongline(self, x, y, layers=None):
-        """Head along line or curve
+        """Head along line or curve.
 
         Parameters
         ----------
@@ -349,7 +346,6 @@ class Model(PlotTim):
         Returns
         -------
         h : array size `nlayers, nx`
-
         """
 
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
@@ -366,9 +362,20 @@ class Model(PlotTim):
         return h
 
     def disvecalongline(self, x, y, layers=None):
-        """Returns Qx[Nlayers,len(x)], Qy[Nlayers,len(x)]
-        Assumes same number of layers for each x and y
-        layers may be None or list of layers for which head is computed"""
+        """Compute discharge vector along line.
+
+        Notes
+        -----
+        Assumes same number of layers for each x and y.
+        Layers may be None or list of layers for which head is computed.
+
+        Returns
+        -------
+        Qx
+            [Nlayers,len(x)]
+        Qy
+            [Nlayers,len(x)]
+        """
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -431,7 +438,7 @@ class Model(PlotTim):
         return np.array([vx, vy, vz])
 
     def solve(self, printmat=0, sendback=0, silent=False, refine_level=None):
-        """Compute solution"""
+        """Compute solution."""
         # Initialize elements
         self.initialize(refine_level=refine_level)
         # Compute number of equations
@@ -480,9 +487,12 @@ class Model(PlotTim):
 
     def solve_mp(self, nproc=4, printmat=0, sendback=0, silent=False):
         """Compute solution, multiprocessing implementation.
-        Note: estimated speedup approximately by factor of
-        number of physical cores. Virtual cores do not improve
-        calculation time."""
+
+        Notes
+        -----
+        Estimated speedup approximately by factor of number of physical cores (virtual
+        cores do not improve calculation time).
+        """
         # Initialize elements
         self.initialize()
         # Compute number of equations
@@ -585,9 +595,8 @@ class Model(PlotTim):
 
 
 class ModelMaq(Model):
-    """
-    Create a Model object by specifying a mult-aquifer sequence of
-    aquifer-leakylayer-aquifer-leakylayer-aquifer etc
+    """Create a Model object by specifying a mult-aquifer sequence of aquifer-
+    leaky layer.
 
     Parameters
     ----------
@@ -619,7 +628,6 @@ class ModelMaq(Model):
     Examples
     --------
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
-
     """
 
     def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary="conf", hstar=None):
@@ -632,10 +640,11 @@ class ModelMaq(Model):
 
 
 class Model3D(Model):
-    """
-    Model3D Class to create a multi-layer model object consisting of
-    many aquifer layers. The resistance between the layers is computed
-    from the vertical hydraulic conductivity of the layers.
+    """Model3D Class to create a multi-layer model object consisting of stacked aquifer
+    layers.
+
+    The resistance between the layers is computed from the vertical hydraulic
+    conductivity of the layers.
 
     Parameters
     ----------
@@ -670,7 +679,6 @@ class Model3D(Model):
     Examples
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-
     """
 
     def __init__(

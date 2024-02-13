@@ -188,8 +188,9 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
 
 
 class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
-    """Element to set numerically integrated flux
-    along linesink to 0. Used in BuildingPit element
+    """Element to set numerically integrated flux along linesink to 0.
+
+    Used in BuildingPit element.
     """
 
     def __init__(

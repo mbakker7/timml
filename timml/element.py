@@ -36,8 +36,8 @@ class Element:
         return np.sum(self.parameters * self.potinf(x, y, aq), 0)
 
     def potinflayers(self, x, y, layers, aq=None):
-        """Returns array of size (len(layers),nparam)
-        only used in building equations"""
+        """Returns array of size (len(layers),nparam) only used in building
+        equations."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         pot = self.potinf(x, y, aq)  # nparam rows, naq cols
@@ -47,8 +47,7 @@ class Element:
         return rv[layers, :]
 
     def potentiallayers(self, x, y, layers, aq=None):
-        """Returns array of size len(layers)
-        only used in building equations"""
+        """Returns array of size len(layers) only used in building equations."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         pot = np.sum(self.potential(x, y, aq) * aq.eigvec, 1)
@@ -65,8 +64,8 @@ class Element:
         return np.sum(self.parameters * self.disvecinf(x, y, aq), 1)
 
     def disvecinflayers(self, x, y, layers, aq=None):
-        """Returns two arrays of size (len(layers),nparam)
-        only used in building equations"""
+        """Returns two arrays of size (len(layers),nparam) only used in building
+        equations."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         qxqy = self.disvecinf(x, y, aq)  # nparam rows, naq cols
@@ -77,8 +76,7 @@ class Element:
         return np.array((qx[layers], qy[layers]))
 
     def disveclayers(self, x, y, layers, aq=None):
-        """Returns two arrays of size len(layers)
-        only used in building equations"""
+        """Returns two arrays of size len(layers) only used in building equations."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         qxqy = self.disvec(x, y, aq)
