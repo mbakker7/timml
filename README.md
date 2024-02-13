@@ -18,11 +18,15 @@ TimML is coded in Python and uses numba to speed up evaluation of the bessel lin
 
 **Python versions:**
 
-TimML requires **Python** >= 3.7 and can be installed from PyPI.
+TimML requires Python >= 3.8 and can be installed from PyPI.
 
 **Dependencies:**
 
-TimML requires **numpy** >=1.17, **scipy** >=1.5 and **matplotlib** >=3.1, **numba>=0.5**.
+TimML requires:
+* numpy 
+* scipy
+* matplotlib
+* numba
 
 **Installation:**
 
@@ -44,16 +48,24 @@ To uninstall TimML type:
 * The documentation is hosted on [readthedocs](https://timml.readthedocs.io/).
 * Example Notebooks are available from the notebooks directory on github, of from [here](https://github.com/mbakker7/timml/tree/master/notebooks).
 
-## TimML Version 6
+## Latest release
+TimML 0.6.5
+* Improved documentation: new look, better organization, tutorials, how-to guides etc. Check it out [here](https://timml.readthedocs.io/)!
+* New elements
+    * Building pit elements for 3D (multi-layer single aquifer) models.
+    * Large diamater wells (only for radial flow).
+* Enhancements
+    * Building pit leaky wall resistance can be set per layer and per side (for modeling leaks or gaps).
+    * Return integrated normal flux per layer and per line segment.
 
-TimML version 6 has the same functionality as version 5, but doesn't depend on a fortran extension anymore, so installation is easy on all platforms.
-TimML version 5 is a total rewrite and is not backwards compatible with previous TimML versions.
-TimML version 5 is intended to be compatible with TTim.
-TimML version 5 has many new features and elements, the code base is Python 3, and the object oriented design is much simpler.
-TimML version 4 remains available through the timml4 branch.
+## TimML Versions
 
-## Release
-TimML 6.0. First release that depends on numba and doesn't depend on fortran extension anymore. Code is now pure python (with numba for speed).
+* TimML version 0.6 has the same functionality as version 5, but doesn't depend on a fortran extension anymore, so installation is easy on all platforms.
+* TimML version 0.5 
+    * is a total rewrite and is not backwards compatible with previous TimML versions.
+    * is intended to be compatible with TTim.
+    * has many new features and elements, the code base is Python 3, and the object oriented design is much simpler.
+* TimML version 0.4 remains available through the timml4 branch.
 
 ## Citation
 
