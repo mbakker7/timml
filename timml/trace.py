@@ -26,6 +26,41 @@ def timtraceline(
     *,
     metadata=False,
 ):
+        """
+    Function to trace one pathline.  
+
+    Parameters
+    ----------
+    ml : Model object
+        model to which the element is added
+    xstart : scalar
+        x-coordinate of starting location
+    ystart : scalar
+        y-coordinate of starting location
+    zstart : scalar
+        z-coordinate of starting location
+    hstepmax : scalar
+        maximum horizontal step size [L]
+    vstepfrac : scalar
+        maximum vertical step as fraction of layer thickness
+    tmax : scalar
+        maximum travel time
+    nstepmax : int
+        maximum number of steps
+    win : list
+        list with [xmin, xmax, ymin, ymax]
+    silent : string
+        if '.', prints dot upon completion of each traceline
+    returnlayers : boolean
+        if True, return layers numbers 
+    metadata: boolean
+        if False, return xyzt array or xyzt array plus layer array
+        if True, return list of result dicionary with three entries:
+        "trace": np.array(xyzt)
+        "message": termination message
+        "complete": True if terminated correctly}
+
+    """
     verbose = False  # used for debugging
     if not metadata:
         warnings.warn(_future_warning_metadata, FutureWarning, stacklevel=2)
@@ -259,6 +294,36 @@ def timtracelines(
     *,
     metadata=False,
 ):
+    """
+    Function to trace multiple pathlines.  
+
+    Parameters
+    ----------
+    ml : Model object
+        model to which the element is added
+    xstart : array
+        x-coordinates of starting locations
+    ystart : array
+        y-coordinates of starting locations
+    zstart : array
+        z-coordinates of starting locations
+    hstepmax : scalar
+        maximum horizontal step size [L]
+    vstepfrac : scalar
+        maximum vertical step as fraction of layer thickness
+    tmax : scalar
+        maximum travel time
+    nstepmax : int
+        maximum number of steps
+    silent : string
+        if '.', prints dot upon completion of each traceline
+    win : list
+        list with [xmin, xmax, ymin, ymax]
+    metadata: boolean
+        if False, return list of xyzt arrays
+        if True, return list of result dicionaries
+
+    """
     xyztlist = []
     for x, y, z in zip(xstart, ystart, zstart):
         xyztlist.append(
