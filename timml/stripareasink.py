@@ -8,11 +8,11 @@ __all__ = ["StripAreaSink"]
 
 
 class StripAreaSinkInhom(Element):
-    """Create a strip area-sink in combination with an inhomogeneity. 
-    
+    """Create a strip area-sink in combination with an inhomogeneity.
+
     Notes
     -----
-    Created automatically using StripInhomMaq or StripInhom3D. 
+    Created automatically using StripInhomMaq or StripInhom3D.
     Can only be created if top boundary is confined.
 
     Parameters

@@ -8,9 +8,9 @@ __all__ = ["Uflow"]
 
 
 class Uflow(Element):
-    """Add uniform flow to the model. 
-    
-    Uniform flow may only be added to a model of which the background aquifer system 
+    """Add uniform flow to the model.
+
+    Uniform flow may only be added to a model of which the background aquifer system
     is confined.
 
     Parameters
@@ -28,9 +28,7 @@ class Uflow(Element):
     """
 
     def __init__(self, model, slope, angle, label=None):
-        assert (
-            model.aq.ilap
-        ), "TimML Error: Uflow can only be added to model with background confined aquifer"
+        assert model.aq.ilap, "TimML Error: Uflow can only be added to model with background confined aquifer"
         self.storeinput(inspect.currentframe())
         Element.__init__(
             self, model, nparam=2, nunknowns=0, layers=0, name="Uflow", label=label
