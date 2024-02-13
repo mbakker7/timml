@@ -466,6 +466,7 @@ class HeadWell(WellBase, PotentialEquation):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
 
+
 class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
     """
     Experimental class for radial flow to large diameter well
@@ -529,7 +530,7 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
             yc=yc,
         )
         self.Qc = float(Qw)
-        self.screened = layers # layers where well is screened
+        self.screened = layers  # layers where well is screened
         self.nscreened = len(self.screened)
         if self.nlayers == 1:
             self.nunknowns = 0
@@ -557,7 +558,7 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
             else:
                 pot[:] = -k0(r / aq.lab) / (2 * np.pi) / k0(self.rw / aq.lab)
             rv[:] = self.aq.coef[self.layers] * pot
-            #rv[:] = pot
+            # rv[:] = pot
         return rv
 
     def disvecinf(self, x, y, aq=None):
@@ -579,11 +580,11 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
             if aq.ilap:
                 qx[0] = -1 / (2 * np.pi) * xminxw / rsq
                 qy[0] = -1 / (2 * np.pi) * yminyw / rsq
-                kone = k1(r / aq.lab[1:]) /  k0(self.rw / aq.lab[1:])
+                kone = k1(r / aq.lab[1:]) / k0(self.rw / aq.lab[1:])
                 qx[1:] = -kone * xminxw / (r * aq.lab[1:]) / (2 * np.pi)
                 qy[1:] = -kone * yminyw / (r * aq.lab[1:]) / (2 * np.pi)
             else:
-                kone = k1(r / aq.lab) /  k0(self.rw / aq.lab)
+                kone = k1(r / aq.lab) / k0(self.rw / aq.lab)
                 qx[:] = -kone * xminxw / (r * aq.lab) / (2 * np.pi)
                 qy[:] = -kone * yminyw / (r * aq.lab) / (2 * np.pi)
             rv[0] = self.aq.coef[self.layers] * qx
