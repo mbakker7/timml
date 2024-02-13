@@ -17,13 +17,32 @@ class PlotTim:
         topfigfrac=0.8,
         layer=None,
     ):
-        """Plot layout
+        """
+        Plot function to plot the layout. Other features such
+        as pathlines or capture zones may be added to the plot with
+        separate commands
 
         Parameters
         ----------
 
         win : list or tuple
-            [x1, x2, y1, y2]
+            [xmin, xmax, ymin, ymax]
+        newfig : boolean (default True)
+            create new figure
+        figsize : tuple of 2 values (default is mpl default)
+            size of figure
+        orientation : ('hor', 'ver', 'both')
+            'hor' for horizontal, 'ver' for vertical
+            'both' for horizontal above vertical
+        topfigfrac : float
+            relative size of top figure when orientation='both'
+        layer : integer
+            layer for which plot is created
+
+        Returns
+        -------
+
+        None
 
         """
 
@@ -98,13 +117,14 @@ class PlotTim:
         legend=True,
         **kwargs,
     ):
-        """Contour plot
+        """
+        Contour plot
 
         Parameters
         ----------
 
         win : list or tuple
-            [x1, x2, y1, y2]
+            [xmin, xmax, ymin, ymax]
         ngr : scalar, tuple or list
             if scalar: number of grid points in x and y direction
             if tuple or list: nx, ny, number of grid points in x and y
@@ -182,8 +202,8 @@ class PlotTim:
         self,
         win,
         n,
-        levels,
-        labels=False,
+        levels=20,
+        labels=True,
         decimals=0,
         color=None,
         vinterp=True,
@@ -193,12 +213,40 @@ class PlotTim:
         layout=True,
     ):
         """
-        Vertical contour
+        Contour plot in vertical cross-section
+
+        Parameters
+        ----------
+
+        win : list or tuple
+            [xmin, xmax, ymin, ymax]
+        n : integer
+            number of grid points along cross-section
+        levels : integer or array (default 20)
+            levels that are contoured
+        labels : boolean (default True)
+            print labels along contours   
+        decimals : integer (default 0)
+            number of decimals of labels along contours
+        color : str or list of strings
+            color of contour lines
+        vinterp : boolean
+            when True, interpolate between centers of layers
+            when False, constant value vertically in each layer
+        nudge : float
+            first value is computed nudge from the specified window
+        newfig : boolean (default True)
+            create new figure
+        figsize : tuple of 2 values (default is mpl default)
+            size of figure
+        layout : boolean
+            plot layout if True
 
         Returns
         -------
 
         cs : contour set
+        
         """
 
         x1, x2, y1, y2 = win
@@ -247,7 +295,51 @@ class PlotTim:
         return_traces=False,
         metadata=False,
     ):
-        """Draw trace lines"""
+        """
+        Function to trace multiple pathlines.  
+    
+        Parameters
+        ----------
+        ml : Model object
+            model to which the element is added
+        xstart : array
+            x-coordinates of starting locations
+        ystart : array
+            y-coordinates of starting locations
+        zstart : array
+            z-coordinates of starting locations
+        hstepmax : scalar
+            maximum horizontal step size [L]
+        vstepfrac : scalar
+            maximum vertical step as fraction of layer thickness
+        tmax : scalar
+            maximum travel time
+        nstepmax : int
+            maximum number of steps
+        silent : string
+            if '.', prints dot upon completion of each traceline
+        color : string
+            matplotlib color of traceline
+        orientation : ('hor', 'ver', 'both')
+            'hor' for horizontal, 'ver' for vertical
+            'both' for horizontal above vertical
+        win : list
+            list with [xmin, xmax, ymin, ymax]
+        figsize : 2tuple
+            figure size
+        return_traces : boolean
+            return traces if True
+        metadata: boolean
+            if False, return list of xyzt arrays
+            if True, return list of result dicionaries
+
+        Returns
+        -------
+
+        traces : result
+            only if return_traces = True
+        
+        """
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         elif type(color) is str:
@@ -339,8 +431,41 @@ class PlotTim:
         ax=None,
     ):
         """
-        Vertical contour for 1D model
+        Contour plot in vertical cross-section of 1D model
 
+        Parameters
+        ----------
+
+        x1 : scalar
+            left edge of contour domain
+        x2 : scalar
+            right edge of contour domain
+        nx : integer
+            number of grid points along cross-section
+        levels : integer or array (default 20)
+            levels that are contoured
+        labels : boolean (default True)
+            print labels along contours   
+        decimals : integer (default 0)
+            number of decimals of labels along contours
+        color : str or list of strings
+            color of contour lines
+        nudge : float
+            first value is computed nudge from the specified x1 and x2
+        newfig : boolean (default True)
+            create new figure
+        figsize : tuple of 2 values (default is mpl default)
+            size of figure
+        layout : boolean
+            plot layout if True
+        ax : matplotlib axis
+            add plot to specified axis
+
+        Returns
+        -------
+
+        ax : axis
+        
         """
         naq = self.aq.naq
         xflow = np.linspace(x1 + nudge, x2 - nudge, nx)

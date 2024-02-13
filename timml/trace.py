@@ -26,7 +26,7 @@ def timtraceline(
     *,
     metadata=False,
 ):
-        """
+    """
     Function to trace one pathline.  
 
     Parameters
