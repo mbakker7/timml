@@ -8,9 +8,12 @@ __all__ = ["StripAreaSink"]
 
 
 class StripAreaSinkInhom(Element):
-    """Create a strip area-sink in combination with an inhomogeneity.
-    Created automatically using StripInhomMaq or StripInhom3D.
-    Can only be created if top boundary is conf.
+    """Create a strip area-sink in combination with an inhomogeneity. 
+    
+    Notes
+    -----
+    Created automatically using StripInhomMaq or StripInhom3D. 
+    Can only be created if top boundary is confined.
 
     Parameters
     ----------
@@ -20,7 +23,6 @@ class StripAreaSinkInhom(Element):
         left boundary of inhomogeneity (may not be -np.inf)
     xright : float
         right boundary of inhomogeneity (may not be np.inf)
-
     """
 
     def __init__(

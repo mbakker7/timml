@@ -26,8 +26,7 @@ def timtraceline(
     *,
     metadata=False,
 ):
-    """
-    Function to trace one pathline.  
+    """Function to trace one pathline.
 
     Parameters
     ----------
@@ -52,14 +51,13 @@ def timtraceline(
     silent : string
         if '.', prints dot upon completion of each traceline
     returnlayers : boolean
-        if True, return layers numbers 
+        if True, return layers numbers
     metadata: boolean
         if False, return xyzt array or xyzt array plus layer array
-        if True, return list of result dicionary with three entries:
-        "trace": np.array(xyzt)
-        "message": termination message
-        "complete": True if terminated correctly}
-
+        if True, return list of result dicionaries with three entries:
+        - "trace": np.array(xyzt)
+        - "message": termination message
+        - "complete": True if terminated correctly
     """
     verbose = False  # used for debugging
     if not metadata:
@@ -294,8 +292,7 @@ def timtracelines(
     *,
     metadata=False,
 ):
-    """
-    Function to trace multiple pathlines.  
+    """Function to trace multiple pathlines.
 
     Parameters
     ----------
@@ -322,7 +319,6 @@ def timtracelines(
     metadata: boolean
         if False, return list of xyzt arrays
         if True, return list of result dicionaries
-
     """
     xyztlist = []
     for x, y, z in zip(xstart, ystart, zstart):

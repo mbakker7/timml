@@ -95,8 +95,7 @@ class AquiferData:
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
 
     def findlayer(self, z):
-        """
-        Returns layer-number, layer-type and model-layer-number"""
+        """Returns layer-number, layer-type and model-layer-number."""
         if z > self.z[0]:
             modellayer, ltype = -1, "above"
             layernumber = None

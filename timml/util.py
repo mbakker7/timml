@@ -17,10 +17,10 @@ class PlotTim:
         topfigfrac=0.8,
         layer=None,
     ):
-        """
-        Plot function to plot the layout. Other features such
-        as pathlines or capture zones may be added to the plot with
-        separate commands
+        """Plot the model layout.
+
+        Other features such as pathlines or capture zones may be added to the plot with
+        separate commands.
 
         Parameters
         ----------
@@ -43,7 +43,6 @@ class PlotTim:
         -------
 
         None
-
         """
 
         if newfig:
@@ -117,8 +116,7 @@ class PlotTim:
         legend=True,
         **kwargs,
     ):
-        """
-        Contour plot
+        """Head contour plot.
 
         Parameters
         ----------
@@ -153,7 +151,6 @@ class PlotTim:
         -------
 
         cs : list of contour sets for each contoured layer
-
         """
 
         x1, x2, y1, y2 = win
@@ -212,8 +209,7 @@ class PlotTim:
         figsize=None,
         layout=True,
     ):
-        """
-        Contour plot in vertical cross-section
+        """Head contour plot in vertical cross-section.
 
         Parameters
         ----------
@@ -225,7 +221,7 @@ class PlotTim:
         levels : integer or array (default 20)
             levels that are contoured
         labels : boolean (default True)
-            print labels along contours   
+            print labels along contours
         decimals : integer (default 0)
             number of decimals of labels along contours
         color : str or list of strings
@@ -246,7 +242,6 @@ class PlotTim:
         -------
 
         cs : contour set
-        
         """
 
         x1, x2, y1, y2 = win
@@ -295,9 +290,8 @@ class PlotTim:
         return_traces=False,
         metadata=False,
     ):
-        """
-        Function to trace multiple pathlines.  
-    
+        """Function to trace multiple pathlines.
+
         Parameters
         ----------
         ml : Model object
@@ -338,7 +332,6 @@ class PlotTim:
 
         traces : result
             only if return_traces = True
-        
         """
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
@@ -430,8 +423,7 @@ class PlotTim:
         layout=True,
         ax=None,
     ):
-        """
-        Contour plot in vertical cross-section of 1D model
+        """Contour plot in vertical cross-section of 1D model.
 
         Parameters
         ----------
@@ -445,7 +437,7 @@ class PlotTim:
         levels : integer or array (default 20)
             levels that are contoured
         labels : boolean (default True)
-            print labels along contours   
+            print labels along contours
         decimals : integer (default 0)
             number of decimals of labels along contours
         color : str or list of strings
@@ -465,7 +457,6 @@ class PlotTim:
         -------
 
         ax : axis
-        
         """
         naq = self.aq.naq
         xflow = np.linspace(x1 + nudge, x2 - nudge, nx)

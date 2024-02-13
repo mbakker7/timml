@@ -4,8 +4,13 @@ import numpy as np
 class PotentialEquation:
     def equation(self):
         """Mix-in class that returns matrix rows for potential-specified conditions.
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         # rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -33,9 +38,18 @@ class PotentialEquation:
 
 class HeadEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for head-specified conditions. (now written as heads)
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+        """Mix-in class that returns matrix rows for head-specified conditions.
+
+        Notes
+        -----
+        Now written as heads.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         # rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -65,9 +79,18 @@ class HeadEquation:
 
 class HeadEquationNoRes:  # This class can be deleted when HeadEquation works with zero resistance
     def equation(self):
-        """Mix-in class that returns matrix rows for head-specified conditions. (really written as constant potential element)
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+        """Mix-in class that returns matrix rows for head-specified conditions.
+
+        Notes
+        -----
+        Really written as constant potential element.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -91,9 +114,16 @@ class HeadEquationNoRes:  # This class can be deleted when HeadEquation works wi
 class MscreenWellEquation:
     def equation(self):
         """Mix-in class that returns matrix rows for mscreen condition.
-        Mscreen condition applied at each control point separately (so not like in ditch).
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part (nunknowns)
+
+        Mscreen condition applied at each control point separately (so not like in
+        ditch).
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.zeros((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -123,14 +153,24 @@ class MscreenWellEquation:
                 rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
         return mat, rhs
 
+
 class MscreenWellNoflowEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for mscreen condition with no flow in the 
-        non-screened layers. Specifically developed for radial flow to a large diameter well.
-        Mscreen condition applied at each control point separately (so not like in ditch).
-        Only works for radial flow.
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part (nunknowns)
+        """Mix-in class that returns matrix rows for mscreen condition with no flow in
+        the non-screened layers.
+
+        Notes
+        -----
+        Specifically developed for radial flow to a large diameter well. Mscreen
+        condition applied at each control point separately (so not like in ditch). Only
+        works for radial flow.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.zeros((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -150,9 +190,10 @@ class MscreenWellNoflowEquation:
                     qx, qy = e.disvecinflayers(self.xc, self.yc, self.layers)
                     qxscreen = qx[self.screened]
                     qxnoflow = np.delete(qx, self.screened, axis=0)
-                    mat[self.nscreened - 1, ieq : ieq + self.nlayers] = \
+                    mat[self.nscreened - 1, ieq : ieq + self.nlayers] = (
                         np.sum(qxscreen, 0) * 2 * np.pi * self.rw
-                    mat[self.nscreened:, ieq : ieq + self.nlayers] = qxnoflow
+                    )
+                    mat[self.nscreened :, ieq : ieq + self.nlayers] = qxnoflow
                 ieq += e.nunknowns
             else:
                 head = (
@@ -166,8 +207,13 @@ class MscreenWellNoflowEquation:
 class DisvecEquation:
     def equation(self):
         """Mix-in class that returns matrix rows for zero normal flux conditions.
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -192,9 +238,17 @@ class DisvecEquation:
 class DisvecEquationOut:
     def equation(self):
         """Mix-in class that returns matrix rows for zero normal flux condition.
-        Using the control point on the outside
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+
+        Notes
+        -----
+        Using the control point(s) on the outside .
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -223,9 +277,15 @@ class DisvecEquationOut:
 class LeakyWallEquation:
     def equation(self):
         """Mix-in class that returns matrix rows for leaky wall condition.
+
         Qnormal = resfac * (headin - headout)
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -279,10 +339,15 @@ class LeakyWallEquation:
 
 class HeadDiffEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside and
-        outside equals zeros
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+        """Mix-in class that returns matrix rows for difference in head between inside
+        and outside equals zeros.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -317,12 +382,20 @@ class HeadDiffEquation:
 
 
 class HeadDiffEquation2:
-    # Integrated head inside and outside are equal
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside and
-        outside equals zeros
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+        """Mix-in class that returns matrix rows for difference in head between inside
+        and outside equals zeros.
+
+        Notes
+        -----
+        Integrated head inside and outside are equal.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -390,10 +463,15 @@ class HeadDiffEquation2:
 
 class DisvecDiffEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside and
-        outside equals zeros
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+        """Mix-in class that returns matrix rows for difference in head between inside
+        and outside equals zeros.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -427,10 +505,15 @@ class DisvecDiffEquation:
 
 class DisvecDiffEquation2:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside and
-        outside equals zeros
-        Returns matrix part (nunknowns,neq)
-        Returns rhs part nunknowns
+        """Mix-in class that returns matrix rows for difference in head between inside
+        and outside equals zeros.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero

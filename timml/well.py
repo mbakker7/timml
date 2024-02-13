@@ -108,27 +108,24 @@ class WellBase(Element):
         return rv
 
     def headinside(self):
-        """The head inside the well
+        """The head inside the well.
 
         Returns
         -------
         array (length number of screens)
             Head inside the well for each screen
-
         """
 
         h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
 
     def discharge(self):
-        """The discharge in each layer
+        """The discharge in each layer.
 
         Returns
         -------
         array (length number of layers)
-            Discharge in each screen with zeros for layers that are not
-            screened
-
+            Discharge in each screen with zeros for layers that are not screened
         """
 
         Q = np.zeros(self.aq.naq)
@@ -179,7 +176,7 @@ class WellBase(Element):
         *,
         metadata=False,
     ):
-        """Compute a capture zone
+        """Compute a capture zone.
 
         Parameters
         ----------
@@ -202,7 +199,6 @@ class WellBase(Element):
         Returns
         -------
         xyzt : list of arrays of x, y, z, and t values
-
         """
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
         xyzt = timtracelines(
@@ -251,7 +247,7 @@ class WellBase(Element):
         return_traces=False,
         metadata=False,
     ):
-        """Plot a capture zone
+        """Plot a capture zone.
 
         Parameters
         ----------
@@ -279,7 +275,6 @@ class WellBase(Element):
             boolean indicating if new figure should be created
         figsize : tuple of integers, optional, default: None
             width, height in inches.
-
         """
         if not return_traces:
             metadata = True  # suppress future warning from timtraceline
@@ -306,11 +301,14 @@ class WellBase(Element):
 
 
 class Well(WellBase, MscreenWellEquation):
-    """
-    Well Class to create a well with a specified discharge. The well
-    may be screened in multiple layers. The resistance of the screen may
-    be specified. The head is computed such that the discharge :math:`Q_i`
-    in layer :math:`i` is computed as
+    """Well Class to create a well with a specified discharge.
+
+    Notes
+    -----
+    The well may be screened in multiple layers.
+    The resistance of the screen may be specified.
+    The head is computed such that the discharge :math:`Q_i` in layer :math:`i`
+    is computed as.
 
     .. math::
         Q_i = 2\pi r_w(h_i - h_w)/c
@@ -346,7 +344,6 @@ class Well(WellBase, MscreenWellEquation):
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
     >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
-
     """
 
     def __init__(
@@ -391,11 +388,14 @@ class Well(WellBase, MscreenWellEquation):
 
 
 class HeadWell(WellBase, PotentialEquation):
-    """
-    HeadWell Class to create a well with a specified head inside the well.
-    The well may be screened in multiple layers. The resistance of the screen
-    may be specified. The head is computed such that the discharge :math:`Q_i`
-    in layer :math:`i` is computed as
+    """HeadWell Class to create a well with a specified head inside the well.
+
+    Notes
+    -----
+    The well may be screened in multiple layers.
+    The resistance of the screen may be specified.
+    The head is computed such that the discharge :math:`Q_i` in layer :math:`i` is
+    computed as:
 
     .. math::
         Q_i = 2\pi r_w(h_i - h_w)/c
@@ -425,7 +425,6 @@ class HeadWell(WellBase, PotentialEquation):
         x-location of control point (default None, which puts it at xw)
     yc : float
         y-location of control point (default None, which puts it at yw + rw)
-
     """
 
     def __init__(
@@ -468,8 +467,7 @@ class HeadWell(WellBase, PotentialEquation):
 
 
 class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
-    """
-    Experimental class for radial flow to large diameter well
+    """Experimental class for radial flow to large diameter well.
 
     Parameters
     ----------
@@ -498,7 +496,6 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
     >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
-
     """
 
     def __init__(

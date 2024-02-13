@@ -109,18 +109,18 @@ class LineSink1DBase(Element):
         return rv
 
     def discharge(self):
-        """Discharge per unit length"""
+        """Discharge per unit length."""
         Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0]
         return Q
 
 
 class LineSink1D(LineSink1DBase, MscreenWellEquation):
-    """
-    Create an infinitely long line-sink with a given discharge
-    per unit length. In case the line-sink is screened in multiple
-    layers, the discharge is distributed over the layers such that
-    the head inside the line-sink is constant in all layers.
+    """Create an infinitely long line-sink with a given discharge per unit length.
+
+    In case the line-sink is screened in multiple layers, the discharge is distributed
+    over the layers such that the head inside the line-sink is constant in all layers.
+
 
     Parameters
     ----------
@@ -144,7 +144,6 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
-
     """
 
     def __init__(self, model, xls=0, sigls=1, layers=0, label=None):
@@ -176,8 +175,7 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
 
 
 class HeadLineSink1D(LineSink1DBase, HeadEquation):
-    """
-    Create an infinitely long line-sink with a given head.
+    """Create an infinitely long line-sink with a given head.
 
     Parameters
     ----------
@@ -201,7 +199,6 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
-
     """
 
     def __init__(self, model, xls=0, hls=1, res=0, wh=1, layers=0, label=None):
