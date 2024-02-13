@@ -222,7 +222,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.resfac = self.aq.Haq[self.layers] * self.res / self.whfac
 
     def potinf(self, x, y, aq=None):
-        """Can be called with only one x,y value"""
+        """Can be called with only one x,y value."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((self.nparam, aq.naq))
@@ -235,7 +235,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         return rv
 
     def disvecinf(self, x, y, aq=None):
-        """Can be called with only one x,y value"""
+        """Can be called with only one x,y value."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, self.nparam, aq.naq))
@@ -379,14 +379,18 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         self.parameters[:, 0] = self.Qls / self.L
 
     def potinf(self, x, y, aq=None):
-        """Can be called with only one x,y value
-        Returns array(nparam, self.aq.naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
+        """Can be called with only one x,y value.
+
+        Returns
+        -------
+        array
+            (nparam, self.aq.naq) with order
+            order 0, layer[0]
+            order 0, layer[1]
+            ...
+            order 1, layer[0]
+            order 1, layer[1]
+            etc.
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -409,14 +413,18 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         return rv
 
     def disvecinf(self, x, y, aq=None):
-        """Can be called with only one x,y value
-        Returns array(nparam, self.aq.naq) with order
-        order 0, layer[0]
-        order 0, layer[1]
-        ...
-        order 1, layer[0]
-        order 1, layer[1]
-        etc
+        """Can be called with only one x,y value.
+
+        Returns
+        -------
+        array
+            (nparam, self.aq.naq) with order
+            order 0, layer[0]
+            order 0, layer[1]
+            ...
+            order 1, layer[0]
+            order 1, layer[1]
+            etc.
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -473,9 +481,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
 
 
 class HeadLineSink(LineSinkHoBase, HeadEquation):
-    """
-    Create a head-specified line-sink
-    which may optionally have a width and resistance
+    """Create a head-specified line-sink which may optionally have a width and
+    resistance.
 
     Parameters
     ----------
@@ -515,7 +522,6 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
     --------
 
     :class:`.HeadLineSinkString`
-
     """
 
     def __init__(
@@ -578,10 +584,8 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
 
 
 class LineSinkDitch(HeadLineSink):
-    """
-    Class to create a line-sink for which the total discharge
-    is specified, and for which the head along the line-sink
-    is uniform but unknown.
+    """Class to create a line-sink for which the total discharge is specified, and for
+    which the head along the line-sink is uniform but unknown.
 
     Parameters
     ----------
@@ -618,7 +622,6 @@ class LineSinkDitch(HeadLineSink):
     --------
 
     :class:`.LineSinkDitchString`
-
     """
 
     def __init__(
@@ -680,8 +683,10 @@ class LineSinkDitch(HeadLineSink):
 
 
 class LineSinkStringBase(Element):
-    """Original implementation
-    Used for boundaries of inhomogenieities"""
+    """Original implementation.
+
+    Used for boundaries of inhomogenieities.
+    """
 
     def __init__(
         self,
@@ -760,19 +765,23 @@ class LineSinkStringBase(Element):
         self.aqout = self.model.aq.find_aquifer_data(self.xcout[0], self.ycout[0])
 
     def potinf(self, x, y, aq=None):
-        """
-        linesink 0, order 0, layer[0]
-                    order 0, layer[1]
-                    ...
-                    order 1, layer[0]
-                    order 1, layer[1]
-                    ...
-        linesink 1, order 0, layer[0]
-                    order 0, layer[1]
-                    ...
-                    order 1, layer[0]
-                    order 1, layer[1]
-                    ...
+        """Compute the unit potential influence of the element.
+
+        Returns
+        -------
+        array
+            linesink 0, order 0, layer[0]
+                        order 0, layer[1]
+                        ...
+                        order 1, layer[0]
+                        order 1, layer[1]
+                        ...
+            linesink 1, order 0, layer[0]
+                        order 0, layer[1]
+                        ...
+                        order 1, layer[0]
+                        order 1, layer[1]
+                        ...
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -856,10 +865,10 @@ class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
 
 
 class LineSinkStringBase2(Element):
-    """
-    Alternative implementation that loops through line-sinks to build equation
-    Has the advantage that it is easier to have different line-sinks in
-    different layers and/or aquifers
+    """Alternative implementation that loops through line-sinks to build equation.
+
+    Has the advantage that it is easier to have different line-sinks in different layers
+    and/or aquifers.
     """
 
     def __init__(
@@ -912,19 +921,23 @@ class LineSinkStringBase2(Element):
         self.parameters = np.zeros((self.nparam, 1))
 
     def potinf(self, x, y, aq=None):
-        """
-        linesink 0, order 0, layer[0]
-                    order 0, layer[1]
-                    ...
-                    order 1, layer[0]
-                    order 1, layer[1]
-                    ...
-        linesink 1, order 0, layer[0]
-                    order 0, layer[1]
-                    ...
-                    order 1, layer[0]
-                    order 1, layer[1]
-                    ...
+        """Compute unit potential influence of element.
+
+        Returns
+        -------
+        array
+            linesink 0, order 0, layer[0]
+                        order 0, layer[1]
+                        ...
+                        order 1, layer[0]
+                        order 1, layer[1]
+                        ...
+            linesink 1, order 0, layer[0]
+                        order 0, layer[1]
+                        ...
+                        order 1, layer[0]
+                        order 1, layer[1]
+                        ...
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -969,7 +982,7 @@ class LineSinkStringBase2(Element):
         return rv
 
     def discharge(self):
-        """Discharge of the element in each layer"""
+        """Discharge of the element in each layer."""
 
         rv = np.zeros(self.aq[0].naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
@@ -1001,9 +1014,8 @@ class LineSinkStringBase2(Element):
 
 
 class HeadLineSinkString(LineSinkStringBase2):
-    """
-    Class to create a string of head-specified line-sinks
-    which may optionally have a width and resistance
+    """Class to create a string of head-specified line-sinks which may optionally have a
+    width and resistance.
 
     Parameters
     ----------
@@ -1041,7 +1053,6 @@ class HeadLineSinkString(LineSinkStringBase2):
     --------
 
     :class:`.HeadLineSink`
-
     """
 
     def __init__(
@@ -1158,10 +1169,9 @@ class HeadLineSinkString(LineSinkStringBase2):
 
 
 class LineSinkDitchString(HeadLineSinkString):
-    """
-    Class to create a string of LineSinkDitch elements for which the
-    total discharge of the string is specified, and for which the head
-    along the entire string is uniform but unknown.
+    """Class to create a string of LineSinkDitch elements for which the total discharge
+    of the string is specified, and for which the head along the entire string is
+    uniform but unknown.
 
     Parameters
     ----------
@@ -1193,7 +1203,6 @@ class LineSinkDitchString(HeadLineSinkString):
     --------
 
     :class:`.LineSinkDitch`
-
     """
 
     def __init__(
@@ -1302,19 +1311,23 @@ class LineSinkContainer(Element):
         self.parameters = np.zeros((self.nparam, 1))
 
     def potinf(self, x, y, aq=None):
-        """
-        linesink 0, order 0, layer[0]
-                    order 0, layer[1]
-                    ...
-                    order 1, layer[0]
-                    order 1, layer[1]
-                    ...
-        linesink 1, order 0, layer[0]
-                    order 0, layer[1]
-                    ...
-                    order 1, layer[0]
-                    order 1, layer[1]
-                    ...
+        """Compute the unit potential influence of the element.
+
+        Returns
+        -------
+        array
+            linesink 0, order 0, layer[0]
+                        order 0, layer[1]
+                        ...
+                        order 1, layer[0]
+                        order 1, layer[1]
+                        ...
+            linesink 1, order 0, layer[0]
+                        order 0, layer[1]
+                        ...
+                        order 1, layer[0]
+                        order 1, layer[1]
+                        ...
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -1342,7 +1355,7 @@ class LineSinkContainer(Element):
         return rv.ravel()
 
     def discharge(self):
-        """Discharge of the element in each layer"""
+        """Discharge of the element in each layer."""
         # TBD: it is unclear what this function does. shouldn't it return
         # values only for the layers where the element is screened?
         rv = np.zeros(self.aq[0].naq)
@@ -1376,9 +1389,8 @@ class LineSinkContainer(Element):
 
 
 class HeadLineSinkContainer(LineSinkContainer):
-    """
-    Class to create a container of head-specified line-sinks
-    which may optionally have a width and resistance
+    """Class to create a container of head-specified line-sinks which may optionally
+    have a width and resistance.
 
     Parameters
     ----------
@@ -1411,7 +1423,6 @@ class HeadLineSinkContainer(LineSinkContainer):
     --------
 
     :class:`.HeadLineSink`
-
     """
 
     def __init__(

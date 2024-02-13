@@ -1,11 +1,9 @@
-"""
-Copyright (C), 2015, Mark Bakker.
+"""Copyright (C), 2015, Mark Bakker. 
 Mark Bakker, Delft University of Technology
 mark dot bakker at tudelft dot nl
 
-TimML is a computer program for the simulation of steady-state
-multiaquifer flow with analytic elements and consists of a
-library of Python scripts and FORTRAN extensions.
+TimML is a computer program for the simulation of steady-state multiaquifer flow with
+analytic elements and consists of a library of Python scripts and FORTRAN extensions.
 """
 # from __future__ import division, print_function, absolute_import
 
@@ -48,7 +46,7 @@ from .stripareasink import StripAreaSink
 from .trace import timtraceline, timtracelines
 from .uflow import Uflow
 from .version import __version__
-from .well import HeadWell, Well, WellBase
+from .well import HeadWell, LargeDiameterWell, Well, WellBase
 
 __all__ = [s for s in dir() if not s.startswith("_")]
 

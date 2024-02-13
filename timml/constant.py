@@ -62,10 +62,10 @@ class ConstantBase(Element, PotentialEquation):
 
 
 class Constant(ConstantBase, PotentialEquation):
-    """
-    Specify the head at one point in the model in one layer.
-    The head may only be specified in an area of the model where
-    the aquifer system is confined.
+    """Specify the head at one point in the model in one layer.
+
+    The head may only be specified in an area of the model where the aquifer system is
+    confined.
 
     Parameters
     ----------
@@ -81,7 +81,6 @@ class Constant(ConstantBase, PotentialEquation):
         layer where the head is specified
     label : string or None (default: None)
         label of the element
-
     """
 
     def __init__(self, model, xr=0, yr=0, hr=0.0, layer=0, label=None):
@@ -128,7 +127,7 @@ class ConstantInside(Element):
         self.ncp = len(self.xc)
 
     def potinf(self, x, y, aq=None):
-        """Can be called with only one x,y value"""
+        """Can be called with only one x,y value."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((1, aq.naq))
@@ -137,7 +136,7 @@ class ConstantInside(Element):
         return rv
 
     def disvecinf(self, x, y, aq=None):
-        """Can be called with only one x,y value"""
+        """Can be called with only one x,y value."""
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, 1, aq.naq))
@@ -201,9 +200,11 @@ class ConstantStar(Element):
         return rv
 
     def potentiallayers(self, x, y, layers, aq=None):
-        """Returns array of size len(layers) only used in building equations
-        Defined here as it is the particular solution inside a semi-confined aquifer
-        and cannot be added by using eigen vectors"""
+        """Returns array of size len(layers) only used in building equations.
+
+        Defined here as it is the particular solution inside a semi-confined aquifer and
+        cannot be added by using eigen vectors.
+        """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
         pot = np.zeros(len(layers))

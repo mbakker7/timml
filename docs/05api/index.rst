@@ -39,5 +39,5 @@ Python code.
 
 .. toctree::
     :hidden:
-    :maxdepth: 4
+    :maxdepth: 2
     :glob:

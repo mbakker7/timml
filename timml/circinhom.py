@@ -1,8 +1,7 @@
-"""
-mlcircinhom.py contains the CircleInhom class
-This file is part of the TimML library and is distributed under
-the GNU LPGL. See the TimML.py file for more details.
-(c) Mark Bakker, 2002-2007
+"""mlcircinhom.py contains the CircleInhom class.
+
+This file is part of the TimML library and is distributed under the GNU LPGL. See the
+TimML.py file for more details. (c) Mark Bakker, 2002-2007
 """
 
 import scipy.special
@@ -11,8 +10,14 @@ import numpy as np
 
 
 class CircleInhom(Element):
-    """CircleInhom class
-    Note that aquiferparent doesn't have a meaning for this element
+    """CircleInhom class.
+
+    Notes
+    -----
+    Note that aquiferparent doesn't have a meaning for this element.
+
+    Attributes
+    ----------
     All attributes from element.
     """
 
@@ -127,9 +132,14 @@ class CircleInhom(Element):
         return rv
 
     def potentialInfluenceInLayer(self, aq, pylayer, x, y):
-        """Returns PotentialInfluence function in aquifer aq in pylayer as array (1 value per parameter)
-        Needs to be overloaded because there is no parameter outside the functions
-        Needs to be modified for inside and outside"""
+        """Returns PotentialInfluence function in aquifer aq in pylayer as array (1
+        value per parameter)
+
+        Notes
+        -----
+        Needs to be overloaded because there is no parameter outside the functions.
+        Needs to be modified for inside and outside.
+        """
         potInf = self.potentialInfluence(aq, x, y)
         rv = np.zeros(0, "d")
         for p in potInf:
@@ -141,7 +151,8 @@ class CircleInhom(Element):
         return rv
 
     def potentialInfluenceAllLayers(self, aq, pylayer, x, y):
-        """Returns PotentialInfluence function in aquifer aq in all layers as an array"""
+        """Returns PotentialInfluence function in aquifer aq in all layers as an
+        array."""
         potInf = self.potentialInfluence(aq, x, y)
         rv = np.zeros((aq.Naquifers, 0), "d")
         for p in potInf:
@@ -153,7 +164,8 @@ class CircleInhom(Element):
         return rv
 
     def potentialInfluenceSpecLayers(self, aq, pylayer, x, y):
-        """Returns PotentialInfluence function in aquifer aq in all layers as an array"""
+        """Returns PotentialInfluence function in aquifer aq in all layers as an
+        array."""
         potInf = self.potentialInfluence(aq, x, y)
         pylen = len(pylayer)
         rv = np.zeros((pylen, 0), "d")
@@ -167,7 +179,12 @@ class CircleInhom(Element):
         return rv
 
     def potentialContribution(self, aq, x, y):
-        """Returns array of potentialContribution. Needs to be overloaded cause there is inside and outside"""
+        """Returns array of potentialContribution.
+
+        Notes
+        -----
+        Needs to be overloaded cause there is inside and outside.
+        """
         if aq == self.aqin:
             potInf = sum(self.paramin * self.potentialInfluence(aq, x, y), 0)
         else:
@@ -304,9 +321,14 @@ class CircleInhom(Element):
         return rvrad
 
     def dischargeInfluenceRadInLayer(self, aq, pylayer, x, y):
-        """Returns dischargeInfluenceRadInLayer function in aquifer aq in pylayer as list (1 value per parameter)
-        Needs to be overloaded because there is no parameter outside the functions
-        Needs to be modified for inside and outside"""
+        """Returns dischargeInfluenceRadInLayer function in aquifer aq in pylayer as
+        list (1 value per parameter).
+
+        Notes
+        -----
+        Needs to be overloaded because there is no parameter outside the functions.
+        Needs to be modified for inside and outside.
+        """
         disInf = self.dischargeInfluenceRad(aq, x, y)
         rv = []
         for d in disInf:
@@ -316,9 +338,13 @@ class CircleInhom(Element):
         return rv
 
     def dischargeInfluenceRadAllLayers(self, aq, dumlayer, x, y):
-        """Returns dischargeInfluenceRadAllLayers function in aquifer aq as an array
-        Needs to be overloaded because there is no parameter outside the functions
-        Needs to be modified for inside and outside"""
+        """Returns dischargeInfluenceRadAllLayers function in aquifer aq as an array.
+
+        Notes
+        -----
+        Needs to be overloaded because there is no parameter outside the functions.
+        Needs to be modified for inside and outside.
+        """
         disInf = self.dischargeInfluenceRad(aq, x, y)
         rv = np.zeros((aq.Naquifers, 0), "d")
         for d in disInf:
@@ -328,9 +354,13 @@ class CircleInhom(Element):
         return rv
 
     def dischargeInfluenceAllLayers(self, aq, dumlayer, x, y):
-        """Returns dischargeInfluenceAllLayers function in aquifer aq as an array
-        Needs to be overloaded because there is no parameter outside the functions
-        Needs to be modified for inside and outside"""
+        """Returns dischargeInfluenceAllLayers function in aquifer aq as an array.
+
+        Notes
+        -----
+        Needs to be overloaded because there is no parameter outside the functions.
+        Needs to be modified for inside and outside.
+        """
         [disx, disy] = self.dischargeInfluence(aq, x, y)
         rvx = np.zeros((aq.Naquifers, 0), "d")
         rvy = np.zeros((aq.Naquifers, 0), "d")
@@ -347,7 +377,7 @@ class CircleInhom(Element):
         return [rvx, rvy]
 
     def dischargeInfluenceInLayer(self, aq, pylayer, x, y):
-        """Returns dischargeInfluence in pylayer, modified for paramin and paramout"""
+        """Returns dischargeInfluence in pylayer, modified for paramin and paramout."""
         [disx, disy] = self.dischargeInfluence(aq, x, y)
         rvx = disx * aq.eigvec[pylayer, :]
         rvy = disy * aq.eigvec[pylayer, :]
@@ -360,9 +390,13 @@ class CircleInhom(Element):
         return [rvx, rvy]
 
     def dischargeInfluenceSpecLayers(self, aq, pylayer, x, y):
-        """Returns dischargeInfluenceAllLayers function in aquifer aq as an array
-        Needs to be overloaded because there is no parameter outside the functions
-        Needs to be modified for inside and outside"""
+        """Returns dischargeInfluenceAllLayers function in aquifer aq as an array.
+
+        Notes
+        -----
+        Needs to be overloaded because there is no parameter outside the functions.
+        Needs to be modified for inside and outside.
+        """
         [disx, disy] = self.dischargeInfluence(aq, x, y)
         pylen = len(pylayer)
         rvx = np.zeros((pylen, 0), "d")
@@ -381,7 +415,12 @@ class CircleInhom(Element):
         return [rvx, rvy]
 
     def dischargeContribution(self, aq, x, y):
-        """Returns matrix with two rowvectors of dischargeContributions Qx and Qy. Needs to be overloaded cause there is inside and outside"""
+        """Returns matrix with two rowvectors of dischargeContributions Qx and Qy.
+
+        Notes
+        -----
+        Needs to be overloaded cause there is inside and outside.
+        """
         disInf = self.dischargeInfluence(aq, x, y)
         if aq == self.aqin:
             disxInf = sum(self.paramin * disInf[0], 0)
@@ -392,7 +431,7 @@ class CircleInhom(Element):
         return np.array([disxInf, disyInf])
 
     def zeroFunction(self, aqdum, ldum, xdum, ydum):
-        """Returns list of zeros of length number of parameters"""
+        """Returns list of zeros of length number of parameters."""
         return list(np.zeros(self.Nparamin + self.Nparamout, "d"))
 
     def getMatrixRows(self, elementList):
@@ -577,7 +616,10 @@ class CircleInhom(Element):
         return [changed, stop, xyznew]
 
     def distanceSquaredToElement(self, x, y):
-        """Returns distance squared to element. Used for deciding tracing step"""
+        """Returns distance squared to element.
+
+        Used for deciding tracing step.
+        """
         dis = np.sqrt((x - self.xc) ** 2 + (y - self.yc) ** 2)
         dissq = (dis - self.R) ** 2
         return dissq

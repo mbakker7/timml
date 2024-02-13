@@ -8,10 +8,10 @@ __all__ = ["Uflow"]
 
 
 class Uflow(Element):
-    """
-    Add uniform flow to the model.
-    Uniform flow may only be added to a model of which the background
-    aquifer system is confined.
+    """Add uniform flow to the model. 
+    
+    Uniform flow may only be added to a model of which the background aquifer system 
+    is confined.
 
     Parameters
     ----------
@@ -25,7 +25,6 @@ class Uflow(Element):
         counter clock-wise is positive)
     label : string or None (default: None)
         label of the element
-
     """
 
     def __init__(self, model, slope, angle, label=None):

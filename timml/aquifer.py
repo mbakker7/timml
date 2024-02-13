@@ -62,6 +62,11 @@ class AquiferData:
         dm1 = -1.0 / (self.c[1:] * self.T[:-1])
         A = np.diag(dm1, -1) + np.diag(d0, 0) + np.diag(dp1, 1)
         w, v = np.linalg.eig(A)
+        # take the real part for the rare occasion that the eig 
+        # function returns a complex answer with very small 
+        # imaginary part
+        w = w.real
+        v = v.real
         # sort lab in decending order, hence w in ascending order
         index = np.argsort(abs(w))
         w = w[index]
@@ -90,8 +95,7 @@ class AquiferData:
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
 
     def findlayer(self, z):
-        """
-        Returns layer-number, layer-type and model-layer-number"""
+        """Returns layer-number, layer-type and model-layer-number."""
         if z > self.z[0]:
             modellayer, ltype = -1, "above"
             layernumber = None
