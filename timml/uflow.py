@@ -8,9 +8,9 @@ __all__ = ["Uflow"]
 
 
 class Uflow(Element):
-    """Add uniform flow to the model. 
-    
-    Uniform flow may only be added to a model of which the background aquifer system 
+    """Add uniform flow to the model.
+
+    Uniform flow may only be added to a model of which the background aquifer system
     is confined.
 
     Parameters

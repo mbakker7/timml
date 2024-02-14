@@ -4,7 +4,7 @@ Tutorials
 TimML tutorials.
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :hidden:
     :glob:
 
