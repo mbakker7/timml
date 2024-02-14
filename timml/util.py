@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import LineCollection
 
-from .trace import timtraceline, timtracelines
+from .controlpoints import controlpoints
+from .trace import timtraceline
 
 plt.rcParams["contour.negative_linestyle"] = "solid"
 
@@ -100,6 +101,9 @@ class PlotTim:
                     plt.axhspan(
                         ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
                     )
+            # for e in self.elementlist:
+            #     if hasattr(e, "xsec"):
+            #         e.xsec()
 
     def contour(
         self,
@@ -167,9 +171,9 @@ class PlotTim:
         # color
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-        elif type(color) is str:
+        elif isinstance(color, str):
             c = len(layers) * [color]
-        elif type(color) is list:
+        elif isinstance(color, list):
             c = color
         if len(c) < len(layers):
             n = np.ceil(self.aq.naq / len(c))
@@ -185,7 +189,7 @@ class PlotTim:
             if labels:
                 fmt = "%1." + str(decimals) + "f"
                 plt.clabel(cs, fmt=fmt)
-        if type(legend) is list:
+        if isinstance(legend, list):
             plt.legend(cshandlelist, legend)
         elif legend:
             legendlist = ["layer " + str(i) for i in layers]
@@ -335,9 +339,9 @@ class PlotTim:
         """
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-        elif type(color) is str:
+        elif isinstance(color, str):
             c = self.aq.naq * [color]
-        elif type(color) is list:
+        elif isinstance(color, list):
             c = color
         if len(c) < self.aq.naq:
             n = int(np.ceil(self.aq.naq / len(c)))
@@ -486,3 +490,74 @@ class PlotTim:
         return ax
         # if layout:
         #    self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
+
+
+def compute_z1z2(xy):
+    # Returns z1 and z2 of polygon, in clockwise order
+    x, y = list(zip(*xy))
+    if x[0] == x[-1] and y[0] == y[-1]:  # In case last point is repeated
+        x = x[:-1]
+        y = y[:-1]
+    z1 = np.array(x) + np.array(y) * 1j
+    index = list(range(1, len(z1))) + [0]
+    z2 = z1[index]
+    Z = 1e-6j
+    z = Z * (z2[0] - z1[0]) / 2.0 + 0.5 * (z1[0] + z2[0])
+    bigZ = (2.0 * z - (z1 + z2)) / (z2 - z1)
+    bigZmin1 = bigZ - 1.0
+    bigZplus1 = bigZ + 1.0
+    angle = np.sum(np.log(bigZmin1 / bigZplus1).imag)
+    if angle < np.pi:  # reverse order
+        z1 = z1[::-1]
+        z2 = z1[index]
+    return z1, z2
+
+
+def refine_n_segments(xy, shape_type, n_segments):
+    """Refine line segments into n_segments each.
+
+    Use cosine-rule to determine new segment lengths.
+
+    Parameters
+    ----------
+    xy : list of tuple or np.array
+        list of coordinates or 2d-array containing x-coordinates in the first column
+        and y-coordinates in the second column
+    shape_type : str
+        shape type, either "line" or "polygon".
+    n_segments : int
+        number of segments to split each line segment into.
+
+    Returns
+    -------
+    xynew : np.array
+        array containing refined coordinates
+    reindexer : np.array
+        array containing index to original line segment, useful for obtaining element
+        parameters from original input.
+    """
+
+    if shape_type == "polygon":
+        z1, z2 = compute_z1z2(xy)
+    elif shape_type == "line":
+        z = xy[:, 0] + 1j * xy[:, 1]
+        z1 = z[:-1]
+        z2 = z[1:]
+    else:
+        raise ValueError("shptype must be one of 'polygon' or 'line'.")
+    xpts = []
+    ypts = []
+    reindexer = []
+    for i in range(len(z1)):
+        xcpi, ycpi = controlpoints(n_segments - 1, z1[i], z2[i], include_ends=True)
+        if i < len(z1) - 1:
+            xpts.append(xcpi[:-1])
+            ypts.append(ycpi[:-1])
+        else:
+            xpts.append(xcpi)
+            ypts.append(ycpi)
+        reindexer.append(i * np.ones(len(xcpi[:-1]), dtype=int))
+    return (
+        np.vstack([np.concatenate(xpts), np.concatenate(ypts)]).T,
+        np.concatenate(reindexer),
+    )

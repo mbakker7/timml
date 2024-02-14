@@ -4,9 +4,9 @@ This file is part of the TimML library and is distributed under the GNU LPGL. Se
 TimML.py file for more details. (c) Mark Bakker, 2002-2007
 """
 
+import numpy as np
 import scipy.special
 from element import Element
-import numpy as np
 
 
 class CircleInhom(Element):

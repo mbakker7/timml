@@ -2,7 +2,6 @@
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
-import sys
 
 import numpy as np
 from scipy.integrate import quad_vec
@@ -46,20 +45,35 @@ class Model(PlotTim):
     def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
-        self.elementlist = []
+        self.elements = []  # elements added by user
+        self.elementlist = []  # computation elements
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
 
-    def initialize(self):
+    def initialize(self, refine_level=None):
+        elementlist = []
+        for e in self.elements:
+            # refine
+            if hasattr(e, "_refine") and (
+                e.refine_level > 1 or refine_level is not None
+            ):
+                refined_element = e._refine(n=refine_level)
+                elementlist += refined_element
+            else:
+                if hasattr(e, "_reset"):
+                    e._reset()  # reset variables in case _refine was previously called
+                elementlist.append(e)
+
         # remove inhomogeneity elements (they are added again)
-        self.elementlist = [e for e in self.elementlist if not e.inhomelement]
-        self.aq.initialize()
+        self.elementlist = [e for e in elementlist if not e.inhomelement]
+        self.aq.initialize(refine_level=refine_level)
+        # now initialize all computation elements
         for e in self.elementlist:
             e.initialize()
 
     def add_element(self, e):
-        self.elementlist.append(e)
+        self.elements.append(e)
         if e.label is not None:
             self.elementdict[e.label] = e
 
@@ -68,7 +82,7 @@ class Model(PlotTim):
 
         if e.label is not None:
             self.elementdict.pop(e.label)
-        self.elementlist.remove(e)
+        self.elements.remove(e)
 
     def storeinput(self, frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
@@ -124,9 +138,9 @@ class Model(PlotTim):
         sinnorm = np.sin(theta)
         return cosnorm * qxqy[0] + sinnorm * qxqy[1]
 
-    def _normflux_integrand(self, l, theta_norm, x1, y1):
-        x = l * np.cos(theta_norm - np.pi / 2) + x1
-        y = l * np.sin(theta_norm - np.pi / 2) + y1
+    def _normflux_integrand(self, s, theta_norm, x1, y1):
+        x = s * np.cos(theta_norm - np.pi / 2) + x1
+        y = s * np.sin(theta_norm - np.pi / 2) + y1
         return self.normflux(x, y, theta_norm)
 
     def intnormflux_segment(self, x1, y1, x2, y2, method="legendre", ndeg=10):
@@ -423,10 +437,10 @@ class Model(PlotTim):
             vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
         return np.array([vx, vy, vz])
 
-    def solve(self, printmat=0, sendback=0, silent=False):
+    def solve(self, printmat=0, sendback=0, silent=False, refine_level=None):
         """Compute solution."""
         # Initialize elements
-        self.initialize()
+        self.initialize(refine_level=refine_level)
         # Compute number of equations
         self.neq = np.sum([e.nunknowns for e in self.elementlist])
         if self.neq == 0:
@@ -554,7 +568,7 @@ class Model(PlotTim):
         return
 
     def write(self):
-        rv = self.modelname + " = " + self.name + "(\n"
+        rv = "tml." + self.modelname + " = " + self.name + "(\n"
         for key in self.inputargs[1:]:  # The first argument (self) is ignored
             if isinstance(self.inputvalues[key], np.ndarray):
                 rv += (
@@ -573,7 +587,7 @@ class Model(PlotTim):
     def writemodel(self, fname):
         self.initialize()  # So that the model can be written without solving first
         f = open(fname, "w")
-        f.write("from timml import *\n")
+        f.write("import timml\n")
         f.write(self.write())
         for e in self.elementlist:
             f.write(e.write())

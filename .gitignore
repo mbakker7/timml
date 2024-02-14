@@ -99,7 +99,10 @@ ENV/
 
 # f2py
 .plist
-.vscode/settings.json
+
+.vscode
+
+coverage/
 
 # docs
 _build/
