@@ -46,7 +46,7 @@ from timml.stripareasink import StripAreaSink
 from timml.trace import timtraceline, timtracelines
 from timml.uflow import Uflow
 from timml.version import __version__
-from timml.well import HeadWell, Well, WellBase
+from timml.well import HeadWell, LargeDiameterWell, Well, WellBase
 
 __all__ = [s for s in dir() if not s.startswith("_")]
 
