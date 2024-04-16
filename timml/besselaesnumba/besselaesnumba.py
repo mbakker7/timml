@@ -121,7 +121,7 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     lstype = 1
 
     # Radius of convergence
-    Rconv = 7.0
+    Rconv = 5.0
 
     # if (ilap==1) :
     #    istart = 1
@@ -183,7 +183,7 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
 
     rv = np.zeros((2, naq))
     # Radius of convergence
-    Rconv = 7.0
+    Rconv = 5.0
 
     # lstype = 1 means line-sink
     lstype = 1
@@ -267,7 +267,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     rv = np.zeros(naq)
 
     # Radius of convergence
-    Rconv = 7.0
+    Rconv = 5.0
 
     # lstype=2 means line-doublet
     lstype = 2
@@ -334,7 +334,7 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
     #                   and mod.Helmholtz potentials in remaining spots
     rv = np.zeros((2, naq))
     # Radius of convergence
-    Rconv = 7.0
+    Rconv = 5.0
 
     # lstype=2 means line-doublet
     lstype = 2
