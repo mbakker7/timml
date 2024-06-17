@@ -178,7 +178,6 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     x1 : scalar
@@ -201,7 +200,6 @@ class ImpLineDoublet(LineDoubletHoBase, DisvecEquation):
 
     See Also
     --------
-
     :class:`.ImpLineDoubletString`
     """
 
@@ -251,7 +249,6 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     x1 : scalar
@@ -276,7 +273,6 @@ class LeakyLineDoublet(LineDoubletHoBase, LeakyWallEquation):
 
     See Also
     --------
-
     :class:`.LeakyLineDoubletString`
     """
 
@@ -422,7 +418,6 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xy : array or list
@@ -440,11 +435,12 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
 
     See Also
     --------
-
     :class:`.ImpLineDoublet`
     """
 
-    def __init__(self, model, xy=[(-1, 0), (1, 0)], layers=0, order=0, label=None):
+    def __init__(self, model, xy=None, layers=0, order=0, label=None):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineDoubletStringBase.__init__(
             self,
@@ -473,7 +469,6 @@ class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xy : array or list
@@ -493,13 +488,12 @@ class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
 
     See Also
     --------
-
     :class:`.ImpLineDoublet`
     """
 
-    def __init__(
-        self, model, xy=[(-1, 0), (1, 0)], res=np.inf, layers=0, order=0, label=None
-    ):
+    def __init__(self, model, xy=None, res=np.inf, layers=0, order=0, label=None):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineDoubletStringBase.__init__(
             self,

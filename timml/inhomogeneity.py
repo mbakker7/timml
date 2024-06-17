@@ -79,7 +79,7 @@ class PolygonInhom(AquiferData):
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
-                ls = IntHeadDiffLineSink(
+                IntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -93,7 +93,7 @@ class PolygonInhom(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
-                ls = IntFluxDiffLineSink(
+                IntFluxDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -171,8 +171,8 @@ class PolygonInhomMaq(PolygonInhom):
         model,
         xy,
         kaq=1,
-        z=[1, 0],
-        c=[],
+        z=None,
+        c=None,
         npor=0.3,
         topboundary="conf",
         hstar=None,
@@ -180,6 +180,10 @@ class PolygonInhomMaq(PolygonInhom):
         order=3,
         ndeg=3,
     ):
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -251,7 +255,7 @@ class PolygonInhom3D(PolygonInhom):
         model,
         xy,
         kaq=1,
-        z=[1, 0],
+        z=None,
         kzoverkh=1,
         npor=0.3,
         topboundary="conf",
@@ -262,6 +266,8 @@ class PolygonInhom3D(PolygonInhom):
         order=3,
         ndeg=3,
     ):
+        if z is None:
+            z = [1, 0]
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -311,7 +317,7 @@ class BuildingPit(AquiferData):
         npor=0.3,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
     ):
         """Element to simulate a building pit with an impermeable wall.
 
@@ -355,6 +361,8 @@ class BuildingPit(AquiferData):
         layers: list or np.array
             layers in which impermeable wall is present.
         """
+        if layers is None:
+            layers = [0]
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.order = order
         self.ndeg = ndeg
@@ -501,14 +509,14 @@ class BuildingPitMaq(BuildingPit):
         model,
         xy,
         kaq=1.0,
-        c=[],
-        z=[1, 0],
+        c=None,
+        z=None,
         topboundary="conf",
         hstar=None,
         npor=0.3,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
     ):
         """Element to simulate a building pit with an impermeable wall in ModelMaq.
 
@@ -554,6 +562,12 @@ class BuildingPitMaq(BuildingPit):
         layers: list or np.array
             layers in which impermeable wall is present.
         """
+        if layers is None:
+            layers = [0]
+        if z is None:
+            z = [1, 0]
+        if c is None:
+            c = []
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -577,7 +591,7 @@ class BuildingPit3D(BuildingPit):
         xy,
         kaq=1.0,
         kzoverkh=1.0,
-        z=[1, 0],
+        z=None,
         topboundary="conf",
         topres=0,
         topthick=0,
@@ -585,7 +599,7 @@ class BuildingPit3D(BuildingPit):
         npor=0.3,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
     ):
         """Element to simulate a building pit with an impermeable wall in Model3D.
 
@@ -633,6 +647,10 @@ class BuildingPit3D(BuildingPit):
         layers: list or np.array
             layers in which impermeable wall is present.
         """
+        if layers is None:
+            layers = [0]
+        if z is None:
+            z = [1, 0]
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -664,7 +682,7 @@ class LeakyBuildingPit(BuildingPit):
         hstar=None,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         res=np.inf,
     ):
         """Element to simulate a building pit with a leaky wall.
@@ -713,7 +731,8 @@ class LeakyBuildingPit(BuildingPit):
             shape (n_segments,) or (n_layers, n_segments). Default is np.inf,
             which simulates an impermeable wall.
         """
-
+        if layers is None:
+            layers = [0]
         super().__init__(
             model,
             xy,
@@ -744,7 +763,9 @@ class LeakyBuildingPit(BuildingPit):
         if np.any(self.res < self.tiny):
             warn(
                 f"Found resistances smaller than {self.tiny}, "
-                f"these were replaced by {self.tiny}."
+                f"these were replaced by {self.tiny}.",
+                category=UserWarning,
+                stacklevel=1,
             )
             self.res[self.res < self.tiny] = self.tiny
 
@@ -895,16 +916,22 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
         model,
         xy,
         kaq=1.0,
-        z=[1, 0],
-        c=[],
+        z=None,
+        c=None,
         npor=0.3,
         topboundary="conf",
         hstar=None,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         res=np.inf,
     ):
+        if layers is None:
+            layers = [0]
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -928,7 +955,7 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
         model,
         xy,
         kaq=1.0,
-        z=[1, 0],
+        z=None,
         kzoverkh=1.0,
         npor=0.3,
         topboundary="conf",
@@ -937,7 +964,7 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
         hstar=None,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         res=np.inf,
     ):
         """Element to simulate a building pit with a leaky wall in Model3D.
@@ -990,6 +1017,10 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
             shape (n_segments,) or (n_segments, n_layers). Default is np.inf,
             which simulates an impermeable wall.
         """
+        if layers is None:
+            layers = [0]
+        if z is None:
+            z = [1, 0]
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))

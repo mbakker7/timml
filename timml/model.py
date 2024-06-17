@@ -2,7 +2,6 @@
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
-import sys
 
 import numpy as np
 from scipy.integrate import quad_vec
@@ -65,7 +64,6 @@ class Model(PlotTim):
 
     def remove_element(self, e):
         """Remove element `e` from model."""
-
         if e.label is not None:
             self.elementdict.pop(e.label)
         self.elementlist.remove(e)
@@ -86,15 +84,13 @@ class Model(PlotTim):
         return rv
 
     def disvec(self, x, y, aq=None):
-        """Discharge vector at `x`, `y`
+        """Discharge vector at `x`, `y`.
 
         Returns
         -------
-
         qxqy : array size (2, naq)
             first row is Qx in each aquifer layer, second row is Qy
         """
-
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, aq.naq))
@@ -208,7 +204,6 @@ class Model(PlotTim):
 
         >>> np.sum(Qn, axis=0)
         """
-
         xy = np.array(xy)  # convert to array
         if np.all(xy[-1] == xy[0]):
             Nsides = len(xy) - 1
@@ -233,16 +228,14 @@ class Model(PlotTim):
         return rv
 
     def head(self, x, y, layers=None, aq=None):
-        """Head at `x`, `y`
+        """Head at `x`, `y`.
 
         Returns
         -------
-
         h : array length `naq` or `len(layers)`
             head in all `layers` (if not `None`),
             or all layers of aquifer (otherwise)
         """
-
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
         rv = self.potential(x, y, aq) / aq.T
@@ -269,12 +262,10 @@ class Model(PlotTim):
         -------
         h : array size `nlayers, ny, nx`
 
-        See also
+        See Also
         --------
-
         :func:`~timml.model.Model.headgrid2`
         """
-
         nx, ny = len(xg), len(yg)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -308,12 +299,10 @@ class Model(PlotTim):
         -------
         h : array size `nlayers, ny, nx`
 
-        See also
+        See Also
         --------
-
         :func:`~timml.model.Model.headgrid`
         """
-
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
         return self.headgrid(xg, yg, layers=layers, printrow=printrow)
 
@@ -333,7 +322,6 @@ class Model(PlotTim):
         -------
         h : array size `nlayers, nx`
         """
-
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -395,9 +383,12 @@ class Model(PlotTim):
     def velocomp(self, x, y, z, aq=None, layer_ltype=None):
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
-        assert z <= aq.z[0] and z >= aq.z[-1], "z value not inside aquifer"
+
+        if (z > aq.z[0]) or z < (aq.z[-1]):
+            raise ValueError("z value not inside aquifer")
+
         if layer_ltype is None:
-            layer, ltype, dummy = aq.findlayer(z)
+            layer, ltype, _ = aq.findlayer(z)
         else:
             layer, ltype = layer_ltype
         h = self.head(x, y, aq=aq)
@@ -616,7 +607,11 @@ class ModelMaq(Model):
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
     """
 
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary="conf", hstar=None):
+    def __init__(self, kaq=1, z=None, c=None, npor=0.3, topboundary="conf", hstar=None):
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
         Model.__init__(self, kaq, c, z, npor, ltype)
@@ -670,7 +665,7 @@ class Model3D(Model):
     def __init__(
         self,
         kaq=1,
-        z=[1, 0],
+        z=None,
         kzoverkh=1,
         npor=0.3,
         topboundary="conf",
@@ -682,7 +677,10 @@ class Model3D(Model):
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top
-        hstar: head above top"""
+        hstar: head above top.
+        """
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":

@@ -124,7 +124,6 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xls : scalar
@@ -179,7 +178,6 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xls : scalar
@@ -228,7 +226,7 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
 
 
 class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
-    """HeadDiffLineSink1D for left side (xcout)"""
+    """HeadDiffLineSink1D for left side (xcout)."""
 
     def __init__(self, model, xls, label=None, aq=None, aqin=None, aqout=None):
         LineSink1DBase.__init__(
@@ -263,7 +261,7 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
 
 
 class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
-    """HeadDiffLineSink1D for left side (xcout)"""
+    """HeadDiffLineSink1D for left side (xcout)."""
 
     def __init__(self, model, xls, label=None, aq=None, aqin=None, aqout=None):
         LineSink1DBase.__init__(

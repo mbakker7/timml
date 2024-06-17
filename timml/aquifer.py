@@ -2,7 +2,6 @@ import inspect  # Used for storing the input
 
 import numpy as np
 
-from .aquifer_parameters import param_maq
 from .constant import ConstantStar
 
 
@@ -33,9 +32,9 @@ class AquiferData:
         self.layernumber[self.ltype == "a"] = np.arange(self.naq)
         self.layernumber[self.ltype == "l"] = np.arange(self.nlayers - self.naq)
         if self.ltype[0] == "a":
-            self.layernumber[
-                self.ltype == "l"
-            ] += 1  # first leaky layer below first aquifer layer
+            self.layernumber[self.ltype == "l"] += (
+                1  # first leaky layer below first aquifer layer
+            )
         self.zaqtop = self.z[:-1][self.ltype == "a"]
         self.zaqbot = self.z[1:][self.ltype == "a"]
         self.Haq = self.zaqtop - self.zaqbot

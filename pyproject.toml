@@ -54,7 +54,7 @@ ci = [
     "pytest>=4.6",
     "pytest-cov",
     "jupyter>=1.0.0",
-    "flake8",
+    "ruff",
     "coveralls",
     "shapely",
 ]
@@ -74,10 +74,33 @@ packages = ["timml", "timml.besselaesnumba"]
 [tool.setuptools.dynamic]
 version = { attr = "timml.version.__version__" }
 
-[tool.black]
-line-length = 88
+[tool.ruff]
+exclude = ["examples"]
 
-[tool.isort]
-profile = "black"
-src_paths = ["timml"]
-line_length = 88
+[tool.ruff.lint]
+# See: https://docs.astral.sh/ruff/rules/
+select = [
+    "C4",  # flake8-comprehensions
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "I",  # isort
+    "PT",  # pytest-style
+    "D",  # pydocstyle
+    "B",  # flake8-bugbear
+    "NPY",  # numpy
+]
+ignore = [
+    "D100",  # Missing docstring in public module
+    "E501",  # Line too long
+    "D101",  # Missing docstring in public class
+    "D102",  # Missing docstring in public method
+    "D103",  # Missing docstring in public function
+    "D104",  # Missing docstring in public package
+    "D105",  # Missing docstring in magic method
+    "D205",  # 1 blank line required between summary line and description
+    "D401",  # First line of docstring should be in imperative mood
+    "E741",  # Ambiguous variable name (such as "l")
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

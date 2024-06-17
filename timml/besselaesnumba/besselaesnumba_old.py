@@ -99,11 +99,11 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
        ilap: equals 1 when first value is Laplace line-sink and first labda equals zero
        naq: Number of aquifers
        rv(naq): Array to store return value (must be pre-allocated)
+
     Returns
-    --------
+    -------
        rv(naq): Potentials. Fist spot is Laplace value if ilap=1
     """
-
     rv = np.zeros(naq)
 
     # lstype = 1 means line-sink

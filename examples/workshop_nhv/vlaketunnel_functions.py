@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 import timml as tml
+
 
 def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c_channel_bot=30,
                 do_plot=True, df_dh=None):
@@ -30,7 +32,6 @@ def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c
         The model
 
     """
-    
     # create model
     ml = tml.ModelMaq(
         kaq=kaq,
@@ -145,15 +146,14 @@ def plot_model_results(ml, df_dh):
     None.
 
     """
-    
     # contour plot
     plt.subplot(221)
     ml.contour(win=[57000, 60000, 386900, 389100], ngr=50, layers=1,
-               levels=[-5,-2,-1,-0.5,-0.1], labels=True, decimals=2, legend=False, newfig=False);
+               levels=[-5,-2,-1,-0.5,-0.1], labels=True, decimals=2, legend=False, newfig=False)
     plt.scatter(df_dh.x, df_dh.y, 20, c=df_dh.color)
     for index, row in df_dh.iterrows():
         plt.annotate(f'{row.dh_obs:0.2f}', (row.x, row.y),ha=row.ha,va=row.va)
-    plt.title('contours in layer 1');
+    plt.title('contours in layer 1')
     
     # plot model input
     plt.subplot(222)
@@ -177,5 +177,5 @@ def plot_model_results(ml, df_dh):
         plt.scatter(plot_df.r, plot_df.dh_obs, 50, c=plot_df.color, alpha=0.3, label='observed')
         plt.scatter(plot_df.r, plot_df.dh_calc, 40, marker='+', label='modelled')
         plt.legend()
-        plt.title('heads from screened modellayer');
+        plt.title('heads from screened modellayer')
         plt.grid()

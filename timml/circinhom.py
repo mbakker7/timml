@@ -4,9 +4,9 @@ This file is part of the TimML library and is distributed under the GNU LPGL. Se
 TimML.py file for more details. (c) Mark Bakker, 2002-2007
 """
 
+import numpy as np
 import scipy.special
 from element import Element
-import numpy as np
 
 
 class CircleInhom(Element):
@@ -133,7 +133,7 @@ class CircleInhom(Element):
 
     def potentialInfluenceInLayer(self, aq, pylayer, x, y):
         """Returns PotentialInfluence function in aquifer aq in pylayer as array (1
-        value per parameter)
+        value per parameter).
 
         Notes
         -----
@@ -152,7 +152,8 @@ class CircleInhom(Element):
 
     def potentialInfluenceAllLayers(self, aq, pylayer, x, y):
         """Returns PotentialInfluence function in aquifer aq in all layers as an
-        array."""
+        array.
+        """
         potInf = self.potentialInfluence(aq, x, y)
         rv = np.zeros((aq.Naquifers, 0), "d")
         for p in potInf:
@@ -165,7 +166,8 @@ class CircleInhom(Element):
 
     def potentialInfluenceSpecLayers(self, aq, pylayer, x, y):
         """Returns PotentialInfluence function in aquifer aq in all layers as an
-        array."""
+        array.
+        """
         potInf = self.potentialInfluence(aq, x, y)
         pylen = len(pylayer)
         rv = np.zeros((pylen, 0), "d")

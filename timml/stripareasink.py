@@ -1,5 +1,3 @@
-import inspect  # Used for storing the input
-
 import numpy as np
 
 from .element import Element
@@ -120,9 +118,6 @@ class StripAreaSinkInhom(Element):
                 u = u1 * (1.0 + eps)  # Go just beyond circle
             else:
                 u = u2 * (1.0 + eps)  # Go just beyond circle
-            xn = x1 + u * (x2 - x1)
-            yn = y1 + u * (y2 - y1)
-            zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
         return changed, terminate, xyztnew, message
 
@@ -250,8 +245,8 @@ class StripAreaSink(Element):
                 u = u1 * (1.0 + eps)  # Go just beyond circle
             else:
                 u = u2 * (1.0 + eps)  # Go just beyond circle
-            xn = x1 + u * (x2 - x1)
-            yn = y1 + u * (y2 - y1)
-            zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
+            x1 + u * (x2 - x1)
+            y1 + u * (y2 - y1)
+            xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
         return changed, terminate, xyztnew, message

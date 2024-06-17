@@ -24,7 +24,7 @@ class StripInhom(AquiferData):
         self.addlinesinks = True  # Set to False not to add line-sinks
 
     def __repr__(self):
-        return "Inhom1D: " + str(list([self.x1, self.x2]))
+        return "Inhom1D: " + str([self.x1, self.x2])
 
     def isinside(self, x, y):
         return (x >= self.x1) and (x < self.x2)
@@ -124,13 +124,17 @@ class StripInhomMaq(StripInhom):
         x1,
         x2,
         kaq=1,
-        z=[1, 0],
-        c=[],
+        z=None,
+        c=None,
         npor=0.3,
         topboundary="conf",
         hstar=None,
         N=None,
     ):
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         (
             kaq,
@@ -194,7 +198,7 @@ class StripInhom3D(StripInhom):
         x1,
         x2,
         kaq,
-        z=[1, 0],
+        z=None,
         kzoverkh=1,
         npor=0.3,
         topboundary="conf",
@@ -203,6 +207,8 @@ class StripInhom3D(StripInhom):
         topthick=0.0,
         N=None,
     ):
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         (
             kaq,

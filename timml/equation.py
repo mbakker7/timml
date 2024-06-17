@@ -21,9 +21,9 @@ class PotentialEquation:
             ieq = 0
             for e in self.model.elementlist:
                 if e.nunknowns > 0:
-                    mat[
-                        istart : istart + self.nlayers, ieq : ieq + e.nunknowns
-                    ] = e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
+                    mat[istart : istart + self.nlayers, ieq : ieq + e.nunknowns] = (
+                        e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
+                    )
                     if e == self:
                         mat[
                             istart : istart + self.nlayers, ieq : ieq + e.nunknowns
@@ -100,9 +100,9 @@ class HeadEquationNoRes:  # This class can be deleted when HeadEquation works wi
             ieq = 0
             for e in self.model.elementlist:
                 if e.nunknowns > 0:
-                    mat[
-                        istart : istart + self.nlayers, ieq : ieq + e.nunknowns
-                    ] = e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
+                    mat[istart : istart + self.nlayers, ieq : ieq + e.nunknowns] = (
+                        e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
+                    )
                     ieq += e.nunknowns
                 else:
                     rhs[istart : istart + self.nlayers] -= e.potentiallayers(

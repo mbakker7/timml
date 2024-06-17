@@ -28,24 +28,21 @@ def get_notebooks():
 
 
 def get_jupyter_kernel():
-    try:
-        jklcmd = ("jupyter", "kernelspec", "list")
-        b = subprocess.Popen(
-            jklcmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        ).communicate()[0]
-        if isinstance(b, bytes):
-            b = b.decode("utf-8")
-        print(b)
-        for line in b.splitlines():
-            if "python" in line:
-                kernel = line.split()[0]
-    except:
-        kernel = None
+    jklcmd = ("jupyter", "kernelspec", "list")
+    b = subprocess.Popen(
+        jklcmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ).communicate()[0]
+    if isinstance(b, bytes):
+        b = b.decode("utf-8")
+    print(b)
+    for line in b.splitlines():
+        if "python" in line:
+            kernel = line.split()[0]
 
     return kernel
 
 
-@pytest.mark.notebooks
+@pytest.mark.notebooks()
 @pytest.mark.parametrize("pth", get_notebooks())
 def test_notebook(pth):
     kernel = get_jupyter_kernel()
