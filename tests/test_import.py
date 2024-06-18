@@ -1,5 +1,6 @@
 def test_import():
-    pass
+    import timml
+    print(timml.__version__)
 
 
 if __name__ == "__main__":
