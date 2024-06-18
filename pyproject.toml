@@ -74,9 +74,6 @@ packages = ["timml", "timml.besselaesnumba"]
 [tool.setuptools.dynamic]
 version = { attr = "timml.version.__version__" }
 
-[tool.ruff]
-exclude = ["examples"]
-
 [tool.ruff.lint]
 # See: https://docs.astral.sh/ruff/rules/
 select = [

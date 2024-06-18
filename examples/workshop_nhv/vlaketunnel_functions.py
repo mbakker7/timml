@@ -6,10 +6,10 @@ import numpy as np
 import timml as tml
 
 
-def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c_channel_bot=30,
+def create_model(kaq=None, c=None,hstar=0, c_channel_bot=30,
                 do_plot=True, df_dh=None):
     """
-    Create a TimML model for Vlaketunnel case
+    Create a TimML model for Vlaketunnel case.
 
     Parameters
     ----------
@@ -33,6 +33,10 @@ def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c
 
     """
     # create model
+    if c is None:
+        c = [1000.0, 2.0, 2.0, 2.0]
+    if kaq is None:
+        kaq = [0.1, 5.0, 15.0, 5.0]
     ml = tml.ModelMaq(
         kaq=kaq,
         z=[1.0, -3.0, -7.0, -7.0, -14.0, -14.0, -30.0, -30.0, -40.0],
@@ -53,7 +57,7 @@ def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c
         # loop over both dewatering locations
         for dewatering_xy in dewatering_xys:
             # loop over the modelled wells, in pratice a lot of more wells are used. Current model has focus on regional effect, therefore limited number of wells are considered sufficient
-            dewatering_east = tml.Well(
+            tml.Well(
                 xw=dewatering_xy[0],
                 yw=dewatering_xy[1],
                 Qw=q_total/len(dewatering_xys),
@@ -67,7 +71,7 @@ def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c
     c_channel = ml.aq.c.copy()
     c_channel[0] = c_channel_bot
 
-    channel_0 = tml.PolygonInhomMaq(
+    tml.PolygonInhomMaq(
         kaq=ml.aq.kaq,
         z=ml.aq.z,
         c=c_channel,
@@ -89,7 +93,7 @@ def create_model(kaq=[0.1, 5.0, 15.0, 5.0], c=[1000.0, 2.0, 2.0, 2.0],hstar=0, c
 
 def plot_model_input(ml):
     """
-    Plot model input in schematic section
+    Plot model input in schematic section.
 
     Parameters
     ----------
@@ -132,7 +136,7 @@ def plot_model_input(ml):
 
 def plot_model_results(ml, df_dh):
     """
-    Plot results of TimML model of Vlaketunnel case
+    Plot results of TimML model of Vlaketunnel case.
 
     Parameters
     ----------
@@ -151,7 +155,7 @@ def plot_model_results(ml, df_dh):
     ml.contour(win=[57000, 60000, 386900, 389100], ngr=50, layers=1,
                levels=[-5,-2,-1,-0.5,-0.1], labels=True, decimals=2, legend=False, newfig=False)
     plt.scatter(df_dh.x, df_dh.y, 20, c=df_dh.color)
-    for index, row in df_dh.iterrows():
+    for _, row in df_dh.iterrows():
         plt.annotate(f'{row.dh_obs:0.2f}', (row.x, row.y),ha=row.ha,va=row.va)
     plt.title('contours in layer 1')
     
