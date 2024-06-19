@@ -1,5 +1,6 @@
 def test_import():
     import timml
+
     print(timml.__version__)
 
 
