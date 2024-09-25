@@ -91,7 +91,6 @@ def create_model(
     c_channel = ml.aq.c.copy()
     c_channel[0] = c_channel_bot
 
-
     # channel_0:
     tml.PolygonInhomMaq(
         kaq=ml.aq.kaq,

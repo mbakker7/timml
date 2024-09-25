@@ -13,17 +13,6 @@ analytic elements and consists of a library of Python scripts and FORTRAN extens
 __name__ = "timml"
 __author__ = "Mark Bakker"
 # Import all classes and functions
-from . import bessel
-from .circareasink import CircAreaSink
-from .constant import Constant, ConstantStar
-from .inhomogeneity import (
-    BuildingPit3D,
-    BuildingPitMaq,
-    LeakyBuildingPit3D,
-    LeakyBuildingPitMaq,
-    PolygonInhom3D,
-    PolygonInhomMaq,
-)
 from timml.inhomogeneity1d import StripInhom3D, StripInhomMaq
 from timml.linedoublet import (
     ImpLineDoublet,
@@ -48,6 +37,18 @@ from timml.trace import timtraceline, timtracelines
 from timml.uflow import Uflow
 from timml.version import __version__
 from timml.well import HeadWell, LargeDiameterWell, Well, WellBase
+
+from . import bessel
+from .circareasink import CircAreaSink
+from .constant import Constant, ConstantStar
+from .inhomogeneity import (
+    BuildingPit3D,
+    BuildingPitMaq,
+    LeakyBuildingPit3D,
+    LeakyBuildingPitMaq,
+    PolygonInhom3D,
+    PolygonInhomMaq,
+)
 
 __all__ = [
     "CircAreaSink",

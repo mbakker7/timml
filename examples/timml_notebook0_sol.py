@@ -57,7 +57,6 @@ ml.contour(
 )
 
 
-
 # The default contour levels are not what we want for this example, so let's
 # specify the levels to go from 39 to 42 with steps of 0.1 (not all those levels
 # are present in the current window).
@@ -81,7 +80,6 @@ ml.contour(
 # A well is located at $(x,y)=(-400,0)$ with a discharge $Q=50$ m$^3$ and a radius of 0.2 m.
 
 # In[8]:
-
 
 
 w = timml.Well(ml, xw=-400, yw=0, Qw=50.0, rw=0.2)
@@ -162,12 +160,10 @@ ml.tracelines(
 )
 
 
-
 # ### Capture zone
 # Create a five year capture zone. You may want to create a contour plot first.
 
 # In[14]:
-
 
 
 ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1), layers=0)

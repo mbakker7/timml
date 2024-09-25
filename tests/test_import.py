@@ -1,5 +1,5 @@
 def test_import():
-    pass
+    import timml
 
     print(timml.__version__)
 

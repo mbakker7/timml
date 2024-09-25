@@ -767,6 +767,7 @@ class LeakyBuildingPit(BuildingPit):
                 f"Found resistances smaller than {self.tiny}, "
                 f"these were replaced by {self.tiny}.",
                 category=UserWarning,
+                stacklevel=1,
             )
             self.res[self.res < self.tiny] = self.tiny
 

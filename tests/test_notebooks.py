@@ -45,7 +45,7 @@ def get_jupyter_kernel():
     return kernel
 
 
-@pytest.mark.notebooks()
+@pytest.mark.notebooks
 @pytest.mark.parametrize("pth", get_notebooks())
 def test_notebook(pth):
     kernel = get_jupyter_kernel()

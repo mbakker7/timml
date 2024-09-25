@@ -675,6 +675,7 @@ class Model3D(Model):
         hstar=0,
     ):
         """Model3D.
+
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top
