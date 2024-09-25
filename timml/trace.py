@@ -20,7 +20,7 @@ def timtraceline(
     vstepfrac=0.2,
     tmax=1e12,
     nstepmax=100,
-    win=[-1e30, 1e30, -1e30, 1e30],
+    win=None,
     silent=False,
     returnlayers=False,
     *,
@@ -60,6 +60,8 @@ def timtraceline(
         - "complete": True if terminated correctly
     """
     verbose = False  # used for debugging
+    if win is None:
+        win = [-1e30, 1e30, -1e30, 1e30]
     if not metadata:
         warnings.warn(_future_warning_metadata, FutureWarning, stacklevel=2)
     # treating aquifer layers and leaky layers the same way
@@ -288,7 +290,7 @@ def timtracelines(
     tmax=1e12,
     nstepmax=100,
     silent=".",
-    win=[-1e30, 1e30, -1e30, 1e30],
+    win=None,
     *,
     metadata=False,
 ):
@@ -320,6 +322,8 @@ def timtracelines(
         if False, return list of xyzt arrays
         if True, return list of result dicionaries
     """
+    if win is None:
+        win = [-1e30, 1e30, -1e30, 1e30]
     xyztlist = []
     for x, y, z in zip(xstart, ystart, zstart):
         xyztlist.append(

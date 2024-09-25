@@ -79,7 +79,7 @@ class PolygonInhom(AquiferData):
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
-                ls = IntHeadDiffLineSink(
+                IntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -93,7 +93,7 @@ class PolygonInhom(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
-                ls = IntFluxDiffLineSink(
+                IntFluxDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -197,8 +197,9 @@ class PolygonInhomMaq(PolygonInhom):
 
 
 class PolygonInhom3D(PolygonInhom):
-    """Model3D Class to create a multi-layer model object consisting of many aquifer
-    layers. The resistance between the layers is computed from the vertical hydraulic
+    """Create a multi-layer model object consisting of many aquifer layers.
+
+    The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.
 
     Parameters
@@ -713,7 +714,6 @@ class LeakyBuildingPit(BuildingPit):
             shape (n_segments,) or (n_layers, n_segments). Default is np.inf,
             which simulates an impermeable wall.
         """
-
         super().__init__(
             model,
             xy,
@@ -744,7 +744,8 @@ class LeakyBuildingPit(BuildingPit):
         if np.any(self.res < self.tiny):
             warn(
                 f"Found resistances smaller than {self.tiny}, "
-                f"these were replaced by {self.tiny}."
+                f"these were replaced by {self.tiny}.",
+                stacklevel=1,
             )
             self.res[self.res < self.tiny] = self.tiny
 
@@ -1016,7 +1017,9 @@ class AreaSinkInhom(Element):
         )
         self.N = N
         self.xc = xc  # x-center of area-sink
-        # self.nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers
+        # Defined here and not in Element as other elements can have
+        # multiple parameters per layers:
+        # self.nparam = 1
         # self.nunknowns = 0
         self.aq = aq
         self.model.add_element(self)

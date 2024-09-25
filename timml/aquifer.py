@@ -2,12 +2,28 @@ import inspect  # Used for storing the input
 
 import numpy as np
 
-from .aquifer_parameters import param_maq
 from .constant import ConstantStar
 
 
 class AquiferData:
     def __init__(self, model, kaq, c, z, npor, ltype):
+        """Initialize aquifer data.
+
+        Parameters
+        ----------
+        model : Model
+            The model to which the aquifer belongs.
+        kaq : float or array of floats
+            Hydraulic conductivity of the aquifer(s).
+        c : float or array of floats
+            Resistance of the leaky layers.
+        z : float or array of floats
+            Elevations of the tops of the layers.
+        npor : float or array of floats
+            Porosity of the aquifer(s).
+        ltype : string or array of strings
+            Type of the layers: 'a' for aquifer, 'l' for leaky layer.
+        """
         # All input variables except model should be numpy arrays
         # That should be checked outside this function
         self.model = model
@@ -33,9 +49,9 @@ class AquiferData:
         self.layernumber[self.ltype == "a"] = np.arange(self.naq)
         self.layernumber[self.ltype == "l"] = np.arange(self.nlayers - self.naq)
         if self.ltype[0] == "a":
-            self.layernumber[
-                self.ltype == "l"
-            ] += 1  # first leaky layer below first aquifer layer
+            self.layernumber[self.ltype == "l"] += (
+                1  # first leaky layer below first aquifer layer
+            )
         self.zaqtop = self.z[:-1][self.ltype == "a"]
         self.zaqbot = self.z[1:][self.ltype == "a"]
         self.Haq = self.zaqtop - self.zaqbot

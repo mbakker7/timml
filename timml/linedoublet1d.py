@@ -127,7 +127,6 @@ class LeakyLineDoublet1D(LineDoublet1D, LeakyWallEquation):
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xld : scalar

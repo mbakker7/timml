@@ -24,7 +24,7 @@ class StripInhom(AquiferData):
         self.addlinesinks = True  # Set to False not to add line-sinks
 
     def __repr__(self):
-        return "Inhom1D: " + str(list([self.x1, self.x2]))
+        return "Inhom1D: " + str([self.x1, self.x2])
 
     def isinside(self, x, y):
         return (x >= self.x1) and (x < self.x2)
@@ -142,8 +142,7 @@ class StripInhomMaq(StripInhom):
 
 
 class StripInhom3D(StripInhom):
-    """Create a strip inhomogeneity for a multi-layer model consisting of stacked
-    aquifer layers.
+    """Strip inhomogeneity for a multi-layer model consisting of stacked aquifer layers.
 
     The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.
