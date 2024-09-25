@@ -820,9 +820,9 @@ class LineSinkStringBase(Element):
 
 
 class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
-    def __init__(
-        self, model, xy=[(-1, 0), (1, 0)], hls=0.0, layers=0, order=0, label=None
-    ):
+    def __init__(self, model, xy=None, hls=0.0, layers=0, order=0, label=None):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineSinkStringBase.__init__(
             self,
@@ -1053,7 +1053,7 @@ class HeadLineSinkString(LineSinkStringBase2):
     def __init__(
         self,
         model,
-        xy=[(-1, 0), (1, 0)],
+        xy=None,
         hls=0,
         res=0,
         wh=1,
@@ -1062,6 +1062,8 @@ class HeadLineSinkString(LineSinkStringBase2):
         label=None,
         name="HeadLineSinkString",
     ):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineSinkStringBase2.__init__(
             self,
@@ -1201,7 +1203,7 @@ class LineSinkDitchString(HeadLineSinkString):
     def __init__(
         self,
         model,
-        xy=[(-1, 0), (1, 0)],
+        xy=None,
         Qls=1,
         res=0,
         wh=1,
@@ -1209,6 +1211,8 @@ class LineSinkDitchString(HeadLineSinkString):
         layers=0,
         label=None,
     ):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         HeadLineSinkString.__init__(
             self,
@@ -1253,7 +1257,7 @@ class LineSinkContainer(Element):
 
     Required attributes:
     lslist: list of line-sinks
-    nls: total number of line-sinks
+    nls: total number of line-sinks.
     """
 
     def __init__(
@@ -1419,15 +1423,19 @@ class HeadLineSinkContainer(LineSinkContainer):
     def __init__(
         self,
         model,
-        xydict={0: [(-1, 0), (1, 0)]},
+        xydict=None,
         hls=0,
         res=0,
         wh=1,
         order=0,
-        laydict={0: 0},
+        laydict=None,
         label=None,
         name="HeadLineSinkContainer",
     ):
+        if laydict is None:
+            laydict = {0: 0}
+        if xydict is None:
+            xydict = {0: [(-1, 0), (1, 0)]}
         self.storeinput(inspect.currentframe())
         LineSinkContainer.__init__(
             self, model, layers=0, order=order, name=name, label=label, aq=None
@@ -1470,11 +1478,11 @@ class HeadLineSinkContainer(LineSinkContainer):
                 )
                 self.lslist.append(ls)
         self.nls = len(self.lslist)
-        # for i in range(self.nls):
-        #     if self.label is not None:
-        #         lslabel = self.label + "_" + str(i)
-        #     else:
-        #         lslabel = self.label
+        for i in range(self.nls):
+            if self.label is not None:
+                self.label + "_" + str(i)
+            else:
+                pass
         LineSinkContainer.initialize(self)
 
     def setparams(self, sol):

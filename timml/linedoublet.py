@@ -439,7 +439,9 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
     :class:`.ImpLineDoublet`
     """
 
-    def __init__(self, model, xy=[(-1, 0), (1, 0)], layers=0, order=0, label=None):
+    def __init__(self, model, xy=None, layers=0, order=0, label=None):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineDoubletStringBase.__init__(
             self,
@@ -490,9 +492,9 @@ class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
     :class:`.ImpLineDoublet`
     """
 
-    def __init__(
-        self, model, xy=[(-1, 0), (1, 0)], res=np.inf, layers=0, order=0, label=None
-    ):
+    def __init__(self, model, xy=None, res=np.inf, layers=0, order=0, label=None):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineDoubletStringBase.__init__(
             self,

@@ -39,6 +39,10 @@ def create_model(
 
     """
     # create model
+    if c is None:
+        c = [1000.0, 2.0, 2.0, 2.0]
+    if kaq is None:
+        kaq = [0.1, 5.0, 15.0, 5.0]
     ml = tml.ModelMaq(
         kaq=kaq,
         z=[1.0, -3.0, -7.0, -7.0, -14.0, -14.0, -30.0, -30.0, -40.0],
@@ -86,6 +90,7 @@ def create_model(
 
     c_channel = ml.aq.c.copy()
     c_channel[0] = c_channel_bot
+
 
     # channel_0:
     tml.PolygonInhomMaq(

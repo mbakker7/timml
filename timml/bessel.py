@@ -12,7 +12,7 @@ def set_bessel_method(method="numba"):
         except ImportError:
             warn(
                 "Cannot import compiled fortran bessel module! Defaulting to numba!",
-                stacklevel=1,
+                category=ImportWarning,
             )
             bessel = import_module("timml.besselaesnumba.besselaesnumba")
     elif method == "numba":

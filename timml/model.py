@@ -382,9 +382,10 @@ class Model(PlotTim):
     def velocomp(self, x, y, z, aq=None, layer_ltype=None):
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
-        assert (z <= aq.z[0]) & (z >= aq.z[-1]), "z value not inside aquifer"
+        if (z > aq.z[0]) or z < (aq.z[-1]):
+            raise ValueError("z value not inside aquifer")
         if layer_ltype is None:
-            layer, ltype, dummy = aq.findlayer(z)
+            layer, ltype, _ = aq.findlayer(z)
         else:
             layer, ltype = layer_ltype
         h = self.head(x, y, aq=aq)
@@ -601,7 +602,11 @@ class ModelMaq(Model):
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
     """
 
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary="conf", hstar=None):
+    def __init__(self, kaq=1, z=None, c=None, npor=0.3, topboundary="conf", hstar=None):
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
         Model.__init__(self, kaq, c, z, npor, ltype)
@@ -661,7 +666,7 @@ class Model3D(Model):
     def __init__(
         self,
         kaq=1,
-        z=[1, 0],
+        z=None,
         kzoverkh=1,
         npor=0.3,
         topboundary="conf",
@@ -669,6 +674,14 @@ class Model3D(Model):
         topthick=0,
         hstar=0,
     ):
+        """Model3D.
+        for semi-confined aquifers, set top equal to 'semi' and provide
+        topres: resistance of top
+        tophick: thickness of top
+        hstar: head above top.
+        """
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
