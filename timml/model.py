@@ -15,8 +15,7 @@ __all__ = ["Model", "ModelMaq", "Model3D"]
 
 
 class Model(PlotTim):
-    """Class to create a model object consisting of an arbitrary sequence of aquifer
-    layers and leaky layers.
+    """Create a model consisting of an arbitrary sequence of aquifers and leaky layers.
 
     Notes
     -----
@@ -120,9 +119,9 @@ class Model(PlotTim):
         sinnorm = np.sin(theta)
         return cosnorm * qxqy[0] + sinnorm * qxqy[1]
 
-    def _normflux_integrand(self, l, theta_norm, x1, y1):
-        x = l * np.cos(theta_norm - np.pi / 2) + x1
-        y = l * np.sin(theta_norm - np.pi / 2) + y1
+    def _normflux_integrand(self, s, theta_norm, x1, y1):
+        x = s * np.cos(theta_norm - np.pi / 2) + x1
+        y = s * np.sin(theta_norm - np.pi / 2) + y1
         return self.normflux(x, y, theta_norm)
 
     def intnormflux_segment(self, x1, y1, x2, y2, method="legendre", ndeg=10):
@@ -172,10 +171,10 @@ class Model(PlotTim):
             return L * qn / 2.0
 
     def intnormflux(self, xy, method="legendre", ndeg=10):
-        """Integrated normal (perpendicular) flux over polyline giving the flux per
-        segment and per aquifer.
+        """Integrated normal (perpendicular) flux over polyline.
 
-        Flux to the left is positive when going from (x1, y1) to (x2, y2).
+        Computes the flux per segment and per aquifer. Flux to the left is positive
+        when going from (x1, y1) to (x2, y2).
 
         Parameters
         ----------
@@ -383,10 +382,8 @@ class Model(PlotTim):
     def velocomp(self, x, y, z, aq=None, layer_ltype=None):
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
-
         if (z > aq.z[0]) or z < (aq.z[-1]):
             raise ValueError("z value not inside aquifer")
-
         if layer_ltype is None:
             layer, ltype, _ = aq.findlayer(z)
         else:
@@ -497,9 +494,8 @@ class Model(PlotTim):
             )  # make no. of processes equal to 1 less than no. of cores
         elif nproc > mp.cpu_count():
             print(
-                "Given 'nproc' larger than no. of cores on machine. Setting 'nproc' to {}.".format(
-                    mp.cpu_count()
-                )
+                "Given 'nproc' larger than no. of cores on machine. "
+                f"Setting 'nproc' to {mp.cpu_count()}."
             )
             nproc = mp.cpu_count()
 
@@ -572,8 +568,7 @@ class Model(PlotTim):
 
 
 class ModelMaq(Model):
-    """Create a Model object by specifying a mult-aquifer sequence of aquifer-
-    leaky layer.
+    """Create a model by specifying a mult-aquifer sequence of aquifer-leaky layer.
 
     Parameters
     ----------
@@ -621,8 +616,7 @@ class ModelMaq(Model):
 
 
 class Model3D(Model):
-    """Model3D Class to create a multi-layer model object consisting of stacked aquifer
-    layers.
+    """Create a multi-layer model object consisting of stacked aquifer layers.
 
     The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.
@@ -657,6 +651,13 @@ class Model3D(Model):
     hstar : float or None (default is None)
         head value above semi-confining top (read if topboundary='semi')
 
+    Notes
+    -----
+    For semi-confined aquifers, set top equal to 'semi' and provide:
+       - topres: resistance of top
+       - tophick: thickness of top
+       - hstar: head above top
+
     Examples
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
@@ -673,7 +674,7 @@ class Model3D(Model):
         topthick=0,
         hstar=0,
     ):
-        """Model3D
+        """Model3D.
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top

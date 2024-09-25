@@ -6,17 +6,17 @@ mark dot bakker at tudelft dot nl
 TimML is a computer program for the simulation of steady-state multiaquifer flow with
 analytic elements and consists of a library of Python scripts and FORTRAN extensions.
 """
+# ruff: noqa: F401
 # from __future__ import division, print_function, absolute_import
 
 # --version number
 __name__ = "timml"
 __author__ = "Mark Bakker"
-from timml import bessel
-
 # Import all classes and functions
-from timml.circareasink import CircAreaSink
-from timml.constant import Constant, ConstantStar
-from timml.inhomogeneity import (
+from . import bessel
+from .circareasink import CircAreaSink
+from .constant import Constant, ConstantStar
+from .inhomogeneity import (
     BuildingPit3D,
     BuildingPitMaq,
     LeakyBuildingPit3D,

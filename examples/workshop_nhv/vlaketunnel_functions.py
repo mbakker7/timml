@@ -6,9 +6,15 @@ import numpy as np
 import timml as tml
 
 
-def create_model(kaq=None, c=None, hstar=0, c_channel_bot=30, do_plot=True, df_dh=None):
-    """
-    Create a TimML model for Vlaketunnel case.
+def create_model(
+    kaq=[0.1, 5.0, 15.0, 5.0],
+    c=[1000.0, 2.0, 2.0, 2.0],
+    hstar=0,
+    c_channel_bot=30,
+    do_plot=True,
+    df_dh=None,
+):
+    """Create a TimML model for Vlaketunnel case.
 
     Parameters
     ----------
@@ -23,7 +29,8 @@ def create_model(kaq=None, c=None, hstar=0, c_channel_bot=30, do_plot=True, df_d
     do_plot : boolean, optional
         Plot results? The default is True.
     df_dh: pd.DataFrame, optional
-        Information about observed drawdowns, required for plotting. The default is None.
+        Information about observed drawdowns, required for plotting.
+        The default is None.
 
     Returns
     -------
@@ -65,7 +72,11 @@ def create_model(kaq=None, c=None, hstar=0, c_channel_bot=30, do_plot=True, df_d
     ):
         # loop over both dewatering locations
         for dewatering_xy in dewatering_xys:
-            # loop over the modelled wells, in pratice a lot of more wells are used. Current model has focus on regional effect, therefore limited number of wells are considered sufficient
+            # loop over the modelled wells, in pratice a lot of more wells are used.
+            # Current model has focus on regional effect, therefore limited number
+            # of wells are considered sufficient
+
+            # dewatering_east:
             tml.Well(
                 xw=dewatering_xy[0],
                 yw=dewatering_xy[1],
@@ -80,6 +91,8 @@ def create_model(kaq=None, c=None, hstar=0, c_channel_bot=30, do_plot=True, df_d
     c_channel = ml.aq.c.copy()
     c_channel[0] = c_channel_bot
 
+
+    # channel_0:
     tml.PolygonInhomMaq(
         kaq=ml.aq.kaq,
         z=ml.aq.z,
@@ -87,7 +100,8 @@ def create_model(kaq=None, c=None, hstar=0, c_channel_bot=30, do_plot=True, df_d
         topboundary="semi",
         npor=[None, None, None, None, None, None, None, None],
         hstar=0.0,
-        # compared to QGIS-Tim export the channel is extended to the north in order to cover the northern observation wells better
+        # compared to QGIS-Tim export the channel is extended to the north in order to
+        # cover the northern observation wells better
         xy=[
             [58921, 390500],
             [59065, 390500],
@@ -112,8 +126,7 @@ def create_model(kaq=None, c=None, hstar=0, c_channel_bot=30, do_plot=True, df_d
 
 
 def plot_model_input(ml):
-    """
-    Plot model input in schematic section.
+    """Plot model input in schematic section.
 
     Parameters
     ----------
@@ -167,8 +180,7 @@ def plot_model_input(ml):
 
 
 def plot_model_results(ml, df_dh):
-    """
-    Plot results of TimML model of Vlaketunnel case.
+    """Plot results of TimML model of Vlaketunnel case.
 
     Parameters
     ----------
@@ -198,7 +210,6 @@ def plot_model_results(ml, df_dh):
     for _, row in df_dh.iterrows():
         plt.annotate(f"{row.dh_obs:0.2f}", (row.x, row.y), ha=row.ha, va=row.va)
     plt.title("contours in layer 1")
-
     # plot model input
     plt.subplot(222)
     plot_model_input(ml)

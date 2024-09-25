@@ -82,7 +82,8 @@ class CircleInhom(Element):
                 # first value in row is 1/r**p
                 self.matRout[p, 0] = 1.0 / self.R ** (p)
                 self.matRout[p, 1:] = scipy.special.kn(p, rolab)  # other values are Kp
-            # first term is logarithm, so scale by np.log(self.R+1)to make sure that self.R can be 1
+            # first term is logarithm, so scale by np.log(self.R+1) to make sure
+            # that self.R can be 1
             self.matRout[0, 0] = np.log(self.R + 1.0) / (2.0 * np.pi)
         elif self.aqout.type == self.aqout.semi:
             for p in range(self.order + 1):
@@ -132,8 +133,9 @@ class CircleInhom(Element):
         return rv
 
     def potentialInfluenceInLayer(self, aq, pylayer, x, y):
-        """Returns PotentialInfluence function in aquifer aq in pylayer as array (1
-        value per parameter).
+        """Returns PotentialInfluence function in aquifer aq in pylayer as array.
+
+        Returns 1 value per parameter.
 
         Notes
         -----
@@ -151,8 +153,23 @@ class CircleInhom(Element):
         return rv
 
     def potentialInfluenceAllLayers(self, aq, pylayer, x, y):
-        """Returns PotentialInfluence function in aquifer aq in all layers as an
-        array.
+        """Returns PotentialInfluence function in aquifer aq in all layers as an array.
+
+        Parameters
+        ----------
+        aq : object
+            Aquifer object.
+        pylayer : list
+            List of layers.
+        x : float
+            x-coordinate.
+        y : float
+            y-coordinate.
+
+        Returns
+        -------
+        rv : array
+            Array of potential influence in all layers.
         """
         potInf = self.potentialInfluence(aq, x, y)
         rv = np.zeros((aq.Naquifers, 0), "d")
@@ -165,8 +182,23 @@ class CircleInhom(Element):
         return rv
 
     def potentialInfluenceSpecLayers(self, aq, pylayer, x, y):
-        """Returns PotentialInfluence function in aquifer aq in all layers as an
-        array.
+        """Returns PotentialInfluence function in aquifer aq in all layers as an array.
+
+        Parameters
+        ----------
+        aq : object
+            Aquifer object.
+        pylayer : list
+            List of layers.
+        x : float
+            x-coordinate.
+        y : float
+            y-coordinate.
+
+        Returns
+        -------
+        rv : array
+            Array of potential influence in specified layers.
         """
         potInf = self.potentialInfluence(aq, x, y)
         pylen = len(pylayer)
@@ -323,8 +355,9 @@ class CircleInhom(Element):
         return rvrad
 
     def dischargeInfluenceRadInLayer(self, aq, pylayer, x, y):
-        """Returns dischargeInfluenceRadInLayer function in aquifer aq in pylayer as
-        list (1 value per parameter).
+        """Returns dischargeInfluenceRadInLayer function in aquifer aq in pylayer.
+
+        Returns 1 value per parameter.
 
         Notes
         -----

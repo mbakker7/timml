@@ -36,8 +36,9 @@ class Element:
         return np.sum(self.parameters * self.potinf(x, y, aq), 0)
 
     def potinflayers(self, x, y, layers, aq=None):
-        """Returns array of size (len(layers),nparam) only used in building
-        equations.
+        """Returns array of size (len(layers),nparam).
+
+        Only used in building equations.
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)
@@ -65,8 +66,9 @@ class Element:
         return np.sum(self.parameters * self.disvecinf(x, y, aq), 1)
 
     def disvecinflayers(self, x, y, layers, aq=None):
-        """Returns two arrays of size (len(layers),nparam) only used in building
-        equations.
+        """Returns two arrays of size (len(layers),nparam).
+
+        Only used in building equations.
         """
         if aq is None:
             aq = self.model.aq.find_aquifer_data(x, y)

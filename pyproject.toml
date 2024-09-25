@@ -50,14 +50,7 @@ repository = "https://github.com/mbakker7/timml"
 documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 
 [project.optional-dependencies]
-ci = [
-    "pytest>=4.6",
-    "pytest-cov",
-    "jupyter>=1.0.0",
-    "ruff",
-    "coveralls",
-    "shapely",
-]
+ci = ["pytest>=4.6", "pytest-cov", "jupyter>=1.0.0", "coveralls", "shapely", "ruff"]
 docs = [
     "timml[ci]",
     "sphinx>=3.1, <6.0",
@@ -74,29 +67,30 @@ packages = ["timml", "timml.besselaesnumba"]
 [tool.setuptools.dynamic]
 version = { attr = "timml.version.__version__" }
 
+[tool.ruff]
+line-length = 88
+extend-include = ["*.ipynb"]
+
 [tool.ruff.lint]
 # See: https://docs.astral.sh/ruff/rules/
 select = [
     "C4",  # flake8-comprehensions
-    "E",  # pycodestyle
-    "F",  # pyflakes
-    "I",  # isort
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "I",   # isort
     "PT",  # pytest-style
-    "D",  # pydocstyle
-    "B",  # flake8-bugbear
-    "NPY",  # numpy
+    "D",   # pydocstyle
+    "B",   # flake8-bugbear
+    "NPY", # numpy
 ]
 ignore = [
-    "D100",  # Missing docstring in public module
-    "E501",  # Line too long
-    "D101",  # Missing docstring in public class
-    "D102",  # Missing docstring in public method
-    "D103",  # Missing docstring in public function
-    "D104",  # Missing docstring in public package
-    "D105",  # Missing docstring in magic method
-    "D205",  # 1 blank line required between summary line and description
-    "D401",  # First line of docstring should be in imperative mood
-    "E741",  # Ambiguous variable name (such as "l")
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D105", # Missing docstring in magic method
+    "D401", # First line should be in imperative mood
+    "B006", # Do not use mutable data structures as default arguments
 ]
 
 [tool.ruff.lint.pydocstyle]

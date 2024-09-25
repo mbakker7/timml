@@ -121,7 +121,6 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
     In case the line-sink is screened in multiple layers, the discharge is distributed
     over the layers such that the head inside the line-sink is constant in all layers.
 
-
     Parameters
     ----------
     model : Model object
@@ -134,9 +133,11 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
-        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
-        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
-        if scalar: the width of the stream that partially penetrates the aquifer layer
+        * if 'H': (default) distance is equal to the thickness of the aquifer layer
+          (when flow comes mainly from one side)
+        * if '2H': distance is twice the thickness of the aquifer layer
+          (when flow comes from both sides)
+        * if scalar: the width of the stream that partially penetrates the aquifer layer
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
@@ -188,9 +189,11 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
-        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
-        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
-        if scalar: the width of the stream that partially penetrates the aquifer layer
+        * if 'H': (default) distance is equal to the thickness of the aquifer layer
+          (when flow comes mainly from one side)
+        * if '2H': distance is twice the thickness of the aquifer layer
+          (when flow comes from both sides)
+        * if scalar: the width of the stream that partially penetrates the aquifer layer
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer

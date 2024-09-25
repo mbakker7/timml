@@ -377,7 +377,8 @@ class LineDoubletStringBase(Element):
                 self.ldlist[0].xc[0], self.ldlist[0].yc[0]
             )
         self.parameters = np.zeros((self.nparam, 1))
-        ## As parameters are only stored for the element not the list, we need to combine the following
+        # As parameters are only stored for the element not the list,
+        # we need to combine the following
         self.xc = np.array([ld.xc for ld in self.ldlist]).flatten()
         self.yc = np.array([ld.yc for ld in self.ldlist]).flatten()
         self.xcin = np.array([ld.xcin for ld in self.ldlist]).flatten()

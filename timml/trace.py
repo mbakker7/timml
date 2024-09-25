@@ -62,6 +62,8 @@ def timtraceline(
     if win is None:
         win = [-1e30, 1e30, -1e30, 1e30]
     verbose = False  # used for debugging
+    if win is None:
+        win = [-1e30, 1e30, -1e30, 1e30]
     if not metadata:
         warnings.warn(_future_warning_metadata, FutureWarning, stacklevel=2)
     # treating aquifer layers and leaky layers the same way

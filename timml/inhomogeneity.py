@@ -201,8 +201,9 @@ class PolygonInhomMaq(PolygonInhom):
 
 
 class PolygonInhom3D(PolygonInhom):
-    """Model3D Class to create a multi-layer model object consisting of many aquifer
-    layers. The resistance between the layers is computed from the vertical hydraulic
+    """Create a multi-layer model object consisting of many aquifer layers.
+
+    The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.
 
     Parameters
@@ -733,6 +734,7 @@ class LeakyBuildingPit(BuildingPit):
         """
         if layers is None:
             layers = [0]
+
         super().__init__(
             model,
             xy,
@@ -765,7 +767,6 @@ class LeakyBuildingPit(BuildingPit):
                 f"Found resistances smaller than {self.tiny}, "
                 f"these were replaced by {self.tiny}.",
                 category=UserWarning,
-                stacklevel=1,
             )
             self.res[self.res < self.tiny] = self.tiny
 
@@ -1047,7 +1048,9 @@ class AreaSinkInhom(Element):
         )
         self.N = N
         self.xc = xc  # x-center of area-sink
-        # self.nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers
+        # Defined here and not in Element as other elements can have
+        # multiple parameters per layers:
+        # self.nparam = 1
         # self.nunknowns = 0
         self.aq = aq
         self.model.add_element(self)

@@ -77,7 +77,8 @@ class HeadEquation:
         return mat, rhs
 
 
-class HeadEquationNoRes:  # This class can be deleted when HeadEquation works with zero resistance
+# This class can be deleted when HeadEquation works with zero resistance:
+class HeadEquationNoRes:
     def equation(self):
         """Mix-in class that returns matrix rows for head-specified conditions.
 
@@ -156,8 +157,7 @@ class MscreenWellEquation:
 
 class MscreenWellNoflowEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for mscreen condition with no flow in
-        the non-screened layers.
+        """Matrix rows for mscreen condition with no flow in the non-screened layers.
 
         Notes
         -----
@@ -339,8 +339,7 @@ class LeakyWallEquation:
 
 class HeadDiffEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside
-        and outside equals zeros.
+        """Matrix rows for difference in head between inside and outside equals zeros.
 
         Returns
         -------
@@ -383,8 +382,7 @@ class HeadDiffEquation:
 
 class HeadDiffEquation2:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside
-        and outside equals zeros.
+        """Matrix rows for difference in head between inside and outside equals zeros.
 
         Notes
         -----
@@ -463,8 +461,7 @@ class HeadDiffEquation2:
 
 class DisvecDiffEquation:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside
-        and outside equals zeros.
+        """Matrix rows for difference in head between inside and outside equals zeros.
 
         Returns
         -------
@@ -505,8 +502,7 @@ class DisvecDiffEquation:
 
 class DisvecDiffEquation2:
     def equation(self):
-        """Mix-in class that returns matrix rows for difference in head between inside
-        and outside equals zeros.
+        """Matrix rows for difference in head between inside and outside equals zeros.
 
         Returns
         -------

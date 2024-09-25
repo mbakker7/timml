@@ -146,8 +146,7 @@ class StripInhomMaq(StripInhom):
 
 
 class StripInhom3D(StripInhom):
-    """Create a strip inhomogeneity for a multi-layer model consisting of stacked
-    aquifer layers.
+    """Strip inhomogeneity for a multi-layer model consisting of stacked aquifer layers.
 
     The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.

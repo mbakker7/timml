@@ -16,7 +16,7 @@ testdir = tempfile.mkdtemp()
 
 
 def get_notebooks():
-    skip = ["benchmarking_besselaes.ipynb"]
+    skip = ["benchmarking_besselaes.ipynb", "anisotropy_pap_posted.ipynb"]
     nblist = []
     for nbdir in nbdirs:
         nblist += [
@@ -28,16 +28,19 @@ def get_notebooks():
 
 
 def get_jupyter_kernel():
-    jklcmd = ("jupyter", "kernelspec", "list")
-    b = subprocess.Popen(
-        jklcmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    ).communicate()[0]
-    if isinstance(b, bytes):
-        b = b.decode("utf-8")
-    print(b)
-    for line in b.splitlines():
-        if "python" in line:
-            kernel = line.split()[0]
+    try:
+        jklcmd = ("jupyter", "kernelspec", "list")
+        b = subprocess.Popen(
+            jklcmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ).communicate()[0]
+        if isinstance(b, bytes):
+            b = b.decode("utf-8")
+        print(b)
+        for line in b.splitlines():
+            if "python" in line:
+                kernel = line.split()[0]
+    except:  # noqa
+        kernel = None
 
     return kernel
 

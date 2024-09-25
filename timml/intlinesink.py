@@ -262,14 +262,13 @@ class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
 
 
 class LeakyIntHeadDiffLineSink(LineSinkHoBase, IntLeakyWallEquation):
-    """
-    Element to set a numerically integrated head along a linesink.
+    """Element to set numerically integrated head along linesink.
 
-    The numerically integrated head along the linesink is equal to:
+    Set integrated head equal to:
 
         Qnormal = H * (headin - headout) / res
 
-    Used in LeakyBuildingPit element
+    Used in LeakyBuildingPit element.
     """
 
     def __init__(

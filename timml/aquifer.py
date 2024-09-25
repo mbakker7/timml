@@ -7,6 +7,23 @@ from .constant import ConstantStar
 
 class AquiferData:
     def __init__(self, model, kaq, c, z, npor, ltype):
+        """Initialize aquifer data.
+
+        Parameters
+        ----------
+        model : Model
+            The model to which the aquifer belongs.
+        kaq : float or array of floats
+            Hydraulic conductivity of the aquifer(s).
+        c : float or array of floats
+            Resistance of the leaky layers.
+        z : float or array of floats
+            Elevations of the tops of the layers.
+        npor : float or array of floats
+            Porosity of the aquifer(s).
+        ltype : string or array of strings
+            Type of the layers: 'a' for aquifer, 'l' for leaky layer.
+        """
         # All input variables except model should be numpy arrays
         # That should be checked outside this function
         self.model = model
