@@ -39,8 +39,9 @@ class LineSinkChangeTrace:
         message = None
         if ltype == "a":
             if True:
-                #            if (layer == self.layers).any():  # in layer where line-sink is screened
-                # not needed anymore, I thin this is all taken care of with checking Qn1 and Qn2
+                # if (layer == self.layers).any():# in layer where line-sink is screened
+                # not needed anymore, I thin this is all taken care of with
+                # checking Qn1 and Qn2
                 if verbose:
                     print("hello changetrace")
                     print("xyz1:", xyzt1[:-1])
@@ -83,9 +84,9 @@ class LineSinkChangeTrace:
                             print("xnew2, ynew2:", xnew2, ynew2)
                             print("Qn1, Qn2", Qn1, Qn2)
                             print("Qn2 > Qn1:", Qn2 > Qn1)
-                        if (
-                            Qn1 < 0
-                        ):  # trying to cross line-sink that infiltrates, stay on bottom, don't terminate
+                        if Qn1 < 0:
+                            # trying to cross line-sink that infiltrates, stay on
+                            # bottom, don't terminate
                             if verbose:
                                 print("change 1")
                             xnew = xnew1
@@ -518,12 +519,10 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
 
 
 class HeadLineSink(LineSinkHoBase, HeadEquation):
-    """Create a head-specified line-sink which may optionally have a width and
-    resistance.
+    """Head-specified line-sink which may optionally have a width and resistance.
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     x1 : scalar
@@ -543,9 +542,11 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
-        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
-        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
-        if scalar: the width of the stream that partially penetrates the aquifer layer
+        * if 'H': (default) distance is equal to the thickness of the aquifer layer
+          (when flow comes mainly from one side)
+        * if '2H': distance is twice the thickness of the aquifer layer
+          (when flow comes from both sides)
+        * if scalar: the width of the stream that partially penetrates the aquifer layer
     order : int (default is 0)
         polynomial order or inflow along line-sink
     layers : scalar, list or array
@@ -557,7 +558,6 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
 
     See Also
     --------
-
     :class:`.HeadLineSinkString`
     """
 
@@ -657,12 +657,10 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
 
 
 class LineSinkDitch(HeadLineSink):
-    """Class to create a line-sink for which the total discharge is specified, and for
-    which the head along the line-sink is uniform but unknown.
+    """Line-sink with specified total discharge, and uniform but unknown head.
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     x1 : scalar
@@ -679,9 +677,11 @@ class LineSinkDitch(HeadLineSink):
         resistance of line-sink
     wh : scalar or str
         distance over which water enters line-sink
-        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
-        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
-        if scalar: the width of the stream that partially penetrates the aquifer layer
+        * if 'H': (default) distance is equal to the thickness of the aquifer layer
+          (when flow comes mainly from one side)
+        * if '2H': distance is twice the thickness of the aquifer layer
+          (when flow comes from both sides)
+        * if scalar: the width of the stream that partially penetrates the aquifer layer
     order : int (default is 0)
         polynomial order or inflow along line-sink
     layers : scalar, list or array
@@ -693,7 +693,6 @@ class LineSinkDitch(HeadLineSink):
 
     See Also
     --------
-
     :class:`.LineSinkDitchString`
     """
 
@@ -872,7 +871,6 @@ class LineSinkStringBase(Element):
         rv : np.array
             array of shape (nlay, nlinesinks)
         """
-
         Qls = self.parameters[:, 0] * self.dischargeinf()
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
         Qls = Qls.sum(axis=2)
@@ -883,14 +881,14 @@ class LineSinkStringBase(Element):
 
     def discharge(self):
         """Discharge of the element in each layer."""
-
         rv = np.zeros(self.aq[0].naq)
         Qls = self.parameters[:, 0] * self.dischargeinf()
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
         Qls = np.sum(Qls, 2)
         for i, q in enumerate(Qls):
-            rv[self._layers[i]] += q
-            # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1), self.nlayers), 0)
+            rv[self.layers[i]] += q
+            # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1),
+            # self.nlayers), 0)
         return rv
 
     def changetrace(
@@ -920,12 +918,10 @@ class LineSinkStringBase(Element):
 
 
 class HeadLineSinkString(LineSinkStringBase):
-    """Class to create a string of head-specified line-sinks which may optionally have a
-    width and resistance.
+    """String of head-specified line-sinks with optional width and resistance.
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xy : array or list
@@ -960,14 +956,13 @@ class HeadLineSinkString(LineSinkStringBase):
 
     See Also
     --------
-
     :class:`.HeadLineSink`
     """
 
     def __init__(
         self,
         model,
-        xy=[(-1, 0), (1, 0)],
+        xy=None,
         hls=0,
         res=0,
         wh=1,
@@ -977,6 +972,8 @@ class HeadLineSinkString(LineSinkStringBase):
         name="HeadLineSinkString",
         refine_level=1,
     ):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         LineSinkStringBase.__init__(
             self,
@@ -1115,13 +1112,10 @@ class HeadLineSinkString(LineSinkStringBase):
 
 
 class LineSinkDitchString(HeadLineSinkString):
-    """Class to create a string of LineSinkDitch elements for which the total discharge
-    of the string is specified, and for which the head along the entire string is
-    uniform but unknown.
+    """String of LineSinkDitches with specified discharge and uniform unknown head.
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xy : array or list
@@ -1131,11 +1125,13 @@ class LineSinkDitchString(HeadLineSinkString):
         total discharge of the string
     res : scalar (default is 0)
         resistance of line-sinks in string
-    wh : scalar or str
-        distance over which water enters line-sink
-        if 'H': (default) distance is equal to the thickness of the aquifer layer (when flow comes mainly from one side)
-        if '2H': distance is twice the thickness of the aquifer layer (when flow comes from both sides)
-        if scalar: the width of the stream that partially penetrates the aquifer layer
+    wh : float or str
+        distance over which water enters line-sink.
+           * if 'H': (default) distance is equal to the thickness of the aquifer
+             (when flow comes mainly from one side)
+           * if '2H': distance is twice the thickness of the aquifer layer
+             (when flow comes from both sides)
+           * if scalar: the width of the stream that partially penetrates the aquifer
     order : int (default is 0)
         polynomial order or inflow along each line-sink in string
     layers : scalar, list or array
@@ -1147,14 +1143,13 @@ class LineSinkDitchString(HeadLineSinkString):
 
     See Also
     --------
-
     :class:`.LineSinkDitch`
     """
 
     def __init__(
         self,
         model,
-        xy=[(-1, 0), (1, 0)],
+        xy=None,
         Qls=1,
         res=0,
         wh=1,
@@ -1163,6 +1158,8 @@ class LineSinkDitchString(HeadLineSinkString):
         label=None,
         refine_level=1,
     ):
+        if xy is None:
+            xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
         HeadLineSinkString.__init__(
             self,
@@ -1213,11 +1210,11 @@ class LineSinkDitchString(HeadLineSinkString):
 
 
 class LineSinkContainer(Element):
-    """
-    Container class for bunch of line-sinks
+    """Container class for bunch of line-sinks.
+
     Required attributes:
     lslist: list of line-sinks
-    nls: total number of line-sinks
+    nls: total number of line-sinks.
     """
 
     def __init__(
@@ -1327,7 +1324,8 @@ class LineSinkContainer(Element):
         Qls = np.sum(Qls, 2)
         for i, q in enumerate(Qls):
             rv[self.layers[i]] += q
-            # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1), self.nlayers), 0)
+            # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1),
+            # self.nlayers), 0)
         return rv
 
     def changetrace(
@@ -1352,12 +1350,10 @@ class LineSinkContainer(Element):
 
 
 class HeadLineSinkContainer(LineSinkContainer):
-    """Class to create a container of head-specified line-sinks which may optionally
-    have a width and resistance.
+    """Container of head-specified line-sinks with optional width and resistance.
 
     Parameters
     ----------
-
     model : Model object
         Model to which the element is added
     xydict : dictionary
@@ -1384,22 +1380,25 @@ class HeadLineSinkContainer(LineSinkContainer):
 
     See Also
     --------
-
     :class:`.HeadLineSink`
     """
 
     def __init__(
         self,
         model,
-        xydict={0: [(-1, 0), (1, 0)]},
+        xydict=None,
         hls=0,
         res=0,
         wh=1,
         order=0,
-        laydict={0: 0},
+        laydict=None,
         label=None,
         name="HeadLineSinkContainer",
     ):
+        if laydict is None:
+            laydict = {0: 0}
+        if xydict is None:
+            xydict = {0: [(-1, 0), (1, 0)]}
         self.storeinput(inspect.currentframe())
         LineSinkContainer.__init__(
             self, model, layers=0, order=order, name=name, label=label, aq=None
@@ -1446,6 +1445,11 @@ class HeadLineSinkContainer(LineSinkContainer):
                 )
                 self.lslist.append(ls)
         self.nls = len(self.lslist)
+        for i in range(self.nls):
+            if self.label is not None:
+                self.label + "_" + str(i)
+            else:
+                pass
         LineSinkContainer.initialize(self)
 
     def setparams(self, sol):

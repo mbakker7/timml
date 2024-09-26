@@ -14,14 +14,14 @@ maintainers = [
     { name = "Mark Bakker", email = "markbak@gmail.com" },
     { name = "Davíd Brakenhoff", email = "d.brakenhoff@artesia-water.nl" },
 ]
-requires-python = ">= 3.7"
+requires-python = ">= 3.10"
 dependencies = [
-    "numpy>=1.17",
-    "scipy>=1.5",
-    "numba>=0.5",
-    "matplotlib>=3.1",
-    "lmfit>=1.0",
-    "pandas>=1.1",
+    "numpy",
+    "scipy",
+    "numba",
+    "matplotlib",
+    "lmfit",
+    "pandas",
 ]
 
 keywords = ["hydrology", "groundwater", "model", "analytic element method"]
@@ -50,22 +50,16 @@ repository = "https://github.com/mbakker7/timml"
 documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 
 [project.optional-dependencies]
-ci = [
-    "pytest>=4.6",
-    "pytest-cov",
-    "jupyter>=1.0.0",
-    "flake8",
-    "coveralls",
-    "shapely",
-]
+ci = ["pytest>=4.6", "pytest-cov", "jupyter>=1.0.0", "coveralls", "shapely", "ruff"]
 docs = [
     "timml[ci]",
-    "sphinx>=3.1, <6.0",
+    "sphinx",
     "sphinx-design",
     "pydata-sphinx-theme",
     "numpydoc",
     "myst_nb",
     "sphinxcontrib-bibtex",
+    "sphinx-autoapi",
 ]
 
 [tool.setuptools]
@@ -74,10 +68,31 @@ packages = ["timml", "timml.besselaesnumba"]
 [tool.setuptools.dynamic]
 version = { attr = "timml.version.__version__" }
 
-[tool.black]
+[tool.ruff]
 line-length = 88
+extend-include = ["*.ipynb"]
 
-[tool.isort]
-profile = "black"
-src_paths = ["timml"]
-line_length = 88
+[tool.ruff.lint]
+# See: https://docs.astral.sh/ruff/rules/
+select = [
+    "C4",  # flake8-comprehensions
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "I",   # isort
+    "PT",  # pytest-style
+    "D",   # pydocstyle
+    "B",   # flake8-bugbear
+    "NPY", # numpy
+]
+ignore = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D105", # Missing docstring in magic method
+    "D401", # First line should be in imperative mood
+    "B006", # Do not use mutable data structures as default arguments
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

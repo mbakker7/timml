@@ -75,7 +75,7 @@ class PolygonInhom(AquiferData):
         self.extent = [self.xmin, self.xmax, self.ymin, self.ymax]
 
     def __repr__(self):
-        return "PolygonInhom: " + str(list(zip(self.x, self.y)))
+        return "PolygonInhom: " + str(list(zip(self.x, self.y, strict=False)))
 
     def isinside(self, x, y):
         rv = 0
@@ -110,7 +110,7 @@ class PolygonInhom(AquiferData):
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
-                ls_in = IntHeadDiffLineSink(
+                IntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -124,7 +124,7 @@ class PolygonInhom(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
-                ls_out = IntFluxDiffLineSink(
+                IntFluxDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -215,8 +215,8 @@ class PolygonInhomMaq(PolygonInhom):
         model,
         xy,
         kaq=1,
-        z=[1, 0],
-        c=[],
+        z=None,
+        c=None,
         npor=0.3,
         topboundary="conf",
         hstar=None,
@@ -226,6 +226,10 @@ class PolygonInhomMaq(PolygonInhom):
         refine_level=1,
         addtomodel=True,
     ):
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -256,8 +260,9 @@ class PolygonInhomMaq(PolygonInhom):
 
 
 class PolygonInhom3D(PolygonInhom):
-    """Model3D Class to create a multi-layer model object consisting of many aquifer
-    layers. The resistance between the layers is computed from the vertical hydraulic
+    """Create a multi-layer model object consisting of many aquifer layers.
+
+    The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.
 
     Parameters
@@ -310,7 +315,7 @@ class PolygonInhom3D(PolygonInhom):
         model,
         xy,
         kaq=1,
-        z=[1, 0],
+        z=None,
         kzoverkh=1,
         npor=0.3,
         topboundary="conf",
@@ -323,6 +328,8 @@ class PolygonInhom3D(PolygonInhom):
         refine_level=1,
         addtomodel=True,
     ):
+        if z is None:
+            z = [1, 0]
         if N is not None:
             assert (
                 topboundary[:4] == "conf"
@@ -349,6 +356,26 @@ class PolygonInhom3D(PolygonInhom):
         )
 
 
+def compute_z1z2(xy):
+    # Returns z1 and z2 of polygon, in clockwise order
+    x, y = list(zip(*xy, strict=False))
+    if x[0] == x[-1] and y[0] == y[-1]:  # In case last point is repeated
+        x = x[:-1]
+        y = y[:-1]
+    z1 = np.array(x) + np.array(y) * 1j
+    index = list(range(1, len(z1))) + [0]
+    z2 = z1[index]
+    Z = 1e-6j
+    z = Z * (z2[0] - z1[0]) / 2.0 + 0.5 * (z1[0] + z2[0])
+    bigZ = (2.0 * z - (z1 + z2)) / (z2 - z1)
+    bigZmin1 = bigZ - 1.0
+    bigZplus1 = bigZ + 1.0
+    angle = np.sum(np.log(bigZmin1 / bigZplus1).imag)
+    if angle < np.pi:  # reverse order
+        z1 = z1[::-1]
+        z2 = z1[index]
+    return z1, z2
+
 class BuildingPit(AquiferData):
     tiny = 1e-8
 
@@ -364,7 +391,7 @@ class BuildingPit(AquiferData):
         npor=0.3,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         refine_level=1,
         addtomodel=True,
     ):
@@ -413,6 +440,8 @@ class BuildingPit(AquiferData):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
+        if layers is None:
+            layers = [0]
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
         self.order = order
         self.ndeg = ndeg
@@ -587,14 +616,14 @@ class BuildingPitMaq(BuildingPit):
         model,
         xy,
         kaq=1.0,
-        c=[],
-        z=[1, 0],
+        c=None,
+        z=None,
         topboundary="conf",
         hstar=None,
         npor=0.3,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         refine_level=1,
         addtomodel=True,
     ):
@@ -645,6 +674,12 @@ class BuildingPitMaq(BuildingPit):
             refine element by splitting up each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
+        if layers is None:
+            layers = [0]
+        if z is None:
+            z = [1, 0]
+        if c is None:
+            c = []
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -670,7 +705,7 @@ class BuildingPit3D(BuildingPit):
         xy,
         kaq=1.0,
         kzoverkh=1.0,
-        z=[1, 0],
+        z=None,
         topboundary="conf",
         topres=0,
         topthick=0,
@@ -678,7 +713,7 @@ class BuildingPit3D(BuildingPit):
         npor=0.3,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         refine_level=1,
         addtomodel=True,
     ):
@@ -731,6 +766,10 @@ class BuildingPit3D(BuildingPit):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
+        if layers is None:
+            layers = [0]
+        if z is None:
+            z = [1, 0]
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -764,7 +803,7 @@ class LeakyBuildingPit(BuildingPit):
         hstar=None,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         res=np.inf,
         refine_level=1,
         addtomodel=True,
@@ -818,6 +857,8 @@ class LeakyBuildingPit(BuildingPit):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
+        if layers is None:
+            layers = [0]
         super().__init__(
             model,
             xy,
@@ -850,7 +891,9 @@ class LeakyBuildingPit(BuildingPit):
         if np.any(self.res < self.tiny):
             warn(
                 f"Found resistances smaller than {self.tiny}, "
-                f"these were replaced by {self.tiny}."
+                f"these were replaced by {self.tiny}.",
+                category=UserWarning,
+                stacklevel=1,
             )
             self.res[self.res < self.tiny] = self.tiny
 
@@ -1023,18 +1066,24 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
         model,
         xy,
         kaq=1.0,
-        z=[1, 0],
-        c=[],
+        z=None,
+        c=None,
         npor=0.3,
         topboundary="conf",
         hstar=None,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         res=np.inf,
         refine_level=1,
         addtomodel=True,
     ):
+        if layers is None:
+            layers = [0]
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         (kaq, c, npor, ltype) = param_maq(kaq, z, c, npor, topboundary)
         super().__init__(
             model=model,
@@ -1060,7 +1109,7 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
         model,
         xy,
         kaq=1.0,
-        z=[1, 0],
+        z=None,
         kzoverkh=1.0,
         npor=0.3,
         topboundary="conf",
@@ -1069,7 +1118,7 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
         hstar=None,
         order=3,
         ndeg=3,
-        layers=[0],
+        layers=None,
         res=np.inf,
         refine_level=1,
         addtomodel=True,
@@ -1127,6 +1176,10 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
             refine element by partitioning each side into refine_level segments, default
             is 1, which means no refinement is applied.
         """
+        if layers is None:
+            layers = [0]
+        if z is None:
+            z = [1, 0]
         (kaq, c, npor, ltype) = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
@@ -1155,7 +1208,9 @@ class AreaSinkInhom(Element):
         )
         self.N = N
         self.xc = xc  # x-center of area-sink
-        # self.nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers
+        # Defined here and not in Element as other elements can have
+        # multiple parameters per layers:
+        # self.nparam = 1
         # self.nunknowns = 0
         self.aq = aq
         self.model.add_element(self)

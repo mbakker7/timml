@@ -99,7 +99,8 @@ def prepare_z(x, y, z1, z2):
 
 @numba.njit(nogil=True, cache=True)
 def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
-    """
+    """potbeslsho.
+
     Parameters
     ----------
        x,y: Point where potential is computed
@@ -110,18 +111,21 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
        ilap: equals 1 when first value is Laplace line-sink and first labda equals zero
        naq: Number of aquifers
        rv(naq): Array to store return value (must be pre-allocated)
+
     Returns
-    --------
+    -------
        rv(naq): Potentials. First spot is Laplace value if ilap=1
     """
-
     rv = np.zeros(naq)
 
     # lstype = 1 means line-sink
     lstype = 1
 
     # Radius of convergence
-    Rconv = 7.0
+    if order > 5:
+        Rconv = 5.0
+    else:
+        Rconv = 7.0
 
     # if (ilap==1) :
     #    istart = 1
@@ -146,7 +150,8 @@ def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     # N-1 leakage factors
     for i in range(ilap, naq):
         # Check whether entire linesink is outside radius of convergence
-        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L, or |zeta|>1/biglab+7 (zeta is called z here)
+        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L,
+        # or |zeta|>1/biglab+7 (zeta is called z here)
         biglab = 2.0 * labda[i] / Lin
         z = (2.0 * zin - (z1in + z2in)) / (z2in - z1in) / biglab
 
@@ -178,12 +183,15 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
     #   Naquifers: Number of aquifers
     #   rvx(Naquifers),rvy(Naquifers): Arrays to store return values
     # Output:
-    #   rvx(Naquifers),rvy(Naquifers): Values of Qx and Qy with Laplace value in first spot
-    #                   and mod.Helmholtz potentials in remaining spots
+    #   rvx(Naquifers),rvy(Naquifers): Values of Qx and Qy with Laplace value in first
+    # spot and mod.Helmholtz potentials in remaining spots
 
     rv = np.zeros((2, naq))
     # Radius of convergence
-    Rconv = 7.0
+    if order > 5:
+        Rconv = 5.0
+    else:
+        Rconv = 7.0
 
     # lstype = 1 means line-sink
     lstype = 1
@@ -221,7 +229,8 @@ def disbeslsho(x, y, z1, z2, labda, order, ilap, naq):
         wdis = complex(0.0, 0.0)
 
         # Check whether entire linesink is outside radius of convergence
-        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L, or |zeta|>1/biglab+7 (zeta is called z here)
+        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L,
+        # or |zeta|>1/biglab+7 (zeta is called z here)
         biglab = 2.0 * labda[i] / Lin
         z = (2.0 * zin - (z1in + z2in)) / (z2in - z1in) / biglab
 
@@ -258,7 +267,7 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     #   z2: Complex end point of line-doublet
     #   labda(naq): labda's (zero for first labda if Laplace)
     #   order: Order of the line-doublet
-    #   ilap: equals 1 when first value is Laplace line-doublet and first labda equals zero
+    #   ilap: equals 1 when first value is Laplace line-doublet and first labda is zero
     #   naq: Number of aquifers
     #   rv(naq): Array to store return value (must be pre-allocated)
     # Output:
@@ -267,7 +276,10 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     rv = np.zeros(naq)
 
     # Radius of convergence
-    Rconv = 7.0
+    if order > 5:
+        Rconv = 5.0
+    else:
+        Rconv = 7.0
 
     # lstype=2 means line-doublet
     lstype = 2
@@ -287,7 +299,8 @@ def potbesldho(x, y, z1, z2, labda, order, ilap, naq):
     for i in range(ilap, naq):
         pot = 0.0
         # Check whether entire linedoublet is outside radius of convergence
-        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L, or |zeta|>1/biglab+7 (zeta is called z here)
+        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L,
+        # or |zeta|>1/biglab+7 (zeta is called z here)
         biglab = 2.0 * labda[i] / Lin
         z = (2.0 * zin - (z1in + z2in)) / (z2in - z1in) / biglab
 
@@ -330,11 +343,14 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
     #   order: Order of the line-sink
     #   naq: Number of aquifers
     # Output:
-    #   rv(2, Naquifers),rvy(Naquifers): Values of Qx and Qy with Laplace value in first spot
-    #                   and mod.Helmholtz potentials in remaining spots
+    #   rv(2, Naquifers),rvy(Naquifers): Values of Qx and Qy with Laplace value in
+    # first spot and mod.Helmholtz potentials in remaining spots
     rv = np.zeros((2, naq))
     # Radius of convergence
-    Rconv = 7.0
+    if order > 5:
+        Rconv = 5.0
+    else:
+        Rconv = 7.0
 
     # lstype=2 means line-doublet
     lstype = 2
@@ -368,7 +384,8 @@ def disbesldho(x, y, z1, z2, labda, order, ilap, naq):
         wdis = complex(0.0, 0.0)
 
         # Check whether entire line-doublet is outside radius of convergence
-        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L, or |zeta|>1/biglab+7 (zeta is called z here)
+        # Outside if |z-zc|>L/2+7lab, and thus |Z|>1+7lab*2/L,
+        # or |zeta|>1/biglab+7 (zeta is called z here)
         biglab = 2.0 * labda[i] / Lin
         z = (2.0 * zin - (z1in + z2in)) / (z2in - z1in) / biglab
 
@@ -611,7 +628,8 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     # cd1minz = del1 / biglab - zbar  cd2minz = del2 / biglab - zbar
     # if ( abs(cd1minz) < 1.0e-8) cd1minz = cd1minz + 1.0e-8
     # if ( abs(cd2minz) < 1.0e-8) cd2minz = cd2minz + 1.0e-8
-    # By definition log is conjugate of previous log this avoids problems with signs along the line (and saves logs).
+    # By definition log is conjugate of previous log this avoids problems with signs
+    # along the line (and saves logs).
     cd1minz = np.conj(cd1minz)
     cd2minz = np.conj(cd2minz)
     cln1 = np.conj(cln1)

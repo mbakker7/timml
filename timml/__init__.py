@@ -1,15 +1,15 @@
-"""Copyright (C), 2015, Mark Bakker. 
+"""Copyright (C), 2015, Mark Bakker.
+
 Mark Bakker, Delft University of Technology
 mark dot bakker at tudelft dot nl
 
 TimML is a computer program for the simulation of steady-state multiaquifer flow with
 analytic elements and consists of a library of Python scripts and FORTRAN extensions.
 """
-# ruff : noqa
+# ruff: noqa: F401
 
 __name__ = "timml"
 __author__ = "Mark Bakker"
-
 
 # Import all classes and functions
 from timml import bessel, util
@@ -48,7 +48,47 @@ from timml.uflow import Uflow
 from timml.version import __version__
 from timml.well import HeadWell, LargeDiameterWell, Well, WellBase
 
-__all__ = [s for s in dir() if not s.startswith("_")]
+
+__all__ = [
+    "CircAreaSink",
+    "Constant",
+    "ConstantStar",
+    "BuildingPit3D",
+    "BuildingPitMaq",
+    "LeakyBuildingPit3D",
+    "LeakyBuildingPitMaq",
+    "PolygonInhom3D",
+    "PolygonInhomMaq",
+    "StripInhom3D",
+    "StripInhomMaq",
+    "ImpLineDoublet",
+    "ImpLineDoubletString",
+    "LeakyLineDoublet",
+    "LeakyLineDoubletString",
+    "ImpLineDoublet1D",
+    "LeakyLineDoublet1D",
+    "HeadLineSink",
+    "HeadLineSinkContainer",
+    "HeadLineSinkString",
+    "HeadLineSinkZero",
+    "LineSinkBase",
+    "LineSinkDitch",
+    "LineSinkDitchString",
+    "HeadLineSink1D",
+    "LineSink1D",
+    "Model",
+    "Model3D",
+    "ModelMaq",
+    "StripAreaSink",
+    "timtraceline",
+    "timtracelines",
+    "Uflow",
+    "__version__",
+    "HeadWell",
+    "LargeDiameterWell",
+    "Well",
+    "WellBase",
+]
 
 # default bessel module is numba
 bessel.set_bessel_method(method="numba")

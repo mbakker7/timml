@@ -15,8 +15,7 @@ __all__ = ["Model", "ModelMaq", "Model3D"]
 
 
 class Model(PlotTim):
-    """Class to create a model object consisting of an arbitrary sequence of aquifer
-    layers and leaky layers.
+    """Create a model consisting of an arbitrary sequence of aquifers and leaky layers.
 
     Notes
     -----
@@ -79,7 +78,6 @@ class Model(PlotTim):
 
     def remove_element(self, e):
         """Remove element `e` from model."""
-
         if e.label is not None:
             self.elementdict.pop(e.label)
         self.elements.remove(e)
@@ -100,15 +98,13 @@ class Model(PlotTim):
         return rv
 
     def disvec(self, x, y, aq=None):
-        """Discharge vector at `x`, `y`
+        """Discharge vector at `x`, `y`.
 
         Returns
         -------
-
         qxqy : array size (2, naq)
             first row is Qx in each aquifer layer, second row is Qy
         """
-
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
         rv = np.zeros((2, aq.naq))
@@ -190,10 +186,10 @@ class Model(PlotTim):
             return L * qn / 2.0
 
     def intnormflux(self, xy, method="legendre", ndeg=10):
-        """Integrated normal (perpendicular) flux over polyline giving the flux per
-        segment and per aquifer.
+        """Integrated normal (perpendicular) flux over polyline.
 
-        Flux to the left is positive when going from (x1, y1) to (x2, y2).
+        Computes the flux per segment and per aquifer. Flux to the left is positive
+        when going from (x1, y1) to (x2, y2).
 
         Parameters
         ----------
@@ -222,7 +218,6 @@ class Model(PlotTim):
 
         >>> np.sum(Qn, axis=0)
         """
-
         xy = np.array(xy)  # convert to array
         if np.all(xy[-1] == xy[0]):
             Nsides = len(xy) - 1
@@ -247,16 +242,14 @@ class Model(PlotTim):
         return rv
 
     def head(self, x, y, layers=None, aq=None):
-        """Head at `x`, `y`
+        """Head at `x`, `y`.
 
         Returns
         -------
-
         h : array length `naq` or `len(layers)`
             head in all `layers` (if not `None`),
             or all layers of aquifer (otherwise)
         """
-
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
         rv = self.potential(x, y, aq) / aq.T
@@ -283,12 +276,10 @@ class Model(PlotTim):
         -------
         h : array size `nlayers, ny, nx`
 
-        See also
+        See Also
         --------
-
         :func:`~timml.model.Model.headgrid2`
         """
-
         nx, ny = len(xg), len(yg)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -322,12 +313,10 @@ class Model(PlotTim):
         -------
         h : array size `nlayers, ny, nx`
 
-        See also
+        See Also
         --------
-
         :func:`~timml.model.Model.headgrid`
         """
-
         xg, yg = np.linspace(x1, x2, nx), np.linspace(y1, y2, ny)
         return self.headgrid(xg, yg, layers=layers, printrow=printrow)
 
@@ -347,7 +336,6 @@ class Model(PlotTim):
         -------
         h : array size `nlayers, nx`
         """
-
         xg, yg = np.atleast_1d(x), np.atleast_1d(y)
         if layers is None:
             Nlayers = self.aq.find_aquifer_data(xg[0], yg[0]).naq
@@ -409,9 +397,10 @@ class Model(PlotTim):
     def velocomp(self, x, y, z, aq=None, layer_ltype=None):
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
-        assert z <= aq.z[0] and z >= aq.z[-1], "z value not inside aquifer"
+        if (z > aq.z[0]) or z < (aq.z[-1]):
+            raise ValueError("z value not inside aquifer")
         if layer_ltype is None:
-            layer, ltype, dummy = aq.findlayer(z)
+            layer, ltype, _ = aq.findlayer(z)
         else:
             layer, ltype = layer_ltype
         h = self.head(x, y, aq=aq)
@@ -520,9 +509,8 @@ class Model(PlotTim):
             )  # make no. of processes equal to 1 less than no. of cores
         elif nproc > mp.cpu_count():
             print(
-                "Given 'nproc' larger than no. of cores on machine. Setting 'nproc' to {}.".format(
-                    mp.cpu_count()
-                )
+                "Given 'nproc' larger than no. of cores on machine. "
+                f"Setting 'nproc' to {mp.cpu_count()}."
             )
             nproc = mp.cpu_count()
 
@@ -595,8 +583,7 @@ class Model(PlotTim):
 
 
 class ModelMaq(Model):
-    """Create a Model object by specifying a mult-aquifer sequence of aquifer-
-    leaky layer.
+    """Create a model by specifying a mult-aquifer sequence of aquifer-leaky layer.
 
     Parameters
     ----------
@@ -630,7 +617,11 @@ class ModelMaq(Model):
     >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
     """
 
-    def __init__(self, kaq=1, z=[1, 0], c=[], npor=0.3, topboundary="conf", hstar=None):
+    def __init__(self, kaq=1, z=None, c=None, npor=0.3, topboundary="conf", hstar=None):
+        if c is None:
+            c = []
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
         Model.__init__(self, kaq, c, z, npor, ltype)
@@ -640,8 +631,7 @@ class ModelMaq(Model):
 
 
 class Model3D(Model):
-    """Model3D Class to create a multi-layer model object consisting of stacked aquifer
-    layers.
+    """Create a multi-layer model object consisting of stacked aquifer layers.
 
     The resistance between the layers is computed from the vertical hydraulic
     conductivity of the layers.
@@ -676,6 +666,13 @@ class Model3D(Model):
     hstar : float or None (default is None)
         head value above semi-confining top (read if topboundary='semi')
 
+    Notes
+    -----
+    For semi-confined aquifers, set top equal to 'semi' and provide:
+       - topres: resistance of top
+       - tophick: thickness of top
+       - hstar: head above top
+
     Examples
     --------
     >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
@@ -684,7 +681,7 @@ class Model3D(Model):
     def __init__(
         self,
         kaq=1,
-        z=[1, 0],
+        z=None,
         kzoverkh=1,
         npor=0.3,
         topboundary="conf",
@@ -692,11 +689,15 @@ class Model3D(Model):
         topthick=0,
         hstar=0,
     ):
-        """Model3D
+        """Model3D.
+
         for semi-confined aquifers, set top equal to 'semi' and provide
         topres: resistance of top
         tophick: thickness of top
-        hstar: head above top"""
+        hstar: head above top.
+        """
+        if z is None:
+            z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":

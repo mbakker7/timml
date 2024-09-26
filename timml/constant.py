@@ -23,7 +23,9 @@ class ConstantBase(Element, PotentialEquation):
         Element.__init__(
             self, model, nparam=1, nunknowns=1, layers=layer, name=name, label=label
         )
-        self.nparam = 1  # Defined here and not in Element as other elements can have multiple parameters per layers
+        # Defined here and not in Element as other elements can have multiple parameters
+        # per layers:
+        self.nparam = 1
         self.nunknowns = 0
         self.xr = xr
         self.yr = yr
@@ -101,7 +103,8 @@ class Constant(ConstantBase, PotentialEquation):
 
 
 class ConstantInside(Element):
-    # Sets constant at points xc, yc equal to the average of the potential of all elements at points xc, yc
+    # Sets constant at points xc, yc equal to the average of the potential of all
+    # elements at points xc, yc.
     # Used for the inside of an inhomogeneity
     def __init__(self, model, xc=0, yc=0, label=None, addtomodel=True):
         Element.__init__(
@@ -155,7 +158,7 @@ class ConstantInside(Element):
                         mat[0:, ieq : ieq + e.nunknowns] += e.potinflayers(
                             self.xc[icp], self.yc[icp], self.layers
                         ).sum(0)
-                        ieq += e.nunknowns
+                    ieq += e.nunknowns # I decreased the tab here
                         # else:
                         #    mat[0, ieq:ieq+e. nunknowns] += -1
                 else:

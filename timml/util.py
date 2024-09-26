@@ -25,7 +25,6 @@ class PlotTim:
 
         Parameters
         ----------
-
         win : list or tuple
             [xmin, xmax, ymin, ymax]
         newfig : boolean (default True)
@@ -42,10 +41,8 @@ class PlotTim:
 
         Returns
         -------
-
         None
         """
-
         if newfig:
             plt.figure(figsize=figsize)
             ax1 = None
@@ -124,7 +121,6 @@ class PlotTim:
 
         Parameters
         ----------
-
         win : list or tuple
             [xmin, xmax, ymin, ymax]
         ngr : scalar, tuple or list
@@ -153,10 +149,8 @@ class PlotTim:
 
         Returns
         -------
-
         cs : list of contour sets for each contoured layer
         """
-
         x1, x2, y1, y2 = win
         if np.isscalar(ngr):
             nx = ny = ngr
@@ -217,7 +211,6 @@ class PlotTim:
 
         Parameters
         ----------
-
         win : list or tuple
             [xmin, xmax, ymin, ymax]
         n : integer
@@ -244,10 +237,8 @@ class PlotTim:
 
         Returns
         -------
-
         cs : contour set
         """
-
         x1, x2, y1, y2 = win
         h = self.headalongline(
             np.linspace(x1 + nudge, x2 - nudge, n),
@@ -287,7 +278,7 @@ class PlotTim:
         silent=".",
         color=None,
         orientation="hor",
-        win=[-1e30, 1e30, -1e30, 1e30],
+        win=None,
         newfig=False,
         figsize=None,
         *,
@@ -333,10 +324,11 @@ class PlotTim:
 
         Returns
         -------
-
         traces : result
             only if return_traces = True
         """
+        if win is None:
+            win = [-1e30, 1e30, -1e30, 1e30]
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         elif isinstance(color, str):
@@ -431,7 +423,6 @@ class PlotTim:
 
         Parameters
         ----------
-
         x1 : scalar
             left edge of contour domain
         x2 : scalar
@@ -459,7 +450,6 @@ class PlotTim:
 
         Returns
         -------
-
         ax : axis
         """
         naq = self.aq.naq

@@ -5,7 +5,7 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-from .equation import MscreenWellEquation, PotentialEquation, MscreenWellNoflowEquation
+from .equation import MscreenWellEquation, MscreenWellNoflowEquation, PotentialEquation
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -115,7 +115,6 @@ class WellBase(Element):
         array (length number of screens)
             Head inside the well for each screen
         """
-
         h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
 
@@ -127,7 +126,6 @@ class WellBase(Element):
         array (length number of layers)
             Discharge in each screen with zeros for layers that are not screened
         """
-
         Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0]
         return Q
@@ -240,7 +238,7 @@ class WellBase(Element):
         silent=".",
         color=None,
         orientation="hor",
-        win=[-1e30, 1e30, -1e30, 1e30],
+        win=None,
         newfig=False,
         figsize=None,
         *,
@@ -276,6 +274,8 @@ class WellBase(Element):
         figsize : tuple of integers, optional, default: None
             width, height in inches.
         """
+        if win is None:
+            win = [-1e30, 1e30, -1e30, 1e30]
         if not return_traces:
             metadata = True  # suppress future warning from timtraceline
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
@@ -301,7 +301,7 @@ class WellBase(Element):
 
 
 class Well(WellBase, MscreenWellEquation):
-    """Well Class to create a well with a specified discharge.
+    r"""Well Class to create a well with a specified discharge.
 
     Notes
     -----
@@ -388,7 +388,7 @@ class Well(WellBase, MscreenWellEquation):
 
 
 class HeadWell(WellBase, PotentialEquation):
-    """HeadWell Class to create a well with a specified head inside the well.
+    r"""HeadWell Class to create a well with a specified head inside the well.
 
     Notes
     -----
@@ -586,5 +586,5 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
                 qy[:] = -kone * yminyw / (r * aq.lab) / (2 * np.pi)
             rv[0] = self.aq.coef[self.layers] * qx
             rv[1] = self.aq.coef[self.layers] * qy
-            #rv[0], rv[1] = qx, qy
+            # rv[0], rv[1] = qx, qy
         return rv
