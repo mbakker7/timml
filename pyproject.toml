@@ -14,14 +14,14 @@ maintainers = [
     { name = "Mark Bakker", email = "markbak@gmail.com" },
     { name = "Davíd Brakenhoff", email = "d.brakenhoff@artesia-water.nl" },
 ]
-requires-python = ">= 3.7"
+requires-python = ">= 3.10"
 dependencies = [
-    "numpy>=1.17",
-    "scipy>=1.5",
-    "numba>=0.5",
-    "matplotlib>=3.1",
-    "lmfit>=1.0",
-    "pandas>=1.1",
+    "numpy",
+    "scipy",
+    "numba",
+    "matplotlib",
+    "lmfit",
+    "pandas",
 ]
 
 keywords = ["hydrology", "groundwater", "model", "analytic element method"]
@@ -53,12 +53,13 @@ documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 ci = ["pytest>=4.6", "pytest-cov", "jupyter>=1.0.0", "coveralls", "shapely", "ruff"]
 docs = [
     "timml[ci]",
-    "sphinx>=3.1, <6.0",
+    "sphinx",
     "sphinx-design",
     "pydata-sphinx-theme",
     "numpydoc",
     "myst_nb",
     "sphinxcontrib-bibtex",
+    "sphinx-autoapi",
 ]
 
 [tool.setuptools]
