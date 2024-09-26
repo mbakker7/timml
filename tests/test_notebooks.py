@@ -39,7 +39,7 @@ def get_jupyter_kernel():
         for line in b.splitlines():
             if "python" in line:
                 kernel = line.split()[0]
-    except:
+    except:  # noqa
         kernel = None
 
     return kernel

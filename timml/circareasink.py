@@ -51,7 +51,8 @@ class CircAreaSink(Element):
         self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
         self.aq.add_element(self)
         self.parameters = np.array([[self.N]])
-        self.Rlarge = 500.0  # If R/lab > Rlarge, then we use asymptotic approximation to compute potential
+        # If R/lab > Rlarge, then we use asymptotic approximation to compute potential:
+        self.Rlarge = 500.0
         if self.aq.ilap:
             self.lab = self.aq.lab[1:]
             self.A = -self.aq.coef[self.layers, 1:] * self.R * self.lab
@@ -246,8 +247,5 @@ class CircAreaSink(Element):
                 u = u1 * (1.0 + eps)  # Go just beyond circle
             else:
                 u = u2 * (1.0 + eps)  # Go just beyond circle
-            xn = x1 + u * (x2 - x1)
-            yn = y1 + u * (y2 - y1)
-            zn = xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
             xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
         return changed, terminate, xyztnew, message
