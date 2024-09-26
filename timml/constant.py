@@ -153,7 +153,7 @@ class ConstantInside(Element):
                         mat[0:, ieq : ieq + e.nunknowns] += e.potinflayers(
                             self.xc[icp], self.yc[icp], self.layers
                         ).sum(0)
-                        ieq += e.nunknowns
+                    ieq += e.nunknowns # I decreased the tab here
                         # else:
                         #    mat[0, ieq:ieq+e. nunknowns] += -1
                 else:
