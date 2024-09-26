@@ -327,7 +327,7 @@ def timtracelines(
     if win is None:
         win = [-1e30, 1e30, -1e30, 1e30]
     xyztlist = []
-    for x, y, z in zip(xstart, ystart, zstart):
+    for x, y, z in zip(xstart, ystart, zstart, strict=False):
         xyztlist.append(
             timtraceline(
                 ml,

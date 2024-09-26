@@ -47,7 +47,7 @@ class PolygonInhom(AquiferData):
         self.ymax = max(self.y)
 
     def __repr__(self):
-        return "PolygonInhom: " + str(list(zip(self.x, self.y)))
+        return "PolygonInhom: " + str(list(zip(self.x, self.y, strict=False)))
 
     def isinside(self, x, y):
         rv = 0
@@ -284,7 +284,7 @@ class PolygonInhom3D(PolygonInhom):
 
 def compute_z1z2(xy):
     # Returns z1 and z2 of polygon, in clockwise order
-    x, y = list(zip(*xy))
+    x, y = list(zip(*xy, strict=False))
     if x[0] == x[-1] and y[0] == y[-1]:  # In case last point is repeated
         x = x[:-1]
         y = y[:-1]

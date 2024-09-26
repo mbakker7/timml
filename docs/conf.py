@@ -81,15 +81,15 @@ napoleon_type_aliases = {"ml": "timml.Model"}
 
 # -- Autodoc, autosummary, and autosectionlabel settings ------------------------------
 
-autodoc_typehints = 'description'
+autodoc_typehints = "description"
 autodoc_typehints_format = "short"
 # autosummary_generate = True
 # autoclass_content = "class"
 autosectionlabel_prefix_document = True
 
 # -- AutoAPI settings -----------------------------------------------------------------
-autoapi_dirs = ['../timml']
-autoapi_root = '05api'
+autoapi_dirs = ["../timml"]
+autoapi_root = "05api"
 
 # -- Numpydoc settings ----------------------------------------------------------------
 

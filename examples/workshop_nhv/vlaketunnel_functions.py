@@ -68,7 +68,9 @@ def create_model(
     ]
 
     for dewatering_xys, q_total in zip(
-        [dewatering_east_xys, dewatering_west_xys], [q_east_total, q_west_total]
+        [dewatering_east_xys, dewatering_west_xys],
+        [q_east_total, q_west_total],
+        strict=False,
     ):
         # loop over both dewatering locations
         for dewatering_xy in dewatering_xys:
@@ -149,10 +151,10 @@ def plot_model_input(ml):
     plt.hlines(y=ml.aq.zaqbot, xmin=xmin, xmax=xmax, color="darkgray")
 
     # plot kh
-    for kh, z in zip(ml.aq.kaq, zaqmid):
+    for kh, z in zip(ml.aq.kaq, zaqmid, strict=False):
         plt.annotate(f"kh={kh:0.1f}m/d", (0, z), ha="center")
     # plot c
-    for c, z in zip(ml.aq.c, ml.aq.zaqtop):
+    for c, z in zip(ml.aq.c, ml.aq.zaqtop, strict=False):
         plt.annotate(f"c={c:0.1f}d", (0.5, z), ha="center", va="center")
     # plot channel
     plt.plot([xmin, xchannel], [ml.aq.inhomlist[0].hstar] * 2, color="blue")
