@@ -5,20 +5,26 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+# import os
+# import sys
 
 project = "TimML"
 copyright = "2023, Mark Bakker"
 author = "Mark Bakker"
 
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+# sys.path.insert(0, os.path.abspath("."))
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "autoapi.extension",
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
-    # "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
@@ -30,7 +36,7 @@ extensions = [
     "sphinxcontrib.bibtex",
 ]
 
-templates_path = ["_templates"]
+# templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
@@ -77,17 +83,20 @@ napoleon_type_aliases = {"ml": "timml.Model"}
 
 autodoc_typehints = "description"
 autodoc_typehints_format = "short"
-
-autosummary_generate = True
-
-autoclass_content = "class"
-
+# autosummary_generate = True
+# autoclass_content = "class"
 autosectionlabel_prefix_document = True
+
+# -- AutoAPI settings -----------------------------------------------------------------
+autoapi_dirs = ["../timml"]
+autoapi_root = "05api"
 
 # -- Numpydoc settings ----------------------------------------------------------------
 
 numpydoc_class_members_toctree = True
 numpydoc_show_class_members = False
+
+# -- Set intersphinx Directories ------------------------------------------------------
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
