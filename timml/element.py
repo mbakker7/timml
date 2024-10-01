@@ -146,7 +146,7 @@ class Element:
         pass
 
     def write(self):
-        rv = self.name + "(" + self.model.modelname + ",\n"
+        rv = "timml." + self.name + "(" + self.model.modelname + ",\n"
         for key in self.inputargs[2:]:  # The first two are ignored
             if isinstance(self.inputvalues[key], np.ndarray):
                 rv += (

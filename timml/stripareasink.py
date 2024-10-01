@@ -32,6 +32,7 @@ class StripAreaSinkInhom(Element):
         layer=0,
         name="StripAreaSink",
         label=None,
+        addtomodel=True,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
@@ -39,7 +40,9 @@ class StripAreaSinkInhom(Element):
         self.xleft = xleft
         self.xright = xright
         self.N = N
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " between " + str((self.xleft, self.xright))
@@ -132,6 +135,7 @@ class StripAreaSink(Element):
         layer=0,
         name="StripAreaSink",
         label=None,
+        addtomodel=True,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
@@ -139,7 +143,9 @@ class StripAreaSink(Element):
         self.xleft = xleft
         self.xright = xright
         self.N = N
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " at " + str((self.xc, self.yc))
