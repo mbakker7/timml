@@ -1,6 +1,7 @@
 import numpy as np
 
 from timml.element import Element
+import warnings
 
 
 class XsectionAreaSinkInhom(Element):
@@ -31,8 +32,8 @@ class XsectionAreaSinkInhom(Element):
         name="XsectionAreaSink",
         label=None,
     ):
-        Element.__init__(
-            self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
+        super().__init__(
+            model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
         )
         self.xleft = xleft
         self.xright = xright
@@ -131,8 +132,14 @@ class XsectionAreaSink(Element):
         name="XsectionAreaSink",
         label=None,
     ):
-        Element.__init__(
-            self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
+        warnings.warn(
+            "XsectionAreaSink is only for testing purposes. It is recommended to add "
+            "infiltration through XsectionMaq or Xsection3D and specifing 'N'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(
+            model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
         )
         self.xleft = xleft
         self.xright = xright
