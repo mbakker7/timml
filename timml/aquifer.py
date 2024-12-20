@@ -127,7 +127,7 @@ class AquiferData:
 
 class Aquifer(AquiferData):
     def __init__(self, model, kaq, c, z, npor, ltype):
-        AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
+        super().__init__(model, kaq, c, z, npor, ltype)
         self.inhomlist = []
         self.area = 1e300  # Needed to find smallest inhom
 
@@ -150,11 +150,30 @@ class Aquifer(AquiferData):
                 if inhom.area < rv.area:
                     rv = inhom
         return rv
-        # Not used anymore I think 5 Nov 2015
-        # def find_aquifer_number(self, x, y):
-        #    rv = -1
-        #    for i,inhom in enumerate(self.inhomlist):
-        #        if inhom.isinside(x, y):
-        #            if inhom.area < rv.area:
-        #                rv = i
-        #    return rv
+
+
+class SimpleAquifer(Aquifer):
+    """Simple aquifer for cross-section models.
+
+    Only the number of aquifers has to be specified.
+
+    Parameters
+    ----------
+    naq : int
+        Number of aquifers.
+    """
+
+    def __init__(self, naq):
+        self.naq = naq
+        self.inhomlist = []
+        self.area = 1e300  # Needed to find smallest inhomogeneity
+        self.elementlist = []
+
+    def __repr__(self):
+        return f"Simple Aquifer: {self.naq} aquifer(s)"
+
+    def initialize(self):
+        for inhom in self.inhomlist:
+            inhom.initialize()
+        for inhom in self.inhomlist:
+            inhom.create_elements()

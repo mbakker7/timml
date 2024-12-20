@@ -6,7 +6,7 @@ import multiprocessing as mp
 import numpy as np
 from scipy.integrate import quad_vec
 
-from .aquifer import Aquifer
+from .aquifer import Aquifer, SimpleAquifer
 from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
 from .util import PlotTim
@@ -691,3 +691,34 @@ class Model3D(Model):
         self.name = "Model3D"
         if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
+
+
+class ModelXsection(Model):
+    def __init__(self, naq=1):
+        self.elementlist = []
+        self.elementdict = {}  # only elements that have a label
+        self.aq = SimpleAquifer(naq)
+        self.modelname = "ml"  # Used for writing out input
+
+    def check_inhoms(self):
+        """Check if number of aquifers in inhoms matches number of aquifers in model."""
+        naqs = {}
+        for inhom in self.aq.inhomlist:
+            naqs[inhom.name] = inhom.naq
+        check = np.array(list(naqs.values())) == self.aq.naq
+        if not check.all():
+            raise ValueError(
+                f"Number of aquifers does not match {self.aq.naq}:\n{naqs}"
+            )
+        # # shared boundary check
+        # # NOTE: does not deal with nested inhoms
+        # xcoords = np.concatenate(
+        #     [(inhom.x1, inhom.x2) for inhom in self.aq.inhomdict.values()]
+        # )
+        # xcoords.sort()
+        # if not np.all(np.diff(xcoords[1:-1])[::2] < 1e-10):
+        #     raise ValueError("Not all inhomogeneities have shared boundaries.")
+
+    def initialize(self):
+        self.check_inhoms()
+        super().initialize()

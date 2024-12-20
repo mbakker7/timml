@@ -1,16 +1,16 @@
+import warnings
+
 import numpy as np
 
-from .element import Element
-
-__all__ = ["StripAreaSink"]
+from timml.element import Element
 
 
-class StripAreaSinkInhom(Element):
-    """Create a strip area-sink in combination with an inhomogeneity.
+class XsectionAreaSinkInhom(Element):
+    """Create a cross-section area-sink in combination with an inhomogeneity.
 
     Notes
     -----
-    Created automatically using StripInhomMaq or StripInhom3D.
+    Created automatically using XsectionMaq or Xsection3D.
     Can only be created if top boundary is confined.
 
     Parameters
@@ -30,11 +30,11 @@ class StripAreaSinkInhom(Element):
         xright=1,
         N=0.001,
         layer=0,
-        name="StripAreaSink",
+        name="XsectionAreaSink",
         label=None,
     ):
-        Element.__init__(
-            self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
+        super().__init__(
+            model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
         )
         self.xleft = xleft
         self.xright = xright
@@ -57,7 +57,7 @@ class StripAreaSinkInhom(Element):
             self.B = self.A * (np.exp(-self.L / self.lab) - 1)
             self.plabsq = self.aq.coef[self.layers, 1:] * self.lab**2
         else:
-            print("StripAreaSink cannot be added to semi-confined system")
+            print("XsectionAreaSink cannot be added to semi-confined system")
 
     def potinf(self, x, y, aq=None):
         if aq is None:
@@ -122,7 +122,7 @@ class StripAreaSinkInhom(Element):
         return changed, terminate, xyztnew, message
 
 
-class StripAreaSink(Element):
+class XsectionAreaSink(Element):
     def __init__(
         self,
         model,
@@ -130,11 +130,17 @@ class StripAreaSink(Element):
         xright=1,
         N=0.001,
         layer=0,
-        name="StripAreaSink",
+        name="XsectionAreaSink",
         label=None,
     ):
-        Element.__init__(
-            self, model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
+        warnings.warn(
+            "XsectionAreaSink is only for testing purposes. It is recommended to add "
+            "infiltration through XsectionMaq or Xsection3D and specifing 'N'.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(
+            model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
         )
         self.xleft = xleft
         self.xright = xright
@@ -157,7 +163,7 @@ class StripAreaSink(Element):
             self.B = self.A * (np.exp(-self.L / self.lab) - 1)
             self.plabsq = self.aq.coef[self.layers, 1:] * self.lab**2
         else:
-            print("StripAreaSink cannot be added to semi-confined system")
+            print("XsectionAreaSink cannot be added to semi-confined system")
 
     def potinf(self, x, y, aq=None):
         if aq is None:
