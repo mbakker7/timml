@@ -455,8 +455,9 @@ class PlotTim:
             Qx[:, i], _ = self.disvec(xflow[i], 0)
         zflow = np.empty(2 * naq)
         for i in range(self.aq.naq):
-            zflow[2 * i] = self.aq.zaqtop[i]
-            zflow[2 * i + 1] = self.aq.zaqbot[i]
+            aq = self.aq.find_aquifer_data(xflow[0], 0)  # use first x as reference
+            zflow[2 * i] = aq.zaqtop[i]
+            zflow[2 * i + 1] = aq.zaqbot[i]
         Qx = Qx[::-1]  # set upside down
         Qxgrid = np.empty((2 * naq, nx))
         Qxgrid[0] = 0

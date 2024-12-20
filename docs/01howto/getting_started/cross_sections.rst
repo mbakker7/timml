@@ -6,11 +6,11 @@ infinitely long line-sinks, and infinitely long line-doublets. The cross-section
 parallel to the x-axis. Strip inhomogeneities may extend to infinity. The following
 elements are available:
 
-1. :class:`~timml.inhomogeneity1d.StripInhomMaq` is a strip aquifer consisting of a
+1. :class:`~timml.inhomogeneity1d.XsectionMaq` is a strip aquifer consisting of a
    regular sequence of aquifer - leaky layer - aquifer - leaky layer, aquifer, etc., like
    a ModelMaq.
 
-2. :class:`~timml.inhomogeneity1d.StripInhom3D` is a strip aquifer consisting of a
+2. :class:`~timml.inhomogeneity1d.Xsection3D` is a strip aquifer consisting of a
    stack of aquifer layers.
 
 3. :class:`~timml.linesink1d.LineSink1D` is an infinitely long line-sink for which the
@@ -22,5 +22,5 @@ elements are available:
 5. :class:`~timml.linedoublet1d.LeakyLineDoublet1D` is an infinitely long leaky wall.
    An impermeable wall is created by specifying an infinitely large resistance
 
-6. :class:`~timml.stripareasink.StripAreaSink` is a strip area-sink, which can only be
+6. :class:`~timml.stripareasink.XsectionAreaSink` is a strip area-sink, which can only be
    added when the topboundary is confined (topboundary='conf').

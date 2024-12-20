@@ -264,7 +264,7 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
 
 
 class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
-    """HeadDiffLineSink1D for left side (xcout)."""
+    """FluxDiffLineSink1D for right side (xcin)."""
 
     def __init__(self, model, xls, label=None, aq=None, aqin=None, aqout=None):
         LineSink1DBase.__init__(
