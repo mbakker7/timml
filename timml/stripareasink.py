@@ -1,7 +1,8 @@
+import warnings
+
 import numpy as np
 
 from timml.element import Element
-import warnings
 
 
 class XsectionAreaSinkInhom(Element):
