@@ -335,9 +335,9 @@ class PlotTim:
             n = int(np.ceil(self.aq.naq / len(c)))
             c = n * c
         fig = plt.gcf()
-        assert (
-            len(fig.axes) > 0
-        ), "Error: Need to specify axes in figure before invoking tracelines"
+        assert len(fig.axes) > 0, (
+            "Error: Need to specify axes in figure before invoking tracelines"
+        )
         ax1 = None
         ax2 = None
         if orientation == "both":

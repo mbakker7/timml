@@ -28,9 +28,9 @@ class CircleInhom(Element):
         self.order = order
         self.aqin = aqin
         self.aqout = aqout
-        assert (
-            aqin.Naquifers == aqout.Naquifers
-        ), "TimML Input error: Number of aquifers inside and outside must be equal"
+        assert aqin.Naquifers == aqout.Naquifers, (
+            "TimML Input error: Number of aquifers inside and outside must be equal"
+        )
         self.label = label
         self.type = "circleinhom"
         self.setCoefs()
