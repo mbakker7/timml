@@ -344,7 +344,7 @@ class PlotTim:
             axes["hor"] = fig.axes[0]
             axes["ver"] = fig.axes[1]
         elif orientation[:3] == "hor":
-            axes["hor"] == fig.axes[0]
+            axes["hor"] = fig.axes[0]
         elif orientation[:3] == "ver":
             axes["ver"] = fig.axes[-1]
 
@@ -377,7 +377,7 @@ class PlotTim:
                 print(".", end="", flush=True)
             if "hor" in axes:
                 color = []
-                for ixyzt, ilayer in zip(xyzt, layerlist):
+                for ixyzt, ilayer in zip(xyzt, layerlist, strict=False):
                     aq = self.aq.find_aquifer_data(ixyzt[0], ixyzt[1])
                     color.append(
                         c[aq.layernumber[ilayer]] if aq.ltype[ilayer] == "a" else "k"
@@ -389,7 +389,7 @@ class PlotTim:
                 # ax1.plot(xyzt[:, 0], xyzt[:, 1], color=color)
             if "ver" in axes:
                 color = []
-                for ixyzt, ilayer in zip(xyzt, layerlist):
+                for ixyzt, ilayer in zip(xyzt, layerlist, strict=False):
                     aq = self.aq.find_aquifer_data(ixyzt[0], ixyzt[1])
                     color.append(
                         c[aq.layernumber[ilayer]] if aq.ltype[ilayer] == "a" else "k"
