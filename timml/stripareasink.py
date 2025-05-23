@@ -191,31 +191,23 @@ class XsectionAreaSink(Element):
         terminate = False
         xyztnew = 0
         message = None
-        eps = 1e-8
-        r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
-        r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
-        if (r1sq < self.Rsq and r2sq > self.Rsq) or (
-            r1sq > self.Rsq and r2sq < self.Rsq
+        eps = 1e-4
+        x1 = xyzt1[0]
+        x2 = xyzt2[0]
+        if (x1 < self.xleft and x2 >= self.xleft) or (
+            x1 > self.xleft and x2 <= self.xleft
         ):
+            dx1 = x1 - self.xleft
+            dx2 = x2 - self.xleft
+            xyztnew = xyzt1 + (dx1 + np.sign(dx1) * eps) / (dx1 - dx2) * (xyzt2 - xyzt1)
             changed = True
-            x1, y1 = xyzt1[0:2]
-            x2, y2 = xyzt2[0:2]
-            a = (x2 - x1) ** 2 + (y2 - y1) ** 2
-            b = 2 * ((x2 - x1) * (x1 - self.xc) + (y2 - y1) * (y1 - self.yc))
-            c = (
-                self.xc**2
-                + self.yc**2
-                + x1**2
-                + y1**2
-                - 2 * (self.xc * x1 + self.yc * y1)
-                - self.Rsq
-            )
-            u1 = (-b - np.sqrt(b**2 - 4 * a * c)) / (2 * a)
-            u2 = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
-            if u1 > 0:
-                u = u1 * (1.0 + eps)  # Go just beyond circle
-            else:
-                u = u2 * (1.0 + eps)  # Go just beyond circle
-            xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
-            xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
+            message = "exited or entered xsection area sink on the left side"
+        elif (x1 < self.xright and x2 >= self.xright) or (
+            x1 > self.xright and x2 <= self.xright
+        ):  # type: ignore
+            dx1 = x1 - self.xright
+            dx2 = x2 - self.xright
+            xyztnew = xyzt1 + (dx1 + np.sign(dx1) * eps) / (dx1 - dx2) * (xyzt2 - xyzt1)
+            changed = True
+            message = "exited or entered area sink on the right side"
         return changed, terminate, xyztnew, message
