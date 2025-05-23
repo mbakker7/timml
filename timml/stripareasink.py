@@ -78,7 +78,7 @@ class XsectionAreaSinkInhom(Element):
                 rv[0, 0, 0] = x - self.xc
         return rv
 
-    def qztop(self, x, y):
+    def qztop(self, x, y, aq=None):
         rv = 0.0
         if (x > self.xleft) and (x < self.xright):
             rv = -self.parameters[
@@ -211,7 +211,7 @@ class XsectionAreaSink(Element):
                 )
         return rv
 
-    def qztop(self, x, y):
+    def qztop(self, x, y, aq=None):
         rv = 0.0
         if (x > self.xleft) and (x < self.xright):
             rv = -self.parameters[
