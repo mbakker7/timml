@@ -338,20 +338,21 @@ class PlotTim:
         assert len(fig.axes) > 0, (
             "Error: Need to specify axes in figure before invoking tracelines"
         )
-        ax1 = None
-        ax2 = None
+
+        axes = {}
         if orientation == "both":
-            ax1 = fig.axes[0]
-            ax2 = fig.axes[1]
+            axes["hor"] = fig.axes[0]
+            axes["ver"] = fig.axes[1]
         elif orientation[:3] == "hor":
-            ax1 = fig.axes[0]
+            axes["hor"] == fig.axes[0]
         elif orientation[:3] == "ver":
-            ax2 = fig.axes[1]
+            axes["ver"] = fig.axes[-1]
+
         if return_traces:
             traces = []
         else:
             metadata = True  # suppress future warning from timtraceline
-        for i in range(len(xstart)):
+        for i, _ in enumerate(xstart):
             trace = timtraceline(
                 self,
                 xstart[i],
@@ -374,27 +375,30 @@ class PlotTim:
                 xyzt, layerlist = trace
             if silent == ".":
                 print(".", end="", flush=True)
-            if ax1 is not None:
-                # plt.axes(ax1)
-                color = [
-                    c[self.aq.layernumber[i]] if self.aq.ltype[i] == "a" else "k"
-                    for i in layerlist
-                ]
+            if "hor" in axes:
+                color = []
+                for ixyzt, ilayer in zip(xyzt, layerlist):
+                    aq = self.aq.find_aquifer_data(ixyzt[0], ixyzt[1])
+                    color.append(
+                        c[aq.layernumber[ilayer]] if aq.ltype[ilayer] == "a" else "k"
+                    )
                 points = np.array([xyzt[:, 0], xyzt[:, 1]]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
                 lc = LineCollection(segments, colors=color)
-                ax1.add_collection(lc)
+                axes["hor"].add_collection(lc)
                 # ax1.plot(xyzt[:, 0], xyzt[:, 1], color=color)
-            if ax2 is not None:
-                color = [
-                    c[self.aq.layernumber[i]] if self.aq.ltype[i] == "a" else "k"
-                    for i in layerlist
-                ]
+            if "ver" in axes:
+                color = []
+                for ixyzt, ilayer in zip(xyzt, layerlist):
+                    aq = self.aq.find_aquifer_data(ixyzt[0], ixyzt[1])
+                    color.append(
+                        c[aq.layernumber[ilayer]] if aq.ltype[ilayer] == "a" else "k"
+                    )
                 points = np.array([xyzt[:, 0], xyzt[:, 2]]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
                 lc = LineCollection(segments, colors=color)
-                ax2.add_collection(lc)
-                ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
+                axes["ver"].add_collection(lc)
+                axes["ver"].set_ylim(aq.z[-1], aq.z[0])
         if silent == ".":
             print("")  # Print the final newline after the dots
         if return_traces:
