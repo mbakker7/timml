@@ -1,5 +1,6 @@
 import inspect  # Used for storing the input
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from .element import Element
