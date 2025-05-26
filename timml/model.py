@@ -2,6 +2,7 @@
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
+import warnings
 
 import numpy as np
 from scipy.integrate import quad_vec
