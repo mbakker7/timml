@@ -600,7 +600,7 @@ class Model:
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.plots.vcontour(*args, **kwargs)
+        return self.plots.tracelines(*args, **kwargs)
 
     def vcontoursf1D(self, *args, **kwargs):
         warnings.warn(

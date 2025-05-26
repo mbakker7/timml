@@ -226,6 +226,7 @@ class XsectionAreaSink(Element):
         ):
             dx1 = x1 - self.xleft
             dx2 = x2 - self.xleft
+            # step just beyond boundary
             xyztnew = xyzt1 + (dx1 + np.sign(dx1) * eps) / (dx1 - dx2) * (xyzt2 - xyzt1)
             changed = True
             message = "exited or entered xsection area sink on the left side"
@@ -234,6 +235,7 @@ class XsectionAreaSink(Element):
         ):  # type: ignore
             dx1 = x1 - self.xright
             dx2 = x2 - self.xright
+            # step just beyond boundary
             xyztnew = xyzt1 + (dx1 + np.sign(dx1) * eps) / (dx1 - dx2) * (xyzt2 - xyzt1)
             changed = True
             message = "exited or entered area sink on the right side"
