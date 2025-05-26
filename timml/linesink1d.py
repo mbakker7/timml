@@ -273,6 +273,16 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
 
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aq = self.model.aq.find_aquifer_data(self.xcout, 0.0)
+        if aq.hstar is not None:
+            ztop = aq.hstar + np.max([0.05 * np.abs(aq.hstar), 0.05])
+        else:
+            ztop = aq.z[0]
+            ax.plot([self.xls, self.xls], [ztop, aq.z[-1]], "k--")
+
 
 class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
     """FluxDiffLineSink1D for right side (xcin)."""
@@ -307,3 +317,13 @@ class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aq = self.model.aq.find_aquifer_data(self.xcin, 0.0)
+        if aq.hstar is not None:
+            ztop = aq.hstar + np.max([0.05 * np.abs(aq.hstar), 0.05])
+        else:
+            ztop = aq.z[0]
+        ax.plot([self.xls, self.xls], [ztop, aq.z[-1]], "k--")
