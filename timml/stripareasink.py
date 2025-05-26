@@ -86,6 +86,32 @@ class XsectionAreaSinkInhom(Element):
             ]  # minus cause the parameter is the infiltration rate
         return rv
 
+    def plot(self, ax=None, n_arrows=10, **kwargs):
+        if ax is None:
+            _, ax = plt.subplots()
+        Lz = self.aq.z[0] - self.aq.z[-1]
+        Lx = self.xright - self.xleft
+
+        for i in np.linspace(self.xleft, self.xright, n_arrows):
+            xtail = i
+            ztail = self.aq.z[0] + Lz / 20.0
+            dx = 0
+            dy = -0.9 * Lz / 20.0
+            ax.arrow(
+                xtail,
+                ztail,
+                dx,
+                dy,
+                width=kwargs.pop("width", Lx / 300.0),
+                length_includes_head=kwargs.pop("length_includes_head", True),
+                head_width=kwargs.pop("head_width", 4 * Lx / 300.0),
+                head_length=kwargs.pop("head_length", 0.4 * Lz / 20.0),
+                color=kwargs.pop("color", "k"),
+                joinstyle=kwargs.pop("joinstyle", "miter"),
+                capstyle=kwargs.pop("capstyle", "projecting"),
+            )
+        return ax
+
 
 class XsectionAreaSink(Element):
     def __init__(
