@@ -14,6 +14,13 @@ class PlotTim:
     def __init__(self, ml):
         self._ml = ml
 
+    def __repr__(self):
+        """Return string representation of Plots submodule."""
+        methods = "".join(
+            [f"\n - {meth}" for meth in dir(self) if not meth.startswith("_")]
+        )
+        return "TimML plots, available methods:" + methods
+
     def topview(
         self,
         win=None,
