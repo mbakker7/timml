@@ -9,12 +9,12 @@ from scipy.integrate import quad_vec
 from .aquifer import Aquifer, SimpleAquifer
 from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
-from .util import PlotTim
+from .plots import PlotTim
 
-__all__ = ["Model", "ModelMaq", "Model3D"]
+__all__ = ["Model", "ModelMaq", "Model3D", "ModelXsection"]
 
 
-class Model(PlotTim):
+class Model:
     """Create a model consisting of an arbitrary sequence of aquifers and leaky layers.
 
     Notes
@@ -48,6 +48,8 @@ class Model(PlotTim):
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
+
+        self.plots = PlotTim(self)
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
