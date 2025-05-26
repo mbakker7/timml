@@ -70,6 +70,10 @@ def test_notebook(pth):
     assert ival == 0, "could not run {}".format(fn)
 
 
+# %%
 if __name__ == "__main__":
-    test_notebook()
-    shutil.rmtree(testdir)
+    for notebook in get_notebooks():
+        os.system(
+            "jupyter nbconvert --clear-output --inplace "
+            f"--ClearMetadataPreprocessor.enabled=True {notebook}"
+        )
