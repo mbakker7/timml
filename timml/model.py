@@ -653,7 +653,7 @@ class ModelMaq(Model):
             z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
-        Model.__init__(self, kaq, c, z, npor, ltype)
+        super().__init__(kaq, c, z, npor, ltype)
         self.name = "ModelMaq"
         if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
@@ -731,7 +731,7 @@ class Model3D(Model):
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
-        Model.__init__(self, kaq, c, z, npor, ltype)
+        super().__init__(kaq, c, z, npor, ltype)
         self.name = "Model3D"
         if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
@@ -743,6 +743,9 @@ class ModelXsection(Model):
         self.elementdict = {}  # only elements that have a label
         self.aq = SimpleAquifer(naq)
         self.modelname = "ml"  # Used for writing out input
+
+        self.plots = PlotTim(self)
+        self.name = "ModelXsection"
 
     def check_inhoms(self):
         """Check if number of aquifers in inhoms matches number of aquifers in model."""
