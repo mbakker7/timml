@@ -568,6 +568,48 @@ class Model:
             f.write(e.write())
         f.close()
 
+    def plot(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.plot' method is deprecated. Use 'ml.plots.topview' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.topview(**kwargs)
+
+    def contour(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.contour' method is deprecated. Use 'ml.plots.contour' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.contour(*args, **kwargs)
+
+    def vcontour(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.vcontour' method is deprecated. Use 'ml.plots.vcontour' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.vcontour(*args, **kwargs)
+
+    def tracelines(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.tracelines' method is deprecated. "
+            "Use 'ml.plots.tracelines' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.vcontour(*args, **kwargs)
+
+    def vcontoursf1D(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.vcontoursf1D' method is deprecated. "
+            "Use 'ml.plots.vcontoursf1D' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.vcontoursf1D(*args, **kwargs)
+
 
 class ModelMaq(Model):
     """Create a model by specifying a mult-aquifer sequence of aquifer-leaky layer.
