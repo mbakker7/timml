@@ -114,6 +114,17 @@ class LineSink1DBase(Element):
         Q[self.layers] = self.parameters[:, 0]
         return Q
 
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aq = self.model.aq.find_aquifer_data(self.xls, 0.0)
+        for ilay in self.layers:
+            ax.plot(
+                [self.xls, self.xls],
+                [aq.zaqtop[ilay], aq.zaqbot[ilay]],
+                "k-",
+            )
+
 
 class LineSink1D(LineSink1DBase, MscreenWellEquation):
     """Create an infinitely long line-sink with a given discharge per unit length.
