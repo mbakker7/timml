@@ -1,5 +1,6 @@
 import inspect  # Used for storing the input
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from .element import Element
@@ -94,6 +95,16 @@ class LineDoublet1D(Element):
                     qx[:] = 0.5 / aq.lab * np.exp(-(x - self.xld) / aq.lab)
             rv[0] = self.aq.coef[self.layers] * qx
         return rv
+
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aq = self.model.aq.find_aquifer_data(self.xld, 0.0)
+        ax.plot(
+            [self.xld, self.xld],
+            [aq.zaqtop[self.layers[0]], aq.zaqbot[self.layers[-1]]],
+            "k-",
+        )
 
 
 class ImpLineDoublet1D(LineDoublet1D, DisvecEquation):
