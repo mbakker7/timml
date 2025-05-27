@@ -407,13 +407,14 @@ class PlotTim:
                 zg[2 * i + 1] = self._ml.aq.zaqbot[i]
             h = np.repeat(h, 2, 0)
         if newfig:
-            plt.figure(figsize=figsize)
-        cs = plt.contour(xg, zg, h, levels, colors=color)
+            _, ax = plt.subplots(figsize=figsize)
+        if layout:
+            self.xsection(xy=[(x1, y1), (x2, y2)], labels=False, ax=ax)
+        cs = ax.contour(xg, zg, h, levels, colors=color)
         if labels:
             fmt = "%1." + str(decimals) + "f"
-            plt.clabel(cs, fmt=fmt)
-        if layout:
-            self.topview(win=[x1, x2, y1, y2], orientation="ver", newfig=False)
+            ax.clabel(cs, fmt=fmt)
+
         return cs
 
     def tracelines(
@@ -624,12 +625,10 @@ class PlotTim:
             Qxgrid[2 * i + 2] = Qxgrid[2 * i + 1]
         Qxgrid[-1] = Qxgrid[-2] - Qx[-1]
         Qxgrid = Qxgrid[::-1]  # index 0 at top
-        if figsize is not None:
-            plt.figure(figsize=figsize)
-        if ax:
-            ax = ax
-        else:
-            ax = plt.subplot(111)
+        if newfig:
+            _, ax = plt.subplots(1, 1, figsize=figsize)
+        elif ax is None:
+            ax = plt.gca()
         cs = ax.contour(xflow, zflow, Qxgrid, levels, colors=color)
         if labels:
             fmt = "%1." + str(decimals) + "f"
