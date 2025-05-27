@@ -594,7 +594,7 @@ class PlotTim:
         nudge : float
             first value is computed nudge from the specified x1 and x2
         newfig : boolean (default True)
-            create new figure
+            create new figure. if False, ax must be supplied
         figsize : tuple of 2 values (default is mpl default)
             size of figure
         layout : boolean
@@ -624,14 +624,16 @@ class PlotTim:
             Qxgrid[2 * i + 2] = Qxgrid[2 * i + 1]
         Qxgrid[-1] = Qxgrid[-2] - Qx[-1]
         Qxgrid = Qxgrid[::-1]  # index 0 at top
-        if newfig:
-            _, ax = plt.subplots(1, 1, figsize=figsize)
-        else:
+        if figsize is not None:
+            plt.figure(figsize=figsize)
+        if ax:
             ax = ax
+        else:
+            ax = plt.subplot(111)
         cs = ax.contour(xflow, zflow, Qxgrid, levels, colors=color)
         if labels:
             fmt = "%1." + str(decimals) + "f"
             plt.clabel(cs, fmt=fmt)
+        if layout:
+            self.xsection(xy=[(x1, 0), (x2, 0)], labels=False, ax=ax)
         return ax
-        # if layout:
-        #    self.topview(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
