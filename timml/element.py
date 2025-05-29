@@ -142,7 +142,7 @@ class Element:
         # given flux at top of aquifer system (as for area-sinks)
         return 0
 
-    def plot(self, layer):
+    def plot(self, **kwargs):
         pass
 
     def write(self):

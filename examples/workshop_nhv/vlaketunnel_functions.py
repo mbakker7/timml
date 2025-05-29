@@ -197,7 +197,7 @@ def plot_model_results(ml, df_dh):
     """
     # contour plot
     plt.subplot(221)
-    ml.contour(
+    ml.plots.contour(
         win=[57000, 60000, 386900, 389100],
         ngr=50,
         layers=1,

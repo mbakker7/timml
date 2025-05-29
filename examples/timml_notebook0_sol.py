@@ -43,7 +43,7 @@ ml.solve()
 # In[6]:
 
 
-ml.contour(
+ml.plots.contour(
     x1=-1200,
     x2=200,
     nx=50,
@@ -64,7 +64,7 @@ ml.contour(
 # In[7]:
 
 
-ml.contour(
+ml.plots.contour(
     x1=-1200,
     x2=200,
     nx=50,
@@ -90,8 +90,8 @@ w = timml.Well(ml, xw=-400, yw=0, Qw=50.0, rw=0.2)
 
 
 ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(-800 * np.ones(1), -200 * np.ones(1), np.zeros(1), hstepmax=20)
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+ml.plots.tracelines(-800 * np.ones(1), -200 * np.ones(1), np.zeros(1), hstepmax=20)
 
 
 # ### Exercise a
@@ -100,8 +100,10 @@ ml.tracelines(-800 * np.ones(1), -200 * np.ones(1), np.zeros(1), hstepmax=20)
 # In[10]:
 
 
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(-800 * np.ones(10), np.linspace(-500, 500, 10), np.zeros(10), hstepmax=20)
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+ml.plots.tracelines(
+    -800 * np.ones(10), np.linspace(-500, 500, 10), np.zeros(10), hstepmax=20
+)
 
 
 # ### Exercise b
@@ -115,8 +117,10 @@ rf = timml.Constant(ml, xr=-1000, yr=0, hr=41)
 uf = timml.Uflow(ml, slope=0.001, angle=0)
 w = timml.Well(ml, xw=-400, yw=0, Qw=200, rw=0.2)
 ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(-800 * np.ones(10), np.linspace(-500, 500, 10), np.zeros(10), hstepmax=20)
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+ml.plots.tracelines(
+    -800 * np.ones(10), np.linspace(-500, 500, 10), np.zeros(10), hstepmax=20
+)
 
 print(("head at well:", w.headinside()))
 
@@ -133,7 +137,7 @@ uf = timml.Uflow(ml, slope=0.001, angle=0)
 w = timml.Well(ml, xw=-400, yw=0, Qw=200, rw=0.2)
 ls1 = timml.HeadLineSink(ml, 0, -500, 0, 500, 40)
 ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
 print(("head at well:", w.headinside()))
 
 
@@ -151,11 +155,11 @@ xls = np.zeros(21)
 yls = np.linspace(-800, 800, 21)
 ls = timml.HeadLineSinkString(ml, xy=list(zip(xls, yls)), hls=40, layers=0)
 ml.solve()
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
-ml.tracelines(
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1))
+ml.plots.tracelines(
     -800 * np.ones(10), np.linspace(-500, 500, 10), np.zeros(10), hstepmax=20, color="b"
 )
-ml.tracelines(
+ml.plots.tracelines(
     -0.01 * np.ones(5), np.linspace(-150, 150, 5), np.zeros(5), hstepmax=20, color="r"
 )
 
@@ -166,7 +170,7 @@ ml.tracelines(
 # In[14]:
 
 
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1), layers=0)
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1), layers=0)
 w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=5 * 365.25, color="b")
 
 
@@ -176,7 +180,7 @@ w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=5 * 365.25, color="b")
 # In[15]:
 
 
-ml.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1), layers=0)
+ml.plots.contour(-1000, 100, 50, -500, 500, 50, levels=np.arange(39, 42, 0.1), layers=0)
 w.plotcapzone(hstepmax=20, nt=20, zstart=0, tmax=20 * 365.25, color="b")
 
 
