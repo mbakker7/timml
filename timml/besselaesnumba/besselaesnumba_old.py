@@ -88,7 +88,7 @@ def prepare_z(x, y, z1, z2):
 
 @numba.njit
 def potbeslsho(x, y, z1, z2, labda, order, ilap, naq):
-    """potbeslsho.
+    """Potbeslsho.
 
     Parameters
     ----------

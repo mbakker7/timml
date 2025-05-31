@@ -2,6 +2,7 @@
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
+import warnings
 
 import numpy as np
 from scipy.integrate import quad_vec
@@ -9,12 +10,12 @@ from scipy.integrate import quad_vec
 from .aquifer import Aquifer, SimpleAquifer
 from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
-from .util import PlotTim
+from .plots import PlotTim
 
-__all__ = ["Model", "ModelMaq", "Model3D"]
+__all__ = ["Model", "ModelMaq", "Model3D", "ModelXsection"]
 
 
-class Model(PlotTim):
+class Model:
     """Create a model consisting of an arbitrary sequence of aquifers and leaky layers.
 
     Notes
@@ -48,6 +49,8 @@ class Model(PlotTim):
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
+
+        self.plots = PlotTim(self)
 
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
@@ -566,6 +569,48 @@ class Model(PlotTim):
             f.write(e.write())
         f.close()
 
+    def plot(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.plot' method is deprecated. Use 'ml.plots.topview' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.topview(**kwargs)
+
+    def contour(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.contour' method is deprecated. Use 'ml.plots.contour' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.contour(*args, **kwargs)
+
+    def vcontour(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.vcontour' method is deprecated. Use 'ml.plots.vcontour' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.vcontour(*args, **kwargs)
+
+    def tracelines(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.tracelines' method is deprecated. "
+            "Use 'ml.plots.tracelines' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.tracelines(*args, **kwargs)
+
+    def vcontoursf1D(self, *args, **kwargs):
+        warnings.warn(
+            "The 'ml.vcontoursf1D' method is deprecated. "
+            "Use 'ml.plots.vcontoursf1D' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.plots.vcontoursf1D(*args, **kwargs)
+
 
 class ModelMaq(Model):
     """Create a model by specifying a mult-aquifer sequence of aquifer-leaky layer.
@@ -609,7 +654,7 @@ class ModelMaq(Model):
             z = [1, 0]
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_maq(kaq, z, c, npor, topboundary)
-        Model.__init__(self, kaq, c, z, npor, ltype)
+        super().__init__(kaq, c, z, npor, ltype)
         self.name = "ModelMaq"
         if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
@@ -687,7 +732,7 @@ class Model3D(Model):
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":
             z = np.hstack((z[0] + topthick, z))
-        Model.__init__(self, kaq, c, z, npor, ltype)
+        super().__init__(kaq, c, z, npor, ltype)
         self.name = "Model3D"
         if self.aq.ltype[0] == "l":
             ConstantStar(self, hstar, aq=self.aq)
@@ -699,6 +744,9 @@ class ModelXsection(Model):
         self.elementdict = {}  # only elements that have a label
         self.aq = SimpleAquifer(naq)
         self.modelname = "ml"  # Used for writing out input
+
+        self.plots = PlotTim(self)
+        self.name = "ModelXsection"
 
     def check_inhoms(self):
         """Check if number of aquifers in inhoms matches number of aquifers in model."""

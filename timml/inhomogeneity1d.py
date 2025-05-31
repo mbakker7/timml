@@ -1,6 +1,7 @@
 import inspect  # user for storing the input
 import warnings
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from timml.aquifer import AquiferData
@@ -117,14 +118,141 @@ class Xsection(AquiferData):
                     self.model, self.x1, label=None, aq=aqin, aqin=aqin, aqout=aqleft
                 )
             if self.N is not None:
-                assert (
-                    aqin.ilap
-                ), "Error: infiltration can only be added if topboundary='conf'"
+                assert aqin.ilap, (
+                    "Error: infiltration can only be added if topboundary='conf'"
+                )
                 XsectionAreaSinkInhom(self.model, self.x1, self.x2, self.N, layer=0)
         if aqin.ltype[0] == "l":
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
+
+    def plot(self, ax=None, labels=False, params=False, names=False, **kwargs):
+        """Plot the cross-section.
+
+        Parameters
+        ----------
+        ax : plt.Axes, optional
+            Axis to plot the cross-section on. If None, a new axis will be created.
+        labels : bool, optional
+            If True, add layer-name labels.
+        params : bool, optional
+            If True, add parameter labels.
+        names : bool, optional
+            If True, add inhomogeneity names.
+        """
+        if ax is None:
+            _, ax = plt.subplots(1, 1, figsize=(8, 4))
+
+        if "x1" in kwargs:
+            x1 = kwargs.pop("x1")
+            if np.isfinite(self.x1):
+                x1 = max(x1, self.x1)
+        elif np.isfinite(self.x1):
+            x1 = self.x1
+        else:
+            x1 = self.x2 - 100.0
+        if "x2" in kwargs:
+            x2 = kwargs.pop("x2")
+            if np.isfinite(self.x2):
+                x2 = min(x2, self.x2)
+        elif np.isfinite(self.x2):
+            x2 = self.x2
+        else:
+            x2 = self.x1 + 100.0
+
+        if self.x1 > x2 or self.x2 < x1:
+            # do nothing, inhom is outside the window
+            return ax
+
+        r = x2 - x1
+        r0 = x1
+
+        if labels or params:
+            lli = 1 if self.ltype[0] == "a" else 0
+            aqi = 0
+        else:
+            lli = None
+            aqi = None
+
+        if names:
+            ax.text(
+                r0 + 0.5 * r,
+                0.95,
+                self.name,
+                ha="center",
+                va="center",
+                fontsize=10,
+                transform=ax.get_xaxis_transform(),
+            )
+
+        for i in range(self.nlayers):
+            if self.ltype[i] == "l":
+                ax.fill_between(
+                    x=[r0, r0 + r],
+                    y1=self.z[i + 1],
+                    y2=self.z[i],
+                    color=[0.8, 0.8, 0.8],
+                )
+                if labels:
+                    ax.text(
+                        r0 + 0.5 * r if not params else r0 + 0.25 * r,
+                        np.mean(self.z[i : i + 2]),
+                        f"leaky layer {lli}",
+                        ha="center",
+                        va="center",
+                    )
+                if params:
+                    paramtxt = f"$c$ = {self.c[lli]:.1f}"
+                    ax.text(
+                        r0 + 0.75 * r if labels else r0 + 0.5 * r,
+                        np.mean(self.z[i : i + 2]),
+                        paramtxt,
+                        ha="center",
+                        va="center",
+                    )
+                if labels or params:
+                    lli += 1
+
+            if labels and self.ltype[i] == "a":
+                ax.text(
+                    r0 + 0.5 * r if not params else r0 + 0.25 * r,
+                    np.mean(self.z[i : i + 2]),
+                    f"aquifer {aqi}",
+                    ha="center",
+                    va="center",
+                )
+            if params and self.ltype[i] == "a":
+                paramtxt = f"$k_h$ = {self.kaq[aqi]:.1f}"
+                ax.text(
+                    r0 + 0.75 * r if labels else r0 + 0.5 * r,
+                    np.mean(self.z[i : i + 2]),
+                    paramtxt,
+                    ha="center",
+                    va="center",
+                )
+            if (labels or params) and self.ltype[i] == "a":
+                aqi += 1
+
+        for i in range(1, self.nlayers):
+            if self.ltype[i] == "a" and self.ltype[i - 1] == "a":
+                ax.fill_between(
+                    x=[r0, r0 + r],
+                    y1=self.z[i],
+                    y2=self.z[i],
+                    color=[0.8, 0.8, 0.8],
+                )
+        ax.hlines(self.z[0], xmin=r0, xmax=r0 + r, color="k", lw=0.75)
+        ax.hlines(self.z[-1], xmin=r0, xmax=r0 + r, color="k", lw=3.0)
+
+        # if hstar is not None, N is taken care of by the AreaSinkInhom element.
+        if self.hstar is not None:
+            ax.plot(
+                [r0, r0 + r], [self.hstar, self.hstar], color="C0", lw=2.0, zorder=5
+            )
+
+        ax.set_ylabel("elevation")
+        return ax
 
 
 class XsectionMaq(Xsection):

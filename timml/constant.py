@@ -94,7 +94,7 @@ class Constant(ConstantBase, PotentialEquation):
 
     def initialize(self):
         ConstantBase.initialize(self)
-        assert self.aq.ilap, "Constant element added to area that is " "semi-confined"
+        assert self.aq.ilap, "Constant element added to area that is semi-confined"
         self.resfac = np.zeros(1)  # required for HeadEquation
         self.strengthinf = np.zeros(1)  # required for HeadEquation
 

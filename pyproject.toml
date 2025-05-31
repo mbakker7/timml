@@ -20,8 +20,8 @@ dependencies = [
     "scipy",
     "numba",
     "matplotlib",
-    "lmfit",
     "pandas",
+    
 ]
 
 keywords = ["hydrology", "groundwater", "model", "analytic element method"]

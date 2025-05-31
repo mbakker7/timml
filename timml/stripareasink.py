@@ -1,5 +1,6 @@
 import warnings
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from timml.element import Element
@@ -78,7 +79,7 @@ class XsectionAreaSinkInhom(Element):
                 rv[0, 0, 0] = x - self.xc
         return rv
 
-    def qztop(self, x, y):
+    def qztop(self, x, y, aq=None):
         rv = 0.0
         if (x > self.xleft) and (x < self.xright):
             rv = -self.parameters[
@@ -86,40 +87,31 @@ class XsectionAreaSinkInhom(Element):
             ]  # minus cause the parameter is the infiltration rate
         return rv
 
-    def changetrace(
-        self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
-    ):
-        changed = False
-        terminate = False
-        xyztnew = 0
-        message = None
-        eps = 1e-8
-        r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
-        r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
-        if (r1sq < self.Rsq and r2sq > self.Rsq) or (
-            r1sq > self.Rsq and r2sq < self.Rsq
-        ):
-            changed = True
-            x1, y1 = xyzt1[0:2]
-            x2, y2 = xyzt2[0:2]
-            a = (x2 - x1) ** 2 + (y2 - y1) ** 2
-            b = 2 * ((x2 - x1) * (x1 - self.xc) + (y2 - y1) * (y1 - self.yc))
-            c = (
-                self.xc**2
-                + self.yc**2
-                + x1**2
-                + y1**2
-                - 2 * (self.xc * x1 + self.yc * y1)
-                - self.Rsq
+    def plot(self, ax=None, n_arrows=10, **kwargs):
+        if ax is None:
+            _, ax = plt.subplots()
+        Lz = self.aq.z[0] - self.aq.z[-1]
+        Lx = self.xright - self.xleft
+
+        for i in np.linspace(self.xleft, self.xright, n_arrows):
+            xtail = i
+            ztail = self.aq.z[0] + Lz / 20.0
+            dx = 0
+            dy = -0.9 * Lz / 20.0
+            ax.arrow(
+                xtail,
+                ztail,
+                dx,
+                dy,
+                width=kwargs.pop("width", Lx / 300.0),
+                length_includes_head=kwargs.pop("length_includes_head", True),
+                head_width=kwargs.pop("head_width", 4 * Lx / 300.0),
+                head_length=kwargs.pop("head_length", 0.4 * Lz / 20.0),
+                color=kwargs.pop("color", "k"),
+                joinstyle=kwargs.pop("joinstyle", "miter"),
+                capstyle=kwargs.pop("capstyle", "projecting"),
             )
-            u1 = (-b - np.sqrt(b**2 - 4 * a * c)) / (2 * a)
-            u2 = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
-            if u1 > 0:
-                u = u1 * (1.0 + eps)  # Go just beyond circle
-            else:
-                u = u2 * (1.0 + eps)  # Go just beyond circle
-            xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
-        return changed, terminate, xyztnew, message
+        return ax
 
 
 class XsectionAreaSink(Element):
@@ -211,7 +203,7 @@ class XsectionAreaSink(Element):
                 )
         return rv
 
-    def qztop(self, x, y):
+    def qztop(self, x, y, aq=None):
         rv = 0.0
         if (x > self.xleft) and (x < self.xright):
             rv = -self.parameters[
@@ -226,31 +218,25 @@ class XsectionAreaSink(Element):
         terminate = False
         xyztnew = 0
         message = None
-        eps = 1e-8
-        r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
-        r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
-        if (r1sq < self.Rsq and r2sq > self.Rsq) or (
-            r1sq > self.Rsq and r2sq < self.Rsq
+        eps = 1e-4
+        x1 = xyzt1[0]
+        x2 = xyzt2[0]
+        if (x1 < self.xleft and x2 >= self.xleft) or (
+            x1 > self.xleft and x2 <= self.xleft
         ):
+            dx1 = x1 - self.xleft
+            dx2 = x2 - self.xleft
+            # step just beyond boundary
+            xyztnew = xyzt1 + (dx1 + np.sign(dx1) * eps) / (dx1 - dx2) * (xyzt2 - xyzt1)
             changed = True
-            x1, y1 = xyzt1[0:2]
-            x2, y2 = xyzt2[0:2]
-            a = (x2 - x1) ** 2 + (y2 - y1) ** 2
-            b = 2 * ((x2 - x1) * (x1 - self.xc) + (y2 - y1) * (y1 - self.yc))
-            c = (
-                self.xc**2
-                + self.yc**2
-                + x1**2
-                + y1**2
-                - 2 * (self.xc * x1 + self.yc * y1)
-                - self.Rsq
-            )
-            u1 = (-b - np.sqrt(b**2 - 4 * a * c)) / (2 * a)
-            u2 = (-b + np.sqrt(b**2 - 4 * a * c)) / (2 * a)
-            if u1 > 0:
-                u = u1 * (1.0 + eps)  # Go just beyond circle
-            else:
-                u = u2 * (1.0 + eps)  # Go just beyond circle
-            xyzt1[2] + u * (xyzt2[2] - xyzt1[2])
-            xyztnew = xyzt1 + u * (xyzt2 - xyzt1)
+            message = "exited or entered xsection area sink on the left side"
+        elif (x1 < self.xright and x2 >= self.xright) or (
+            x1 > self.xright and x2 <= self.xright
+        ):  # type: ignore
+            dx1 = x1 - self.xright
+            dx2 = x2 - self.xright
+            # step just beyond boundary
+            xyztnew = xyzt1 + (dx1 + np.sign(dx1) * eps) / (dx1 - dx2) * (xyzt2 - xyzt1)
+            changed = True
+            message = "exited or entered area sink on the right side"
         return changed, terminate, xyztnew, message

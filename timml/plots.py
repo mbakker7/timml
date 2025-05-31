@@ -1,14 +1,27 @@
+from typing import Optional
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import LineCollection
 
-from .trace import timtraceline
+from timml.aquifer import SimpleAquifer
+from timml.trace import timtraceline
 
 plt.rcParams["contour.negative_linestyle"] = "solid"
 
 
 class PlotTim:
-    def plot(
+    def __init__(self, ml):
+        self._ml = ml
+
+    def __repr__(self):
+        """Return string representation of Plots submodule."""
+        methods = "".join(
+            [f"\n - {meth}" for meth in dir(self) if not meth.startswith("_")]
+        )
+        return "TimML plots, available methods:" + methods
+
+    def topview(
         self,
         win=None,
         newfig=True,
@@ -77,7 +90,7 @@ class PlotTim:
                 ax2 = fig.axes[0]
         if ax1 is not None:
             plt.sca(ax1)
-            for e in self.elementlist:
+            for e in self._ml.elementlist:
                 e.plot(layer=layer)
             if orientation[:3] == "hor":
                 plt.axis("scaled")
@@ -87,16 +100,157 @@ class PlotTim:
                 plt.axis(win)
         if ax2 is not None:
             plt.sca(ax2)
-            for i in range(self.aq.nlayers):
-                if self.aq.ltype[i] == "l":
+            for i in range(self._ml.aq.nlayers):
+                if self._ml.aq.ltype[i] == "l":
                     plt.axhspan(
-                        ymin=self.aq.z[i + 1], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
+                        ymin=self._ml.aq.z[i + 1],
+                        ymax=self._ml.aq.z[i],
+                        color=[0.8, 0.8, 0.8],
                     )
-            for i in range(1, self.aq.nlayers):
-                if self.aq.ltype[i] == "a" and self.aq.ltype[i - 1] == "a":
+            for i in range(1, self._ml.aq.nlayers):
+                if self._ml.aq.ltype[i] == "a" and self._ml.aq.ltype[i - 1] == "a":
                     plt.axhspan(
-                        ymin=self.aq.z[i], ymax=self.aq.z[i], color=[0.8, 0.8, 0.8]
+                        ymin=self._ml.aq.z[i],
+                        ymax=self._ml.aq.z[i],
+                        color=[0.8, 0.8, 0.8],
                     )
+
+    def xsection(
+        self,
+        xy: Optional[list[tuple[float]]] = None,
+        labels=True,
+        params=False,
+        ax=None,
+    ):
+        """Plot cross-section of model.
+
+        Note: this method does not plot elements at this time. It does plot
+        cross-section inhoms if the model is a cross-section model (ModelXsection).
+
+        Parameters
+        ----------
+        xy : list of tuples, optional
+            list of tuples with coordinates of the form [(x0, y0), (x1, y1)]. If not
+            provided, a cross section with length 1 is plotted.
+        labels : bool, optional
+            add layer numbering labels to plot
+        params : bool, optional
+            add parameter values to plot
+        ax : matplotlib.Axes, optional
+            axes to plot on, default is None which creates a new figure
+
+        Returns
+        -------
+        ax : matplotlib.Axes
+            axes with plot
+        """
+        if ax is None:
+            _, ax = plt.subplots(1, 1, figsize=(8, 4))
+
+        # if SimpleAquifer, plot inhoms and return
+        if isinstance(self._ml.aq, SimpleAquifer):
+            for e in self._ml.elementlist:
+                e.plot(ax=ax)
+            if xy is not None:
+                (x1, _), (x2, _) = xy
+            else:
+                x1, x2 = ax.get_xlim()
+            for inhom in self._ml.aq.inhomlist:
+                inhom.plot(ax=ax, labels=labels, params=params, x1=x1, x2=x2)
+            ax.set_xlim(x1, x2)
+            ax.set_ylabel("elevation")
+            ax.set_xlabel("x")
+            return ax
+
+        # else get cross-section line
+        if xy is not None:
+            (x0, y0), (x1, y1) = xy
+            r = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+            if y0 == 0 and y1 == 0:
+                r0 = x0
+                ax.set_xlim(x0, x1)
+            elif x0 == 0 and x1 == 0:
+                ax.set_ylim(y0, y1)
+                r0 = y0
+            else:
+                ax.set_xlim(0, r)
+                r0 = 0.0
+        else:
+            r0 = 0.0
+            r = 1.0
+
+        # get values for layer and aquifer numbering
+        if labels:
+            lli = 1 if self._ml.aq.ltype[0] == "a" else 0
+            aqi = 0
+        else:
+            lli = None
+            aqi = None
+
+        # plot layers
+        for i in range(self._ml.aq.nlayers):
+            # leaky layers
+            if self._ml.aq.ltype[i] == "l":
+                ax.axhspan(
+                    ymin=self._ml.aq.z[i + 1],
+                    ymax=self._ml.aq.z[i],
+                    color=[0.8, 0.8, 0.8],
+                )
+                if labels:
+                    ax.text(
+                        r0 + 0.5 * r if not params else r0 + 0.25 * r,
+                        np.mean(self._ml.aq.z[i : i + 2]),
+                        f"leaky layer {lli}",
+                        ha="center",
+                        va="center",
+                    )
+                if params:
+                    ax.text(
+                        r0 + 0.75 * r if labels else r0 + 0.5 * r,
+                        np.mean(self._ml.aq.z[i : i + 2]),
+                        (f"$c$ = {self._ml.aq.c[lli]}"),
+                        ha="center",
+                        va="center",
+                    )
+                if labels or params:
+                    lli += 1
+
+            # aquifers
+            if labels and self._ml.aq.ltype[i] == "a":
+                ax.text(
+                    r0 + 0.5 * r if not params else r0 + 0.25 * r,
+                    np.mean(self._ml.aq.z[i : i + 2]),
+                    f"aquifer {aqi}",
+                    ha="center",
+                    va="center",
+                )
+            if params and self._ml.aq.ltype[i] == "a":
+                if aqi == 0:
+                    paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]}"
+                if self._ml.name == "Model3D":
+                    paramtxt += f", $k_z/k_h$ = {self._ml.aq.kzoverkh[aqi]:.2f}"
+                ax.text(
+                    r0 + 0.75 * r if labels else r0 + 0.5 * r,
+                    np.mean(self._ml.aq.z[i : i + 2]),
+                    paramtxt,
+                    ha="center",
+                    va="center",
+                )
+            if (labels or params) and self._ml.aq.ltype[i] == "a":
+                aqi += 1
+
+        # aquifer-aquifer boundaries (for e.g. Model3D)
+        for i in range(1, self._ml.aq.nlayers):
+            if self._ml.aq.ltype[i] == "a" and self._ml.aq.ltype[i - 1] == "a":
+                ax.axhspan(
+                    ymin=self._ml.aq.z[i], ymax=self._ml.aq.z[i], color=[0.8, 0.8, 0.8]
+                )
+        # top and bottom
+        ax.axhline(self._ml.aq.z[0], color="k", lw=0.75)
+        ax.axhline(self._ml.aq.z[-1], color="k", lw=3.0)
+        # add y-label
+        ax.set_ylabel("elevation")
+        return ax
 
     def contour(
         self,
@@ -155,7 +309,7 @@ class PlotTim:
         layers = np.atleast_1d(layers)
         xg = np.linspace(x1, x2, nx)
         yg = np.linspace(y1, y2, ny)
-        h = self.headgrid(xg, yg, layers)
+        h = self._ml.headgrid(xg, yg, layers)
         if newfig:
             plt.figure(figsize=figsize)
         # color
@@ -166,7 +320,7 @@ class PlotTim:
         elif isinstance(color, list):
             c = color
         if len(c) < len(layers):
-            n = np.ceil(self.aq.naq / len(c))
+            n = np.ceil(self._ml.aq.naq / len(c))
             c = n * c
         # contour
         cslist = []
@@ -186,7 +340,7 @@ class PlotTim:
             plt.legend(cshandlelist, legendlist)
         plt.axis("scaled")
         if layout:
-            self.plot(win=[x1, x2, y1, y2], newfig=False, layer=layers)
+            self.topview(win=[x1, x2, y1, y2], newfig=False, layer=layers)
         return cslist
 
     def vcontour(
@@ -236,30 +390,31 @@ class PlotTim:
         cs : contour set
         """
         x1, x2, y1, y2 = win
-        h = self.headalongline(
+        h = self._ml.headalongline(
             np.linspace(x1 + nudge, x2 - nudge, n),
             np.linspace(y1 + nudge, y2 - nudge, n),
         )
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         xg = np.linspace(0, L, n)
         if vinterp:
-            zg = 0.5 * (self.aq.zaqbot + self.aq.zaqtop)
-            zg = np.hstack((self.aq.zaqtop[0], zg, self.aq.zaqbot[-1]))
+            zg = 0.5 * (self._ml.aq.zaqbot + self._ml.aq.zaqtop)
+            zg = np.hstack((self._ml.aq.zaqtop[0], zg, self._ml.aq.zaqbot[-1]))
             h = np.vstack((h[0], h, h[-1]))
         else:
-            zg = np.empty(2 * self.aq.naq)
-            for i in range(self.aq.naq):
-                zg[2 * i] = self.aq.zaqtop[i]
-                zg[2 * i + 1] = self.aq.zaqbot[i]
+            zg = np.empty(2 * self._ml.aq.naq)
+            for i in range(self._ml.aq.naq):
+                zg[2 * i] = self._ml.aq.zaqtop[i]
+                zg[2 * i + 1] = self._ml.aq.zaqbot[i]
             h = np.repeat(h, 2, 0)
         if newfig:
-            plt.figure(figsize=figsize)
-        cs = plt.contour(xg, zg, h, levels, colors=color)
+            _, ax = plt.subplots(figsize=figsize)
+        if layout:
+            self.xsection(xy=[(x1, y1), (x2, y2)], labels=False, ax=ax)
+        cs = ax.contour(xg, zg, h, levels, colors=color)
         if labels:
             fmt = "%1." + str(decimals) + "f"
-            plt.clabel(cs, fmt=fmt)
-        if layout:
-            self.plot(win=[x1, x2, y1, y2], orientation="ver", newfig=False)
+            ax.clabel(cs, fmt=fmt)
+
         return cs
 
     def tracelines(
@@ -328,32 +483,33 @@ class PlotTim:
         if color is None:
             c = plt.rcParams["axes.prop_cycle"].by_key()["color"]
         elif isinstance(color, str):
-            c = self.aq.naq * [color]
+            c = self._ml.aq.naq * [color]
         elif isinstance(color, list):
             c = color
-        if len(c) < self.aq.naq:
-            n = int(np.ceil(self.aq.naq / len(c)))
+        if len(c) < self._ml.aq.naq:
+            n = int(np.ceil(self._ml.aq.naq / len(c)))
             c = n * c
         fig = plt.gcf()
-        assert (
-            len(fig.axes) > 0
-        ), "Error: Need to specify axes in figure before invoking tracelines"
-        ax1 = None
-        ax2 = None
+        assert len(fig.axes) > 0, (
+            "Error: Need to specify axes in figure before invoking tracelines"
+        )
+
+        axes = {}
         if orientation == "both":
-            ax1 = fig.axes[0]
-            ax2 = fig.axes[1]
+            axes["hor"] = fig.axes[0]
+            axes["ver"] = fig.axes[1]
         elif orientation[:3] == "hor":
-            ax1 = fig.axes[0]
+            axes["hor"] = fig.axes[0]
         elif orientation[:3] == "ver":
-            ax2 = fig.axes[1]
+            axes["ver"] = fig.axes[-1]
+
         if return_traces:
             traces = []
         else:
             metadata = True  # suppress future warning from timtraceline
-        for i in range(len(xstart)):
+        for i, _ in enumerate(xstart):
             trace = timtraceline(
-                self,
+                self._ml,
                 xstart[i],
                 ystart[i],
                 zstart[i],
@@ -374,27 +530,30 @@ class PlotTim:
                 xyzt, layerlist = trace
             if silent == ".":
                 print(".", end="", flush=True)
-            if ax1 is not None:
-                # plt.axes(ax1)
-                color = [
-                    c[self.aq.layernumber[i]] if self.aq.ltype[i] == "a" else "k"
-                    for i in layerlist
-                ]
+            if "hor" in axes:
+                color = []
+                for ixyzt, ilayer in zip(xyzt, layerlist, strict=False):
+                    aq = self._ml.aq.find_aquifer_data(ixyzt[0], ixyzt[1])
+                    color.append(
+                        c[aq.layernumber[ilayer]] if aq.ltype[ilayer] == "a" else "k"
+                    )
                 points = np.array([xyzt[:, 0], xyzt[:, 1]]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
                 lc = LineCollection(segments, colors=color)
-                ax1.add_collection(lc)
+                axes["hor"].add_collection(lc)
                 # ax1.plot(xyzt[:, 0], xyzt[:, 1], color=color)
-            if ax2 is not None:
-                color = [
-                    c[self.aq.layernumber[i]] if self.aq.ltype[i] == "a" else "k"
-                    for i in layerlist
-                ]
+            if "ver" in axes:
+                color = []
+                for ixyzt, ilayer in zip(xyzt, layerlist, strict=False):
+                    aq = self._ml.aq.find_aquifer_data(ixyzt[0], ixyzt[1])
+                    color.append(
+                        c[aq.layernumber[ilayer]] if aq.ltype[ilayer] == "a" else "k"
+                    )
                 points = np.array([xyzt[:, 0], xyzt[:, 2]]).T.reshape(-1, 1, 2)
                 segments = np.concatenate([points[:-1], points[1:]], axis=1)
                 lc = LineCollection(segments, colors=color)
-                ax2.add_collection(lc)
-                ax2.set_ylim(self.aq.z[-1], self.aq.z[0])
+                axes["ver"].add_collection(lc)
+                axes["ver"].set_ylim(aq.z[-1], aq.z[0])
         if silent == ".":
             print("")  # Print the final newline after the dots
         if return_traces:
@@ -436,7 +595,7 @@ class PlotTim:
         nudge : float
             first value is computed nudge from the specified x1 and x2
         newfig : boolean (default True)
-            create new figure
+            create new figure. if False, ax must be supplied
         figsize : tuple of 2 values (default is mpl default)
             size of figure
         layout : boolean
@@ -448,14 +607,14 @@ class PlotTim:
         -------
         ax : axis
         """
-        naq = self.aq.naq
+        naq = self._ml.aq.naq
         xflow = np.linspace(x1 + nudge, x2 - nudge, nx)
         Qx = np.empty((naq, nx))
         for i in range(nx):
-            Qx[:, i], _ = self.disvec(xflow[i], 0)
+            Qx[:, i], _ = self._ml.disvec(xflow[i], 0)
         zflow = np.empty(2 * naq)
-        for i in range(self.aq.naq):
-            aq = self.aq.find_aquifer_data(xflow[0], 0)  # use first x as reference
+        for i in range(self._ml.aq.naq):
+            aq = self._ml.aq.find_aquifer_data(xflow[0], 0)  # use first x as reference
             zflow[2 * i] = aq.zaqtop[i]
             zflow[2 * i + 1] = aq.zaqbot[i]
         Qx = Qx[::-1]  # set upside down
@@ -468,12 +627,12 @@ class PlotTim:
         Qxgrid = Qxgrid[::-1]  # index 0 at top
         if newfig:
             _, ax = plt.subplots(1, 1, figsize=figsize)
-        else:
-            ax = ax
+        elif ax is None:
+            ax = plt.gca()
         cs = ax.contour(xflow, zflow, Qxgrid, levels, colors=color)
         if labels:
             fmt = "%1." + str(decimals) + "f"
             plt.clabel(cs, fmt=fmt)
+        if layout:
+            self.xsection(xy=[(x1, 0), (x2, 0)], labels=False, ax=ax)
         return ax
-        # if layout:
-        #    self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
