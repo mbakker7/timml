@@ -225,8 +225,7 @@ class PlotTim:
                     va="center",
                 )
             if params and self._ml.aq.ltype[i] == "a":
-                if aqi == 0:
-                    paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]}"
+                paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]}"
                 if self._ml.name == "Model3D":
                     paramtxt += f", $k_z/k_h$ = {self._ml.aq.kzoverkh[aqi]:.2f}"
                 ax.text(
