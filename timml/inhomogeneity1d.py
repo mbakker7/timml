@@ -127,7 +127,9 @@ class Xsection(AquiferData):
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
 
-    def plot(self, ax=None, labels=False, params=False, names=False, **kwargs):
+    def plot(
+        self, ax=None, labels=False, params=False, names=False, fmt=None, **kwargs
+    ):
         """Plot the cross-section.
 
         Parameters
@@ -140,6 +142,8 @@ class Xsection(AquiferData):
             If True, add parameter labels.
         names : bool, optional
             If True, add inhomogeneity names.
+        fmt : str
+            format string for parameters
         """
         if ax is None:
             _, ax = plt.subplots(1, 1, figsize=(8, 4))
@@ -167,6 +171,9 @@ class Xsection(AquiferData):
 
         r = x2 - x1
         r0 = x1
+
+        if fmt is None:
+            fmt = ""
 
         if labels or params:
             lli = 1 if self.ltype[0] == "a" else 0
@@ -203,7 +210,7 @@ class Xsection(AquiferData):
                         va="center",
                     )
                 if params:
-                    paramtxt = f"$c$ = {self.c[lli]:.1f}"
+                    paramtxt = f"$c$ = {self.c[lli]:{fmt}}"
                     ax.text(
                         r0 + 0.75 * r if labels else r0 + 0.5 * r,
                         np.mean(self.z[i : i + 2]),
@@ -223,7 +230,7 @@ class Xsection(AquiferData):
                     va="center",
                 )
             if params and self.ltype[i] == "a":
-                paramtxt = f"$k_h$ = {self.kaq[aqi]:.1f}"
+                paramtxt = f"$k_h$ = {self.kaq[aqi]:{fmt}}"
                 ax.text(
                     r0 + 0.75 * r if labels else r0 + 0.5 * r,
                     np.mean(self.z[i : i + 2]),
