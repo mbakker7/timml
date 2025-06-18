@@ -140,7 +140,7 @@ class PlotTim:
         ax : matplotlib.Axes, optional
             axes to plot on, default is None which creates a new figure
         fmt : str, optional
-            format string for parameter values, e.g. '0.2f' for 2 decimals
+            format string for parameter values, e.g. '.2f' for 2 decimals
 
         Returns
         -------
