@@ -121,6 +121,7 @@ class PlotTim:
         labels=True,
         params=False,
         ax=None,
+        fmt=None,
     ):
         """Plot cross-section of model.
 
@@ -138,6 +139,8 @@ class PlotTim:
             add parameter values to plot
         ax : matplotlib.Axes, optional
             axes to plot on, default is None which creates a new figure
+        fmt : str, optional
+            format string for parameter values, e.g. '0.2f' for 2 decimals
 
         Returns
         -------
@@ -156,11 +159,14 @@ class PlotTim:
             else:
                 x1, x2 = ax.get_xlim()
             for inhom in self._ml.aq.inhomlist:
-                inhom.plot(ax=ax, labels=labels, params=params, x1=x1, x2=x2)
+                inhom.plot(ax=ax, labels=labels, params=params, x1=x1, x2=x2, fmt=fmt)
             ax.set_xlim(x1, x2)
             ax.set_ylabel("elevation")
             ax.set_xlabel("x")
             return ax
+
+        if fmt is None:
+            fmt = ""
 
         # else get cross-section line
         if xy is not None:
@@ -208,7 +214,7 @@ class PlotTim:
                     ax.text(
                         r0 + 0.75 * r if labels else r0 + 0.5 * r,
                         np.mean(self._ml.aq.z[i : i + 2]),
-                        (f"$c$ = {self._ml.aq.c[lli]}"),
+                        (f"$c$ = {self._ml.aq.c[lli]:{fmt}}"),
                         ha="center",
                         va="center",
                     )
@@ -225,9 +231,7 @@ class PlotTim:
                     va="center",
                 )
             if params and self._ml.aq.ltype[i] == "a":
-                paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]}"
-                if self._ml.name == "Model3D":
-                    paramtxt += f", $k_z/k_h$ = {self._ml.aq.kzoverkh[aqi]:.2f}"
+                paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]:{fmt}}"
                 ax.text(
                     r0 + 0.75 * r if labels else r0 + 0.5 * r,
                     np.mean(self._ml.aq.z[i : i + 2]),
