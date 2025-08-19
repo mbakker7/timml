@@ -520,10 +520,10 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
-    label : str or None
-        label of element
     dely : float (default  is 0)
         distance between control points and line
+    label : str or None
+        label of element
 
     See Also
     --------
@@ -542,8 +542,8 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         wh=1,
         order=0,
         layers=0,
-        label=None,
         dely=0,
+        label=None,
         name="HeadLineSink",
         addtomodel=True,
     ):
@@ -623,6 +623,8 @@ class LineSinkDitch(HeadLineSink):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
+    dely : float (default  is 0)
+        distance between control points and line
     label: str or None
         label of element
 
@@ -643,6 +645,7 @@ class LineSinkDitch(HeadLineSink):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
         addtomodel=True,
     ):
@@ -659,6 +662,7 @@ class LineSinkDitch(HeadLineSink):
             wh=wh,
             order=order,
             layers=layers,
+            dely=dely,
             label=label,
             name="HeadLineSinkDitch",
             addtomodel=addtomodel,
@@ -702,6 +706,7 @@ class LineSinkStringBase(Element):
         closed=False,
         layers=0,
         order=0,
+        dely=0,
         name="LineSinkStringBase",
         label=None,
         aq=None,
@@ -732,6 +737,7 @@ class LineSinkStringBase(Element):
                     Qls=0.0,
                     layers=layers,
                     order=order,
+                    dely=dely,
                     label=lslabel,
                     addtomodel=False,
                     aq=aq,
@@ -885,6 +891,7 @@ class LineSinkStringBase2(Element):
         closed=False,
         layers=0,
         order=0,
+        dely=0,
         name="LineSinkStringBase",
         label=None,
         aq=None,
@@ -896,6 +903,7 @@ class LineSinkStringBase2(Element):
         if closed:
             self.xy = np.vstack((self.xy, self.xy[0]))
         self.order = order  # same for all segments in string
+        self.dely = dely # same for all segments in string
         self.lslist = []
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
         self.nls = len(self.x) - 1
@@ -1047,6 +1055,8 @@ class HeadLineSinkString(LineSinkStringBase2):
         aquifer layer
     order : int (default is 0)
         order of all line-sinks in string
+    dely : float (default  is 0)
+        distance between control points and line
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
@@ -1067,6 +1077,7 @@ class HeadLineSinkString(LineSinkStringBase2):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
         name="HeadLineSinkString",
     ):
@@ -1082,6 +1093,7 @@ class HeadLineSinkString(LineSinkStringBase2):
             order=order,
             name=name,
             label=label,
+            dely=dely,
             aq=None,
         )
         self.hls = np.atleast_1d(hls)
@@ -1128,6 +1140,7 @@ class HeadLineSinkString(LineSinkStringBase2):
                     wh=self.wh,
                     layers=self.layers[i],
                     order=self.order,
+                    dely=self.dely,
                     label=lslabel,
                     addtomodel=False,
                 )
@@ -1200,6 +1213,8 @@ class LineSinkDitchString(HeadLineSinkString):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
+    dely : float (default  is 0)
+        distance between control points and line
     label: str or None
         label of element
 
@@ -1217,6 +1232,7 @@ class LineSinkDitchString(HeadLineSinkString):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
     ):
         if xy is None:
@@ -1230,6 +1246,7 @@ class LineSinkDitchString(HeadLineSinkString):
             res=res,
             wh=wh,
             order=order,
+            dely=dely,
             layers=layers,
             label=label,
             name="LineSinkDitchString",
