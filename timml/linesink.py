@@ -317,7 +317,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         label=None,
         addtomodel=True,
         aq=None,
-        zcinout=None,
+        dely=0,
+        #zcinout=None,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -333,7 +334,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if addtomodel:
             self.model.add_element(self)
         self.aq = aq
-        self.zcinout = zcinout
+        self.dely = dely
+        #self.zcinout = zcinout
 
     def __repr__(self):
         return (
@@ -358,19 +360,21 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         # array of ncp by nlayers * (order + 1)
         self.strengthinf = strengthinf_controlpoints(self.ncp, self.nlayers)
         #
-        self.xc, self.yc = controlpoints(self.ncp, self.z1, self.z2, eps=0)
-        if self.zcinout is not None:
-            self.xcin, self.ycin = controlpoints(
-                self.ncp, self.zcinout[0], self.zcinout[1], eps=0
-            )
-            self.xcout, self.ycout = controlpoints(
-                self.ncp, self.zcinout[2], self.zcinout[3], eps=0
-            )
-        else:
-            self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6)
-            self.xcout, self.ycout = controlpoints(
-                self.ncp, self.z1, self.z2, eps=-1e-6
-            )
+        self.xc, self.yc = controlpoints(self.ncp, self.z1, self.z2, eps=0, dely=self.dely)
+        self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6, dely=self.dely)
+        self.xcout, self.ycout = controlpoints(self.ncp, self.z1, self.z2, eps=-1e-6, dely=self.dely)
+        # if self.zcinout is not None:
+        #     self.xcin, self.ycin = controlpoints(
+        #         self.ncp, self.zcinout[0], self.zcinout[1], eps=0
+        #     )
+        #     self.xcout, self.ycout = controlpoints(
+        #         self.ncp, self.zcinout[2], self.zcinout[3], eps=0
+        #     )
+        # else:
+        #     self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6)
+        #     self.xcout, self.ycout = controlpoints(
+        #         self.ncp, self.z1, self.z2, eps=-1e-6
+        #     )
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         if self.addtomodel:
@@ -516,8 +520,10 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
-    label: str or None
+    label : str or None
         label of element
+    dely : float (default  is 0)
+        distance between control points and line
 
     See Also
     --------
@@ -537,6 +543,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         order=0,
         layers=0,
         label=None,
+        dely=0,
         name="HeadLineSink",
         addtomodel=True,
     ):
@@ -554,6 +561,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
             name=name,
             label=label,
             addtomodel=addtomodel,
+            dely=dely,
         )
         self.hls = np.atleast_1d(hls)
         self.res = res
