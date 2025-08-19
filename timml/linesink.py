@@ -318,7 +318,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         addtomodel=True,
         aq=None,
         dely=0,
-        #zcinout=None,
+        # zcinout=None,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -335,7 +335,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             self.model.add_element(self)
         self.aq = aq
         self.dely = dely
-        #self.zcinout = zcinout
+        # self.zcinout = zcinout
 
     def __repr__(self):
         return (
@@ -360,9 +360,15 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         # array of ncp by nlayers * (order + 1)
         self.strengthinf = strengthinf_controlpoints(self.ncp, self.nlayers)
         #
-        self.xc, self.yc = controlpoints(self.ncp, self.z1, self.z2, eps=0, dely=self.dely)
-        self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6, dely=self.dely)
-        self.xcout, self.ycout = controlpoints(self.ncp, self.z1, self.z2, eps=-1e-6, dely=self.dely)
+        self.xc, self.yc = controlpoints(
+            self.ncp, self.z1, self.z2, eps=0, dely=self.dely
+        )
+        self.xcin, self.ycin = controlpoints(
+            self.ncp, self.z1, self.z2, eps=1e-6, dely=self.dely
+        )
+        self.xcout, self.ycout = controlpoints(
+            self.ncp, self.z1, self.z2, eps=-1e-6, dely=self.dely
+        )
         # if self.zcinout is not None:
         #     self.xcin, self.ycin = controlpoints(
         #         self.ncp, self.zcinout[0], self.zcinout[1], eps=0
@@ -903,7 +909,7 @@ class LineSinkStringBase2(Element):
         if closed:
             self.xy = np.vstack((self.xy, self.xy[0]))
         self.order = order  # same for all segments in string
-        self.dely = dely # same for all segments in string
+        self.dely = dely  # same for all segments in string
         self.lslist = []
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
         self.nls = len(self.x) - 1
