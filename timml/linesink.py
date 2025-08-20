@@ -707,12 +707,12 @@ class LineSinkDitch(HeadLineSink):
             Head inside ditch at control points
         """
         if np.any(self.resfac > 0):
-            print('function not implemented for ditch with resistance')
-            h - self.resfac * self.parameters[:, 0]
+            print("function not implemented for ditch with resistance")
             return
         else:
             h = self.model.head(self.xc[0], self.yc[0], layers=self.layers)[0]
             return h
+
 
 class LineSinkStringBase2(Element):
     """Alternative implementation that loops through line-sinks to build equation.
@@ -977,8 +977,8 @@ class HeadLineSinkString(LineSinkStringBase2):
             else:
                 lslabel = self.label
             if self.xy.shape[1] == 2:
-                x1, x2 = self.x[i: i + 2]
-                y1, y2 = self.y[i: i + 2]
+                x1, x2 = self.x[i : i + 2]
+                y1, y2 = self.y[i : i + 2]
             elif self.xy.shape[1] == 4:
                 x1, y1, x2, y2 = self.xy[i]
             self.lslist.append(
@@ -996,7 +996,7 @@ class HeadLineSinkString(LineSinkStringBase2):
                     dely=self.dely,
                     label=lslabel,
                     addtomodel=False,
-                )   
+                )
             )
         LineSinkStringBase2.initialize(self)
 
@@ -1128,6 +1128,7 @@ class LineSinkDitchString(HeadLineSinkString):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
 
 # class LineSinkStringBase(Element):
 #     """Original implementation.
@@ -1311,7 +1312,7 @@ class LineSinkDitchString(HeadLineSinkString):
 
 #     def setparams(self, sol):
 #         self.parameters[:, 0] = sol
-        
+
 # class LineSinkContainer(Element):
 #     """Container class for bunch of line-sinks.
 
@@ -1571,9 +1572,8 @@ class LineSinkDitchString(HeadLineSinkString):
 #         irow = 0
 #         for ls in self.lslist:
 #             for icp in range(ls.ncp):
-#                 mat[irow : irow + ls.nlayers, jcol : jcol + ls.nunknowns] -= ls.resfac[
-#                     icp
-#                 ]
+#                 mat[irow : irow + ls.nlayers, jcol : jcol + ls.nunknowns] -= \
+#                     ls.resfac[icp]
 #                 irow += ls.nlayers
 #             jcol += ls.nunknowns
 #         return mat, rhs
