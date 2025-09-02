@@ -134,7 +134,7 @@ class MscreenWellEquation:
         for e in self.model.elementlist:
             if e.nunknowns > 0:
                 head = (
-                    e.potinflayers(self.xc, self.yc, self.layers)
+                    e.potinflayers(self.xc[0], self.yc[0], self.layers)
                     / self.aq.Tcol[self.layers, :]
                 )
                 mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = (
@@ -148,7 +148,7 @@ class MscreenWellEquation:
                 ieq += e.nunknowns
             else:
                 head = (
-                    e.potentiallayers(self.xc, self.yc, self.layers)
+                    e.potentiallayers(self.xc[0], self.yc[0], self.layers)
                     / self.aq.T[self.layers]
                 )
                 rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
