@@ -601,9 +601,9 @@ class CollectorWell(LineSinkDitchString):
     ----------
     model : Model object
         model to which the element is added
-    xy : array_like
+    xy : np.array
         array of shape (N, 4) with start and end coordinates of the line sinks
-        on each row: (x1, y1, x2, y2)
+        on each row: [(x1, y1, x2, y2), ...]
     Qw : float
         total discharge of the collector well
     rw : float
