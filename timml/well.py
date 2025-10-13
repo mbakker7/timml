@@ -614,8 +614,6 @@ class CollectorWell(LineSinkDitchString):
         layer (int) or layers (list or array) where well is screened
     order : int
         order of the line sink elements
-    wh : float
-        width of the line sink elements
     label : string, optional
         label of the collector well
 
@@ -636,7 +634,6 @@ class CollectorWell(LineSinkDitchString):
         res=0.0,
         layers=0,
         order=0,
-        wh=1,
         label=None,
     ):
         super().__init__(
@@ -646,7 +643,6 @@ class CollectorWell(LineSinkDitchString):
             res=res,
             layers=layers,
             order=order,
-            wh=wh,
             dely=rw,
             label=label,
         )
