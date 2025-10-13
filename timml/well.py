@@ -6,6 +6,7 @@ from scipy.special import k0, k1
 
 from .element import Element
 from .equation import MscreenWellEquation, MscreenWellNoflowEquation, PotentialEquation
+from .linesink import LineSinkDitchString
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -588,3 +589,168 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
             rv[1] = self.aq.coef[self.layers] * qy
             # rv[0], rv[1] = qx, qy
         return rv
+
+
+class CollectorWell(LineSinkDitchString):
+    """Collector well: collection of line sinks with a specified total discharge.
+
+    Collection of (discontinuous) line sinks with specified total discharge
+    and unknown but uniform head.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array_like
+        array of shape (N, 4) with start and end coordinates of the line sinks
+        on each row: (x1, y1, x2, y2)
+    Qw : float
+        total discharge of the collector well
+    rw : float
+        radius of the collector well arms
+    res : float
+        resistance of the well screen
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    order : int
+        order of the line sink elements
+    wh : float
+        width of the line sink elements
+    label : string, optional
+        label of the collector well
+
+    Examples
+    --------
+    >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> xy = [(1, 0, 10, 0), (0, 1, 0, 10)]
+    >>> w = timml.CollectorWell(ml, xy=xy, Qw=1000, layers=np.arange(5, 10))
+    >>> ml.solve()
+    """
+
+    def __init__(
+        self,
+        model,
+        xy,
+        Qw=100.0,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        order=0,
+        wh=1,
+        label=None,
+    ):
+        super().__init__(
+            model,
+            xy,
+            Qls=Qw,
+            res=res,
+            layers=layers,
+            order=order,
+            wh=wh,
+            dely=rw,
+            label=label,
+        )
+        self.name = "CollectorWell"
+
+
+class RadialCollectorWell(CollectorWell):
+    """Radial collector well.
+
+    Collection of (discontinuous) line sinks in a radial pattern with specified
+    total discharge and unknown but uniform head.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x : float
+        x-coordinate of the center of the collector well
+    y : float
+        y-coordinate of the center of the collector well
+    L : float
+        length of each arm
+    narms : int
+        number of arms
+    rcaisson : float
+        radius of the caisson
+    rw : float
+        radius of the arms
+    nls : int
+        number of line sinks per arm
+    Qw : float
+        total discharge of the collector well
+    res : float
+        resistance of the arms
+    layers : int, array or list
+        layer(s) in which the well is screened
+    label : string, optional
+        label of the collector well
+
+    Examples
+    --------
+    >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, L=5, narms=5, rcaisson=2.0,
+    ... Qw=1000, layers=np.arange(5, 10))
+    >>> ml.solve()
+    """
+
+    def __init__(
+        self,
+        model,
+        x=0,
+        y=0,
+        L=10.0,
+        narms=5,
+        rcaisson=1.0,
+        rw=0.1,
+        nls=1,
+        Qw=100.0,
+        res=0.0,
+        layers=0,
+        label=None,
+    ):
+        xy = self.compute_xy(x, y, rcaisson, L, narms, nls)
+        super().__init__(
+            model,
+            xy,
+            Qw=Qw,
+            rw=rw,
+            res=res,
+            layers=layers,
+            label=label,
+        )
+        self.name = "RadialCollectorWell"
+
+    def compute_xy(self, x, y, rcaisson, L, narms, nls):
+        """Compute the x,y-coordinates array for the radial collector well.
+
+        Parameters
+        ----------
+        x : float
+            x-coordinate of the center of the collector well
+        y : float
+            y-coordinate of the center of the collector well
+        rcaisson : float
+            radius of the caisson
+        L : float
+            length of each arm
+        narms : int
+            number of arms
+        nls : int
+            number of line sinks per arm
+
+        Returns
+        -------
+        xy : np.array
+            array of shape (N, 4) with start and end coordinates of the line sinks
+            on each row: [(x1, y1, x2, y2), ...]
+        """
+        xy = np.empty((narms * nls, 4))
+        for i, theta in enumerate(np.arange(0, 2 * np.pi, 2 * np.pi / 5)):
+            x = rcaisson * np.cos(theta) + np.linspace(0, L, nls + 1) * np.cos(theta)
+            y = rcaisson * np.sin(theta) + np.linspace(0, L, nls + 1) * np.sin(theta)
+            xy[i * nls : (i + 1) * nls, 0] = x[:-1]
+            xy[i * nls : (i + 1) * nls, 1] = y[:-1]
+            xy[i * nls : (i + 1) * nls, 2] = x[1:]
+            xy[i * nls : (i + 1) * nls, 3] = y[1:]
+        return xy
