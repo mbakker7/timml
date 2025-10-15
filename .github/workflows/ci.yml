@@ -44,14 +44,4 @@ jobs:
       - name: Publish to coveralls.io
         uses: coverallsapp/github-action@v2
         with:
-          parallel: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Close parallel build
-        uses: coverallsapp/github-action@v2
-        with:
-          parallel-finished: true
