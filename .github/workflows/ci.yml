@@ -16,35 +16,30 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13']
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Install uv with Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v6
         with:
+          enable-cache: true
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[ci]
+      - name: Install the project
+        run: uv sync --locked --all-extras
 
       - name: ruff-lint
-        uses: chartboost/ruff-action@v1
+        run: uv run ruff check
 
       - name: ruff-format
-        uses: chartboost/ruff-action@v1
-        with:
-          args: "format --check"
-  
+        run: uv run ruff check --fix
+
       - name: Run tests
-        run: |
-          py.test ./tests
+        run: uv run pytest ./tests
 
       - name: Numba coverage
         run: |
-          NUMBA_DISABLE_JIT=1 pytest --cov-append ./tests/test_besselaes.py 
+          NUMBA_DISABLE_JIT=1 uv run pytest --cov-append ./tests/test_besselaes.py
 
       - name: Publish to coveralls.io
         uses: coverallsapp/github-action@v2
