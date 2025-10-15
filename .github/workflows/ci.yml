@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v4
 
@@ -41,6 +41,10 @@ jobs:
       - name: Run tests
         run: |
           py.test ./tests
+
+      - name: Numba coverage
+        run: |
+          NUMBA_DISABLE_JIT=1 pytest --cov-append ./tests/test_besselaes.py 
 
       - name: Publish to coveralls.io
         uses: coverallsapp/github-action@v2
