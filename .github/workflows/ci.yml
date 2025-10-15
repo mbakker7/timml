@@ -32,7 +32,7 @@ jobs:
         run: uv run ruff check
 
       - name: ruff-format
-        run: uv run ruff check --fix
+        run: uv run ruff format --check
 
       - name: Run tests
         run: uv run pytest ./tests
