@@ -5,7 +5,11 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-from .equation import MscreenWellEquation, MscreenWellNoflowEquation, PotentialEquation
+from .equation import (
+    HeadEquation,
+    MscreenWellEquation,
+    MscreenWellNoflowEquation,
+)
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -25,6 +29,7 @@ class WellBase(Element):
         label=None,
         xc=None,
         yc=None,
+        addtomodel=True,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -39,7 +44,8 @@ class WellBase(Element):
         self.res = float(res)
         self.xc = xc
         self.yc = yc
-        self.model.add_element(self)
+        if addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " at " + str((self.xw, self.yw))
@@ -387,7 +393,7 @@ class Well(WellBase, MscreenWellEquation):
         self.parameters[:, 0] = sol
 
 
-class HeadWell(WellBase, PotentialEquation):
+class HeadWell(WellBase, HeadEquation):
     r"""HeadWell Class to create a well with a specified head inside the well.
 
     Notes
@@ -439,6 +445,7 @@ class HeadWell(WellBase, PotentialEquation):
         label=None,
         xc=None,
         yc=None,
+        addtomodel=True,
     ):
         self.storeinput(inspect.currentframe())
         WellBase.__init__(
@@ -454,8 +461,9 @@ class HeadWell(WellBase, PotentialEquation):
             label=label,
             xc=xc,
             yc=yc,
+            addtomodel=addtomodel,
         )
-        self.hc = hw
+        self.hc = hw * np.ones(self.nparam)
         self.nunknowns = self.nparam
 
     def initialize(self):
