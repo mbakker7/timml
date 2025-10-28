@@ -685,8 +685,8 @@ class RadialCollectorWell(CollectorWell):
     Examples
     --------
     >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, narms=5, nls=10, angle=0, rcaisson=2.0,
-    ... rw=0.1, Qw=1000, layers=5)
+    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, narms=5, nls=10, angle=0,
+    ... rcaisson=2.0, rw=0.1, Qw=1000, layers=5)
     >>> ml.solve()
     """
 
@@ -713,10 +713,10 @@ class RadialCollectorWell(CollectorWell):
         if np.isscalar(L):
             L = L * np.ones(narms)
         if np.isscalar(nls):
-            nls = nls * np.ones(narms, dtype='int')
+            nls = nls * np.ones(narms, dtype="int")
         self.nls = nls
         if np.isscalar(layers):
-            layers = layers * np.ones(narms, dtype='int')
+            layers = layers * np.ones(narms, dtype="int")
         xy, layers = self.compute_xy(x, y, rcaisson, narms, nls, L, angle, layers)
         super().__init__(
             model,
@@ -756,16 +756,20 @@ class RadialCollectorWell(CollectorWell):
             on each row: [(x1, y1, x2, y2), ...]
         """
         xy = np.empty((np.sum(nls), 4))
-        layers = np.empty(np.sum(nls), dtype='int')
+        layers = np.empty(np.sum(nls), dtype="int")
         for i in range(narms):
-            x = rcaisson * np.cos(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.cos(angle[i])
-            y = rcaisson * np.sin(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.sin(angle[i])
+            x = rcaisson * np.cos(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.cos(
+                angle[i]
+            )
+            y = rcaisson * np.sin(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.sin(
+                angle[i]
+            )
             i0 = np.sum(nls[:i])
             xy[i0 : i0 + nls[i], 0] = x[:-1]
             xy[i0 : i0 + nls[i], 1] = y[:-1]
             xy[i0 : i0 + nls[i], 2] = x[1:]
             xy[i0 : i0 + nls[i], 3] = y[1:]
-            layers[i0: i0 + nls[i]] = layer_arms[i]
+            layers[i0 : i0 + nls[i]] = layer_arms[i]
         return xy, layers
 
     # def compute_xyold(self, x, y, rcaisson, L, narms, nls):
