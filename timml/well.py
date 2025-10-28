@@ -685,8 +685,8 @@ class RadialCollectorWell(CollectorWell):
     Examples
     --------
     >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, L=5, narms=5, rcaisson=2.0,
-    ... Qw=1000, layers=np.arange(5, 10))
+    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, narms=5, nls=10, angle=0, rcaisson=2.0,
+    ... rw=0.1, Qw=1000, layers=5)
     >>> ml.solve()
     """
 
@@ -695,17 +695,29 @@ class RadialCollectorWell(CollectorWell):
         model,
         x=0,
         y=0,
-        L=10.0,
         narms=5,
+        nls=10,
+        L=10.0,
+        angle=0,
         rcaisson=1.0,
         rw=0.1,
-        nls=1,
         Qw=100.0,
         res=0.0,
         layers=0,
         label=None,
     ):
-        xy = self.compute_xy(x, y, rcaisson, L, narms, nls)
+        if np.isscalar(angle):
+            angle = np.deg2rad(angle) + np.linspace(0, 2 * np.pi, narms + 1)[:-1]
+        else:
+            angle = np.deg2rad(angle)
+        if np.isscalar(L):
+            L = L * np.ones(narms)
+        if np.isscalar(nls):
+            nls = nls * np.ones(narms, dtype='int')
+        self.nls = nls
+        if np.isscalar(layers):
+            layers = layers * np.ones(narms, dtype='int')
+        xy, layers = self.compute_xy(x, y, rcaisson, narms, nls, L, angle, layers)
         super().__init__(
             model,
             xy,
@@ -717,7 +729,7 @@ class RadialCollectorWell(CollectorWell):
         )
         self.name = "RadialCollectorWell"
 
-    def compute_xy(self, x, y, rcaisson, L, narms, nls):
+    def compute_xy(self, x, y, rcaisson, narms, nls, L, angle, layer_arms):
         """Compute the x,y-coordinates array for the radial collector well.
 
         Parameters
@@ -726,14 +738,16 @@ class RadialCollectorWell(CollectorWell):
             x-coordinate of the center of the collector well
         y : float
             y-coordinate of the center of the collector well
-        rcaisson : float
-            radius of the caisson
-        L : float
-            length of each arm
         narms : int
             number of arms
-        nls : int
+        nls : int or array
             number of line sinks per arm
+        L : float or array
+            length of each arm
+        angle : float or array
+            angle of first arm or of each arm
+        rcaisson : float
+            radius of the caisson
 
         Returns
         -------
@@ -741,12 +755,49 @@ class RadialCollectorWell(CollectorWell):
             array of shape (N, 4) with start and end coordinates of the line sinks
             on each row: [(x1, y1, x2, y2), ...]
         """
-        xy = np.empty((narms * nls, 4))
-        for i, theta in enumerate(np.arange(0, 2 * np.pi, 2 * np.pi / 5)):
-            x = rcaisson * np.cos(theta) + np.linspace(0, L, nls + 1) * np.cos(theta)
-            y = rcaisson * np.sin(theta) + np.linspace(0, L, nls + 1) * np.sin(theta)
-            xy[i * nls : (i + 1) * nls, 0] = x[:-1]
-            xy[i * nls : (i + 1) * nls, 1] = y[:-1]
-            xy[i * nls : (i + 1) * nls, 2] = x[1:]
-            xy[i * nls : (i + 1) * nls, 3] = y[1:]
-        return xy
+        xy = np.empty((np.sum(nls), 4))
+        layers = np.empty(np.sum(nls), dtype='int')
+        for i in range(narms):
+            x = rcaisson * np.cos(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.cos(angle[i])
+            y = rcaisson * np.sin(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.sin(angle[i])
+            i0 = np.sum(nls[:i])
+            xy[i0 : i0 + nls[i], 0] = x[:-1]
+            xy[i0 : i0 + nls[i], 1] = y[:-1]
+            xy[i0 : i0 + nls[i], 2] = x[1:]
+            xy[i0 : i0 + nls[i], 3] = y[1:]
+            layers[i0: i0 + nls[i]] = layer_arms[i]
+        return xy, layers
+
+    # def compute_xyold(self, x, y, rcaisson, L, narms, nls):
+    #     """Compute the x,y-coordinates array for the radial collector well.
+
+    #     Parameters
+    #     ----------
+    #     x : float
+    #         x-coordinate of the center of the collector well
+    #     y : float
+    #         y-coordinate of the center of the collector well
+    #     rcaisson : float
+    #         radius of the caisson
+    #     L : float
+    #         length of each arm
+    #     narms : int
+    #         number of arms
+    #     nls : int
+    #         number of line sinks per arm
+
+    #     Returns
+    #     -------
+    #     xy : np.array
+    #         array of shape (N, 4) with start and end coordinates of the line sinks
+    #         on each row: [(x1, y1, x2, y2), ...]
+    #     """
+    #     xy = np.empty((narms * nls, 4))
+    #     for i, theta in enumerate(np.arange(0, 2 * np.pi, 2 * np.pi / 5)):
+    #         x = rcaisson * np.cos(theta) + np.linspace(0, L, nls + 1) * np.cos(theta)
+    #         y = rcaisson * np.sin(theta) + np.linspace(0, L, nls + 1) * np.sin(theta)
+    #         xy[i * nls : (i + 1) * nls, 0] = x[:-1]
+    #         xy[i * nls : (i + 1) * nls, 1] = y[:-1]
+    #         xy[i * nls : (i + 1) * nls, 2] = x[1:]
+    #         xy[i * nls : (i + 1) * nls, 3] = y[1:]
+    #     return xy

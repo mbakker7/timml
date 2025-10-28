@@ -48,7 +48,6 @@ from timml.version import __version__, show_versions
 from timml.well import (
     CollectorWell,
     HeadWell,
-    LargeDiameterWell,
     RadialCollectorWell,
     Well,
     WellBase,
