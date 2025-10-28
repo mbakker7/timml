@@ -46,6 +46,7 @@ class WellBase(Element):
         self.yc = yc
         if addtomodel:
             self.model.add_element(self)
+        self.addtomodel = addtomodel
 
     def __repr__(self):
         return self.name + " at " + str((self.xw, self.yw))
@@ -61,7 +62,8 @@ class WellBase(Element):
             self.yc = np.atleast_1d(self.yc)
         self.ncp = 1
         self.aq = self.model.aq.find_aquifer_data(self.xw, self.yw)
-        self.aq.add_element(self)
+        if self.addtomodel:
+            self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.Qw
         self.resfac = self.res / (2 * np.pi * self.rw * self.aq.Haq[self.layers])
