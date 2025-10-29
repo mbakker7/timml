@@ -699,7 +699,6 @@ class WellStringBase(Element):
 
     def discharge(self):
         """Discharge of the element in each layer."""
-
         Q = []
         j = 0
         for w in self.wlist:
