@@ -129,11 +129,11 @@ class AquiferData:
 class Aquifer(AquiferData):
     def __init__(self, model, kaq, c, z, npor, ltype):
         super().__init__(model, kaq, c, z, npor, ltype)
-        self.inhomlist = []
+        self.inhoms = []
         self.area = 1e300  # Needed to find smallest inhom
 
     def initialize(self, refine_level=None):
-        self.inhomlist = []  # compute list for inhoms
+        self.inhoms = []  # compute list for inhoms
         # because we are going to call initialize for inhoms
         AquiferData.initialize(self)
         for inhom in self.inhoms:
@@ -146,8 +146,8 @@ class Aquifer(AquiferData):
                 # has already been called with refine_level > 1
                 inhom._reset()
             inhom.initialize()
-            self.inhomlist.append(inhom)
-        for inhom in self.inhomlist:
+            self.inhoms.append(inhom)
+        for inhom in self.inhoms:
             inhom_elements = inhom.create_elements()  # create elements
             self.model.elementlist += inhom_elements  # add elements to compute list
 
@@ -177,7 +177,7 @@ class SimpleAquifer(Aquifer):
 
     def __init__(self, naq):
         self.naq = naq
-        self.inhomlist = []
+        self.inhoms = []
         self.area = 1e300  # Needed to find smallest inhomogeneity
         self.elementlist = []
 
@@ -185,7 +185,7 @@ class SimpleAquifer(Aquifer):
         return f"Simple Aquifer: {self.naq} aquifer(s)"
 
     def initialize(self):
-        for inhom in self.inhomlist:
+        for inhom in self.inhoms:
             inhom.initialize()
-        for inhom in self.inhomlist:
+        for inhom in self.inhoms:
             inhom.create_elements()

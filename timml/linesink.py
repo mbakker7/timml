@@ -789,7 +789,7 @@ class LineSinkDitch(HeadLineSink):
             return h
 
 
-class LineSinkStringBase2(Element):
+class LineSinkStringBase(Element):
     """Alternative implementation that loops through line-sinks to build equation.
 
     Has the advantage that it is easier to have different line-sinks in different layers
@@ -926,7 +926,7 @@ class LineSinkStringBase2(Element):
         Qls.shape = (self.nls, self.nlayers, self.order + 1)
         Qls = np.sum(Qls, 2)
         for i, q in enumerate(Qls):
-            rv[self.layers[i]] += q
+            rv[self._layers[i]] += q
             # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1),
             # self.nlayers), 0)
         return rv
@@ -1078,8 +1078,8 @@ class HeadLineSinkString(LineSinkStringBase):
             else:
                 lslabel = self.label
             if self.xy.shape[1] == 2:
-                x1, x2 = self.x[i : i + 2]
-                y1, y2 = self.y[i : i + 2]
+                x1, x2 = self._x[i : i + 2]
+                y1, y2 = self._y[i : i + 2]
             elif self.xy.shape[1] == 4:
                 x1, y1, x2, y2 = self.xy[i]
             self.lslist.append(

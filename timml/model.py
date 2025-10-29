@@ -765,7 +765,7 @@ class ModelXsection(Model):
     def check_inhoms(self):
         """Check if number of aquifers in inhoms matches number of aquifers in model."""
         naqs = {}
-        for inhom in self.aq.inhomlist:
+        for inhom in self.aq.inhoms:
             naqs[inhom.name] = inhom.naq
         check = np.array(list(naqs.values())) == self.aq.naq
         if not check.all():

@@ -1,5 +1,4 @@
 import inspect  # Used for storing the input
-from copy import deepcopy
 from warnings import warn
 
 import numpy as np
@@ -376,6 +375,7 @@ def compute_z1z2(xy):
         z2 = z1[index]
     return z1, z2
 
+
 class BuildingPit(AquiferData):
     tiny = 1e-8
 
@@ -485,7 +485,7 @@ class BuildingPit(AquiferData):
             f"{self.__class__.__name__}: layers "
             + str(list(self.layers))
             + ", "
-            + str(list(zip(self.x, self.y)))
+            + str(list(zip(self.x, self.y, strict=False)))
         )
 
     def isinside(self, x, y):
