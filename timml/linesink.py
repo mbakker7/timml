@@ -461,9 +461,9 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             )
         return rv
 
-    def plot(self, layer=None):
+    def plot(self, layer=None, **kwargs):
         if (layer is None) or (layer in self.layers):
-            plt.plot([self.x1, self.x2], [self.y1, self.y2], "k")
+            plt.plot([self.x1, self.x2], [self.y1, self.y2], "k", **kwargs)
 
     def dischargeinf(self):
         # returns the unit contribution to the discharge in each layer
@@ -865,14 +865,9 @@ class LineSinkStringBase2(Element):
                 return changed, terminate, xyztnew, message
         return changed, terminate, xyztnew, message
 
-    def plot(self, layer=None):
-        if (layer is None) or (layer in self.layers):
-            if self.xy.shape[1] == 2:
-                plt.plot(self.x, self.y, "k")
-            elif self.xy.shape[1] == 4:
-                for i in range(len(self.xy)):
-                    x1, y1, x2, y2 = self.xy[i]
-                    plt.plot([x1, x2], [y1, y2], "k")
+    def plot(self, layer=None, **kwargs):
+        for ls in self.lslist:
+            ls.plot(layer=layer, **kwargs)
 
 
 class HeadLineSinkString(LineSinkStringBase2):
