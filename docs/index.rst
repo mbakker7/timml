@@ -79,7 +79,7 @@ Quick Example
             ml.solve()
 
             # plot head contours
-            ml.contour(win=[-30, 55, -30, 30], ngr=40, labels=True, decimals=1)
+            ml.plots.contour(win=[-30, 55, -30, 30], ngr=40, labels=True, decimals=1)
             
 
     .. tab-item:: Result

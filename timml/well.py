@@ -279,7 +279,7 @@ class WellBase(Element):
         if not return_traces:
             metadata = True  # suppress future warning from timtraceline
         xstart, ystart, zstart = self.capzonestart(nt, zstart)
-        traces = self.model.tracelines(
+        traces = self.model.plots.tracelines(
             xstart,
             ystart,
             zstart,

@@ -352,6 +352,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         aq=None,
         zcinout=None,
         refine_level=1,
+        dely=0,
+        # zcinout=None,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -369,6 +371,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         self.aq = aq
         self.zcinout = zcinout
         self.refine_level = refine_level
+        self.dely = dely
+        # self.zcinout = zcinout
 
     def __repr__(self):
         return (
@@ -393,19 +397,27 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         # array of ncp by nlayers * (order + 1)
         self.strengthinf = strengthinf_controlpoints(self.ncp, self.nlayers)
         #
-        self.xc, self.yc = controlpoints(self.ncp, self.z1, self.z2, eps=0)
-        if self.zcinout is not None:
-            self.xcin, self.ycin = controlpoints(
-                self.ncp, self.zcinout[0], self.zcinout[1], eps=0
-            )
-            self.xcout, self.ycout = controlpoints(
-                self.ncp, self.zcinout[2], self.zcinout[3], eps=0
-            )
-        else:
-            self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6)
-            self.xcout, self.ycout = controlpoints(
-                self.ncp, self.z1, self.z2, eps=-1e-6
-            )
+        self.xc, self.yc = controlpoints(
+            self.ncp, self.z1, self.z2, eps=0, dely=self.dely
+        )
+        self.xcin, self.ycin = controlpoints(
+            self.ncp, self.z1, self.z2, eps=1e-6, dely=self.dely
+        )
+        self.xcout, self.ycout = controlpoints(
+            self.ncp, self.z1, self.z2, eps=-1e-6, dely=self.dely
+        )
+        # if self.zcinout is not None:
+        #     self.xcin, self.ycin = controlpoints(
+        #         self.ncp, self.zcinout[0], self.zcinout[1], eps=0
+        #     )
+        #     self.xcout, self.ycout = controlpoints(
+        #         self.ncp, self.zcinout[2], self.zcinout[3], eps=0
+        #     )
+        # else:
+        #     self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6)
+        #     self.xcout, self.ycout = controlpoints(
+        #         self.ncp, self.z1, self.z2, eps=-1e-6
+        #     )
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         # also respect addtomodel here to prevent sub-elements (e.g. parts of
@@ -553,7 +565,9 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
-    label: str or None
+    dely : float (default  is 0)
+        distance between control points and line
+    label : str or None
         label of element
 
     See Also
@@ -573,6 +587,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
         name="HeadLineSink",
         addtomodel=True,
@@ -594,6 +609,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
             label=label,
             addtomodel=addtomodel,
             refine_level=refine_level,
+            dely=dely,
         )
         self.hls = np.atleast_1d(hls)
         self.res = res
@@ -688,6 +704,8 @@ class LineSinkDitch(HeadLineSink):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
+    dely : float (default  is 0)
+        distance between control points and line
     label: str or None
         label of element
 
@@ -708,6 +726,7 @@ class LineSinkDitch(HeadLineSink):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
         addtomodel=True,
     ):
@@ -724,6 +743,7 @@ class LineSinkDitch(HeadLineSink):
             wh=wh,
             order=order,
             layers=layers,
+            dely=dely,
             label=label,
             name="HeadLineSinkDitch",
             addtomodel=addtomodel,
@@ -753,8 +773,23 @@ class LineSinkDitch(HeadLineSink):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
 
+    def headinside(self):
+        """The head inside the ditch.
 
-class LineSinkStringBase(Element):
+        Returns
+        -------
+        scalar
+            Head inside ditch at control points
+        """
+        if np.any(self.resfac > 0):
+            print("function not implemented for ditch with resistance")
+            return
+        else:
+            h = self.model.head(self.xc[0], self.yc[0], layers=self.layers)[0]
+            return h
+
+
+class LineSinkStringBase2(Element):
     """Alternative implementation that loops through line-sinks to build equation.
 
     Has the advantage that it is easier to have different line-sinks in different layers
@@ -768,6 +803,7 @@ class LineSinkStringBase(Element):
         closed=False,
         layers=0,
         order=0,
+        dely=0,
         name="LineSinkStringBase",
         label=None,
         aq=None,
@@ -779,10 +815,14 @@ class LineSinkStringBase(Element):
         self.xy = np.atleast_2d(xy).astype("d")
         if closed:
             self.xy = np.vstack((self.xy, self.xy[0]))
-        self.order = order  # same for all segments in string
-        self.lslist = []
         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
-        self.nls = len(self.x) - 1
+        self.order = order  # same for all segments in string
+        self.dely = dely  # same for all segments in string
+        self.lslist = []
+        if self.xy.shape[1] == 2:
+            self.nls = len(self.xy) - 1
+        elif self.xy.shape[1] == 4:
+            self.nls = len(self.xy)
         if self.layers.ndim == 1:
             if len(self.layers) == self.nls:
                 self.layers = self.layers[:, np.newaxis]
@@ -891,6 +931,9 @@ class LineSinkStringBase(Element):
             # self.nlayers), 0)
         return rv
 
+    def headinside(self):
+        return self.lslist[0].headinside()[0]
+
     def changetrace(
         self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
     ):
@@ -907,8 +950,13 @@ class LineSinkStringBase(Element):
         return changed, terminate, xyztnew, message
 
     def plot(self, layer=None):
-        if (layer is None) or (layer in self._layers):
-            plt.plot(self.x, self.y, "k")
+        if (layer is None) or (layer in self.layers):
+            if self.xy.shape[1] == 2:
+                plt.plot(self.x, self.y, "k")
+            elif self.xy.shape[1] == 4:
+                for i in range(len(self.xy)):
+                    x1, y1, x2, y2 = self.xy[i]
+                    plt.plot([x1, x2], [y1, y2], "k")
 
     def _reset(self):
         self._xy = self.xy.copy()
@@ -945,6 +993,8 @@ class HeadLineSinkString(LineSinkStringBase):
         aquifer layer
     order : int (default is 0)
         order of all line-sinks in string
+    dely : float (default  is 0)
+        distance between control points and line
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
@@ -968,6 +1018,7 @@ class HeadLineSinkString(LineSinkStringBase):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
         name="HeadLineSinkString",
         refine_level=1,
@@ -984,6 +1035,7 @@ class HeadLineSinkString(LineSinkStringBase):
             order=order,
             name=name,
             label=label,
+            dely=dely,
             aq=None,
             refine_level=refine_level,
         )
@@ -1025,6 +1077,11 @@ class HeadLineSinkString(LineSinkStringBase):
                 lslabel = self.label + "_" + str(i)
             else:
                 lslabel = self.label
+            if self.xy.shape[1] == 2:
+                x1, x2 = self.x[i : i + 2]
+                y1, y2 = self.y[i : i + 2]
+            elif self.xy.shape[1] == 4:
+                x1, y1, x2, y2 = self.xy[i]
             self.lslist.append(
                 HeadLineSink(
                     self.model,
@@ -1037,6 +1094,7 @@ class HeadLineSinkString(LineSinkStringBase):
                     wh=self.wh,
                     layers=self._layers[i],
                     order=self.order,
+                    dely=self.dely,
                     label=lslabel,
                     addtomodel=False,
                 )
@@ -1138,6 +1196,8 @@ class LineSinkDitchString(HeadLineSinkString):
         layer(s) in which element is placed
         if scalar: element is placed in this layer
         if list or array: element is placed in all these layers
+    dely : float (default  is 0)
+        distance between control points and line
     label: str or None
         label of element
 
@@ -1155,6 +1215,7 @@ class LineSinkDitchString(HeadLineSinkString):
         wh=1,
         order=0,
         layers=0,
+        dely=0,
         label=None,
         refine_level=1,
     ):
@@ -1169,6 +1230,7 @@ class LineSinkDitchString(HeadLineSinkString):
             res=res,
             wh=wh,
             order=order,
+            dely=dely,
             layers=layers,
             label=label,
             name="LineSinkDitchString",
@@ -1209,278 +1271,450 @@ class LineSinkDitchString(HeadLineSinkString):
         return [self]
 
 
-class LineSinkContainer(Element):
-    """Container class for bunch of line-sinks.
+# class LineSinkStringBase(Element):
+#     """Original implementation.
 
-    Required attributes:
-    lslist: list of line-sinks
-    nls: total number of line-sinks.
-    """
+#     Used for boundaries of inhomogenieities.
+#     """
 
-    def __init__(
-        self,
-        model,
-        layers=0,
-        order=0,
-        name="LineSinkStringContainer",
-        label=None,
-        aq=None,
-    ):
-        Element.__init__(
-            self,
-            model,
-            nparam=1,
-            nunknowns=0,
-            layers=layers,
-            name=name,
-            label=label,
-        )
-        self.order = order
+#     def __init__(
+#         self,
+#         model,
+#         xy,
+#         closed=False,
+#         layers=0,
+#         order=0,
+#         dely=0,
+#         name="LineSinkStringBase",
+#         label=None,
+#         aq=None,
+#     ):
+#         Element.__init__(
+#             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
+#         )
+#         self.xy = np.atleast_2d(xy).astype("d")
+#         if closed:
+#             self.xy = np.vstack((self.xy, self.xy[0]))
+#         self.order = order
+#         self.aq = aq
+#         self.lslist = []
+#         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
+#         self.nls = len(self.x) - 1
+#         for i in range(self.nls):
+#             if label is not None:
+#                 lslabel = label + "_" + str(i)
+#             else:
+#                 lslabel = label
+#             self.lslist.append(
+#                 LineSinkHoBase(
+#                     model,
+#                     x1=self.x[i],
+#                     y1=self.y[i],
+#                     x2=self.x[i + 1],
+#                     y2=self.y[i + 1],
+#                     Qls=0.0,
+#                     layers=layers,
+#                     order=order,
+#                     dely=dely,
+#                     label=lslabel,
+#                     addtomodel=False,
+#                     aq=aq,
+#                 )
+#             )
 
-    #         self.xy = np.atleast_2d(xy).astype('d')
-    #         if closed: self.xy = np.vstack((self.xy, self.xy[0]))
-    #         self.order = order  # same for all segments in string
-    #         self.lslist = []
-    #         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
-    #         self.nls = len(self.x) - 1
-    #         if self.layers.ndim == 1:
-    #             if len(self.layers) == self.nls:
-    #                 self.layers = self.layers[:, np.newaxis]
-    #             else:  # entire string in these layers
-    #                 self.layers = self.layers * \
-    #                     np.ones((self.nls, len(self.layers)), dtype='int')
-    #         self.nlayers = len(self.layers[0])
+#     def __repr__(self):
+#         return self.name + " with nodes " + str(self.xy)
 
-    def __repr__(self):
-        return self.name
+#     def initialize(self):
+#         for ls in self.lslist:
+#             ls.initialize()
+#         # Same order for all elements in string
+#         self.ncp = self.nls * self.lslist[0].ncp
+#         self.nparam = self.nls * self.lslist[0].nparam
+#         self.nunknowns = self.nparam
+#         self.xls = np.empty((self.nls, 2))
+#         self.yls = np.empty((self.nls, 2))
+#         for i, ls in enumerate(self.lslist):
+#             self.xls[i, :] = [ls.x1, ls.x2]
+#             self.yls[i, :] = [ls.y1, ls.y2]
+#         if self.aq is None:
+#             self.aq = self.model.aq.find_aquifer_data(
+#                 self.lslist[0].xc, self.lslist[0].yc
+#             )
+#         self.parameters = np.zeros((self.nparam, 1))
+#         # As parameters are only stored for the element not the list,
+#         # we need to combine the following
+#         self.xc = np.array([ls.xc for ls in self.lslist]).flatten()
+#         self.yc = np.array([ls.yc for ls in self.lslist]).flatten()
+#         self.xcin = np.array([ls.xcin for ls in self.lslist]).flatten()
+#         self.ycin = np.array([ls.ycin for ls in self.lslist]).flatten()
+#         self.xcout = np.array([ls.xcout for ls in self.lslist]).flatten()
+#         self.ycout = np.array([ls.ycout for ls in self.lslist]).flatten()
+#         self.cosnorm = np.array([ls.cosnorm for ls in self.lslist]).flatten()
+#         self.sinnorm = np.array([ls.sinnorm for ls in self.lslist]).flatten()
+#         self.aqin = self.model.aq.find_aquifer_data(self.xcin[0], self.ycin[0])
+#         self.aqout = self.model.aq.find_aquifer_data(self.xcout[0], self.ycout[0])
 
-    def initialize(self):
-        self.layers = []
-        for ls in self.lslist:
-            ls.initialize()
-            if ls.layers[0] not in self.layers:  # works if ls in 1 layer
-                self.layers.append(ls.layers[0])
-        self.aq = []
-        for ls in self.lslist:
-            if ls.aq not in self.aq:
-                self.aq.append(ls.aq)
-        for aq in self.aq:
-            aq.add_element(self)
-        self.nparam = sum(ls.nparam for ls in self.lslist)
-        self.nunknowns = self.nparam
-        self.parameters = np.zeros((self.nparam, 1))
+#     def potinf(self, x, y, aq=None):
+#         """Compute the unit potential influence of the element.
 
-    def potinf(self, x, y, aq=None):
-        """Compute the unit potential influence of the element.
+#         Returns
+#         -------
+#         array
+#             linesink 0, order 0, layer[0]
+#                         order 0, layer[1]
+#                         ...
+#                         order 1, layer[0]
+#                         order 1, layer[1]
+#                         ...
+#             linesink 1, order 0, layer[0]
+#                         order 0, layer[1]
+#                         ...
+#                         order 1, layer[0]
+#                         order 1, layer[1]
+#                         ...
+#         """
+#         if aq is None:
+#             aq = self.model.aq.find_aquifer_data(x, y)
+#         rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
+#         for i in range(self.nls):
+#             rv[i] = self.lslist[i].potinf(x, y, aq)
+#         rv.shape = (self.nparam, aq.naq)
+#         return rv
 
-        Returns
-        -------
-        array
-            linesink 0, order 0, layer[0]
-                        order 0, layer[1]
-                        ...
-                        order 1, layer[0]
-                        order 1, layer[1]
-                        ...
-            linesink 1, order 0, layer[0]
-                        order 0, layer[1]
-                        ...
-                        order 1, layer[0]
-                        order 1, layer[1]
-                        ...
-        """
-        if aq is None:
-            aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
-        if aq in self.aq:
-            for i, ls in enumerate(self.lslist):
-                rv[i] = ls.potinf(x, y, aq)
-        rv.shape = (self.nparam, aq.naq)
-        return rv
+#     def disvecinf(self, x, y, aq=None):
+#         if aq is None:
+#             aq = self.model.aq.find_aquifer_data(x, y)
+#         rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.naq))
+#         for i in range(self.nls):
+#             rv[:, i] = self.lslist[i].disvecinf(x, y, aq)
+#         rv.shape = (2, self.nparam, aq.naq)
+#         return rv
 
-    def disvecinf(self, x, y, aq=None):
-        if aq is None:
-            aq = self.model.aq.find_aquifer_data(x, y)
-        rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.naq))
-        if aq in self.aq:
-            for i, ls in enumerate(self.lslist):
-                rv[:, i] = ls.disvecinf(x, y, aq)
-        rv.shape = (2, self.nparam, aq.naq)
-        return rv
+#     def changetrace(
+#         self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
+#     ):
+#         changed = False
+#         terminate = False
+#         xyztnew = 0
+#         message = None
+#         for ls in self.lslist:
+#             changed, terminate, xyztnew, message = ls.changetrace(
+#                 xyzt1, xyzt2, aq, layer, ltype, modellayer, direction
+#             )
+#             if changed or terminate:
+#                 return changed, terminate, xyztnew, message
+#         return changed, terminate, xyztnew, message
 
-    def dischargeinf(self):
-        rv = np.zeros((self.nls, self.lslist[0].nparam))
-        for i, ls in enumerate(self.lslist):
-            rv[i] = ls.dischargeinf()
-        return rv.ravel()
-
-    def discharge(self):
-        """Discharge of the element in each layer."""
-        # TBD: it is unclear what this function does. shouldn't it return
-        # values only for the layers where the element is screened?
-        rv = np.zeros(self.aq[0].naq)
-        Qls = self.parameters[:, 0] * self.dischargeinf()
-        Qls.shape = (self.nls, self.nlayers, self.order + 1)
-        Qls = np.sum(Qls, 2)
-        for i, q in enumerate(Qls):
-            rv[self.layers[i]] += q
-            # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1),
-            # self.nlayers), 0)
-        return rv
-
-    def changetrace(
-        self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
-    ):
-        changed = False
-        terminate = False
-        xyztnew = 0
-        message = None
-        for ls in self.lslist:
-            changed, terminate, xyztnew, message = ls.changetrace(
-                xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
-            )
-            if changed or terminate:
-                return changed, terminate, xyztnew, message
-        return changed, terminate, xyztnew, message
-
-    def plot(self, layer=None):
-        if (layer is None) or (layer in self.layers):
-            for i in range(len(self.xls)):
-                plt.plot(self.xls[i], self.yls[i], "k")
+#     def plot(self, layer=None):
+#         if (layer is None) or (layer in self.layers):
+#             plt.plot(self.x, self.y, "k")
 
 
-class HeadLineSinkContainer(LineSinkContainer):
-    """Container of head-specified line-sinks with optional width and resistance.
+# class HeadLineSinkStringOLd(LineSinkStringBase, HeadEquation):
+#     def __init__(self, model, xy=None, hls=0.0, layers=0, order=0, label=None):
+#         if xy is None:
+#             xy = [(-1, 0), (1, 0)]
+#         self.storeinput(inspect.currentframe())
+#         LineSinkStringBase.__init__(
+#             self,
+#             model,
+#             xy,
+#             closed=False,
+#             layers=layers,
+#             order=order,
+#             name="HeadLineSinkString",
+#             label=label,
+#             aq=None,
+#         )
+#         self.hls = np.atleast_1d(hls)
+#         self.model.add_element(self)
 
-    Parameters
-    ----------
-    model : Model object
-        Model to which the element is added
-    xydict : dictionary
-        dictionary with lists or arrays of (x,y) pairs of coordinates of
-        end-points of line-sinks that are stringed together
-    hls : scalar
-    res : scalar (default is 0)
-        resistance of line-sink
-    wh : scalar or str
-        distance over which water enters line-sink
-        if 'H': (default) distance is equal to the thickness of the aquifer
-        layer (when flow comes mainly from one side)
-        if '2H': distance is twice the thickness of the aquifer layer (when
-        flow comes from both sides)
-        if scalar: the width of the stream that partially penetrates the
-        aquifer layer
-    order : int (default is 0)
-        order of all line-sinks in string
-    laydict : scalar, list or array
-        layer(s) in which element is placed
-        if scalar: element is placed in this layer
-        if list or array: element is placed in all these layers
-    label: str or None
+#     def initialize(self):
+#         LineSinkStringBase.initialize(self)
+#         self.aq.add_element(self)
+#         # self.pc = np.array([ls.pc for ls in self.lslist]).flatten()
+#         if len(self.hls) == 1:
+#             self.pc = self.hls * self.aq.T[self.layers] * np.ones(self.nparam)
+#         elif len(self.hls) == self.nls:  # head specified at centers
+#             self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.layers]).flatten()
+#         elif len(self.hls) == 2:
+#             L = np.array([ls.L for ls in self.lslist])
+#             Ltot = np.sum(L)
+#             xp = np.zeros(self.nls)
+#             xp[0] = 0.5 * L[0]
+#             for i in range(1, self.nls):
+#                 xp[i] = xp[i - 1] + 0.5 * (L[i - 1] + L[i])
+#             self.hls = np.interp(xp, [0, Ltot], self.hls)
+#             self.pc = (self.hls[:, np.newaxis] * self.aq.T[self.layers]).flatten()
+#         else:
+#             print("Error: hls entry not supported")
+#         self.resfac = 0.0
 
-    See Also
-    --------
-    :class:`.HeadLineSink`
-    """
+#     def setparams(self, sol):
+#         self.parameters[:, 0] = sol
 
-    def __init__(
-        self,
-        model,
-        xydict=None,
-        hls=0,
-        res=0,
-        wh=1,
-        order=0,
-        laydict=None,
-        label=None,
-        name="HeadLineSinkContainer",
-    ):
-        if laydict is None:
-            laydict = {0: 0}
-        if xydict is None:
-            xydict = {0: [(-1, 0), (1, 0)]}
-        self.storeinput(inspect.currentframe())
-        LineSinkContainer.__init__(
-            self, model, layers=0, order=order, name=name, label=label, aq=None
-        )
-        self.xydict = xydict
-        self.hls = hls
-        self.laydict = laydict
-        self.res = res
-        self.wh = wh
-        self.model.add_element(self)
-        # TODO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
+# class LineSinkContainer(Element):
+#     """Container class for bunch of line-sinks.
 
-    def initialize(self):
-        self.lslist = []
-        self.xls = []  # used for layout
-        self.yls = []
-        for key in self.xydict.keys():
-            xy = np.atleast_1d(self.xydict[key])
-            layers = np.atleast_1d(self.laydict[key])
-            if len(layers) == 1:
-                layers = layers * np.ones(len(xy) - 1, dtype="int")
-            self.xls.append(xy[:, 0])
-            self.yls.append(xy[:, 1])
-            for i in range(len(xy) - 1):
-                if self.label is not None:
-                    lslabel = self.label + "_" + str(i)
-                else:
-                    lslabel = self.label
-                x1, y1 = xy[i]
-                x2, y2 = xy[i + 1]
-                ls = HeadLineSink(
-                    self.model,
-                    x1=x1,
-                    y1=y1,
-                    x2=x2,
-                    y2=y2,
-                    hls=self.hls,
-                    res=self.res,
-                    wh=self.wh,
-                    layers=layers[i],
-                    order=self.order,
-                    label=lslabel,
-                    addtomodel=False,
-                )
-                self.lslist.append(ls)
-        self.nls = len(self.lslist)
-        for i in range(self.nls):
-            if self.label is not None:
-                self.label + "_" + str(i)
-            else:
-                pass
-        LineSinkContainer.initialize(self)
+#     Required attributes:
+#     lslist: list of line-sinks
+#     nls: total number of line-sinks.
+#     """
 
-    def setparams(self, sol):
-        self.parameters[:, 0] = sol
+#     def __init__(
+#         self,
+#         model,
+#         layers=0,
+#         order=0,
+#         name="LineSinkStringContainer",
+#         label=None,
+#         aq=None,
+#     ):
+#         Element.__init__(
+#             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
+#         )
+#         self.order = order
 
-    def equation(self):
-        mat = np.empty((self.nunknowns, self.model.neq))
-        rhs = np.empty(self.nunknowns)
-        ieq = 0
-        for ls in self.lslist:
-            matls, rhsls = ls.equation()
-            neq = len(rhsls)
-            mat[ieq : ieq + neq] = matls
-            rhs[ieq : ieq + neq] = rhsls
-            ieq += neq
-        # fix to include resistance
-        # this is not pretty but works
-        # not sure how to change the design to make this nicer
-        # I guess the additional matrix can be pre-computed and stored
-        jcol = 0
-        for e in self.model.elementlist:
-            if e == self:
-                break
-            elif e.nunknowns > 0:
-                jcol += e.nunknowns
-        irow = 0
-        for ls in self.lslist:
-            for icp in range(ls.ncp):
-                mat[irow : irow + ls.nlayers, jcol : jcol + ls.nunknowns] -= ls.resfac[
-                    icp
-                ]
-                irow += ls.nlayers
-            jcol += ls.nunknowns
-        return mat, rhs
+#     #         self.xy = np.atleast_2d(xy).astype('d')
+#     #         if closed: self.xy = np.vstack((self.xy, self.xy[0]))
+#     #         self.order = order  # same for all segments in string
+#     #         self.lslist = []
+#     #         self.x, self.y = self.xy[:, 0], self.xy[:, 1]
+#     #         self.nls = len(self.x) - 1
+#     #         if self.layers.ndim == 1:
+#     #             if len(self.layers) == self.nls:
+#     #                 self.layers = self.layers[:, np.newaxis]
+#     #             else:  # entire string in these layers
+#     #                 self.layers = self.layers * \
+#     #                     np.ones((self.nls, len(self.layers)), dtype='int')
+#     #         self.nlayers = len(self.layers[0])
+
+#     def __repr__(self):
+#         return self.name
+
+#     def initialize(self):
+#         self.layers = []
+#         for ls in self.lslist:
+#             ls.initialize()
+#             if ls.layers[0] not in self.layers:  # works if ls in 1 layer
+#                 self.layers.append(ls.layers[0])
+#         self.aq = []
+#         for ls in self.lslist:
+#             if ls.aq not in self.aq:
+#                 self.aq.append(ls.aq)
+#         for aq in self.aq:
+#             aq.add_element(self)
+#         self.nparam = sum(ls.nparam for ls in self.lslist)
+#         self.nunknowns = self.nparam
+#         self.parameters = np.zeros((self.nparam, 1))
+
+#     def potinf(self, x, y, aq=None):
+#         """Compute the unit potential influence of the element.
+
+#         Returns
+#         -------
+#         array
+#             linesink 0, order 0, layer[0]
+#                         order 0, layer[1]
+#                         ...
+#                         order 1, layer[0]
+#                         order 1, layer[1]
+#                         ...
+#             linesink 1, order 0, layer[0]
+#                         order 0, layer[1]
+#                         ...
+#                         order 1, layer[0]
+#                         order 1, layer[1]
+#                         ...
+#         """
+#         if aq is None:
+#             aq = self.model.aq.find_aquifer_data(x, y)
+#         rv = np.zeros((self.nls, self.lslist[0].nparam, aq.naq))
+#         if aq in self.aq:
+#             for i, ls in enumerate(self.lslist):
+#                 rv[i] = ls.potinf(x, y, aq)
+#         rv.shape = (self.nparam, aq.naq)
+#         return rv
+
+#     def disvecinf(self, x, y, aq=None):
+#         if aq is None:
+#             aq = self.model.aq.find_aquifer_data(x, y)
+#         rv = np.zeros((2, self.nls, self.lslist[0].nparam, aq.naq))
+#         if aq in self.aq:
+#             for i, ls in enumerate(self.lslist):
+#                 rv[:, i] = ls.disvecinf(x, y, aq)
+#         rv.shape = (2, self.nparam, aq.naq)
+#         return rv
+
+#     def dischargeinf(self):
+#         rv = np.zeros((self.nls, self.lslist[0].nparam))
+#         for i, ls in enumerate(self.lslist):
+#             rv[i] = ls.dischargeinf()
+#         return rv.ravel()
+
+#     def discharge(self):
+#         """Discharge of the element in each layer."""
+#         # TBD: it is unclear what this function does. shouldn't it return
+#         # values only for the layers where the element is screened?
+#         rv = np.zeros(self.aq[0].naq)
+#         Qls = self.parameters[:, 0] * self.dischargeinf()
+#         Qls.shape = (self.nls, self.nlayers, self.order + 1)
+#         Qls = np.sum(Qls, 2)
+#         for i, q in enumerate(Qls):
+#             rv[self.layers[i]] += q
+#             # rv[self.layers] = np.sum(Qls.reshape(self.nls * (self.order + 1),
+#             # self.nlayers), 0)
+#         return rv
+
+#     def changetrace(
+#         self, xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
+#     ):
+#         changed = False
+#         terminate = False
+#         xyztnew = 0
+#         message = None
+#         for ls in self.lslist:
+#             changed, terminate, xyztnew, message = ls.changetrace(
+#                 xyzt1, xyzt2, aq, layer, ltype, modellayer, direction, hstepmax
+#             )
+#             if changed or terminate:
+#                 return changed, terminate, xyztnew, message
+#         return changed, terminate, xyztnew, message
+
+#     def plot(self, layer=None):
+#         if (layer is None) or (layer in self.layers):
+#             for i in range(len(self.xls)):
+#                 plt.plot(self.xls[i], self.yls[i], "k")
+
+
+# class HeadLineSinkContainer(LineSinkContainer):
+#     """Container of head-specified line-sinks with optional width and resistance.
+
+#     Parameters
+#     ----------
+#     model : Model object
+#         Model to which the element is added
+#     xydict : dictionary
+#         dictionary with lists or arrays of (x,y) pairs of coordinates of
+#         end-points of line-sinks that are stringed together
+#     hls : scalar
+#     res : scalar (default is 0)
+#         resistance of line-sink
+#     wh : scalar or str
+#         distance over which water enters line-sink
+#         if 'H': (default) distance is equal to the thickness of the aquifer
+#         layer (when flow comes mainly from one side)
+#         if '2H': distance is twice the thickness of the aquifer layer (when
+#         flow comes from both sides)
+#         if scalar: the width of the stream that partially penetrates the
+#         aquifer layer
+#     order : int (default is 0)
+#         order of all line-sinks in string
+#     laydict : scalar, list or array
+#         layer(s) in which element is placed
+#         if scalar: element is placed in this layer
+#         if list or array: element is placed in all these layers
+#     label: str or None
+
+#     See Also
+#     --------
+#     :class:`.HeadLineSink`
+#     """
+
+#     def __init__(
+#         self,
+#         model,
+#         xydict=None,
+#         hls=0,
+#         res=0,
+#         wh=1,
+#         order=0,
+#         laydict=None,
+#         label=None,
+#         name="HeadLineSinkContainer",
+#     ):
+#         if laydict is None:
+#             laydict = {0: 0}
+#         if xydict is None:
+#             xydict = {0: [(-1, 0), (1, 0)]}
+#         self.storeinput(inspect.currentframe())
+#         LineSinkContainer.__init__(
+#             self, model, layers=0, order=order, name=name, label=label, aq=None
+#         )
+#         self.xydict = xydict
+#         self.hls = hls
+#         self.laydict = laydict
+#         self.res = res
+#         self.wh = wh
+#         self.model.add_element(self)
+#         # TO DO: TEST FOR DIFFERENT AQUIFERS AND LAYERS
+
+#     def initialize(self):
+#         self.lslist = []
+#         self.xls = []  # used for layout
+#         self.yls = []
+#         for key in self.xydict.keys():
+#             xy = np.atleast_1d(self.xydict[key])
+#             layers = np.atleast_1d(self.laydict[key])
+#             if len(layers) == 1:
+#                 layers = layers * np.ones(len(xy) - 1, dtype="int")
+#             self.xls.append(xy[:, 0])
+#             self.yls.append(xy[:, 1])
+#             for i in range(len(xy) - 1):
+#                 x1, y1 = xy[i]
+#                 x2, y2 = xy[i + 1]
+#                 ls = HeadLineSink(
+#                     self.model,
+#                     x1=x1,
+#                     y1=y1,
+#                     x2=x2,
+#                     y2=y2,
+#                     hls=self.hls,
+#                     res=self.res,
+#                     wh=self.wh,
+#                     layers=layers[i],
+#                     order=self.order,
+#                     label=None,
+#                     addtomodel=False,
+#                 )
+#                 self.lslist.append(ls)
+#         self.nls = len(self.lslist)
+#         for i in range(self.nls):
+#             if self.label is not None:
+#                 self.label + "_" + str(i)
+#             else:
+#                 pass
+#         LineSinkContainer.initialize(self)
+
+#     def setparams(self, sol):
+#         self.parameters[:, 0] = sol
+
+#     def equation(self):
+#         mat = np.empty((self.nunknowns, self.model.neq))
+#         rhs = np.empty(self.nunknowns)
+#         ieq = 0
+#         for ls in self.lslist:
+#             matls, rhsls = ls.equation()
+#             neq = len(rhsls)
+#             mat[ieq : ieq + neq] = matls
+#             rhs[ieq : ieq + neq] = rhsls
+#             ieq += neq
+#         # fix to include resistance
+#         # this is not pretty but works
+#         # not sure how to change the design to make this nicer
+#         # I guess the additional matrix can be pre-computed and stored
+#         jcol = 0
+#         for e in self.model.elementlist:
+#             if e == self:
+#                 break
+#             elif e.nunknowns > 0:
+#                 jcol += e.nunknowns
+#         irow = 0
+#         for ls in self.lslist:
+#             for icp in range(ls.ncp):
+#                 mat[irow : irow + ls.nlayers, jcol : jcol + ls.nunknowns] -= \
+#                     ls.resfac[icp]
+#                 irow += ls.nlayers
+#             jcol += ls.nunknowns
+#         return mat, rhs

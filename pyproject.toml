@@ -14,15 +14,8 @@ maintainers = [
     { name = "Mark Bakker", email = "markbak@gmail.com" },
     { name = "Davíd Brakenhoff", email = "d.brakenhoff@artesia-water.nl" },
 ]
-requires-python = ">= 3.10"
-dependencies = [
-    "numpy",
-    "scipy",
-    "numba",
-    "matplotlib",
-    "lmfit",
-    "pandas",
-]
+requires-python = ">= 3.11"
+dependencies = ["numpy", "scipy", "numba", "matplotlib", "pandas"]
 
 keywords = ["hydrology", "groundwater", "model", "analytic element method"]
 classifiers = [
@@ -36,10 +29,9 @@ classifiers = [
     "Operating System :: MacOS",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering :: Hydrology",
 ]
@@ -50,7 +42,7 @@ repository = "https://github.com/mbakker7/timml"
 documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 
 [project.optional-dependencies]
-ci = ["pytest>=4.6", "pytest-cov", "jupyter>=1.0.0", "coveralls", "shapely", "ruff"]
+ci = ["pytest", "pytest-cov", "jupyter", "coveralls", "shapely", "ruff"]
 docs = [
     "timml[ci]",
     "sphinx",

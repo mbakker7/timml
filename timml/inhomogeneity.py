@@ -231,9 +231,9 @@ class PolygonInhomMaq(PolygonInhom):
         if z is None:
             z = [1, 0]
         if N is not None:
-            assert (
-                topboundary[:4] == "conf"
-            ), "Error: infiltration can only be added if topboundary='conf'"
+            assert topboundary[:4] == "conf", (
+                "Error: infiltration can only be added if topboundary='conf'"
+            )
         self.storeinput(inspect.currentframe())
         (
             kaq,
@@ -331,9 +331,9 @@ class PolygonInhom3D(PolygonInhom):
         if z is None:
             z = [1, 0]
         if N is not None:
-            assert (
-                topboundary[:4] == "conf"
-            ), "Error: infiltration can only be added if topboundary='conf'"
+            assert topboundary[:4] == "conf", (
+                "Error: infiltration can only be added if topboundary='conf'"
+            )
         self.storeinput(inspect.currentframe())
         kaq, c, npor, ltype = param_3d(kaq, z, kzoverkh, npor, topboundary, topres)
         if topboundary == "semi":

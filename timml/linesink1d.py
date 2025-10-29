@@ -1,5 +1,6 @@
 import inspect  # Used for storing the input
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from .element import Element
@@ -112,6 +113,17 @@ class LineSink1DBase(Element):
         Q = np.zeros(self.aq.naq)
         Q[self.layers] = self.parameters[:, 0]
         return Q
+
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aq = self.model.aq.find_aquifer_data(self.xls, 0.0)
+        for ilay in self.layers:
+            ax.plot(
+                [self.xls, self.xls],
+                [aq.zaqtop[ilay], aq.zaqbot[ilay]],
+                "k-",
+            )
 
 
 class LineSink1D(LineSink1DBase, MscreenWellEquation):
@@ -265,9 +277,31 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
     def setparams(self, sol):
         self.parameters[:, 0] = sol
 
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aqout = self.model.aq.find_aquifer_data(self.xcout, 0.0)
+        aqin = self.model.aq.find_aquifer_data(self.xcin, 0.0)
+        if aqout.hstar is not None:
+            ztop_out = aqout.hstar + np.max([0.05 * np.abs(aqout.hstar), 0.05])
+        else:
+            ztop_out = aqout.z[0]
+        if aqin.hstar is not None:
+            ztop_in = aqin.hstar + np.max([0.05 * np.abs(aqin.hstar), 0.05])
+        else:
+            ztop_in = aqin.z[0]
+
+        ax.plot(
+            [self.xls, self.xls],
+            [np.max([ztop_in, ztop_out]), aqout.z[-1]],
+            "k--",
+            lw=1.0,
+        )
+        return ax
+
 
 class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
-    """HeadDiffLineSink1D for left side (xcout)."""
+    """FluxDiffLineSink1D for right side (xcin)."""
 
     def __init__(
         self, model, xls, label=None, aq=None, aqin=None, aqout=None, addtomodel=True
@@ -301,3 +335,24 @@ class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
+    def plot(self, ax=None):
+        if ax is None:
+            _, ax = plt.subplots()
+        aqout = self.model.aq.find_aquifer_data(self.xcout, 0.0)
+        aqin = self.model.aq.find_aquifer_data(self.xcin, 0.0)
+        if aqout.hstar is not None:
+            ztop_out = aqout.hstar + np.max([0.05 * np.abs(aqout.hstar), 0.05])
+        else:
+            ztop_out = aqout.z[0]
+        if aqin.hstar is not None:
+            ztop_in = aqin.hstar + np.max([0.05 * np.abs(aqin.hstar), 0.05])
+        else:
+            ztop_in = aqin.z[0]
+        ax.plot(
+            [self.xls, self.xls],
+            [np.max([ztop_in, ztop_out]), aqout.z[-1]],
+            "k--",
+            lw=1.0,
+        )
+        return ax

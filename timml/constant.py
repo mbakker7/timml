@@ -94,7 +94,7 @@ class Constant(ConstantBase, PotentialEquation):
 
     def initialize(self):
         ConstantBase.initialize(self)
-        assert self.aq.ilap, "Constant element added to area that is " "semi-confined"
+        assert self.aq.ilap, "Constant element added to area that is semi-confined"
         self.resfac = np.zeros(1)  # required for HeadEquation
         self.strengthinf = np.zeros(1)  # required for HeadEquation
 
@@ -158,9 +158,9 @@ class ConstantInside(Element):
                         mat[0:, ieq : ieq + e.nunknowns] += e.potinflayers(
                             self.xc[icp], self.yc[icp], self.layers
                         ).sum(0)
-                    ieq += e.nunknowns # I decreased the tab here
-                        # else:
-                        #    mat[0, ieq:ieq+e. nunknowns] += -1
+                    ieq += e.nunknowns  # I decreased the tab here
+                # else:
+                #    mat[0, ieq:ieq+e. nunknowns] += -1
                 else:
                     rhs[0] -= e.potentiallayers(
                         self.xc[icp], self.yc[icp], self.layers
