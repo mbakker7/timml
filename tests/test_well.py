@@ -7,7 +7,8 @@ def test_wellstring_layers_int():
     # int
     ml = tml.Model3D(z=[0, -1, -2, -3])
     ws = tml.WellStringBase(ml, [(0, 0), (10, 0), (0, 10)], layers=2)
-    assert (ws.layers == 2).all() and ws.layers.shape[0] == 3
+    assert (ws.layers == 2).all()
+    assert ws.layers.shape[0] == 3
     assert ws.nlayers == 1
 
 
