@@ -45,7 +45,15 @@ from timml.stripareasink import XsectionAreaSink
 from timml.trace import timtraceline, timtracelines
 from timml.uflow import Uflow
 from timml.version import __version__, show_versions
-from timml.well import HeadWell, LargeDiameterWell, Well, WellBase
+from timml.well import (
+    HeadWell,
+    HeadWellString,
+    LargeDiameterWell,
+    Well,
+    WellBase,
+    WellString,
+    WellStringBase,
+)
 
 # default bessel module is numba
 bessel.set_bessel_method(method="numba")
