@@ -598,3 +598,332 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
             rv[1] = self.aq.coef[self.layers] * qy
             # rv[0], rv[1] = qx, qy
         return rv
+
+
+class WellStringBase(Element):
+    """Base class for multiple connected wells.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array_like
+        array of x and y coordinates of the well nodes
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    name : string
+        name of the element
+    label : string or None (default: None)
+        label of the well string
+    aq : AquiferData object or None
+        aquifer data object or None (default is None)
+    """
+
+    def __init__(self, model, xy, layers=0, name="WellStringBase", label=None, aq=None):
+        super().__init__(model, nparam=1, nunknowns=0, layers=0, name=name, label=label)
+        self.xy = np.array(xy)
+        self.xw = self.xy[:, 0]
+        self.yw = self.xy[:, 1]
+        self.nw = len(self.xw)
+        # convert layers to layers per well
+        if isinstance(layers, (int, np.integer)):
+            layers = layers * np.ones((self.nw, 1), dtype="int")
+        elif isinstance(layers, (list, tuple)):
+            # first try to coerce into an array
+            try:
+                nlayers = max(len(layers[i]) for i in range(self.nw))
+                layers = np.array(layers) * np.ones((self.nw, nlayers), dtype="int")
+            except ValueError:  # list/tuple of different size tuples
+                pass
+                # raise ValueError(
+                #     "layers must be int, list of tuples of equal shape, or array of "
+                #     "shape (nwells, nlayers)"
+                # ) from e
+            except TypeError:  # list/tuple of int
+                layers = np.atleast_1d(layers) * np.ones((self.nw, 1), dtype="int")
+
+        elif isinstance(layers, np.ndarray):
+            if layers.ndim == 1:
+                layers = layers * np.ones((self.nw, layers.shape[0]), dtype="int")
+            else:
+                assert layers.shape[0] == self.nw, (
+                    "layers array must be shape (nwells, nlayers)"
+                )
+        self.layers = layers
+        if isinstance(self.layers, np.ndarray):
+            self.nlayers = max(self.layers[i : i + 1].shape[1] for i in range(self.nw))
+        else:
+            self.nlayers = max(len(self.layers[i]) for i in range(self.nw))
+        self.wlist = []
+
+    def __repr__(self):
+        return self.name + " with nodes " + str(self.xy)
+
+    def initialize(self):
+        for w in self.wlist:
+            w.initialize()
+
+        self.aq = []
+        for w in self.wlist:
+            if w.aq not in self.aq:
+                self.aq.append(w.aq)
+        for aq in self.aq:
+            aq.add_element(self)
+
+        self.nparam = sum(ls.nparam for ls in self.wlist)
+        self.nunknowns = self.nparam
+        self.parameters = np.zeros((self.nparam, 1))
+
+    def potinf(self, x, y, aq=None):
+        if aq is None:
+            aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((self.nparam, aq.naq))
+        if aq in self.aq:
+            j = 0
+            for w in self.wlist:
+                rv[j : j + w.nparam] = w.potinf(x, y, aq)
+                j += w.nparam
+        # rv.shape = (self.nparam, aq.naq)
+        return rv
+
+    def disvecinf(self, x, y, aq=None):
+        if aq is None:
+            aq = self.model.aq.find_aquifer_data(x, y)
+        rv = np.zeros((2, self.nparam, aq.naq))
+        if aq in self.aq:
+            j = 0
+            for w in self.wlist:
+                rv[:, j : j + w.nparam] = w.disvecinf(x, y, aq)
+                j += w.nparam
+        return rv
+
+    def discharge(self):
+        """Discharge of the element in each layer."""
+
+        Q = []
+        j = 0
+        for w in self.wlist:
+            Q.append(self.parameters[j : j + w.nlayers])
+            j += w.nlayers
+        try:
+            return np.hstack(Q)
+        except ValueError:
+            return Q
+
+    def plot(self, layer=None):
+        for iw, w in enumerate(self.wlist):
+            if (layer is None) or (layer in self.layers[iw]):
+                plt.plot(w.xw, w.yw, "k.")
+
+    def equation(self):
+        mat = np.zeros((self.nunknowns, self.model.neq))
+        rhs = np.zeros(self.nunknowns)
+        ieq = 0
+        for w in self.wlist:
+            matw, rhsw = w.equation()  # HeadWell equation
+            neq = len(rhsw)
+            mat[ieq : ieq + neq] = matw
+            rhs[ieq : ieq + neq] = rhsw
+            ieq += neq
+        return mat, rhs
+
+
+class WellString(WellStringBase):
+    """
+    WellString is a string of wells for which the total discharge is specified.
+
+    The head inside the wells is equal but unknown, and the total discharge of the
+    wells is specified.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : list of tuples or np.ndarray
+        list of (x, y) tuples or 2d array of x and y coordinates
+        of the well nodes
+    Qw : float
+        total discharge of the well string
+    rw : float
+        radius of the wells
+    res : float
+        resistance of the well screens
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    label : string or None (default: None)
+        label of the well string
+    """
+
+    def __init__(
+        self,
+        model,
+        xy,
+        Qw=100,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        label=None,
+    ):
+        super().__init__(model, xy, layers=layers, name="WellString", label=label)
+        self.Qw = float(Qw)
+        self.rw = rw
+        self.res = res
+        self.model.add_element(self)
+
+    def initialize(self):
+        self.wlist = []
+        for i in range(self.nw):
+            self.wlist.append(
+                HeadWell(
+                    self.model,
+                    xw=self.xw[i],
+                    yw=self.yw[i],
+                    hw=0.0,
+                    rw=self.rw,
+                    res=self.res,
+                    layers=self.layers[i],
+                    addtomodel=False,
+                )
+            )
+        WellStringBase.initialize(self)
+
+    def equation(self):
+        mat, rhs = WellStringBase.equation(self)
+        # print(rhs)
+        for i in range(1, self.nunknowns):
+            mat[i] -= mat[0]
+            rhs[i] -= rhs[0]
+
+        # first equation is sum of discharges equals Qw
+        mat[0] = 0
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                if e == self:
+                    mat[0, ieq : ieq + self.nunknowns] = 1.0
+                    break
+                ieq += e.nunknowns
+        rhs[0] = self.Qw
+        return mat, rhs
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        # assign parameters to individual wells
+        i = 0
+        for w in self.wlist:
+            w.parameters[:, 0] = sol[i : i + w.nparam]
+            i += w.nparam
+
+
+class HeadWellString(WellStringBase):
+    """
+    HeadWellString is a string of wells for which the head is specified at some point.
+
+    The head in the wells is equal but unknown and the head at the control point
+    (lc, xc, yc) must equal the specified head.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : list of tuples or np.ndarray
+        list of (x, y) tuples or 2d array of x and y coordinates of the well nodes
+    hw : float
+        head at the control point (lc, xc, yc)
+    rw : float
+        radius of the wells
+    res : float
+        resistance of the well screens
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    xc : float, optional
+        x-location of control point (default None, which puts it at mean of xw)
+    yc : float, optional
+        y-location of control point (default None, which puts it at mean of yw)
+    lc : int, optional
+        layer (int) where head is specified. The default is layer 0.
+    label : string or None (default: None)
+        label of the well string
+    """
+
+    def __init__(
+        self,
+        model,
+        xy,
+        hw=10,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        xc=None,
+        yc=None,
+        lc=None,
+        label=None,
+    ):
+        super().__init__(model, xy, layers=layers, name="HeadWellString", label=label)
+
+        self.hw = float(hw)
+        self.rw = rw
+        self.res = res
+        if xc is None:
+            self.xc = np.mean(self.xw)
+        if yc is None:
+            self.yc = np.mean(self.yw)
+        if lc is None:
+            self.lc = np.zeros(1, dtype=int)
+        self.xc = xc
+        self.yc = yc
+        self.model.add_element(self)
+
+    def initialize(self):
+        self.wlist = []
+        for i in range(self.nw):
+            self.wlist.append(
+                HeadWell(
+                    self.model,
+                    xw=self.xw[i],
+                    yw=self.yw[i],
+                    hw=self.hw,
+                    rw=self.rw,
+                    res=self.res,
+                    layers=self.layers[i],
+                    xc=None,
+                    yc=None,
+                    addtomodel=False,
+                )
+            )
+        super().initialize()
+
+    def equation(self):
+        mat, rhs = super().equation()
+        for i in range(1, self.nunknowns):
+            mat[i] -= mat[0]
+            rhs[i] -= rhs[0]
+        # first equation is head at control point equals hw
+        mat[0] = 0
+        rhs[0] = self.hw
+        aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                if e == self:
+                    for w in self.wlist:
+                        mat[0:1, ieq : ieq + w.nunknowns] += (
+                            w.potinflayers(self.xc, self.yc, self.lc) / aq.Tcol[self.lc]
+                        )
+                        ieq += w.nunknowns
+                else:
+                    mat[0:1, ieq : ieq + e.nunknowns] += (
+                        e.potinflayers(self.xc, self.yc, self.lc) / aq.Tcol[self.lc]
+                    )
+                    ieq += e.nunknowns
+            else:
+                rhs[0] -= e.potentiallayers(self.xc, self.yc, self.lc) / aq.T[self.lc]
+        return mat, rhs
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        # assign parameters to individual wells
+        i = 0
+        for w in self.wlist:
+            w.parameters[:, 0] = sol[i : i + w.nparam]
+            i += w.nparam
