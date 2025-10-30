@@ -815,7 +815,7 @@ class LineSinkStringBase(Element):
         self.xy = np.atleast_2d(xy).astype("d")
         if closed:
             self.xy = np.vstack((self.xy, self.xy[0]))
-        self.x, self.y = self.xy[:, 0], self.xy[:, 1]
+
         self.order = order  # same for all segments in string
         self.dely = dely  # same for all segments in string
         self.lslist = []
@@ -836,8 +836,6 @@ class LineSinkStringBase(Element):
         # set _x, _y and _layers so that _refine can potentially overwrite
         # these attributes without modifying original input
         self._xy = self.xy.copy()
-        self._x = self.x.copy()
-        self._y = self.y.copy()
         self._layers = self.layers.copy()
 
     def __repr__(self):
@@ -952,7 +950,7 @@ class LineSinkStringBase(Element):
     def plot(self, layer=None):
         if (layer is None) or (layer in self.layers):
             if self.xy.shape[1] == 2:
-                plt.plot(self.x, self.y, "k")
+                plt.plot(self.xy[:, 0], self.xy[:, 1], "k")
             elif self.xy.shape[1] == 4:
                 for i in range(len(self.xy)):
                     x1, y1, x2, y2 = self.xy[i]
@@ -960,8 +958,6 @@ class LineSinkStringBase(Element):
 
     def _reset(self):
         self._xy = self.xy.copy()
-        self._x = self.x.copy()
-        self._y = self.y.copy()
         self._layers = self.layers.copy()
 
 
@@ -1058,7 +1054,7 @@ class HeadLineSinkString(LineSinkStringBase):
             )
             s = np.hstack((0, np.cumsum(L)))
             self._hls = np.interp(s, [0, s[-1]], self._hls)
-        elif len(self._hls) == len(self.x):  # nodes may contain nan values
+        elif len(self._hls) == len(self.xy):  # nodes may contain nan values
             if np.isnan(self._hls).any():
                 L = np.sqrt(
                     (self._x[1:] - self._x[:-1]) ** 2
@@ -1078,17 +1074,19 @@ class HeadLineSinkString(LineSinkStringBase):
             else:
                 lslabel = self.label
             if self.xy.shape[1] == 2:
-                x1, x2 = self._x[i : i + 2]
-                y1, y2 = self._y[i : i + 2]
+                x1, x2 = self._xy[i : i + 2, 0]
+                y1, y2 = self._xy[i : i + 2, 1]
             elif self.xy.shape[1] == 4:
-                x1, y1, x2, y2 = self.xy[i]
+                x1, y1, x2, y2 = self._xy[i]
+            else:
+                raise TypeError(f"Cannot parse xy: {type(self._xy)}: {self._xy}")
             self.lslist.append(
                 HeadLineSink(
                     self.model,
-                    x1=self._x[i],
-                    y1=self._y[i],
-                    x2=self._x[i + 1],
-                    y2=self._y[i + 1],
+                    x1=x1,
+                    y1=y1,
+                    x2=x2,
+                    y2=y2,
                     hls=self._hls[i : i + 2],
                     res=self.res,
                     wh=self.wh,
@@ -1154,7 +1152,7 @@ class HeadLineSinkString(LineSinkStringBase):
             self._hls = self.hls.copy()  # initialize will set hls for each segment
         elif len(self.hls == 2):
             self._hls = self.hls.copy()  # initialize will set hls for each segment
-        elif len(self.hls) == len(self.x):
+        elif len(self.hls) == len(self.xy):
             self._hls = self.hls[reindexer]  # reindex user-specified hls
             mask = ~(np.diff(reindexer, prepend=[-1]).astype(bool))
             self._hls[mask] = np.nan
@@ -1265,9 +1263,7 @@ class LineSinkDitchString(HeadLineSinkString):
         if n is None:
             n = self.refine_level
         xyr, _ = refine_n_segments(self.xy, "line", n_segments=n)
-        # update attributes
-        self._x = xyr[:, 0]
-        self._y = xyr[:, 1]
+        self._xy = xyr
         return [self]
 
 
