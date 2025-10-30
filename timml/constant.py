@@ -175,8 +175,7 @@ class ConstantInside(Element):
 # I don't think we need the equation
 class ConstantStar(Element):
     def __init__(self, model, hstar=0.0, label=None, aq=None, addtomodel=True):
-        Element.__init__(
-            self,
+        super().__init__(
             model,
             nparam=1,
             nunknowns=0,

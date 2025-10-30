@@ -754,9 +754,10 @@ class Model3D(Model):
 
 class ModelXsection(Model):
     def __init__(self, naq=1):
+        self.elements = []
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
-        self.aq = SimpleAquifer(naq)
+        self.aq = SimpleAquifer(self, naq)
         self.modelname = "ml"  # Used for writing out input
 
         self.plots = PlotTim(self)
@@ -781,6 +782,6 @@ class ModelXsection(Model):
         # if not np.all(np.diff(xcoords[1:-1])[::2] < 1e-10):
         #     raise ValueError("Not all inhomogeneities have shared boundaries.")
 
-    def initialize(self):
+    def initialize(self, **_):
         self.check_inhoms()
         super().initialize()
