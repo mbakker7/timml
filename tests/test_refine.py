@@ -39,7 +39,8 @@ def test_refine_n_segments_line():
     xy = np.array([(x1, y1), (x2, y2)])
     xyr, reindexer = tml.util.refine_n_segments(xy, "line", 3)
     assert np.allclose(xyr[:, 0], np.array([-5.0, -2.5, 2.5, 5.0]))
-    assert (reindexer == 0).all() and len(reindexer) == 3
+    assert (reindexer == 0).all() 
+    assert len(reindexer) == 3
 
 
 def test_refine_n_segments_polygon():
@@ -122,7 +123,7 @@ def test_refine_polygonimhommaq():
         (-10, 5),
         (-10, -5),
     ]
-    inhom = tml.PolygonInhomMaq(
+    tml.PolygonInhomMaq(
         ml,
         xy,
         kaq=ml.aq.kaq,
@@ -154,7 +155,7 @@ def test_refine_polygonimhom3d():
         (-10, 5),
         (-10, -5),
     ]
-    inhom = tml.PolygonInhom3D(
+    tml.PolygonInhom3D(
         ml,
         xy,
         kaq=ml.aq.kaq,
