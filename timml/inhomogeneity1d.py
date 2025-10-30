@@ -141,7 +141,10 @@ class Xsection(AquiferData):
                 assert aqin.ilap, (
                     "Error: infiltration can only be added if topboundary='conf'"
                 )
-                XsectionAreaSinkInhom(self.model, self.x1, self.x2, self.N, layer=0)
+                area_sink = XsectionAreaSinkInhom(
+                    self.model, self.x1, self.x2, self.N, layer=0
+                )
+                inhom_elements.append(area_sink)
         if aqin.ltype[0] == "l":
             assert self.hstar is not None, "Error: hstar needs to be set"
             c = ConstantStar(
