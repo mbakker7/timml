@@ -51,8 +51,7 @@ class LineSink1DBase(Element):
         self.ncp = 1
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
-        if self.addtomodel:
-            self.aq.add_element(self)
+        self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.sigls
         self.theta_norm_out = np.zeros(1)
@@ -306,8 +305,7 @@ class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
     def __init__(
         self, model, xls, label=None, aq=None, aqin=None, aqout=None, addtomodel=True
     ):
-        LineSink1DBase.__init__(
-            self,
+        super().__init__(
             model,
             xls,
             sigls=0,
