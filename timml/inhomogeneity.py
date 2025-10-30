@@ -109,7 +109,7 @@ class PolygonInhom(AquiferData):
                 self.zcout[i].real, self.zcout[i].imag
             )
             if (aqout == self.model.aq) or (aqout.inhom_number > self.inhom_number):
-                IntHeadDiffLineSink(
+                ls_in = IntHeadDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
@@ -123,7 +123,7 @@ class PolygonInhom(AquiferData):
                     aqin=aqin,
                     aqout=aqout,
                 )
-                IntFluxDiffLineSink(
+                ls_out = IntFluxDiffLineSink(
                     self.model,
                     x1=self.x[i],
                     y1=self.y[i],
