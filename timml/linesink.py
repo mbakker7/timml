@@ -1050,15 +1050,16 @@ class HeadLineSinkString(LineSinkStringBase):
             self._hls = self._hls * np.ones(self.nls + 1)  # at all nodes
         elif len(self._hls) == 2:  # values at beginning and end
             L = np.sqrt(
-                (self._x[1:] - self._x[:-1]) ** 2 + (self._y[1:] - self._y[:-1]) ** 2
+                (self._xy[1:, 0] - self._xy[:-1, 0]) ** 2
+                + (self._xy[1:, 1] - self._xy[:-1, 1]) ** 2
             )
             s = np.hstack((0, np.cumsum(L)))
             self._hls = np.interp(s, [0, s[-1]], self._hls)
         elif len(self._hls) == len(self.xy):  # nodes may contain nan values
             if np.isnan(self._hls).any():
                 L = np.sqrt(
-                    (self._x[1:] - self._x[:-1]) ** 2
-                    + (self._y[1:] - self._y[:-1]) ** 2
+                    (self._xy[1:, 0] - self._xy[:-1, 0]) ** 2
+                    + (self._xy[1:, 1] - self._xy[:-1, 1]) ** 2
                 )
                 s = np.hstack((0, np.cumsum(L)))
                 self._hls = np.interp(
