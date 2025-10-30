@@ -2,7 +2,7 @@ import inspect  # Used for storing the input
 
 import numpy as np
 
-from .constant import ConstantStar
+from timml.constant import ConstantStar
 
 
 class AquiferData:
@@ -128,14 +128,14 @@ class AquiferData:
 
 class Aquifer(AquiferData):
     def __init__(self, model, kaq, c, z, npor, ltype):
-        super().__init__(model, kaq, c, z, npor, ltype)
-        self.inhoms = []
+        AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
+        self.inhoms = []  # user added inhoms
         self.area = 1e300  # Needed to find smallest inhom
 
     def initialize(self, refine_level=None):
-        self.inhoms = []  # compute list for inhoms
+        self.inhomlist = []  # compute list for inhoms
         # because we are going to call initialize for inhoms
-        AquiferData.initialize(self)
+        super().initialize()
         for inhom in self.inhoms:
             if hasattr(inhom, "_refine") and (
                 inhom.refine_level > 1 or refine_level is not None
@@ -146,8 +146,8 @@ class Aquifer(AquiferData):
                 # has already been called with refine_level > 1
                 inhom._reset()
             inhom.initialize()
-            self.inhoms.append(inhom)
-        for inhom in self.inhoms:
+            self.inhomlist.append(inhom)
+        for inhom in self.inhomlist:
             inhom_elements = inhom.create_elements()  # create elements
             self.model.elementlist += inhom_elements  # add elements to compute list
 
@@ -175,7 +175,8 @@ class SimpleAquifer(Aquifer):
         Number of aquifers.
     """
 
-    def __init__(self, naq):
+    def __init__(self, model, naq):
+        self.model = model
         self.naq = naq
         self.inhoms = []
         self.area = 1e300  # Needed to find smallest inhomogeneity
@@ -184,8 +185,12 @@ class SimpleAquifer(Aquifer):
     def __repr__(self):
         return f"Simple Aquifer: {self.naq} aquifer(s)"
 
-    def initialize(self):
+    def initialize(self, **_):
+        self.elementlist = []
+        # initialize aquifers
         for inhom in self.inhoms:
             inhom.initialize()
+        # add inhom elements
         for inhom in self.inhoms:
-            inhom.create_elements()
+            inhom_elements = inhom.create_elements()
+            self.model.elementlist += inhom_elements  # add elements to compute list
