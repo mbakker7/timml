@@ -67,7 +67,7 @@ class HeadEquation:
                     if e == self:
                         mat[np.arange(istart, istart + self.nlayers), 
                         np.arange(ieq, ieq + e.nunknowns)
-                        ] -= self.resfac[icp, :, e.nunknowns]
+                        ] -= self.resfac[:].squeeze()
                         #(self.ncp, self.nlayers, self.nunknowns)
                     ieq += e.nunknowns
                 else:
