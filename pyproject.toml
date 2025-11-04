@@ -42,7 +42,15 @@ repository = "https://github.com/mbakker7/timml"
 documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 
 [project.optional-dependencies]
-ci = ["pytest", "pytest-cov", "jupyter", "coveralls", "shapely", "ruff"]
+ci = [
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "nbval",
+    "jupyter",
+    "shapely",
+    "ruff",
+]
 docs = [
     "timml[ci]",
     "sphinx",
