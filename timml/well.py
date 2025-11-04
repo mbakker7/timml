@@ -97,18 +97,23 @@ class WellBase(Element):
             rv[1] = self.aq.coef[self.layers] * qy
         return rv
 
-    def headinside(self):
+    def headinside(self, all_layers=False):
         """The head inside the well.
 
         Returns
         -------
-        array (length number of screens)
+        scalar (length number of screens)
             Head inside the well for each screen
+            if all_layers, returns array with values for all 
+            screened layers, and nan for non-screened layers
         """
         h = np.nan * np.ones(self.model.aq.naq)
         h[self.layers] = self.model.head(self.xc, self.yc, layers=self.layers)
         h[self.layers] -= self.resfac * self.parameters[:, 0]
-        return h
+        if all_layers:
+            return h
+        else:
+            return h[self.layers[0]]
 
     def discharge(self):
         """The discharge in each layer.
