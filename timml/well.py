@@ -105,8 +105,10 @@ class WellBase(Element):
         array (length number of screens)
             Head inside the well for each screen
         """
-        h = self.model.head(self.xc, self.yc, layers=self.layers)
-        return h - self.resfac * self.parameters[:, 0]
+        h = np.nan * np.ones(self.model.aq.naq)
+        h[self.layers] = self.model.head(self.xc, self.yc, layers=self.layers)
+        h[self.layers] -= self.resfac * self.parameters[:, 0]
+        return h
 
     def discharge(self):
         """The discharge in each layer.
