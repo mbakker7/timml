@@ -65,10 +65,11 @@ class HeadEquation:
                         / self.aq.Tcol[self.layers]
                     )
                     if e == self:
-                        mat[np.arange(istart, istart + self.nlayers), 
-                        np.arange(ieq, ieq + e.nunknowns)
+                        mat[
+                            np.arange(istart, istart + self.nlayers),
+                            np.arange(ieq, ieq + e.nunknowns),
                         ] -= self.resfac[:].squeeze()
-                        #(self.ncp, self.nlayers, self.nunknowns)
+                        # (self.ncp, self.nlayers, self.nunknowns)
                     ieq += e.nunknowns
                 else:
                     rhs[istart : istart + self.nlayers] -= (
