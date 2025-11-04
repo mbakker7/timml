@@ -5,7 +5,7 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-from .equation import MscreenWellEquation, MscreenWellNoflowEquation, PotentialEquation
+from .equation import MscreenWellEquation, MscreenWellNoflowEquation, HeadEquation
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -23,8 +23,6 @@ class WellBase(Element):
         layers=0,
         name="WellBase",
         label=None,
-        xc=None,
-        yc=None,
     ):
         Element.__init__(
             self, model, nparam=1, nunknowns=0, layers=layers, name=name, label=label
@@ -37,22 +35,14 @@ class WellBase(Element):
         self.Qw = np.atleast_1d(Qw)
         self.rw = float(rw)
         self.res = float(res)
-        self.xc = xc
-        self.yc = yc
         self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " at " + str((self.xw, self.yw))
 
     def initialize(self):
-        if self.xc is None:
-            self.xc = np.array([self.xw + self.rw])
-        else:
-            self.xc = np.atleast_1d(self.xc)
-        if self.yc is None:
-            self.yc = np.array([self.yw])
-        else:
-            self.yc = np.atleast_1d(self.yc)
+        self.xc = np.array([self.xw + self.rw])
+        self.yc = np.array([self.yw])
         self.ncp = 1
         self.aq = self.model.aq.find_aquifer_data(self.xw, self.yw)
         self.aq.add_element(self)
@@ -115,7 +105,7 @@ class WellBase(Element):
         array (length number of screens)
             Head inside the well for each screen
         """
-        h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
+        h = self.model.head(self.xc, self.yc, layers=self.layers)
         return h - self.resfac * self.parameters[:, 0]
 
     def discharge(self):
@@ -335,10 +325,6 @@ class Well(WellBase, MscreenWellEquation):
         layer (int) or layers (list or array) where well is screened
     label : string or None (default: None)
         label of the well
-    xc : float
-        x-location of control point (default None, which puts it at xw)
-    yc : float
-        y-location of control point (default None, which puts it at yw + rw)
 
     Examples
     --------
@@ -356,8 +342,6 @@ class Well(WellBase, MscreenWellEquation):
         res=0.0,
         layers=0,
         label=None,
-        xc=None,
-        yc=None,
     ):
         self.storeinput(inspect.currentframe())
         WellBase.__init__(
@@ -371,8 +355,6 @@ class Well(WellBase, MscreenWellEquation):
             layers=layers,
             name="Well",
             label=label,
-            xc=xc,
-            yc=yc,
         )
         self.Qc = float(Qw)
         if self.nlayers == 1:
@@ -387,7 +369,7 @@ class Well(WellBase, MscreenWellEquation):
         self.parameters[:, 0] = sol
 
 
-class HeadWell(WellBase, PotentialEquation):
+class HeadWell(WellBase, HeadEquation):
     r"""HeadWell Class to create a well with a specified head inside the well.
 
     Notes
@@ -421,10 +403,14 @@ class HeadWell(WellBase, PotentialEquation):
         layer (int) or layers (list or array) where well is screened
     label : string (default: None)
         label of the well
-    xc : float
-        x-location of control point (default None, which puts it at xw)
-    yc : float
-        y-location of control point (default None, which puts it at yw + rw)
+    xcp : float
+        x-location of control point away from well (default None)
+    ycp : float
+        y-location of control point away from well (default None)
+    layercp : integer
+        layer where control point is located (default 0)
+        must be specified when xcp and ycp are specified
+        the control point can only be in one layer
     """
 
     def __init__(
@@ -437,8 +423,9 @@ class HeadWell(WellBase, PotentialEquation):
         res=0,
         layers=0,
         label=None,
-        xc=None,
-        yc=None,
+        xcp=None,
+        ycp=None,
+        layercp=0,
     ):
         self.storeinput(inspect.currentframe())
         WellBase.__init__(
@@ -452,18 +439,41 @@ class HeadWell(WellBase, PotentialEquation):
             layers=layers,
             name="HeadWell",
             label=label,
-            xc=xc,
-            yc=yc,
         )
         self.hc = hw
         self.nunknowns = self.nparam
+        self.xcp = xcp
+        self.ycp = ycp
+        self.layercp = np.atleast_1d(layercp)
 
     def initialize(self):
         WellBase.initialize(self)
-        self.pc = self.hc * self.aq.T[self.layers]  # Needed in solving
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
+    def equation(self):
+        mat, rhs = HeadEquation.equation(self)
+        if self.xcp is not None:
+            for i in range(1, self.nunknowns):
+                mat[i] -= mat[0]
+                rhs[i] -= rhs[0]
+            rhs[1:] = 0
+            rhs[0] = self.hc
+            ieq = 0
+            for e in self.model.elementlist:
+                if e.nunknowns > 0:
+                    mat[0, ieq : ieq + e.nunknowns] = (
+                        e.potinflayers(self.xcp, self.ycp, self.layercp)
+                        / self.aq.Tcol[self.layercp]
+                    )
+                    ieq += e.nunknowns
+                else:
+                    rhs[0] -= (
+                        e.potentiallayers(self.xcp, self.ycp, self.layercp)
+                        / self.aq.T[self.layercp]
+                    )
+        return mat, rhs
 
 
 class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
@@ -487,10 +497,6 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
         layer (int) or layers (list or array) where well is screened
     label : string or None (default: None)
         label of the well
-    xc : float
-        x-location of control point (default None, which puts it at xw)
-    yc : float
-        y-location of control point (default None, which puts it at yw + rw)
 
     Examples
     --------

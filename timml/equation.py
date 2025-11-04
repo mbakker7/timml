@@ -53,7 +53,7 @@ class HeadEquation:
         """
         mat = np.empty((self.nunknowns, self.model.neq))
         # rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
-        rhs = self.hc.copy()
+        rhs = self.hc * np.ones(len(self.layers))
         for icp in range(self.ncp):
             istart = icp * self.nlayers
             # rhs[istart:istart+self.nlayers] = self.pc[]
@@ -65,9 +65,10 @@ class HeadEquation:
                         / self.aq.Tcol[self.layers]
                     )
                     if e == self:
-                        mat[
-                            istart : istart + self.nlayers, ieq : ieq + e.nunknowns
-                        ] -= self.resfac[icp]
+                        mat[np.arange(istart, istart + self.nlayers), 
+                        np.arange(ieq, ieq + e.nunknowns)
+                        ] -= self.resfac[icp, :, e.nunknowns]
+                        #(self.ncp, self.nlayers, self.nunknowns)
                     ieq += e.nunknowns
                 else:
                     rhs[istart : istart + self.nlayers] -= (
