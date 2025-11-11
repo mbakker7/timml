@@ -2,7 +2,7 @@ import inspect  # Used for storing the input
 
 import numpy as np
 
-from .constant import ConstantStar
+from timml.constant import ConstantStar
 
 
 class AquiferData:
@@ -71,7 +71,8 @@ class AquiferData:
             self.nporll = self.npor[self.ltype == "l"]
 
     def initialize(self):
-        self.elementlist = []  # Elementlist of aquifer
+        self.elementlist = []  # computation element list of aquifer
+
         d0 = 1.0 / (self.c * self.T)
         d0[:-1] += 1.0 / (self.c[1:] * self.T[:-1])
         dp1 = -1.0 / (self.c[1:] * self.T[1:])
@@ -127,25 +128,36 @@ class AquiferData:
 
 class Aquifer(AquiferData):
     def __init__(self, model, kaq, c, z, npor, ltype):
-        super().__init__(model, kaq, c, z, npor, ltype)
-        self.inhomlist = []
+        AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
+        self.inhoms = []  # user added inhoms
         self.area = 1e300  # Needed to find smallest inhom
 
-    def initialize(self):
-        # cause we are going to call initialize for inhoms
-        AquiferData.initialize(self)
-        for inhom in self.inhomlist:
+    def initialize(self, refine_level=None):
+        self.inhomlist = []  # compute list for inhoms
+        # because we are going to call initialize for inhoms
+        super().initialize()
+        for inhom in self.inhoms:
+            if hasattr(inhom, "_refine") and (
+                inhom.refine_level > 1 or refine_level is not None
+            ):
+                inhom._refine(n=refine_level)  # refine element
+            elif hasattr(inhom, "_reset"):
+                # potentially reset refined parameters if initialize
+                # has already been called with refine_level > 1
+                inhom._reset()
             inhom.initialize()
+            self.inhomlist.append(inhom)
         for inhom in self.inhomlist:
-            inhom.create_elements()
+            inhom_elements = inhom.create_elements()  # create elements
+            self.model.elementlist += inhom_elements  # add elements to compute list
 
     def add_inhom(self, inhom):
-        self.inhomlist.append(inhom)
-        return len(self.inhomlist) - 1  # returns number in the list
+        self.inhoms.append(inhom)
+        return len(self.inhoms) - 1  # returns number in the list
 
     def find_aquifer_data(self, x, y):
         rv = self
-        for inhom in self.inhomlist:
+        for inhom in self.inhoms:
             if inhom.isinside(x, y):
                 if inhom.area < rv.area:
                     rv = inhom
@@ -163,17 +175,22 @@ class SimpleAquifer(Aquifer):
         Number of aquifers.
     """
 
-    def __init__(self, naq):
+    def __init__(self, model, naq):
+        self.model = model
         self.naq = naq
-        self.inhomlist = []
+        self.inhoms = []
         self.area = 1e300  # Needed to find smallest inhomogeneity
         self.elementlist = []
 
     def __repr__(self):
         return f"Simple Aquifer: {self.naq} aquifer(s)"
 
-    def initialize(self):
-        for inhom in self.inhomlist:
+    def initialize(self, **_):
+        self.elementlist = []
+        # initialize aquifers
+        for inhom in self.inhoms:
             inhom.initialize()
-        for inhom in self.inhomlist:
-            inhom.create_elements()
+        # add inhom elements
+        for inhom in self.inhoms:
+            inhom_elements = inhom.create_elements()
+            self.model.elementlist += inhom_elements  # add elements to compute list

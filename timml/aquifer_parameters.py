@@ -15,17 +15,19 @@ def param_maq(kaq, z, c, npor, top):
         ltype = np.array(list(Naq * "la"))
     if len(kaq) == 1:
         kaq = kaq * np.ones(Naq)
-    assert len(kaq) == Naq, "Error: length of kaq needs to be 1 or" + str(Naq)
+    assert len(kaq) == Naq, "Error: length of kaq needs to be 1 or " + str(Naq)
     H = z[:-1] - z[1:]
-    assert np.all(H >= 0), "Error: Not all layers thicknesses are non-negative" + str(H)
+    assert np.all(H >= 0), "Error: Not all layers thicknesses are non-negative " + str(
+        H
+    )
     if top == "conf":
         if len(c) == 1:
             c = c * np.ones(Naq - 1)
         if len(npor) == 1:
             npor = npor * np.ones(2 * Naq - 1)
-        assert len(c) == Naq - 1, "Error: Length of c needs to be 1 or" + str(Naq - 1)
-        assert len(npor) == 2 * Naq - 1, "Error: Length of npor needs to be 1 or" + str(
-            2 * Naq - 1
+        assert len(c) == Naq - 1, "Error: Length of c needs to be 1 or " + str(Naq - 1)
+        assert len(npor) == 2 * Naq - 1, (
+            "Error: Length of npor needs to be 1 or " + str(2 * Naq - 1)
         )
         c = np.hstack((1e100, c))
     else:  # leaky layer on top
@@ -33,8 +35,8 @@ def param_maq(kaq, z, c, npor, top):
             c = c * np.ones(Naq)
         if len(npor) == 1:
             npor = npor * np.ones(2 * Naq)
-        assert len(c) == Naq, "Error: Length of c needs to be 1 or" + str(Naq)
-        assert len(npor) == 2 * Naq, "Error: Length of npor needs to be 1 or" + str(
+        assert len(c) == Naq, "Error: Length of c needs to be 1 or " + str(Naq)
+        assert len(npor) == 2 * Naq, "Error: Length of npor needs to be 1 or " + str(
             2 * Naq
         )
     return kaq, c, npor, ltype
@@ -54,23 +56,27 @@ def param_3d(kaq, z, kzoverkh, npor, top="conf", topres=0):
         ltype = np.hstack(("l", Naq * ["a"]))
     if len(kaq) == 1:
         kaq = kaq * np.ones(Naq)
-    assert len(kaq) == Naq, "Error: length of kaq needs to be 1 or" + str(Naq)
+    assert len(kaq) == Naq, "Error: length of kaq needs to be 1 or " + str(Naq)
     if len(kzoverkh) == 1:
         kzoverkh = kzoverkh * np.ones(Naq)
-    assert len(kzoverkh) == Naq, "Error: length of kzoverkh needs to be 1 or" + str(Naq)
+    assert len(kzoverkh) == Naq, "Error: length of kzoverkh needs to be 1 or " + str(
+        Naq
+    )
     if len(npor) == 1:
         if top == "conf":
             npor = npor * np.ones(Naq)
         elif top == "semi":
             npor = npor * np.ones(Naq + 1)
     if top == "conf":
-        assert len(npor) == Naq, "Error: length of npor needs to be 1 or" + str(Naq)
+        assert len(npor) == Naq, "Error: length of npor needs to be 1 or " + str(Naq)
     elif top == "semi":
-        assert len(npor) == Naq + 1, "Error: length of npor needs to be 1 or" + str(
+        assert len(npor) == Naq + 1, "Error: length of npor needs to be 1 or " + str(
             Naq + 1
         )
     H = z[:-1] - z[1:]
-    assert np.all(H >= 0), "Error: Not all layers thicknesses are non-negative" + str(H)
+    assert np.all(H >= 0), "Error: Not all layers thicknesses are non-negative " + str(
+        H
+    )
     c = 0.5 * H[:-1] / (kzoverkh[:-1] * kaq[:-1]) + 0.5 * H[1:] / (
         kzoverkh[1:] * kaq[1:]
     )

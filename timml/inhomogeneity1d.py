@@ -79,30 +79,38 @@ class Xsection(AquiferData):
         return (x >= self.x1) and (x < self.x2)
 
     def create_elements(self):
+        inhom_elements = []
         # HeadDiff on right side, FluxDiff on left side
         if self.x1 == -np.inf:
             xin = self.x2 - self.tiny * abs(self.x2) - self.tiny
             xoutright = self.x2 + self.tiny * abs(self.x2) + self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutright = self.model.aq.find_aquifer_data(xoutright, 0)
-            if self.addlinesinks:
-                HeadDiffLineSink1D(
-                    self.model,
-                    self.x2,
-                    label=None,
-                    aq=aqin,
-                    aqin=aqin,
-                    aqout=aqoutright,
-                )
+            hdls_right = HeadDiffLineSink1D(
+                self.model,
+                self.x2,
+                label=None,
+                aq=aqin,
+                aqin=aqin,
+                aqout=aqoutright,
+                addtomodel=False,
+            )
+            inhom_elements.append(hdls_right)
         elif self.x2 == np.inf:
             xin = self.x1 + self.tiny * abs(self.x1) + self.tiny
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqoutleft = self.model.aq.find_aquifer_data(xoutleft, 0)
-            if self.addlinesinks:
-                FluxDiffLineSink1D(
-                    self.model, self.x1, label=None, aq=aqin, aqin=aqin, aqout=aqoutleft
-                )
+            fdls_left = FluxDiffLineSink1D(
+                self.model,
+                self.x1,
+                label=None,
+                aq=aqin,
+                aqin=aqin,
+                aqout=aqoutleft,
+                addtomodel=False,
+            )
+            inhom_elements.append(fdls_left)
         else:
             xin = 0.5 * (self.x1 + self.x2)
             xoutleft = self.x1 - self.tiny * abs(self.x1) - self.tiny
@@ -110,22 +118,44 @@ class Xsection(AquiferData):
             aqin = self.model.aq.find_aquifer_data(xin, 0)
             aqleft = self.model.aq.find_aquifer_data(xoutleft, 0)
             aqright = self.model.aq.find_aquifer_data(xoutright, 0)
-            if self.addlinesinks:
-                HeadDiffLineSink1D(
-                    self.model, self.x2, label=None, aq=aqin, aqin=aqin, aqout=aqright
-                )
-                FluxDiffLineSink1D(
-                    self.model, self.x1, label=None, aq=aqin, aqin=aqin, aqout=aqleft
-                )
+            hdls_right = HeadDiffLineSink1D(
+                self.model,
+                self.x2,
+                label=None,
+                aq=aqin,
+                aqin=aqin,
+                aqout=aqright,
+                addtomodel=False,
+            )
+            fdls_left = FluxDiffLineSink1D(
+                self.model,
+                self.x1,
+                label=None,
+                aq=aqin,
+                aqin=aqin,
+                aqout=aqleft,
+                addtomodel=False,
+            )
+            inhom_elements += [hdls_right, fdls_left]
             if self.N is not None:
                 assert aqin.ilap, (
                     "Error: infiltration can only be added if topboundary='conf'"
                 )
-                XsectionAreaSinkInhom(self.model, self.x1, self.x2, self.N, layer=0)
+                area_sink = XsectionAreaSinkInhom(
+                    self.model, self.x1, self.x2, self.N, layer=0
+                )
+                inhom_elements.append(area_sink)
         if aqin.ltype[0] == "l":
             assert self.hstar is not None, "Error: hstar needs to be set"
-            c = ConstantStar(self.model, self.hstar, aq=aqin)
+            c = ConstantStar(
+                self.model,
+                self.hstar,
+                aq=aqin,
+                addtomodel=False,
+            )
             c.inhomelement = True
+            inhom_elements.append(c)
+        return inhom_elements
 
     def plot(
         self, ax=None, labels=False, params=False, names=False, fmt=None, **kwargs

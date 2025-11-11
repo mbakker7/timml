@@ -33,6 +33,7 @@ class XsectionAreaSinkInhom(Element):
         layer=0,
         name="XsectionAreaSink",
         label=None,
+        addtomodel=True,
     ):
         super().__init__(
             model, nparam=1, nunknowns=0, layers=layer, name=name, label=label
@@ -40,7 +41,9 @@ class XsectionAreaSinkInhom(Element):
         self.xleft = xleft
         self.xright = xright
         self.N = N
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " between " + str((self.xleft, self.xright))
@@ -124,6 +127,7 @@ class XsectionAreaSink(Element):
         layer=0,
         name="XsectionAreaSink",
         label=None,
+        addtomodel=True,
     ):
         warnings.warn(
             "XsectionAreaSink is only for testing purposes. It is recommended to add "
@@ -137,7 +141,9 @@ class XsectionAreaSink(Element):
         self.xleft = xleft
         self.xright = xright
         self.N = N
-        self.model.add_element(self)
+        self.addtomodel = addtomodel
+        if self.addtomodel:
+            self.model.add_element(self)
 
     def __repr__(self):
         return self.name + " at " + str((self.xc, self.yc))

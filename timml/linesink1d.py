@@ -51,9 +51,7 @@ class LineSink1DBase(Element):
         self.ncp = 1
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
-
-        if self.addtomodel:
-            self.aq.add_element(self)
+        self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.sigls
         self.theta_norm_out = np.zeros(1)
@@ -158,7 +156,7 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
         label of element
     """
 
-    def __init__(self, model, xls=0, sigls=1, layers=0, label=None):
+    def __init__(self, model, xls=0, sigls=1, layers=0, label=None, addtomodel=True):
         self.storeinput(inspect.currentframe())
         LineSink1DBase.__init__(
             self,
@@ -168,7 +166,7 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
             layers=layers,
             name="Linesink1D",
             label=label,
-            addtomodel=True,
+            addtomodel=addtomodel,
             res=0,
             wh=1,
             aq=None,
@@ -214,7 +212,9 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
         label of element
     """
 
-    def __init__(self, model, xls=0, hls=1, res=0, wh=1, layers=0, label=None):
+    def __init__(
+        self, model, xls=0, hls=1, res=0, wh=1, layers=0, label=None, addtomodel=True
+    ):
         self.storeinput(inspect.currentframe())
         LineSink1DBase.__init__(
             self,
@@ -224,7 +224,7 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
             layers=layers,
             name="HeadLinesink1D",
             label=label,
-            addtomodel=True,
+            addtomodel=addtomodel,
             res=res,
             wh=wh,
             aq=None,
@@ -243,7 +243,9 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
 class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
     """HeadDiffLineSink1D for left side (xcout)."""
 
-    def __init__(self, model, xls, label=None, aq=None, aqin=None, aqout=None):
+    def __init__(
+        self, model, xls, label=None, aq=None, aqin=None, aqout=None, addtomodel=True
+    ):
         LineSink1DBase.__init__(
             self,
             model,
@@ -252,7 +254,7 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
             layers=np.arange(model.aq.naq),
             label=label,
             name="HeadDiffLineSink1D",
-            addtomodel=True,
+            addtomodel=addtomodel,
             aq=aq,
         )
         self.inhomelement = True
@@ -300,16 +302,17 @@ class HeadDiffLineSink1D(LineSink1DBase, HeadDiffEquation):
 class FluxDiffLineSink1D(LineSink1DBase, DisvecDiffEquation):
     """FluxDiffLineSink1D for right side (xcin)."""
 
-    def __init__(self, model, xls, label=None, aq=None, aqin=None, aqout=None):
-        LineSink1DBase.__init__(
-            self,
+    def __init__(
+        self, model, xls, label=None, aq=None, aqin=None, aqout=None, addtomodel=True
+    ):
+        super().__init__(
             model,
             xls,
             sigls=0,
             layers=np.arange(model.aq.naq),
             label=label,
             name="FluxDiffLineSink1D",
-            addtomodel=True,
+            addtomodel=addtomodel,
             aq=aq,
         )
         self.inhomelement = True

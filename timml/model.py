@@ -45,22 +45,36 @@ class Model:
     def __init__(self, kaq, c, z, npor, ltype):
         # All input variables are numpy arrays
         # That should be checked outside this function
-        self.elementlist = []
+        self.elements = []  # elements added by user
+        self.elementlist = []  # computation elements
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
-
         self.plots = PlotTim(self)
 
-    def initialize(self):
+    def initialize(self, refine_level=None):
+        elementlist = []
+        for e in self.elements:
+            # refine
+            if hasattr(e, "_refine") and (
+                e.refine_level > 1 or refine_level is not None
+            ):
+                refined_element = e._refine(n=refine_level)
+                elementlist += refined_element
+            else:
+                if hasattr(e, "_reset"):
+                    e._reset()  # reset variables in case _refine was previously called
+                elementlist.append(e)
+
         # remove inhomogeneity elements (they are added again)
-        self.elementlist = [e for e in self.elementlist if not e.inhomelement]
-        self.aq.initialize()
+        self.elementlist = [e for e in elementlist if not e.inhomelement]
+        self.aq.initialize(refine_level=refine_level)
+        # now initialize all computation elements
         for e in self.elementlist:
             e.initialize()
 
     def add_element(self, e):
-        self.elementlist.append(e)
+        self.elements.append(e)
         if e.label is not None:
             self.elementdict[e.label] = e
 
@@ -68,7 +82,7 @@ class Model:
         """Remove element `e` from model."""
         if e.label is not None:
             self.elementdict.pop(e.label)
-        self.elementlist.remove(e)
+        self.elements.remove(e)
 
     def storeinput(self, frame):
         self.inputargs, _, _, self.inputvalues = inspect.getargvalues(frame)
@@ -414,10 +428,10 @@ class Model:
             vy = qy[layer] / (aq.Haq[layer] * aq.nporaq[layer])
         return np.array([vx, vy, vz])
 
-    def solve(self, printmat=0, sendback=0, silent=False):
+    def solve(self, printmat=0, sendback=0, silent=False, refine_level=None):
         """Compute solution."""
         # Initialize elements
-        self.initialize()
+        self.initialize(refine_level=refine_level)
         # Compute number of equations
         self.neq = np.sum([e.nunknowns for e in self.elementlist])
         if self.neq == 0:
@@ -544,7 +558,7 @@ class Model:
         return
 
     def write(self):
-        rv = self.modelname + " = " + self.name + "(\n"
+        rv = "tml." + self.modelname + " = " + self.name + "(\n"
         for key in self.inputargs[1:]:  # The first argument (self) is ignored
             if isinstance(self.inputvalues[key], np.ndarray):
                 rv += (
@@ -563,7 +577,7 @@ class Model:
     def writemodel(self, fname):
         self.initialize()  # So that the model can be written without solving first
         f = open(fname, "w")
-        f.write("from timml import *\n")
+        f.write("import timml\n")
         f.write(self.write())
         for e in self.elementlist:
             f.write(e.write())
@@ -740,9 +754,10 @@ class Model3D(Model):
 
 class ModelXsection(Model):
     def __init__(self, naq=1):
+        self.elements = []
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label
-        self.aq = SimpleAquifer(naq)
+        self.aq = SimpleAquifer(self, naq)
         self.modelname = "ml"  # Used for writing out input
 
         self.plots = PlotTim(self)
@@ -751,7 +766,7 @@ class ModelXsection(Model):
     def check_inhoms(self):
         """Check if number of aquifers in inhoms matches number of aquifers in model."""
         naqs = {}
-        for inhom in self.aq.inhomlist:
+        for inhom in self.aq.inhoms:
             naqs[inhom.name] = inhom.naq
         check = np.array(list(naqs.values())) == self.aq.naq
         if not check.all():
@@ -767,6 +782,6 @@ class ModelXsection(Model):
         # if not np.all(np.diff(xcoords[1:-1])[::2] < 1e-10):
         #     raise ValueError("Not all inhomogeneities have shared boundaries.")
 
-    def initialize(self):
+    def initialize(self, **_):
         self.check_inhoms()
         super().initialize()

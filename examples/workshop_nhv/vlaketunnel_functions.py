@@ -157,15 +157,15 @@ def plot_model_input(ml):
     for c, z in zip(ml.aq.c, ml.aq.zaqtop, strict=False):
         plt.annotate(f"c={c:0.1f}d", (0.5, z), ha="center", va="center")
     # plot channel
-    plt.plot([xmin, xchannel], [ml.aq.inhomlist[0].hstar] * 2, color="blue")
+    plt.plot([xmin, xchannel], [ml.aq.inhoms[0].hstar] * 2, color="blue")
     plt.annotate(
-        f"h_ch={ml.aq.inhomlist[0].hstar:0.1f}",
-        (xchannel, ml.aq.inhomlist[0].hstar),
+        f"h_ch={ml.aq.inhoms[0].hstar:0.1f}",
+        (xchannel, ml.aq.inhoms[0].hstar),
         ha="right",
         va="bottom",
     )
     plt.annotate(
-        f"c_ch={ml.aq.inhomlist[0].c[0]:0.1f}",
+        f"c_ch={ml.aq.inhoms[0].c[0]:0.1f}",
         (xchannel, ml.aq.zaqtop[0]),
         ha="right",
         va="bottom",

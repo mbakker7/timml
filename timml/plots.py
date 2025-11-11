@@ -114,6 +114,9 @@ class PlotTim:
                         ymax=self._ml.aq.z[i],
                         color=[0.8, 0.8, 0.8],
                     )
+            # for e in self.elementlist:
+            #     if hasattr(e, "xsec"):
+            #         e.xsec()
 
     def xsection(
         self,
@@ -158,7 +161,7 @@ class PlotTim:
                 (x1, _), (x2, _) = xy
             else:
                 x1, x2 = ax.get_xlim()
-            for inhom in self._ml.aq.inhomlist:
+            for inhom in self._ml.aq.inhoms:
                 inhom.plot(ax=ax, labels=labels, params=params, x1=x1, x2=x2, fmt=fmt)
             ax.set_xlim(x1, x2)
             ax.set_ylabel("elevation")
@@ -639,3 +642,5 @@ class PlotTim:
         if layout:
             self.xsection(xy=[(x1, 0), (x2, 0)], labels=False, ax=ax)
         return ax
+        # if layout:
+        #    self.plot(win=[x1, x2, y1, y2], orientation='ver', newfig=False)
