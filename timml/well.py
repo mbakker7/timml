@@ -5,7 +5,7 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-from .equation import HeadEquation, MscreenWellEquation, MscreenWellNoflowEquation
+from .equation import MscreenWellEquation, MscreenWellNoflowEquation, HeadEquation
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -49,6 +49,7 @@ class WellBase(Element):
         self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.Qw
         self.resfac = self.res / (2 * np.pi * self.rw * self.aq.Haq[self.layers])
+        self.resfac = np.reshape(self.resfac, (1, self.nlayers)) # ncp=1
 
     def potinf(self, x, y, aq=None):
         if aq is None:
@@ -104,12 +105,12 @@ class WellBase(Element):
         -------
         scalar (length number of screens)
             Head inside the well for each screen
-            if all_layers, returns array with values for all
+            if all_layers, returns array with values for all 
             screened layers, and nan for non-screened layers
         """
         h = np.nan * np.ones(self.model.aq.naq)
         h[self.layers] = self.model.head(self.xc, self.yc, layers=self.layers)
-        h[self.layers] -= self.resfac * self.parameters[:, 0]
+        h[self.layers] -= self.resfac[0] * self.parameters[:, 0]
         if all_layers:
             return h
         else:
