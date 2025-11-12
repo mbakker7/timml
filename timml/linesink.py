@@ -482,9 +482,8 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         return rv
 
     def headinside(self, icp=0):
-        hinside = (
-             self.model.head(self.xc[icp], self.yc[icp], self.layers)
-            - np.sum(self.resfac[icp] * self.parameters[:, 0], 1)
+        hinside = self.model.head(self.xc[icp], self.yc[icp], self.layers) - np.sum(
+            self.resfac[icp] * self.parameters[:, 0], 1
         )
         return hinside
 
@@ -580,7 +579,9 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
             self.whfac = 2.0 * self.aq.Haq[self.layers]
         elif np.isscalar(self.wh):
             self.whfac = self.wh * np.ones(self.nlayers)
-        self.resfac = np.tile(self.res / self.whfac, self.ncp) * self.strengthinf # this is resfach !
+        self.resfac = (
+            np.tile(self.res / self.whfac, self.ncp) * self.strengthinf
+        )  # this is resfach !
         self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns)
         if len(self.hls) == 1:
             self.hc = self.hls * np.ones(self.nparam)
@@ -695,6 +696,7 @@ class LineSinkDitch(HeadLineSink):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
+
 
 class LineSinkStringBase2(Element):
     """Alternative implementation that loops through line-sinks to build equation.
