@@ -155,6 +155,51 @@ class MscreenWellEquation:
         return mat, rhs
 
 
+class MscreenWellHeadEquation:
+    def equation(self):
+        """Mix-in class that returns matrix rows for mscreen condition.
+
+        Mscreen condition applied at one control point.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
+        """
+        mat = np.zeros((self.nunknowns, self.model.neq))
+        rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
+        rhs[0 : self.nlayers - 1] = 0.0
+        rhs[self.nlayers - 1] = self.hw
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                head = (
+                    e.potinflayers(self.xc[0], self.yc[0], self.layers)
+                    / self.aq.Tcol[self.layers, :]
+                )
+                mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = (
+                    head[:-1] - head[1:]
+                )
+                # last equation
+                mat[self.nlayers - 1, ieq : ieq + e.nunknowns] = head[0]
+                if e == self:
+                    for i in range(self.nlayers - 1):
+                        mat[i, ieq + i] -= self.resfac[i]
+                        mat[i, ieq + i + 1] += self.resfac[i + 1]
+                    mat[self.nlayers - 1, ieq] -= self.resfac[0]
+                ieq += e.nunknowns
+            else:
+                head = (
+                    e.potentiallayers(self.xc[0], self.yc[0], self.layers)
+                    / self.aq.T[self.layers]
+                )
+                rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
+                rhs[self.nlayers - 1] -= head[0]
+        return mat, rhs
+
+
 class MscreenWellNoflowEquation:
     def equation(self):
         """Matrix rows for mscreen condition with no flow in the non-screened layers.
