@@ -59,8 +59,6 @@ def timtraceline(
         - "message": termination message
         - "complete": True if terminated correctly
     """
-    if win is None:
-        win = [-1e30, 1e30, -1e30, 1e30]
     verbose = False  # used for debugging
     if win is None:
         win = [-1e30, 1e30, -1e30, 1e30]
