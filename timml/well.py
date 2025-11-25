@@ -5,8 +5,7 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-#from .equation import MscreenWellEquation, MscreenWellNoflowEquation, PotentialEquation
-from .equation import MscreenWellEquation, MscreenWellNoflowEquation, HeadEquation, MscreenWellHeadEquation
+from .equation import HeadEquation, MscreenWellNoflowEquation
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
@@ -59,7 +58,9 @@ class WellBase(Element):
         self.aq.add_element(self)
         self.parameters = np.empty((self.nparam, 1))
         self.parameters[:, 0] = self.Qw
-        self.resfac = self.res / (2 * np.pi * self.rw * self.aq.Haq[self.layers]) #* np.identity(self.nparam)
+        self.resfac = self.res / (2 * np.pi * self.rw * self.aq.Haq[self.layers])
+        self.resfac = self.resfac * np.identity(self.nlayers)
+        self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns) # required shape for HeadEquation
 
     def potinf(self, x, y, aq=None):
         if aq is None:
@@ -116,8 +117,11 @@ class WellBase(Element):
         array (length number of screens)
             Head inside the well for each screen
         """
-        h = self.model.head(self.xw + self.rw, self.yw, layers=self.layers)
-        return h - self.resfac * self.parameters[:, 0]
+        icp = 0 # there is only one control point
+        hinside = self.model.head(self.xc[icp], self.yc[icp], self.layers) - np.sum(
+            self.resfac[icp] * self.parameters[:, 0], 1
+        )
+        return hinside
 
     def discharge(self):
         """The discharge in each layer.
@@ -301,7 +305,7 @@ class WellBase(Element):
             return traces
 
 
-class Well(WellBase, MscreenWellEquation):
+class Well(WellBase):
     r"""Well Class to create a well with a specified discharge.
 
     Notes
@@ -375,6 +379,7 @@ class Well(WellBase, MscreenWellEquation):
             xc=xc,
             yc=yc,
         )
+        self.hc = np.zeros(self.nlayers) # needed as heads are same in all screened layers
         self.Qc = float(Qw)
         if self.nlayers == 1:
             self.nunknowns = 0
@@ -383,6 +388,23 @@ class Well(WellBase, MscreenWellEquation):
 
     def initialize(self):
         WellBase.initialize(self)
+
+    def equation(self):
+        mat, rhs = HeadEquation.equation(self)
+        for i in range(1, self.nunknowns):
+            mat[i] -= mat[0]
+            rhs[i] -= rhs[0]
+        # first equation is sum of discharges equals Qw
+        mat[0] = 0
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                if e == self:
+                    mat[0, ieq : ieq + e.nunknowns] = 1.0
+                    break
+                ieq += e.nunknowns
+        rhs[0] = self.Qw
+        return mat, rhs
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
@@ -461,88 +483,10 @@ class HeadWell(WellBase, HeadEquation):
 
     def initialize(self):
         WellBase.initialize(self)
-        #self.pc = self.hc * self.aq.T[self.layers]  # Needed in solving
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-
-class HeadWell2(WellBase, MscreenWellHeadEquation):
-    r"""HeadWell Class to create a well with a specified head inside the well.
-
-    Notes
-    -----
-    The well may be screened in multiple layers.
-    The resistance of the screen may be specified.
-    The head is computed such that the discharge :math:`Q_i` in layer :math:`i` is
-    computed as:
-
-    .. math::
-        Q_i = 2\pi r_w(h_i - h_w)/c
-
-    where :math:`c` is the resistance of the well screen and :math:`h_w` is
-    the head inside the well.
-
-    Parameters
-    ----------
-    model : Model object
-        model to which the element is added
-    xw : float
-        x-coordinate of the well
-    yw : float
-        y-coordinate of the well
-    hw : float
-        head inside the well
-    rw : float
-        radius of the well
-    res : float
-        resistance of the well screen
-    layers : int, array or list
-        layer (int) or layers (list or array) where well is screened
-    label : string (default: None)
-        label of the well
-    xc : float
-        x-location of control point (default None, which puts it at xw)
-    yc : float
-        y-location of control point (default None, which puts it at yw + rw)
-    """
-
-    def __init__(
-        self,
-        model,
-        xw=0,
-        yw=0,
-        hw=10,
-        rw=0.1,
-        res=0,
-        layers=0,
-        label=None,
-        xc=None,
-        yc=None,
-    ):
-        self.storeinput(inspect.currentframe())
-        WellBase.__init__(
-            self,
-            model,
-            xw,
-            yw,
-            0.0,
-            rw,
-            res,
-            layers=layers,
-            name="HeadWell",
-            label=label,
-            xc=xc,
-            yc=yc,
-        )
-        self.nunknowns = self.nparam
-        self.hw = hw
-
-    def initialize(self):
-        WellBase.initialize(self)
-        #self.pc = self.hc * self.aq.T[self.layers]  # Needed in solving
-
-    def setparams(self, sol):
-        self.parameters[:, 0] = sol
+        
 
 class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
     """Experimental class for radial flow to large diameter well.
@@ -633,7 +577,6 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
             else:
                 pot[:] = -k0(r / aq.lab) / (2 * np.pi) / k0(self.rw / aq.lab)
             rv[:] = self.aq.coef[self.layers] * pot
-            # rv[:] = pot
         return rv
 
     def disvecinf(self, x, y, aq=None):
@@ -664,5 +607,4 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
                 qy[:] = -kone * yminyw / (r * aq.lab) / (2 * np.pi)
             rv[0] = self.aq.coef[self.layers] * qx
             rv[1] = self.aq.coef[self.layers] * qy
-            # rv[0], rv[1] = qx, qy
         return rv
