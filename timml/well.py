@@ -5,12 +5,8 @@ import numpy as np
 from scipy.special import k0, k1
 
 from .element import Element
-<<<<<<< HEAD
-from .equation import MscreenWellEquation, MscreenWellNoflowEquation, PotentialEquation
-from .linesink import LineSinkDitchString
-=======
 from .equation import HeadEquation, MscreenWellNoflowEquation
->>>>>>> dev
+from .linesink import LineSinkDitchString
 from .trace import timtracelines
 
 __all__ = ["WellBase", "Well", "HeadWell"]
