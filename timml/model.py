@@ -363,7 +363,7 @@ class Model:
         Qx = np.zeros((nlayers, nx))
         Qy = np.zeros((nlayers, nx))
         for i in range(nx):
-            Qx[:, i], Qy[:, 1] = self.disvec(xg[i], yg[i], layers)
+            Qx[:, i], Qy[:, i] = self.disvec(xg[i], yg[i], layers)
         return Qx, Qy
 
     #    def disvec_direction(self, s, x1, y1, cdirection):
