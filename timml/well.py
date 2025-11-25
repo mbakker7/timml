@@ -63,7 +63,7 @@ class WellBase(Element):
         self.resfac.shape = (
             self.ncp,
             self.nlayers,
-            self.nunknowns,
+            self.nlayers,  # changed to nlayers from nunknowns
         )  # required shape for HeadEquation
 
     def potinf(self, x, y, aq=None):
