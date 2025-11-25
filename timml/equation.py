@@ -154,6 +154,7 @@ class MscreenWellEquation:
                 rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
         return mat, rhs
 
+
 class MscreenWellHeadEquation:
     def equation(self):
         """Mix-in class that returns matrix rows for mscreen condition.

@@ -60,7 +60,11 @@ class WellBase(Element):
         self.parameters[:, 0] = self.Qw
         self.resfac = self.res / (2 * np.pi * self.rw * self.aq.Haq[self.layers])
         self.resfac = self.resfac * np.identity(self.nlayers)
-        self.resfac.shape = (self.ncp, self.nlayers, self.nunknowns) # required shape for HeadEquation
+        self.resfac.shape = (
+            self.ncp,
+            self.nlayers,
+            self.nunknowns,
+        )  # required shape for HeadEquation
 
     def potinf(self, x, y, aq=None):
         if aq is None:
@@ -117,7 +121,7 @@ class WellBase(Element):
         array (length number of screens)
             Head inside the well for each screen
         """
-        icp = 0 # there is only one control point
+        icp = 0  # there is only one control point
         hinside = self.model.head(self.xc[icp], self.yc[icp], self.layers) - np.sum(
             self.resfac[icp] * self.parameters[:, 0], 1
         )
@@ -379,7 +383,9 @@ class Well(WellBase):
             xc=xc,
             yc=yc,
         )
-        self.hc = np.zeros(self.nlayers) # needed as heads are same in all screened layers
+        self.hc = np.zeros(
+            self.nlayers
+        )  # needed as heads are same in all screened layers
         self.Qc = float(Qw)
         if self.nlayers == 1:
             self.nunknowns = 0
@@ -486,7 +492,7 @@ class HeadWell(WellBase, HeadEquation):
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
-        
+
 
 class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
     """Experimental class for radial flow to large diameter well.
