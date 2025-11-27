@@ -31,6 +31,7 @@ from timml.linedoublet import (
 )
 from timml.linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
 from timml.linesink import (
+    CollectorWell,
     HeadLineSink,
     # HeadLineSinkContainer,
     HeadLineSinkString,
@@ -38,6 +39,7 @@ from timml.linesink import (
     LineSinkBase,
     LineSinkDitch,
     LineSinkDitchString,
+    RadialCollectorWell,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
 from timml.model import Model, Model3D, ModelMaq, ModelXsection
@@ -45,13 +47,7 @@ from timml.stripareasink import XsectionAreaSink
 from timml.trace import timtraceline, timtracelines
 from timml.uflow import Uflow
 from timml.version import __version__, show_versions
-from timml.well import (
-    CollectorWell,
-    HeadWell,
-    RadialCollectorWell,
-    Well,
-    WellBase,
-)
+from timml.well import HeadWell, Well, WellBase
 
 # default bessel module is numba
 bessel.set_bessel_method(method="numba")
