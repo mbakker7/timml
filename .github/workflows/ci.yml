@@ -18,7 +18,8 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Install uv with Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v6
         with:
@@ -35,13 +36,25 @@ jobs:
         run: uv run ruff format --check
 
       - name: Run tests
-        run: uv run pytest ./tests
+        run: uv run pytest -v ./tests
 
       - name: Numba coverage
         run: |
           NUMBA_DISABLE_JIT=1 uv run pytest --cov-append ./tests/test_besselaes.py
 
-      - name: Publish to coveralls.io
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test tutorial notebooks
+        run: |
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto docs/00tutorials/
+    
+      - name: Test example notebooks
+        run: |
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto docs/03examples/
+
+      - name: Test cross-section notebooks
+        run: |
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto docs/04xsections/
+
+      - name: Test other notebooks
+        run: |
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto notebooks/large_diameter_experimental.ipynb notebooks/timml_besselaesnew_test.ipynb
+

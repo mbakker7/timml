@@ -31,6 +31,7 @@ from timml.linedoublet import (
 )
 from timml.linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
 from timml.linesink import (
+    CollectorWell,
     HeadLineSink,
     # HeadLineSinkContainer,
     HeadLineSinkString,
@@ -38,6 +39,7 @@ from timml.linesink import (
     LineSinkBase,
     LineSinkDitch,
     LineSinkDitchString,
+    RadialCollectorWell,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
 from timml.model import Model, Model3D, ModelMaq, ModelXsection
