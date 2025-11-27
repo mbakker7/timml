@@ -740,7 +740,6 @@ class RadialCollectorWell(CollectorWell):
             L = L * np.ones(narms)
         if np.isscalar(nls):
             nls = nls * np.ones(narms, dtype="int")
-        self.nls = nls
         if np.isscalar(layers):
             layers = layers * np.ones(narms, dtype="int")
         xy, layers = self.compute_xy(x, y, rcaisson, narms, nls, L, angle, layers)
@@ -754,6 +753,7 @@ class RadialCollectorWell(CollectorWell):
             label=label,
         )
         self.name = "RadialCollectorWell"
+        self.iarm = np.cumsum(np.hstack((0, nls)))  # starting index of arms
 
     def compute_xy(self, x, y, rcaisson, narms, nls, L, angle, layer_arms):
         """Compute the x,y-coordinates array for the radial collector well.
@@ -798,36 +798,16 @@ class RadialCollectorWell(CollectorWell):
             layers[i0 : i0 + nls[i]] = layer_arms[i]
         return xy, layers
 
-    # def compute_xyold(self, x, y, rcaisson, L, narms, nls):
-    #     """Compute the x,y-coordinates array for the radial collector well.
+    def discharge_per_arm(self):
+        """Discharge of each arm.
 
-    #     Parameters
-    #     ----------
-    #     x : float
-    #         x-coordinate of the center of the collector well
-    #     y : float
-    #         y-coordinate of the center of the collector well
-    #     rcaisson : float
-    #         radius of the caisson
-    #     L : float
-    #         length of each arm
-    #     narms : int
-    #         number of arms
-    #     nls : int
-    #         number of line sinks per arm
-
-    #     Returns
-    #     -------
-    #     xy : np.array
-    #         array of shape (N, 4) with start and end coordinates of the line sinks
-    #         on each row: [(x1, y1, x2, y2), ...]
-    #     """
-    #     xy = np.empty((narms * nls, 4))
-    #     for i, theta in enumerate(np.arange(0, 2 * np.pi, 2 * np.pi / 5)):
-    #         x = rcaisson * np.cos(theta) + np.linspace(0, L, nls + 1) * np.cos(theta)
-    #         y = rcaisson * np.sin(theta) + np.linspace(0, L, nls + 1) * np.sin(theta)
-    #         xy[i * nls : (i + 1) * nls, 0] = x[:-1]
-    #         xy[i * nls : (i + 1) * nls, 1] = y[:-1]
-    #         xy[i * nls : (i + 1) * nls, 2] = x[1:]
-    #         xy[i * nls : (i + 1) * nls, 3] = y[1:]
-    #     return xy
+        Returns
+        -------
+        array (length number of arms)
+            Total discharge of each arm
+        """
+        dis = np.zeros(len(self.iarm) - 1)
+        for i in range(len(dis)):
+            for j in range(self.iarm[i], self.iarm[i + 1]):
+                dis[i] += self.lslist[j].discharge().sum()
+        return dis
