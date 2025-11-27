@@ -454,10 +454,6 @@ class HeadWell(WellBase, HeadEquation):
         layer (int) or layers (list or array) where well is screened
     label : string (default: None)
         label of the well
-    xc : float
-        x-location of control point (default None, which puts it at xw)
-    yc : float
-        y-location of control point (default None, which puts it at yw + rw)
     """
 
     def __init__(
@@ -470,8 +466,6 @@ class HeadWell(WellBase, HeadEquation):
         res=0,
         layers=0,
         label=None,
-        xc=None,
-        yc=None,
         addtomodel=True,
     ):
         self.storeinput(inspect.currentframe())
@@ -486,8 +480,6 @@ class HeadWell(WellBase, HeadEquation):
             layers=layers,
             name="HeadWell",
             label=label,
-            xc=xc,
-            yc=yc,
             addtomodel=addtomodel,
         )
         self.nunknowns = self.nparam
@@ -495,6 +487,111 @@ class HeadWell(WellBase, HeadEquation):
 
     def initialize(self):
         WellBase.initialize(self)
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+
+
+class TargetHeadWell(WellBase):
+    r"""TargetHeadWell is a well with a specified head at (layer, x, y).
+
+    Notes
+    -----
+    The well may be screened in multiple layers.
+    The resistance of the screen may be specified.
+    The head is computed such that the discharge :math:`Q_i` in layer :math:`i` is
+    computed as:
+
+    .. math::
+        Q_i = 2\pi r_w(h_i - h_w)/c
+
+    where :math:`c` is the resistance of the well screen and :math:`h_w` is
+    the head inside the well.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xw : float
+        x-coordinate of the well
+    yw : float
+        y-coordinate of the well
+    hc : float
+        specified head at control point
+    rw : float
+        radius of the well
+    res : float
+        resistance of the well screen
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    xcp : float
+        x-coordinate where head is specified
+    ycp : float
+        y-coordinate where head is specified
+    lcp : int
+        layer in which head is specified, default is the first layer, layer 0
+    label : string (default: None)
+        label of the well
+    """
+
+    def __init__(
+        self,
+        model,
+        xw=0,
+        yw=0,
+        hc=10,
+        rw=0.1,
+        res=0,
+        layers=0,
+        xcp=10,
+        ycp=10,
+        lcp=0,
+        label=None,
+        addtomodel=True,
+    ):
+        self.storeinput(inspect.currentframe())
+        super().__init__(
+            model,
+            xw,
+            yw,
+            0.0,
+            rw,
+            res,
+            layers=layers,
+            name="TargetHeadWell",
+            label=label,
+            addtomodel=addtomodel,
+        )
+        self.nunknowns = self.nparam
+        self.hc = hc * np.ones(self.nunknowns)
+        self.xcp = xcp
+        self.ycp = ycp
+        self.lcp = np.atleast_1d(lcp)  # layer of control point for specified head
+
+    def initialize(self):
+        WellBase.initialize(self)
+
+    def equation(self):
+        mat, rhs = HeadEquation.equation(self)
+        for i in range(1, self.nunknowns):
+            mat[i] -= mat[0]
+            rhs[i] -= rhs[0]
+        # first equation is head at control point equals hc
+        mat[0] = 0.0
+        rhs[0] = self.hc[0]
+        aq = self.model.aq.find_aquifer_data(self.xcp, self.ycp)
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                mat[0:1, ieq : ieq + e.nunknowns] += (
+                    e.potinflayers(self.xcp, self.ycp, self.lcp) / aq.Tcol[self.lcp]
+                )
+                ieq += e.nunknowns
+            else:
+                rhs[0] -= (
+                    e.potentiallayers(self.xcp, self.ycp, self.lcp) / aq.T[self.lcp]
+                )
+        return mat, rhs
 
     def setparams(self, sol):
         self.parameters[:, 0] = sol
@@ -720,16 +817,29 @@ class WellStringBase(Element):
         return rv
 
     def discharge(self):
-        """Discharge of the element in each layer."""
-        Q = []
+        """Discharge of the element in each layer.
+
+        Returns
+        -------
+        array (length naq)
+            Discharge in each layer
+        """
+        return self.discharge_per_well().sum(axis=1)
+
+    def discharge_per_well(self):
+        """Discharge per well in each layer.
+
+        Returns
+        -------
+        array (nlay, nwells)
+            Discharge per well in each layer
+        """
+        Q = np.zeros((self.model.aq.naq, self.nw))
         j = 0
-        for w in self.wlist:
-            Q.append(self.parameters[j : j + w.nlayers])
+        for i, w in enumerate(self.wlist):
+            Q[w.layers, i : i + 1] = self.parameters[j : j + w.nlayers]
             j += w.nlayers
-        try:
-            return np.hstack(Q)
-        except ValueError:
-            return Q
+        return Q
 
     def plot(self, layer=None):
         for iw, w in enumerate(self.wlist):
@@ -747,6 +857,16 @@ class WellStringBase(Element):
             rhs[ieq : ieq + neq] = rhsw
             ieq += neq
         return mat, rhs
+
+    def headinside(self):
+        """The head inside the wells.
+
+        Returns
+        -------
+        head: float
+            head inside the well
+        """
+        return self.wlist[0].headinside()[0]
 
 
 class WellString(WellStringBase):
@@ -838,10 +958,9 @@ class WellString(WellStringBase):
 
 class HeadWellString(WellStringBase):
     """
-    HeadWellString is a string of wells for which the head is specified at some point.
+    HeadWellString is a string of wells for which the head is specified in the wells.
 
-    The head in the wells is equal but unknown and the head at the control point
-    (lc, xc, yc) must equal the specified head.
+    This element is identical to a series of HeadWell elements.
 
     Parameters
     ----------
@@ -850,19 +969,13 @@ class HeadWellString(WellStringBase):
     xy : list of tuples or np.ndarray
         list of (x, y) tuples or 2d array of x and y coordinates of the well nodes
     hw : float
-        head at the control point (lc, xc, yc)
+        head in the well(s)
     rw : float
         radius of the wells
     res : float
         resistance of the well screens
     layers : int, array or list
         layer (int) or layers (list or array) where well is screened
-    xc : float, optional
-        x-location of control point (default None, which puts it at mean of xw)
-    yc : float, optional
-        y-location of control point (default None, which puts it at mean of yw)
-    lc : int, optional
-        layer (int) where head is specified. The default is layer 0.
     label : string or None (default: None)
         label of the well string
     """
@@ -875,9 +988,6 @@ class HeadWellString(WellStringBase):
         rw=0.1,
         res=0.0,
         layers=0,
-        xc=None,
-        yc=None,
-        lc=None,
         label=None,
     ):
         super().__init__(model, xy, layers=layers, name="HeadWellString", label=label)
@@ -885,14 +995,6 @@ class HeadWellString(WellStringBase):
         self.hw = float(hw)
         self.rw = rw
         self.res = res
-        if xc is None:
-            self.xc = np.mean(self.xw)
-        if yc is None:
-            self.yc = np.mean(self.yw)
-        if lc is None:
-            self.lc = np.zeros(1, dtype=int)
-        self.xc = xc
-        self.yc = yc
         self.model.add_element(self)
 
     def initialize(self):
@@ -907,8 +1009,99 @@ class HeadWellString(WellStringBase):
                     rw=self.rw,
                     res=self.res,
                     layers=self.layers[i],
-                    xc=None,
-                    yc=None,
+                    addtomodel=False,
+                )
+            )
+        super().initialize()
+
+    def equation(self):
+        mat = np.zeros((self.nunknowns, self.model.neq))
+        rhs = np.zeros(self.nunknowns)
+        ieq = 0
+        for w in self.wlist:
+            imat, rhs = w.equation()
+            mat[ieq : ieq + w.nunknowns] = imat
+            rhs[ieq : ieq + w.nunknowns] = rhs
+            ieq = ieq + w.nunknowns
+        return mat, rhs
+
+    def setparams(self, sol):
+        self.parameters[:, 0] = sol
+        # assign parameters to individual wells
+        i = 0
+        for w in self.wlist:
+            w.parameters[:, 0] = sol[i : i + w.nparam]
+            i += w.nparam
+
+
+class TargetHeadWellString(WellStringBase):
+    """
+    TargetHeadWellString is a string of wells for which the head is specified at some point.
+
+    The head in the wells is equal but unknown and the head at the control point
+    (lc, xc, yc) must equal the specified head.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : list of tuples or np.ndarray
+        list of (x, y) tuples or 2d array of x and y coordinates of the wells
+    hc : float
+        head at the control point (lcp, xcp, ycp)
+    rw : float
+        radius of the wells
+    res : float
+        resistance of the well screens
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    xcp : float
+        x-coordinate where head is specified
+    ycp : float
+        y-coordinate where head is specified
+    lcp : int
+        layer in which head is specified, default is the first layer, layer 0
+    label : string or None (default: None)
+        label of the well string
+    """
+
+    def __init__(
+        self,
+        model,
+        xy,
+        hc=10,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        xcp=None,
+        ycp=None,
+        lcp=0,
+        label=None,
+    ):
+        super().__init__(
+            model, xy, layers=layers, name="TargetHeadWellString", label=label
+        )
+
+        self.hc = float(hc)
+        self.rw = rw
+        self.res = res
+        self.xcp = xcp
+        self.ycp = ycp
+        self.lcp = np.atleast_1d(lcp)
+        self.model.add_element(self)
+
+    def initialize(self):
+        self.wlist = []
+        for i in range(self.nw):
+            self.wlist.append(
+                HeadWell(
+                    self.model,
+                    xw=self.xw[i],
+                    yw=self.yw[i],
+                    hw=0.0,
+                    rw=self.rw,
+                    res=self.res,
+                    layers=self.layers[i],
                     addtomodel=False,
                 )
             )
@@ -921,24 +1114,27 @@ class HeadWellString(WellStringBase):
             rhs[i] -= rhs[0]
         # first equation is head at control point equals hw
         mat[0] = 0
-        rhs[0] = self.hw
-        aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
+        rhs[0] = self.hc
+        aq = self.model.aq.find_aquifer_data(self.xcp, self.ycp)
         ieq = 0
         for e in self.model.elementlist:
             if e.nunknowns > 0:
                 if e == self:
                     for w in self.wlist:
                         mat[0:1, ieq : ieq + w.nunknowns] += (
-                            w.potinflayers(self.xc, self.yc, self.lc) / aq.Tcol[self.lc]
+                            w.potinflayers(self.xcp, self.ycp, self.lcp)
+                            / aq.Tcol[self.lcp]
                         )
                         ieq += w.nunknowns
                 else:
                     mat[0:1, ieq : ieq + e.nunknowns] += (
-                        e.potinflayers(self.xc, self.yc, self.lc) / aq.Tcol[self.lc]
+                        e.potinflayers(self.xcp, self.ycp, self.lcp) / aq.Tcol[self.lcp]
                     )
                     ieq += e.nunknowns
             else:
-                rhs[0] -= e.potentiallayers(self.xc, self.yc, self.lc) / aq.T[self.lc]
+                rhs[0] -= (
+                    e.potentiallayers(self.xcp, self.ycp, self.lcp) / aq.T[self.lcp]
+                )
         return mat, rhs
 
     def setparams(self, sol):

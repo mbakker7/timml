@@ -51,6 +51,8 @@ from timml.well import (
     HeadWell,
     HeadWellString,
     LargeDiameterWell,
+    TargetHeadWell,
+    TargetHeadWellString,
     Well,
     WellBase,
     WellString,
