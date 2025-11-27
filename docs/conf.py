@@ -22,7 +22,6 @@ author = "Mark Bakker"
 
 extensions = [
     "autoapi.extension",
-    "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinx.ext.mathjax",
@@ -83,13 +82,16 @@ napoleon_type_aliases = {"ml": "timml.Model"}
 
 autodoc_typehints = "description"
 autodoc_typehints_format = "short"
-# autosummary_generate = True
-# autoclass_content = "class"
+autosummary_generate = True
+autoclass_content = "class"
 autosectionlabel_prefix_document = True
 
 # -- AutoAPI settings -----------------------------------------------------------------
 autoapi_dirs = ["../timml"]
 autoapi_root = "05api"
+autoapi_options = ["show-module-summary"]
+autoapi_own_page_level = "method"
+autoapi_template_dir = "_static/autoapi_templates"
 
 # -- Numpydoc settings ----------------------------------------------------------------
 
