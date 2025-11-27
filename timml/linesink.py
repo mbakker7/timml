@@ -461,9 +461,9 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             )
         return rv
 
-    def plot(self, layer=None):
+    def plot(self, layer=None, **kwargs):
         if (layer is None) or (layer in self.layers):
-            plt.plot([self.x1, self.x2], [self.y1, self.y2], "k")
+            plt.plot([self.x1, self.x2], [self.y1, self.y2], "k", **kwargs)
 
     def dischargeinf(self):
         # returns the unit contribution to the discharge in each layer
@@ -849,14 +849,9 @@ class LineSinkStringBase2(Element):
                 return changed, terminate, xyztnew, message
         return changed, terminate, xyztnew, message
 
-    def plot(self, layer=None):
-        if (layer is None) or (layer in self.layers):
-            if self.xy.shape[1] == 2:
-                plt.plot(self.x, self.y, "k")
-            elif self.xy.shape[1] == 4:
-                for i in range(len(self.xy)):
-                    x1, y1, x2, y2 = self.xy[i]
-                    plt.plot([x1, x2], [y1, y2], "k")
+    def plot(self, layer=None, **kwargs):
+        for ls in self.lslist:
+            ls.plot(layer=layer, **kwargs)
 
 
 class HeadLineSinkString(LineSinkStringBase2):
@@ -1109,3 +1104,199 @@ class LineSinkDitchString(HeadLineSinkString):
                 ieq += e.nunknowns
         rhs[0] = self.Qls
         return mat, rhs
+
+
+class CollectorWell(LineSinkDitchString):
+    """Collector well: collection of line sinks with a specified total discharge.
+
+    Collection of (discontinuous) line sinks with specified total discharge
+    and unknown but uniform head.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : np.array
+        array of shape (N, 4) with start and end coordinates of the line sinks
+        on each row: [(x1, y1, x2, y2), ...]
+    Qw : float
+        total discharge of the collector well
+    rw : float
+        radius of the collector well arms
+    res : float
+        resistance of the well screen
+    layers : int, array or list
+        layer (int) or layers (list or array) where well is screened
+    order : int
+        order of the line sink elements
+    label : string, optional
+        label of the collector well
+
+    Examples
+    --------
+    >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> xy = [(1, 0, 10, 0), (0, 1, 0, 10)]
+    >>> w = timml.CollectorWell(ml, xy=xy, Qw=1000, layers=np.arange(5, 10))
+    >>> ml.solve()
+    """
+
+    def __init__(
+        self,
+        model,
+        xy,
+        Qw=100.0,
+        rw=0.1,
+        res=0.0,
+        layers=0,
+        order=0,
+        label=None,
+    ):
+        super().__init__(
+            model,
+            xy,
+            Qls=Qw,
+            res=res,
+            layers=layers,
+            order=order,
+            dely=rw,
+            label=label,
+        )
+        self.name = "CollectorWell"
+
+
+class RadialCollectorWell(CollectorWell):
+    """Radial collector well.
+
+    Collection of (discontinuous) line sinks in a radial pattern with specified
+    total discharge and unknown but uniform head.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x : float
+        x-coordinate of the center of the collector well
+    y : float
+        y-coordinate of the center of the collector well
+    L : float
+        length of each arm
+    narms : int
+        number of arms
+    rcaisson : float
+        radius of the caisson
+    rw : float
+        radius of the arms
+    nls : int
+        number of line sinks per arm
+    Qw : float
+        total discharge of the collector well
+    res : float
+        resistance of the arms
+    layers : int, array or list
+        layer(s) in which the well is screened
+    label : string, optional
+        label of the collector well
+
+    Examples
+    --------
+    >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, narms=5, nls=10, angle=0,
+    ... rcaisson=2.0, rw=0.1, Qw=1000, layers=5)
+    >>> ml.solve()
+    """
+
+    def __init__(
+        self,
+        model,
+        x=0,
+        y=0,
+        narms=5,
+        nls=10,
+        L=10.0,
+        angle=0,
+        rcaisson=1.0,
+        rw=0.1,
+        Qw=100.0,
+        res=0.0,
+        layers=0,
+        label=None,
+    ):
+        if np.isscalar(angle):
+            angle = np.deg2rad(angle) + np.linspace(0, 2 * np.pi, narms + 1)[:-1]
+        else:
+            angle = np.deg2rad(angle)
+        if np.isscalar(L):
+            L = L * np.ones(narms)
+        if np.isscalar(nls):
+            nls = nls * np.ones(narms, dtype="int")
+        if np.isscalar(layers):
+            layers = layers * np.ones(narms, dtype="int")
+        xy, layers = self.compute_xy(x, y, rcaisson, narms, nls, L, angle, layers)
+        super().__init__(
+            model,
+            xy,
+            Qw=Qw,
+            rw=rw,
+            res=res,
+            layers=layers,
+            label=label,
+        )
+        self.name = "RadialCollectorWell"
+        self.iarm = np.cumsum(np.hstack((0, nls)))  # starting index of arms
+
+    def compute_xy(self, x, y, rcaisson, narms, nls, L, angle, layer_arms):
+        """Compute the x,y-coordinates array for the radial collector well.
+
+        Parameters
+        ----------
+        x : float
+            x-coordinate of the center of the collector well
+        y : float
+            y-coordinate of the center of the collector well
+        narms : int
+            number of arms
+        nls : int or array
+            number of line sinks per arm
+        L : float or array
+            length of each arm
+        angle : float or array
+            angle of first arm or of each arm
+        rcaisson : float
+            radius of the caisson
+
+        Returns
+        -------
+        xy : np.array
+            array of shape (N, 4) with start and end coordinates of the line sinks
+            on each row: [(x1, y1, x2, y2), ...]
+        """
+        xy = np.empty((np.sum(nls), 4))
+        layers = np.empty(np.sum(nls), dtype="int")
+        for i in range(narms):
+            x = rcaisson * np.cos(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.cos(
+                angle[i]
+            )
+            y = rcaisson * np.sin(angle[i]) + np.linspace(0, L[i], nls[i] + 1) * np.sin(
+                angle[i]
+            )
+            i0 = np.sum(nls[:i])
+            xy[i0 : i0 + nls[i], 0] = x[:-1]
+            xy[i0 : i0 + nls[i], 1] = y[:-1]
+            xy[i0 : i0 + nls[i], 2] = x[1:]
+            xy[i0 : i0 + nls[i], 3] = y[1:]
+            layers[i0 : i0 + nls[i]] = layer_arms[i]
+        return xy, layers
+
+    def discharge_per_arm(self):
+        """Discharge of each arm.
+
+        Returns
+        -------
+        array (length number of arms)
+            Total discharge of each arm
+        """
+        dis = np.zeros(len(self.iarm) - 1)
+        for i in range(len(dis)):
+            for j in range(self.iarm[i], self.iarm[i + 1]):
+                dis[i] += self.lslist[j].discharge().sum()
+        return dis
