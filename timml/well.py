@@ -1036,7 +1036,7 @@ class HeadWellString(WellStringBase):
 
 class TargetHeadWellString(WellStringBase):
     """
-    TargetHeadWellString is a string of wells for which the head is specified at some point.
+    A string of wells for which the head is specified at a point.
 
     The head in the wells is equal but unknown and the head at the control point
     (lc, xc, yc) must equal the specified head.
