@@ -1,3 +1,13 @@
+"""Aquifer data structures and helpers.
+
+Defines `AquiferData` and `Aquifer` used to store aquifer properties
+and derived parameters used for computations throughout TimML.
+
+Example::
+
+    aq = SimpleAquifer(naq=2)
+
+"""
 import inspect  # Used for storing the input
 
 import numpy as np

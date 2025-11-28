@@ -1,3 +1,12 @@
+"""1D line-doublet elements.
+
+Doublet features for modeling barriers in a cross-section.
+
+Example::
+    
+    ImpLineDoublet1D(ml, xld=0, layers=0)
+
+"""
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -5,9 +14,6 @@ import numpy as np
 
 from .element import Element
 from .equation import DisvecEquation, LeakyWallEquation
-
-__all__ = ["ImpLineDoublet1D", "LeakyLineDoublet1D"]
-
 
 class LineDoublet1D(Element):
     def __init__(

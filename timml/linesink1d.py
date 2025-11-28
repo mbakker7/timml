@@ -1,3 +1,11 @@
+"""1D line-sink elements.
+
+Implements simplified line-sinks for cross-section (1D) models.
+
+Example::
+    
+    HeadLineSink1D(ml, xls=0, hls=1, layers=0)
+"""
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -10,9 +18,6 @@ from .equation import (
     HeadEquation,
     MscreenWellEquation,
 )
-
-__all__ = ["LineSink1D", "HeadLineSink1D"]
-
 
 class LineSink1DBase(Element):
     def __init__(

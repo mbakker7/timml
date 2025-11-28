@@ -1,3 +1,7 @@
+"""Control point utilities.
+
+Helper functions to place control points.
+"""
 import numpy as np
 
 

@@ -1,3 +1,8 @@
+"""Integrated line-sink elements.
+
+Provides higher-order solutions and integrated conditions along line-sink elements. 
+Used by inhomogeneities.
+"""
 import numpy as np
 
 from .controlpoints import controlpoints

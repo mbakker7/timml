@@ -9,7 +9,7 @@
 # import sys
 
 project = "TimML"
-copyright = "2023, Mark Bakker"
+copyright = "2025, Mark Bakker"
 author = "Mark Bakker"
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -55,14 +55,15 @@ html_theme_options = {
     "github_url": "https://github.com/mbakker7/timml",
     "use_edit_page_button": True,
     "header_links_before_dropdown": 7,
-    # "icon_links": [
-    #     {
-    #         "name": "GitHub",  # Label for this link
-    #         "url": "https://github.com/mbakker7/timml",  # required
-    #         "icon": "fab fa-github-square",
-    #         "type": "fontawesome",  # Default is fontawesome
-    #     }
-    # ],
+    "icon_links": [
+        {
+            "name": "GitHub",  # Label for this link
+            "url": "https://github.com/mbakker7/timml",  # required
+            "icon": "fab fa-github-square",
+            "type": "fontawesome",  # Default is fontawesome
+        }
+    ],
+    "show_nav_level": 2,
 }
 
 html_context = {
@@ -78,12 +79,8 @@ napoleon_include_init_with_doc = False
 napoleon_use_param = True
 napoleon_type_aliases = {"ml": "timml.Model"}
 
-# -- Autodoc, autosummary, and autosectionlabel settings ------------------------------
+# -- Autosectionlabel settings --------------------------------------------------------
 
-autodoc_typehints = "description"
-autodoc_typehints_format = "short"
-autosummary_generate = True
-autoclass_content = "class"
 autosectionlabel_prefix_document = True
 
 # -- AutoAPI settings -----------------------------------------------------------------
@@ -91,7 +88,7 @@ autoapi_dirs = ["../timml"]
 autoapi_root = "05api"
 autoapi_options = ["show-module-summary"]
 autoapi_own_page_level = "method"
-autoapi_template_dir = "_static/autoapi_templates"
+autoapi_template_dir = "_templates/autoapi"
 
 # -- Numpydoc settings ----------------------------------------------------------------
 

@@ -1,8 +1,10 @@
+"""Particle tracing utilities.
+
+Implements pathline tracing for capture zone visualization.
+"""
 import warnings
 
 import numpy as np
-
-__all__ = ["timtraceline", "timtracelines"]
 
 _future_warning_metadata = (
     "In a future version traces will be returned as a dictionary containing "

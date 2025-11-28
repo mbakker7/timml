@@ -1,3 +1,12 @@
+"""Constant elements.
+
+Provides `Constant` to fix head at a point and `ConstantStar` for
+semi-confined aquifers.
+
+Example::
+
+    Constant(ml, xr=0, yr=0, hr=10.0, layer=0)
+"""
 import inspect  # Used for storing the input
 
 import numpy as np
@@ -5,7 +14,6 @@ import numpy as np
 from .element import Element
 from .equation import PotentialEquation
 
-__all__ = ["Constant", "ConstantStar"]
 
 
 class ConstantBase(Element, PotentialEquation):

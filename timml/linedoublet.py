@@ -1,3 +1,11 @@
+"""Line-doublet elements.
+
+Implements line doublets used to model barriers.
+
+Example::
+
+    ImpLineDoublet(ml, x1=-10, y1=0, x2=10, y2=0, layers=0)
+"""
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -8,12 +16,6 @@ from .controlpoints import controlpoints
 from .element import Element
 from .equation import DisvecEquation, LeakyWallEquation
 
-__all__ = [
-    "ImpLineDoublet",
-    "ImpLineDoubletString",
-    "LeakyLineDoublet",
-    "LeakyLineDoubletString",
-]
 
 
 class LineDoubletHoBase(Element):

@@ -1,10 +1,16 @@
+"""Uniform flow element.
+
+Adds uniform flow to a confined aquifer model.
+
+Example::
+
+    Uflow(ml, slope=1e-4, angle=0.0)
+"""
 import inspect  # Used for storing the input
 
 import numpy as np
 
 from .element import Element
-
-__all__ = ["Uflow"]
 
 
 class Uflow(Element):

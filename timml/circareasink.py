@@ -1,3 +1,11 @@
+"""Circular area-sink element.
+
+Defines `CircAreaSink` to model uniform infiltration over a circular area.
+
+Example::
+
+    CircAreaSink(ml, xc=0, yc=0, R=50, N=0.001, layer=0)
+"""
 import inspect  # Used for storing the input
 
 import numpy as np
@@ -5,7 +13,6 @@ from scipy.special import i0, i1, k0, k1
 
 from .element import Element
 
-__all__ = ["CircAreaSink"]
 
 
 class CircAreaSink(Element):

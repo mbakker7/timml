@@ -1,3 +1,13 @@
+"""Well elements for TimML.
+
+Provides classes to model wells with specified discharge or head, including
+multi-well strings.
+
+Example::
+
+    Well(ml, xw=100, yw=200, Qw=1000, layers=[0])
+"""
+
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -7,8 +17,6 @@ from scipy.special import k0, k1
 from .element import Element
 from .equation import HeadEquation, MscreenWellNoflowEquation
 from .trace import timtracelines
-
-__all__ = ["WellBase", "Well", "HeadWell"]
 
 
 class WellBase(Element):

@@ -1,3 +1,13 @@
+"""Base element interfaces used by TimML.
+
+Defines the `Element` base class that other elements derive from.
+
+Example::
+
+    class MyElem(Element):
+        def initialize(self):
+            pass
+"""
 import inspect  # Used for storing the input
 
 import numpy as np
