@@ -16,6 +16,7 @@ TimML example notebooks.
     timml_notebook5_sol
     timml_notebook6_sol
     timml_notebook7
+    modeling_connected_wells
     BuildingPit
     circareasink_example
     circular_buildingpit
@@ -36,6 +37,7 @@ TimML example notebooks.
 * `timml_notebook5_sol`_
 * `timml_notebook6_sol`_
 * `timml_notebook7`_
+* `modeling_connected_wells`_
 * `BuildingPit`_
 * `circareasink_example`_
 * `circular_buildingpit`_
@@ -55,6 +57,7 @@ TimML example notebooks.
 .. _timml_notebook5_sol: timml_notebook5_sol.html
 .. _timml_notebook6_sol: timml_notebook6_sol.html
 .. _timml_notebook7: timml_notebook7.html
+.. _modeling_connected_wells: modeling_connected_wells.html
 .. _BuildingPit: BuildingPit.html
 .. _circareasink_example: circareasink_example.html
 .. _circular_buildingpit: circular_buildingpit.html
