@@ -1,3 +1,18 @@
+"""Inhomogeneity elements.
+
+Defines polygonal inhomogeneities with different aquifer properties. Includes
+BuildingPit elements to simulate excavation pits with impermeable or leaky walls.
+
+Example::
+
+    PolygonInhomMaq(
+        ml,
+        xy=[(-10, -10), (10, -10), (10, 10), (-10, 10)],
+        kaq=10.0,
+        z=[10, 0],
+    )
+"""
+
 import inspect  # Used for storing the input
 from warnings import warn
 

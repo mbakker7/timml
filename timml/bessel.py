@@ -1,3 +1,8 @@
+"""Configure Bessel function backends (numba/fortran).
+
+Switches the internal Bessel implementation used by TimML.
+"""
+
 from importlib import import_module
 from warnings import warn
 

@@ -1,3 +1,12 @@
+"""Line-sink elements.
+
+Implements line-sinks and line-sink strings for head- or discharge-specified features.
+
+Example::
+
+    HeadLineSink(ml, x1=-10, y1=0, x2=10, y2=0, hls=5, layers=0)
+"""
+
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -7,15 +16,6 @@ from . import bessel
 from .controlpoints import controlpoints, strengthinf_controlpoints
 from .element import Element
 from .equation import HeadEquation
-
-__all__ = [
-    "LineSinkBase",
-    "HeadLineSinkZero",
-    "HeadLineSink",
-    "LineSinkDitch",
-    "HeadLineSinkString",
-    "LineSinkDitchString",
-]
 
 
 class LineSinkChangeTrace:

@@ -1,3 +1,8 @@
+"""Parameter helpers for aquifer models.
+
+Utilities to compute derived parameters for multi-layer and 3D aquifer setups.
+"""
+
 import numpy as np
 
 

@@ -1,3 +1,8 @@
+"""Equation assembly helpers.
+
+Defines mixins to build linear systems of equations.
+"""
+
 import numpy as np
 
 

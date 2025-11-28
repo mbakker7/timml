@@ -1,3 +1,5 @@
+"""Version information for TimML."""
+
 from importlib import metadata
 from platform import python_version
 

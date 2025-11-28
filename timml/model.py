@@ -1,4 +1,14 @@
-"""Model classes."""
+"""TimML Models.
+
+Defines `Model`, `ModelMaq`, and `Model3D` to construct aquifer systems
+and solve for heads and flows.
+
+Example::
+
+    ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=[1000])
+    # ... add elements
+    ml.solve()
+"""
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
@@ -11,8 +21,6 @@ from .aquifer import Aquifer, SimpleAquifer
 from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
 from .plots import PlotTim
-
-__all__ = ["Model", "ModelMaq", "Model3D", "ModelXsection"]
 
 
 class Model:

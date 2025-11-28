@@ -1,3 +1,12 @@
+"""Plot helpers for TimML.
+
+Provides top-view, contours, and tracing visualization functions.
+
+Example::
+
+    ml.plots.topview()
+"""
+
 from typing import Optional
 
 import matplotlib.pyplot as plt
