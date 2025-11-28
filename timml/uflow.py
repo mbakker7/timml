@@ -6,6 +6,7 @@ Example::
 
     Uflow(ml, slope=1e-4, angle=0.0)
 """
+
 import inspect  # Used for storing the input
 
 import numpy as np

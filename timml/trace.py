@@ -2,6 +2,7 @@
 
 Implements pathline tracing for capture zone visualization.
 """
+
 import warnings
 
 import numpy as np

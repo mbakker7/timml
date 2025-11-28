@@ -6,6 +6,7 @@ Example::
 
     ml.plots.topview()
 """
+
 from typing import Optional
 
 import matplotlib.pyplot as plt

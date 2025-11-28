@@ -8,6 +8,7 @@ Example::
         def initialize(self):
             pass
 """
+
 import inspect  # Used for storing the input
 
 import numpy as np

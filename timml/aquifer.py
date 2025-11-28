@@ -8,6 +8,7 @@ Example::
     aq = SimpleAquifer(naq=2)
 
 """
+
 import inspect  # Used for storing the input
 
 import numpy as np

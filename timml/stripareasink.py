@@ -6,6 +6,7 @@ Example::
 
     XsectionAreaSink(ml, xleft=-50, xright=50, N=0.001, layer=0)
 """
+
 import warnings
 
 import matplotlib.pyplot as plt
