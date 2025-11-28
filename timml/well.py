@@ -516,14 +516,14 @@ class TargetHeadWell(WellBase):
         x-coordinate of the well
     yw : float
         y-coordinate of the well
-    hc : float
-        specified head at control point
     rw : float
         radius of the well
     res : float
         resistance of the well screen
     layers : int, array or list
         layer (int) or layers (list or array) where well is screened
+    hcp : float
+        specified head at control point
     xcp : float
         x-coordinate where head is specified
     ycp : float
@@ -539,10 +539,10 @@ class TargetHeadWell(WellBase):
         model,
         xw=0,
         yw=0,
-        hc=10,
         rw=0.1,
         res=0,
         layers=0,
+        hcp=10,
         xcp=10,
         ycp=10,
         lcp=0,
@@ -563,7 +563,8 @@ class TargetHeadWell(WellBase):
             addtomodel=addtomodel,
         )
         self.nunknowns = self.nparam
-        self.hc = hc * np.ones(self.nunknowns)
+        self.hcp = hcp
+        self.hc = hcp * np.ones(self.nunknowns)  # needed for HeadEquation
         self.xcp = xcp
         self.ycp = ycp
         self.lcp = np.atleast_1d(lcp)  # layer of control point for specified head
@@ -578,7 +579,7 @@ class TargetHeadWell(WellBase):
             rhs[i] -= rhs[0]
         # first equation is head at control point equals hc
         mat[0] = 0.0
-        rhs[0] = self.hc[0]
+        rhs[0] = self.hcp
         aq = self.model.aq.find_aquifer_data(self.xcp, self.ycp)
         ieq = 0
         for e in self.model.elementlist:
@@ -1047,14 +1048,14 @@ class TargetHeadWellString(WellStringBase):
         model to which the element is added
     xy : list of tuples or np.ndarray
         list of (x, y) tuples or 2d array of x and y coordinates of the wells
-    hc : float
-        head at the control point (lcp, xcp, ycp)
     rw : float
         radius of the wells
     res : float
         resistance of the well screens
     layers : int, array or list
         layer (int) or layers (list or array) where well is screened
+    hcp : float
+        head at the control point (lcp, xcp, ycp)
     xcp : float
         x-coordinate where head is specified
     ycp : float
@@ -1069,10 +1070,10 @@ class TargetHeadWellString(WellStringBase):
         self,
         model,
         xy,
-        hc=10,
         rw=0.1,
         res=0.0,
         layers=0,
+        hcp=10,
         xcp=None,
         ycp=None,
         lcp=0,
@@ -1082,9 +1083,9 @@ class TargetHeadWellString(WellStringBase):
             model, xy, layers=layers, name="TargetHeadWellString", label=label
         )
 
-        self.hc = float(hc)
         self.rw = rw
         self.res = res
+        self.hcp = float(hcp)
         self.xcp = xcp
         self.ycp = ycp
         self.lcp = np.atleast_1d(lcp)
@@ -1114,7 +1115,7 @@ class TargetHeadWellString(WellStringBase):
             rhs[i] -= rhs[0]
         # first equation is head at control point equals hw
         mat[0] = 0
-        rhs[0] = self.hc
+        rhs[0] = self.hcp
         aq = self.model.aq.find_aquifer_data(self.xcp, self.ycp)
         ieq = 0
         for e in self.model.elementlist:
