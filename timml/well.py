@@ -1027,17 +1027,6 @@ class HeadWellString(WellStringBase):
             )
         super().initialize()
 
-    def equation(self):
-        mat = np.zeros((self.nunknowns, self.model.neq))
-        rhs = np.zeros(self.nunknowns)
-        ieq = 0
-        for w in self.wlist:
-            imat, rhs = w.equation()
-            mat[ieq : ieq + w.nunknowns] = imat
-            rhs[ieq : ieq + w.nunknowns] = rhs
-            ieq = ieq + w.nunknowns
-        return mat, rhs
-
     def setparams(self, sol):
         self.parameters[:, 0] = sol
         # assign parameters to individual wells
