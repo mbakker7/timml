@@ -173,11 +173,11 @@ class PlotTim:
             (x0, y0), (x1, y1) = xy
             r = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
             if y0 == 0 and y1 == 0:
-                r0 = x0
-                ax.set_xlim(x0, x1)
+                r0 = np.min([x0, x1])
+                ax.set_xlim(np.min([x0, x1]), np.max([x0, x1]))
             elif x0 == 0 and x1 == 0:
-                ax.set_ylim(y0, y1)
-                r0 = y0
+                ax.set_xlim(np.min([y0, y1]), np.max([y0, y1]))
+                r0 = np.min([y0, y1])
             else:
                 ax.set_xlim(0, r)
                 r0 = 0.0
