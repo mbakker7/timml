@@ -997,16 +997,10 @@ class HeadLineSinkString(LineSinkStringBase2):
             mat[ieq : ieq + neq] = matls
             rhs[ieq : ieq + neq] = rhsls
             ieq += neq
-        # fix to include resistance
-        # this is not pretty but works
-        # not sure how to change the design to make this nicer
-        # I guess the additional matrix can be pre-computed and stored
-        jcol = 0
-        for e in self.model.elementlist:
-            if e == self:
-                break
-            elif e.nunknowns > 0:
-                jcol += e.nunknowns
+        # include resistance by computing position of coefficients in matrix
+        # and subtracting resistance terms
+        iself = self.model.elementlist.index(self)
+        jcol = np.sum(e.nunknowns for e in self.model.elementlist[:iself])
         irow = 0
         for ls in self.lslist:
             for icp in range(ls.ncp):
