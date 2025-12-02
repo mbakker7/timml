@@ -574,10 +574,11 @@ class TargetHeadWell(WellBase):
 
     def equation(self):
         mat, rhs = HeadEquation.equation(self)
+        # set head differences between layers to 0
         for i in range(1, self.nunknowns):
             mat[i] -= mat[0]
             rhs[i] -= rhs[0]
-        # first equation is head at control point equals hc
+        # first equation is head at control point equals hcp
         mat[0] = 0.0
         rhs[0] = self.hcp
         aq = self.model.aq.find_aquifer_data(self.xcp, self.ycp)
@@ -745,26 +746,23 @@ class WellStringBase(Element):
         self.xw = self.xy[:, 0]
         self.yw = self.xy[:, 1]
         self.nw = len(self.xw)
-        # convert layers to layers per well
+
+        # convert layers to object containing layers per well
         if isinstance(layers, (int, np.integer)):
-            layers = layers * np.ones((self.nw, 1), dtype="int")
+            layers = layers * np.ones((self.nw, 1), dtype=int)
         elif isinstance(layers, (list, tuple)):
             # first try to coerce into an array
             try:
                 nlayers = max(len(layers[i]) for i in range(self.nw))
-                layers = np.array(layers) * np.ones((self.nw, nlayers), dtype="int")
+                layers = np.array(layers) * np.ones((self.nw, nlayers), dtype=int)
             except ValueError:  # list/tuple of different size tuples
                 pass
-                # raise ValueError(
-                #     "layers must be int, list of tuples of equal shape, or array of "
-                #     "shape (nwells, nlayers)"
-                # ) from e
             except TypeError:  # list/tuple of int
-                layers = np.atleast_1d(layers) * np.ones((self.nw, 1), dtype="int")
+                layers = np.atleast_1d(layers) * np.ones((self.nw, 1), dtype=int)
 
         elif isinstance(layers, np.ndarray):
             if layers.ndim == 1:
-                layers = layers * np.ones((self.nw, layers.shape[0]), dtype="int")
+                layers = layers * np.ones((self.nw, layers.shape[0]), dtype=int)
             else:
                 assert layers.shape[0] == self.nw, (
                     "layers array must be shape (nwells, nlayers)"
@@ -935,7 +933,7 @@ class WellString(WellStringBase):
                     hw=0.0,
                     rw=self.rw,
                     res=self.res,
-                    layers=self.layers[i],
+                    layers=self.layers[i],  # NOTE: layers for well `i`
                     addtomodel=False,
                 )
             )
@@ -1021,7 +1019,7 @@ class HeadWellString(WellStringBase):
                     hw=self.hw,
                     rw=self.rw,
                     res=self.res,
-                    layers=self.layers[i],
+                    layers=self.layers[i],  # NOTE: layers for well `i`
                     addtomodel=False,
                 )
             )
@@ -1041,7 +1039,7 @@ class TargetHeadWellString(WellStringBase):
     A string of wells for which the head is specified at a point.
 
     The head in the wells is equal but unknown and the head at the control point
-    (lc, xc, yc) must equal the specified head.
+    (lcp, xcp, ycp) must equal the specified head hcp.
 
     Parameters
     ----------
@@ -1103,7 +1101,7 @@ class TargetHeadWellString(WellStringBase):
                     hw=0.0,
                     rw=self.rw,
                     res=self.res,
-                    layers=self.layers[i],
+                    layers=self.layers[i],  # NOTE: layers for well `i`
                     addtomodel=False,
                 )
             )
@@ -1111,10 +1109,13 @@ class TargetHeadWellString(WellStringBase):
 
     def equation(self):
         mat, rhs = super().equation()
+
+        # set head differences between layers/wells to 0
         for i in range(1, self.nunknowns):
             mat[i] -= mat[0]
             rhs[i] -= rhs[0]
-        # first equation is head at control point equals hw
+
+        # first equation is head at control point equals hcp
         mat[0] = 0
         rhs[0] = self.hcp
         aq = self.model.aq.find_aquifer_data(self.xcp, self.ycp)
