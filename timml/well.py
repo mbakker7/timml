@@ -852,11 +852,23 @@ class WellStringBase(Element):
         rhs = np.zeros(self.nunknowns)
         ieq = 0
         for w in self.wlist:
-            matw, rhsw = w.equation()  # HeadWell equation
-            neq = len(rhsw)
-            mat[ieq : ieq + neq] = matw
-            rhs[ieq : ieq + neq] = rhsw
-            ieq += neq
+            imat, irhs = w.equation()  # HeadWell equation
+            mat[ieq : ieq + w.nunknowns] = imat
+            rhs[ieq : ieq + w.nunknowns] = irhs
+            ieq = ieq + w.nunknowns
+
+        # include resistance by finding position of element in coefficient matrix
+        # and subtracting resfac (resistance factor).
+        iself = self.model.elementlist.index(self)
+        jcol = np.sum(e.nunknowns for e in self.model.elementlist[:iself])
+        irow = 0
+        for w in self.wlist:
+            mat[irow : irow + w.nlayers, jcol : jcol + w.nunknowns] -= w.resfac[
+                0
+            ]  # only one control point
+            irow += w.nlayers
+            jcol += w.nunknowns
+
         return mat, rhs
 
     def headinside(self):
