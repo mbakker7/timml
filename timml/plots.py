@@ -18,8 +18,16 @@ from timml.trace import timtraceline
 
 plt.rcParams["contour.negative_linestyle"] = "solid"
 
+__all__ = ["PlotTim"]
+
 
 class PlotTim:
+    """Plotting functionality for TimML models.
+
+    Provides methods for visualizing model layouts, contours, pathlines,
+    and other model results.
+    """
+
     def __init__(self, ml):
         self._ml = ml
 
@@ -503,7 +511,7 @@ class PlotTim:
             return traces if True
         metadata: boolean
             if False, return list of xyzt arrays
-            if True, return list of result dicionaries
+            if True, return list of result dictionaries
 
         Returns
         -------

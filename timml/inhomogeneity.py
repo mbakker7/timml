@@ -29,6 +29,15 @@ from .intlinesink import (
     LeakyIntHeadDiffLineSink,
 )
 
+__all__ = [
+    "PolygonInhomMaq",
+    "PolygonInhom3D",
+    "BuildingPitMaq",
+    "BuildingPit3D",
+    "LeakyBuildingPitMaq",
+    "LeakyBuildingPit3D",
+]
+
 
 class PolygonInhom(AquiferData):
     tiny = 1e-8
@@ -319,6 +328,49 @@ def compute_z1z2(xy):
 
 
 class BuildingPit(AquiferData):
+    """Element to simulate a building pit with an impermeable wall.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of corners of the
+        inhomogeneity
+        polygonal boundary is automatically closed (so first point
+        is not repeated)
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if topboundary='conf': length is number of aquifers - 1
+        if topboundary='semi': length is number of aquifers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    ltype : list of string
+        indicating whether layer is an aquifer ('a') or a leaky layer ('l').
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if topboundary='semi'
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    order : int
+        polynomial order of flux along each segment
+    ndeg : int
+        number of points used between two segments to numerically
+        integrate normal discharge
+    layers: list or np.array
+        layers in which impermeable wall is present.
+    """
+
     tiny = 1e-8
 
     def __init__(
@@ -335,48 +387,6 @@ class BuildingPit(AquiferData):
         ndeg=3,
         layers=None,
     ):
-        """Element to simulate a building pit with an impermeable wall.
-
-        Parameters
-        ----------
-        model : Model object
-            model to which the element is added
-        xy : array or list
-            list or array of (x,y) pairs of coordinates of corners of the
-            inhomogeneity
-            polygonal boundary is automatically closed (so first point
-            is not repeated)
-        kaq : float, array or list
-            hydraulic conductivity of each aquifer from the top down
-            if float, hydraulic conductivity is the same in all aquifers
-        c : float, array or list
-            resistance of leaky layers from the top down
-            if float, resistance is the same for all leaky layers
-            if topboundary='conf': length is number of aquifers - 1
-            if topboundary='semi': length is number of aquifers
-        z : array or list
-            elevation tops and bottoms of the aquifers from the top down
-            leaky layers may have zero thickness
-            if topboundary='conf': length is 2 * number of aquifers
-            if topboundary='semi': length is 2 * number of aquifers + 1 as top
-            of leaky layer on top of systems needs to be specified
-        ltype : list of string
-            indicating whether layer is an aquifer ('a') or a leaky layer ('l').
-        hstar : float or None (default is None)
-            head value above semi-confining top, only read if topboundary='semi'
-        npor : float, array or list
-            porosity of all aquifers and leaky layers from the top down
-            if float, porosity is the same for all layers
-            if topboundary='conf': length is 2 * number of aquifers - 1
-            if topboundary='semi': length is 2 * number of aquifers
-        order : int
-            polynomial order of flux along each segment
-        ndeg : int
-            number of points used between two segments to numerically
-            integrate normal discharge
-        layers: list or np.array
-            layers in which impermeable wall is present.
-        """
         if layers is None:
             layers = [0]
         AquiferData.__init__(self, model, kaq, c, z, npor, ltype)
@@ -520,6 +530,51 @@ class BuildingPit(AquiferData):
 
 
 class BuildingPitMaq(BuildingPit):
+    """Element to simulate a building pit with an impermeable wall in ModelMaq.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of corners of the
+        inhomogeneity
+        polygonal boundary is automatically closed (so first point
+        is not repeated)
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if topboundary='conf': length is number of aquifers - 1
+        if topboundary='semi': length is number of aquifers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi'). For a building pit, the 'conf'
+        option is generally more applicable.
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if topboundary='semi'
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    order : int
+        polynomial order of flux along each segment
+    ndeg : int
+        number of points used between two segments to numerically
+        integrate normal discharge
+    layers: list or np.array
+        layers in which impermeable wall is present.
+    """
+
     def __init__(
         self,
         model,
@@ -534,50 +589,6 @@ class BuildingPitMaq(BuildingPit):
         ndeg=3,
         layers=None,
     ):
-        """Element to simulate a building pit with an impermeable wall in ModelMaq.
-
-        Parameters
-        ----------
-        model : Model object
-            model to which the element is added
-        xy : array or list
-            list or array of (x,y) pairs of coordinates of corners of the
-            inhomogeneity
-            polygonal boundary is automatically closed (so first point
-            is not repeated)
-        kaq : float, array or list
-            hydraulic conductivity of each aquifer from the top down
-            if float, hydraulic conductivity is the same in all aquifers
-        c : float, array or list
-            resistance of leaky layers from the top down
-            if float, resistance is the same for all leaky layers
-            if topboundary='conf': length is number of aquifers - 1
-            if topboundary='semi': length is number of aquifers
-        z : array or list
-            elevation tops and bottoms of the aquifers from the top down
-            leaky layers may have zero thickness
-            if topboundary='conf': length is 2 * number of aquifers
-            if topboundary='semi': length is 2 * number of aquifers + 1 as top
-            of leaky layer on top of systems needs to be specified
-        topboundary : string, 'conf' or 'semi' (default is 'conf')
-            indicating whether the top is confined ('conf') or
-            semi-confined ('semi'). For a building pit, the 'conf'
-            option is generally more applicable.
-        hstar : float or None (default is None)
-            head value above semi-confining top, only read if topboundary='semi'
-        npor : float, array or list
-            porosity of all aquifers and leaky layers from the top down
-            if float, porosity is the same for all layers
-            if topboundary='conf': length is 2 * number of aquifers - 1
-            if topboundary='semi': length is 2 * number of aquifers
-        order : int
-            polynomial order of flux along each segment
-        ndeg : int
-            number of points used between two segments to numerically
-            integrate normal discharge
-        layers: list or np.array
-            layers in which impermeable wall is present.
-        """
         if layers is None:
             layers = [0]
         if z is None:
@@ -601,6 +612,14 @@ class BuildingPitMaq(BuildingPit):
 
 
 class BuildingPit3D(BuildingPit):
+    """Element to simulate a building pit with an impermeable wall in Model3D.
+
+    See Also
+    --------
+    BuildingPitMaq : Building pit for ModelMaq
+    LeakyBuildingPit3D : Building pit with leaky walls for Model3D
+    """
+
     def __init__(
         self,
         model,
@@ -617,7 +636,7 @@ class BuildingPit3D(BuildingPit):
         ndeg=3,
         layers=None,
     ):
-        """Element to simulate a building pit with an impermeable wall in Model3D.
+        """Initialize BuildingPit3D element.
 
         Parameters
         ----------
@@ -686,6 +705,53 @@ class BuildingPit3D(BuildingPit):
 
 
 class LeakyBuildingPit(BuildingPit):
+    """Element to simulate a building pit with a leaky wall.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of corners of the
+        inhomogeneity
+        polygonal boundary is automatically closed (so first point
+        is not repeated)
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    c : float, array or list
+        resistance of leaky layers from the top down
+        if float, resistance is the same for all leaky layers
+        if topboundary='conf': length is number of aquifers - 1
+        if topboundary='semi': length is number of aquifers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    ltype : list of string
+        indicating whether layer is an aquifer ('a') or a leaky layer ('l').
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if topboundary='semi'
+    order : int
+        polynomial order of flux along each segment
+    ndeg : int
+        number of points used between two segments to numerically
+        integrate normal discharge
+    layers: list or np.array
+        layers in which leaky wall is present.
+    res : float or np.array, optional
+        resistance of leaky wall, if passed as an array must be either
+        shape (n_segments,) or (n_layers, n_segments). Default is np.inf,
+        which simulates an impermeable wall.
+    """
+
     def __init__(
         self,
         model,
@@ -701,52 +767,6 @@ class LeakyBuildingPit(BuildingPit):
         layers=None,
         res=np.inf,
     ):
-        """Element to simulate a building pit with a leaky wall.
-
-        Parameters
-        ----------
-        model : Model object
-            model to which the element is added
-        xy : array or list
-            list or array of (x,y) pairs of coordinates of corners of the
-            inhomogeneity
-            polygonal boundary is automatically closed (so first point
-            is not repeated)
-        kaq : float, array or list
-            hydraulic conductivity of each aquifer from the top down
-            if float, hydraulic conductivity is the same in all aquifers
-        c : float, array or list
-            resistance of leaky layers from the top down
-            if float, resistance is the same for all leaky layers
-            if topboundary='conf': length is number of aquifers - 1
-            if topboundary='semi': length is number of aquifers
-        z : array or list
-            elevation tops and bottoms of the aquifers from the top down
-            leaky layers may have zero thickness
-            if topboundary='conf': length is 2 * number of aquifers
-            if topboundary='semi': length is 2 * number of aquifers + 1 as top
-            of leaky layer on top of systems needs to be specified
-        npor : float, array or list
-            porosity of all aquifers and leaky layers from the top down
-            if float, porosity is the same for all layers
-            if topboundary='conf': length is 2 * number of aquifers - 1
-            if topboundary='semi': length is 2 * number of aquifers
-        ltype : list of string
-            indicating whether layer is an aquifer ('a') or a leaky layer ('l').
-        hstar : float or None (default is None)
-            head value above semi-confining top, only read if topboundary='semi'
-        order : int
-            polynomial order of flux along each segment
-        ndeg : int
-            number of points used between two segments to numerically
-            integrate normal discharge
-        layers: list or np.array
-            layers in which leaky wall is present.
-        res : float or np.array, optional
-            resistance of leaky wall, if passed as an array must be either
-            shape (n_segments,) or (n_layers, n_segments). Default is np.inf,
-            which simulates an impermeable wall.
-        """
         if layers is None:
             layers = [0]
 
@@ -967,6 +987,57 @@ class LeakyBuildingPitMaq(LeakyBuildingPit):
 
 
 class LeakyBuildingPit3D(LeakyBuildingPit):
+    """Element to simulate a building pit with a leaky wall in Model3D.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    xy : array or list
+        list or array of (x,y) pairs of coordinates of corners of the
+        inhomogeneity
+        polygonal boundary is automatically closed (so first point
+        is not repeated)
+    kaq : float, array or list
+        hydraulic conductivity of each aquifer from the top down
+        if float, hydraulic conductivity is the same in all aquifers
+    kzoverkh : float, array or list
+        vertical anisotropy ratio vertical k divided by horizontal k
+        if float, value is the same for all layers, length is number of layers
+    z : array or list
+        elevation tops and bottoms of the aquifers from the top down
+        leaky layers may have zero thickness
+        if topboundary='conf': length is 2 * number of aquifers
+        if topboundary='semi': length is 2 * number of aquifers + 1 as top
+        of leaky layer on top of systems needs to be specified
+    topboundary : string, 'conf' or 'semi' (default is 'conf')
+        indicating whether the top is confined ('conf') or
+        semi-confined ('semi'). For a building pit, the 'conf'
+        option is generally more applicable.
+    topres : float
+        resistance of top leaky layer (read if topboundary="semi")
+    topthick : float
+        thickness of top semi-confining layer (read if topboundary='semi')
+    hstar : float or None (default is None)
+        head value above semi-confining top, only read if topboundary='semi'
+    npor : float, array or list
+        porosity of all aquifers and leaky layers from the top down
+        if float, porosity is the same for all layers
+        if topboundary='conf': length is 2 * number of aquifers - 1
+        if topboundary='semi': length is 2 * number of aquifers
+    order : int
+        polynomial order of flux along each segment
+    ndeg : int
+        number of points used between two segments to numerically
+        integrate normal discharge
+    layers: list or np.array
+        layers in which leaky wall is present.
+    res : float or np.array, optional
+        resistance of leaky wall, if passed as an array must be either
+        shape (n_segments,) or (n_segments, n_layers). Default is np.inf,
+        which simulates an impermeable wall.
+    """
+
     def __init__(
         self,
         model,
@@ -984,56 +1055,6 @@ class LeakyBuildingPit3D(LeakyBuildingPit):
         layers=None,
         res=np.inf,
     ):
-        """Element to simulate a building pit with a leaky wall in Model3D.
-
-        Parameters
-        ----------
-        model : Model object
-            model to which the element is added
-        xy : array or list
-            list or array of (x,y) pairs of coordinates of corners of the
-            inhomogeneity
-            polygonal boundary is automatically closed (so first point
-            is not repeated)
-        kaq : float, array or list
-            hydraulic conductivity of each aquifer from the top down
-            if float, hydraulic conductivity is the same in all aquifers
-        kzoverkh : float, array or list
-            vertical anisotropy ratio vertical k divided by horizontal k
-            if float, value is the same for all layers, length is number of layers
-        z : array or list
-            elevation tops and bottoms of the aquifers from the top down
-            leaky layers may have zero thickness
-            if topboundary='conf': length is 2 * number of aquifers
-            if topboundary='semi': length is 2 * number of aquifers + 1 as top
-            of leaky layer on top of systems needs to be specified
-        topboundary : string, 'conf' or 'semi' (default is 'conf')
-            indicating whether the top is confined ('conf') or
-            semi-confined ('semi'). For a building pit, the 'conf'
-            option is generally more applicable.
-        topres : float
-            resistance of top leaky layer (read if topboundary="semi")
-        topthick : float
-            thickness of top semi-confining layer (read if topboundary='semi')
-        hstar : float or None (default is None)
-            head value above semi-confining top, only read if topboundary='semi'
-        npor : float, array or list
-            porosity of all aquifers and leaky layers from the top down
-            if float, porosity is the same for all layers
-            if topboundary='conf': length is 2 * number of aquifers - 1
-            if topboundary='semi': length is 2 * number of aquifers
-        order : int
-            polynomial order of flux along each segment
-        ndeg : int
-            number of points used between two segments to numerically
-            integrate normal discharge
-        layers: list or np.array
-            layers in which leaky wall is present.
-        res : float or np.array, optional
-            resistance of leaky wall, if passed as an array must be either
-            shape (n_segments,) or (n_segments, n_layers). Default is np.inf,
-            which simulates an impermeable wall.
-        """
         if layers is None:
             layers = [0]
         if z is None:

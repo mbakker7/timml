@@ -15,6 +15,8 @@ import numpy as np
 from .element import Element
 from .equation import PotentialEquation
 
+__all__ = ["Constant", "ConstantStar", "ConstantInside"]
+
 
 class ConstantBase(Element, PotentialEquation):
     def __init__(
@@ -180,6 +182,11 @@ class ConstantInside(Element):
 # class ConstantStar(Element, PotentialEquation):
 # I don't think we need the equation
 class ConstantStar(Element):
+    """Constant representing the particular solution inside a semi-confined aquifer.
+
+    Used for setting a reference head (hstar) within a specific aquifer.
+    """
+
     def __init__(self, model, hstar=0.0, label=None, aq=None):
         Element.__init__(
             self,

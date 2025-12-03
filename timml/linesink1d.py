@@ -20,6 +20,8 @@ from .equation import (
     MscreenWellEquation,
 )
 
+__all__ = ["LineSink1D", "HeadLineSink1D"]
+
 
 class LineSink1DBase(Element):
     def __init__(
@@ -163,6 +165,7 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
+
     """
 
     def __init__(self, model, xls=0, sigls=1, layers=0, label=None):
@@ -219,6 +222,7 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
+
     """
 
     def __init__(self, model, xls=0, hls=1, res=0, wh=1, layers=0, label=None):

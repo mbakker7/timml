@@ -17,6 +17,13 @@ from .controlpoints import controlpoints
 from .element import Element
 from .equation import DisvecEquation, LeakyWallEquation
 
+__all__ = [
+    "ImpLineDoublet",
+    "ImpLineDoubletString",
+    "LeakyLineDoublet",
+    "LeakyLineDoubletString",
+]
+
 
 class LineDoubletHoBase(Element):
     def __init__(
@@ -417,7 +424,7 @@ class LineDoubletStringBase(Element):
 
 
 class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
-    """Create a string of impermeable wall segements consisting of line-doublets.
+    """Create a string of impermeable wall segments consisting of line-doublets.
 
     Parameters
     ----------
@@ -425,7 +432,7 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
         Model to which the element is added
     xy : array or list
         list or array of (x,y) pairs of coordinates of end-points of
-        the segements in the string
+        the segments in the string
     layers : scalar, list or array
         layer(s) in which element is placed
         if scalar: element is placed in this layer
@@ -468,7 +475,7 @@ class ImpLineDoubletString(LineDoubletStringBase, DisvecEquation):
 
 
 class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
-    """Create a string of leaky wall segements consisting of line-doublets.
+    """Create a string of leaky wall segments consisting of line-doublets.
 
     Parameters
     ----------
@@ -476,7 +483,7 @@ class LeakyLineDoubletString(LineDoubletStringBase, LeakyWallEquation):
         Model to which the element is added
     xy : array or list
         list or array of (x,y) pairs of coordinates of end-points of
-        the segements in the string
+        the segments in the string
     res : scalar
         resistance of leaky wall
     layers : scalar, list or array

@@ -16,6 +16,8 @@ import numpy as np
 from .element import Element
 from .equation import DisvecEquation, LeakyWallEquation
 
+__all__ = ["ImpLineDoublet1D", "LeakyLineDoublet1D"]
+
 
 class LineDoublet1D(Element):
     def __init__(

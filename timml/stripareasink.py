@@ -14,6 +14,8 @@ import numpy as np
 
 from timml.element import Element
 
+__all__ = ["XsectionAreaSinkInhom", "XsectionAreaSink"]
+
 
 class XsectionAreaSinkInhom(Element):
     """Create a cross-section area-sink in combination with an inhomogeneity.
@@ -31,6 +33,7 @@ class XsectionAreaSinkInhom(Element):
         left boundary of inhomogeneity (may not be -np.inf)
     xright : float
         right boundary of inhomogeneity (may not be np.inf)
+
     """
 
     def __init__(
@@ -124,6 +127,11 @@ class XsectionAreaSinkInhom(Element):
 
 
 class XsectionAreaSink(Element):
+    """Cross-section area-sink for testing purposes only.
+
+    Use XsectionMaq or Xsection3D with 'N' parameter instead for production code.
+    """
+
     def __init__(
         self,
         model,
@@ -136,7 +144,7 @@ class XsectionAreaSink(Element):
     ):
         warnings.warn(
             "XsectionAreaSink is only for testing purposes. It is recommended to add "
-            "infiltration through XsectionMaq or Xsection3D and specifing 'N'.",
+            "infiltration through XsectionMaq or Xsection3D and specifying 'N'.",
             DeprecationWarning,
             stacklevel=2,
         )

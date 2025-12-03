@@ -22,6 +22,8 @@ from timml.constant import ConstantStar
 from timml.linesink1d import FluxDiffLineSink1D, HeadDiffLineSink1D
 from timml.stripareasink import XsectionAreaSinkInhom
 
+__all__ = ["XsectionMaq", "Xsection3D", "Xsection"]
+
 
 class Xsection(AquiferData):
     """Base class for cross-section inhomogeneities.
@@ -51,6 +53,7 @@ class Xsection(AquiferData):
         infiltration rate, only read if topboundary='conf'
     name : string, optional
         name of the inhomogeneity
+
     """
 
     tiny = 1e-12

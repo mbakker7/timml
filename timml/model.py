@@ -15,12 +15,15 @@ import multiprocessing as mp
 import warnings
 
 import numpy as np
+import pandas as pd
 from scipy.integrate import quad_vec
 
 from .aquifer import Aquifer, SimpleAquifer
 from .aquifer_parameters import param_3d, param_maq
 from .constant import ConstantStar
 from .plots import PlotTim
+
+__all__ = ["Model", "ModelMaq", "Model3D", "ModelXsection"]
 
 
 class Model:
@@ -57,6 +60,7 @@ class Model:
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
+        self.name = "Model"
 
         self.plots = PlotTim(self)
 
@@ -100,6 +104,7 @@ class Model:
         -------
         qxqy : array size (2, naq)
             first row is Qx in each aquifer layer, second row is Qy
+
         """
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
@@ -668,7 +673,10 @@ class ModelMaq(Model):
 
     Examples
     --------
-    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+    Build a model::
+
+        ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+
     """
 
     def __init__(self, kaq=1, z=None, c=None, npor=0.3, topboundary="conf", hstar=None):
@@ -729,7 +737,10 @@ class Model3D(Model):
 
     Examples
     --------
-    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    Create a 3D model with 10 layers::
+
+        ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+
     """
 
     def __init__(
@@ -763,6 +774,12 @@ class Model3D(Model):
 
 
 class ModelXsection(Model):
+    """Model for cross-section (2D vertical slice) problems.
+
+    A cross-section model represents flow in a vertical plane, typically used
+    for analyzing flow patterns in aquifers along a transect.
+    """
+
     def __init__(self, naq=1):
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label

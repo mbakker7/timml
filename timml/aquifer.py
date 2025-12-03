@@ -12,8 +12,11 @@ Example::
 import inspect  # Used for storing the input
 
 import numpy as np
+import pandas as pd
 
 from .constant import ConstantStar
+
+__all__ = ["Aquifer", "SimpleAquifer"]
 
 
 class AquiferData:

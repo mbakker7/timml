@@ -7,7 +7,33 @@ import numpy as np
 
 
 def param_maq(kaq, z, c, npor, top):
-    # Computes the parameters for a ModelBase from input for a maq model
+    """Computes the parameters for a ModelBase from input for ModelMaq.
+
+    Parameters
+    ----------
+    kaq : float or array of floats
+        Hydraulic conductivity of the aquifer(s).
+    z : float or array of floats
+        Elevations of the tops of the layers.
+    c : float or array of floats
+        Resistance of the leaky layers.
+    npor : float or array of floats
+        Porosity of the aquifer(s).
+    top : string
+        'conf' for confined aquifer on top, 'leak' for leaky layer on top.
+
+    Returns
+    -------
+    kaq : array of floats
+        Hydraulic conductivity of the aquifer(s).
+    c : array of floats
+        Resistance of the leaky layers.
+    npor : array of floats
+        Porosity of the aquifer(s).
+    ltype : array of strings
+        Type of the layers: 'a' for aquifer, 'l' for leaky layer.
+    """
+    #
     kaq = np.atleast_1d(kaq).astype("d")
     z = np.atleast_1d(z).astype("d")
     c = np.atleast_1d(c).astype("d")
@@ -46,7 +72,34 @@ def param_maq(kaq, z, c, npor, top):
 
 
 def param_3d(kaq, z, kzoverkh, npor, top="conf", topres=0):
-    # Computes the parameters for a ModelBase from input for a model3d model
+    """Computes the parameters for a ModelBase from input for Model3D.
+
+    Parameters
+    ----------
+    kaq : float or array of floats
+        Hydraulic conductivity of the aquifer(s).
+    z : float or array of floats
+        Elevations of the tops of the layers.
+    kzoverkh : float or array of floats
+        Vertical to horizontal hydraulic conductivity ratio of the aquifer(s).
+    npor : float or array of floats
+        Porosity of the aquifer(s).
+    top : string
+        'conf' for confined aquifer on top, 'semi' for semi-confined aquifer on top.
+    topres : float
+        Resistance of the top leaky layer when top is 'semi'.
+
+    Returns
+    -------
+    kaq : array of floats
+        Hydraulic conductivity of the aquifer(s).
+    c : array of floats
+        Resistance of the leaky layers.
+    npor : array of floats
+        Porosity of the aquifer(s).
+    ltype : array of strings
+        Type of the layers: 'a' for aquifer, 'l' for leaky layer.
+    """
     kaq = np.atleast_1d(kaq).astype("d")
     z = np.atleast_1d(z).astype("d")
     kzoverkh = np.atleast_1d(kzoverkh).astype("d")

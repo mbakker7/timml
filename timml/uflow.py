@@ -13,6 +13,8 @@ import numpy as np
 
 from .element import Element
 
+__all__ = ["Uflow"]
+
 
 class Uflow(Element):
     """Add uniform flow to the model.
@@ -32,6 +34,7 @@ class Uflow(Element):
         counter clock-wise is positive)
     label : string or None (default: None)
         label of the element
+
     """
 
     def __init__(self, model, slope, angle, label=None):

@@ -17,6 +17,15 @@ from .controlpoints import controlpoints, strengthinf_controlpoints
 from .element import Element
 from .equation import HeadEquation
 
+__all__ = [
+    "HeadLineSink",
+    "HeadLineSinkString",
+    "LineSinkDitch",
+    "LineSinkDitchString",
+    "CollectorWell",
+    "RadialCollectorWell",
+]
+
 
 class LineSinkChangeTrace:
     def changetrace(
@@ -531,6 +540,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
     See Also
     --------
     :class:`.HeadLineSinkString`
+
     """
 
     def __init__(
@@ -636,6 +646,7 @@ class LineSinkDitch(HeadLineSink):
     See Also
     --------
     :class:`.LineSinkDitchString`
+
     """
 
     def __init__(
@@ -703,6 +714,7 @@ class LineSinkStringBase2(Element):
 
     Has the advantage that it is easier to have different line-sinks in different layers
     and/or aquifers.
+
     """
 
     def __init__(
@@ -1128,10 +1140,13 @@ class CollectorWell(LineSinkDitchString):
 
     Examples
     --------
-    >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> xy = [(1, 0, 10, 0), (0, 1, 0, 10)]
-    >>> w = timml.CollectorWell(ml, xy=xy, Qw=1000, layers=np.arange(5, 10))
-    >>> ml.solve()
+    Create a collector well with two arms::
+
+        ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+        xy = [(1, 0, 10, 0), (0, 1, 0, 10)]
+        w = timml.CollectorWell(ml, xy=xy, Qw=1000, layers=np.arange(5, 10))
+        ml.solve()
+
     """
 
     def __init__(
@@ -1193,10 +1208,13 @@ class RadialCollectorWell(CollectorWell):
 
     Examples
     --------
-    >>> ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> w = timml.RadialCollectorWell(ml, x=0, y=0, narms=5, nls=10, angle=0,
-    ... rcaisson=2.0, rw=0.1, Qw=1000, layers=5)
-    >>> ml.solve()
+    Create a radial collector well with 5 arms::
+
+        ml = timml.Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+        w = timml.RadialCollectorWell(ml, x=0, y=0, narms=5, nls=10, angle=0,
+                                      rcaisson=2.0, rw=0.1, Qw=1000, layers=5)
+        ml.solve()
+
     """
 
     def __init__(

@@ -5,8 +5,27 @@ Defines mixins to build linear systems of equations.
 
 import numpy as np
 
+__all__ = [
+    "PotentialEquation",
+    "HeadEquation",
+    "MscreenWellEquation",
+    "MscreenWellHeadEquation",
+    "MscreenWellNoflowEquation",
+    "DisvecEquation",
+    "DisvecEquationOut",
+    "LeakyWallEquation",
+    "HeadDiffEquation",
+    "HeadDiffEquation2",
+    "DisvecDiffEquation",
+    "DisvecDiffEquation2",
+    "IntDisVecEquation",
+    "IntLeakyWallEquation",
+]
+
 
 class PotentialEquation:
+    """Mix-in class for potential-specified boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for potential-specified conditions.
 
@@ -42,6 +61,8 @@ class PotentialEquation:
 
 
 class HeadEquation:
+    """Mix-in class for head-specified boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for head-specified conditions.
 
@@ -82,7 +103,7 @@ class HeadEquation:
         return mat, rhs
 
 
-# This class can be deleted when HeadEquation works with zero resistance:
+# TODO: This class can be deleted when HeadEquation works with zero resistance:
 class HeadEquationNoRes:
     def equation(self):
         """Mix-in class that returns matrix rows for head-specified conditions.
@@ -118,6 +139,8 @@ class HeadEquationNoRes:
 
 
 class MscreenWellEquation:
+    """Mix-in class for multi-screen well boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for mscreen condition.
 
@@ -161,6 +184,8 @@ class MscreenWellEquation:
 
 
 class MscreenWellHeadEquation:
+    """Mix-in class for multi-screen well with head-specified boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for mscreen condition.
 
@@ -206,6 +231,8 @@ class MscreenWellHeadEquation:
 
 
 class MscreenWellNoflowEquation:
+    """Mix-in class for multi-screen well with no-flow in non-screened layers."""
+
     def equation(self):
         """Matrix rows for mscreen condition with no flow in the non-screened layers.
 
@@ -255,6 +282,8 @@ class MscreenWellNoflowEquation:
 
 
 class DisvecEquation:
+    """Mix-in class for zero normal flux boundary conditions, impermeable boundaries."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for zero normal flux conditions.
 
@@ -286,6 +315,8 @@ class DisvecEquation:
 
 
 class DisvecEquationOut:
+    """Mix-in class for zero normal flux using outside control points."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for zero normal flux condition.
 
@@ -325,6 +356,8 @@ class DisvecEquationOut:
 
 
 class LeakyWallEquation:
+    """Mix-in class for leaky wall boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for leaky wall condition.
 
@@ -388,6 +421,8 @@ class LeakyWallEquation:
 
 
 class HeadDiffEquation:
+    """Mix-in class for head difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -431,6 +466,8 @@ class HeadDiffEquation:
 
 
 class HeadDiffEquation2:
+    """Mix-in class for integrated head difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -510,6 +547,8 @@ class HeadDiffEquation2:
 
 
 class DisvecDiffEquation:
+    """Mix-in class for discharge vector difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -551,6 +590,8 @@ class DisvecDiffEquation:
 
 
 class DisvecDiffEquation2:
+    """Mix-in class for alternative discharge vector difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -614,6 +655,8 @@ class DisvecDiffEquation2:
 
 
 class IntDisVecEquation:
+    """Mix-in class for integrated discharge vector boundary conditions."""
+
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -649,6 +692,8 @@ class IntDisVecEquation:
 
 
 class IntLeakyWallEquation:
+    """Mix-in class for integrated leaky wall boundary conditions."""
+
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
