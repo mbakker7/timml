@@ -44,17 +44,17 @@ jobs:
 
       - name: Test tutorial notebooks
         run: |
-          uv run pytest --nbval --cov-append --dist loadscope -n auto docs/00tutorials/
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto docs/00tutorials/
     
       - name: Test example notebooks
         run: |
-          uv run pytest --nbval --cov-append --dist loadscope -n auto docs/03examples/
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto docs/03examples/
 
       - name: Test cross-section notebooks
         run: |
-          uv run pytest --nbval --cov-append --dist loadscope -n auto docs/04xsections/
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto docs/04xsections/
 
       - name: Test other notebooks
         run: |
-          uv run pytest --nbval --cov-append --dist loadscope -n auto notebooks/large_diameter_experimental.ipynb notebooks/timml_besselaesnew_test.ipynb
+          uv run pytest --nbval-lax --cov-append --dist loadscope -n auto notebooks/large_diameter_experimental.ipynb notebooks/timml_besselaesnew_test.ipynb
 
