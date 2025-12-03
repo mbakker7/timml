@@ -86,7 +86,11 @@ autosectionlabel_prefix_document = True
 # -- AutoAPI settings -----------------------------------------------------------------
 autoapi_dirs = ["../timml"]
 autoapi_root = "05api"
-autoapi_options = ["show-module-summary"]
+autoapi_options = [
+    "show-module-summary",
+    "inherited-members",
+    "show-inheritance",
+]
 autoapi_own_page_level = "method"
 autoapi_template_dir = "_templates/autoapi"
 
@@ -110,8 +114,24 @@ intersphinx_mapping = {
 nb_execution_allow_errors = True  # Allow errors in notebooks, to see the error online
 nb_execution_mode = "auto"
 nb_merge_streams = True
+
 myst_enable_extensions = ["dollarmath", "amsmath"]
 myst_dmath_double_inline = True
+nb_render_markdown_format = "myst"  # Enable MyST markdown parsing in notebooks
+nb_render_text_lexer = "myst-ansi"  # Better rendering of ANSI output
+nb_render_priority = {
+    "html": (
+        "application/vnd.jupyter.widget-view+json",
+        "application/javascript",
+        "text/html",
+        "image/svg+xml",
+        "image/png",
+        "image/jpeg",
+        "text/markdown",
+        "text/latex",
+        "text/plain",
+    )
+}
 
 # -- bibtex options ------------------------------------------------------------------
 
