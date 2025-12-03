@@ -90,13 +90,13 @@ class PlotTim:
                 ax1 = fig.axes[0]
                 ax2 = fig.axes[1]
             elif orientation[:3] == "hor":
-                fig = plt.gcf()
-                ax1 = fig.axes[0]
+                ax1 = plt.gca()
                 ax2 = None
+                fig = ax1.figure
             elif orientation[:3] == "ver":
-                fig = plt.gcf()
                 ax1 = None
-                ax2 = fig.axes[0]
+                ax2 = plt.gca()
+                fig = ax2.figure
         if ax1 is not None:
             plt.sca(ax1)
             for e in self._ml.elementlist:
