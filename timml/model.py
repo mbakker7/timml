@@ -577,6 +577,22 @@ class Model:
             f.write(e.write())
         f.close()
 
+    def aquifer_summary(self):
+        """Return DataFrame with summary of aquifer(s) parameters in model.
+
+        Returns
+        -------
+        pandas.DataFrame
+            dataframe with summary of aquifer(s) parameters
+        """
+        aqs = {}
+        if not isinstance(self.aq, SimpleAquifer):
+            aqs["background"] = self.aq.summary()
+        for i, iaq in enumerate(self.aq.inhomlist):
+            aqs[f"inhom{i}"] = iaq.summary()
+        if aqs:
+            return pd.concat(aqs, axis=0)
+
     def plot(self, *args, **kwargs):
         warnings.warn(
             "The 'ml.plot' method is deprecated. Use 'ml.plots.topview' instead.",

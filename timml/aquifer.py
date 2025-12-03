@@ -135,8 +135,55 @@ class AquiferData:
             ltype = self.ltype[modellayer]
         return layernumber, ltype, modellayer
 
+    def summary(self):
+        """Get summary of aquifer parameters.
+
+        Returns
+        -------
+        pd.DataFrame
+            Summary of aquifer parameters including layer type, thickness,
+            hydraulic conductivity, and resistance.
+        """
+        summary = pd.DataFrame(
+            index=range(self.nlayers),
+            columns=["layer", "layer_type", "H", "k_h", "c"],
+        )
+        summary.index.name = "#"
+        layertype = {"a": "aquifer", "l": "leaky layer"}
+        summary["layer_type"] = [layertype[lt] for lt in self.ltype]
+        if self.nlayers == self.naq:
+            model3d = True
+        else:
+            model3d = False
+        maskaq = self.ltype == "a"
+        if self.ilap == 1:  # confined on top
+            summary.iloc[maskaq, 2] = self.Haq
+            summary.iloc[maskaq, 3] = self.kaq
+            if model3d:
+                summary.iloc[maskaq, 4] = self.c
+                summary.iloc[0, 4] = np.nan  # reset confined resistance to nan
+            else:
+                summary.iloc[~maskaq, 2] = self.Hll[1:]
+                summary.iloc[~maskaq, 4] = self.c[1:]
+        else:
+            summary.iloc[maskaq, 2] = self.Haq
+            summary.iloc[maskaq, 3] = self.kaq
+            if model3d:
+                summary.iloc[~maskaq, 2] = self.Hll[0]
+                summary.iloc[maskaq, 4] = self.c
+            else:
+                summary.iloc[~maskaq, 2] = self.Hll
+                summary.iloc[~maskaq, 4] = self.c
+        summary.loc[:, "layer"] = self.layernumber
+        return summary  # .set_index("layer")
+
 
 class Aquifer(AquiferData):
+    """Background aquifer for models.
+
+    Extends AquiferData and supports inhomogeneities within a model.
+    """
+
     def __init__(self, model, kaq, c, z, npor, ltype):
         super().__init__(model, kaq, c, z, npor, ltype)
         self.inhomlist = []
