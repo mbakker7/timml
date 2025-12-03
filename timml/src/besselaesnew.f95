@@ -519,7 +519,7 @@ contains
         z = ( rTWO*zin - (z1in + z2in) ) / (z2in - z1in) / biglab; zbar=conjg(z);
     
         ! Coefficients gamma(n,m), Eq. 21
-        ! Store coefficents in matrix.
+        ! Store coefficients in matrix.
         do n = 0, Nterms
             czmzbarp(n) = (z-zbar)**n
         end do
@@ -614,7 +614,7 @@ contains
         z = ( rTWO*zin - (z1in + z2in) ) / (z2in - z1in) / biglab; zbar=conjg(z);
     
         ! Coefficients gamma(n,m), Eq. 21
-        ! Store coefficents in matrix.
+        ! Store coefficients in matrix.
         do n = 0, Nterms
             czmzbarp(n) = (z-zbar)**n
         end do
