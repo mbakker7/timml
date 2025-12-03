@@ -10,7 +10,7 @@ nbdirs = [
     os.path.join("docs/00userguide"),
     os.path.join("docs/02examples"),
     os.path.join("docs/03xsections"),
-    os.path.join("notebooks"),
+    os.path.join("docs/04tests"),
 ]
 
 testdir = tempfile.mkdtemp()
