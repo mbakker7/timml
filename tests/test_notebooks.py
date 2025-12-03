@@ -7,9 +7,9 @@ import pytest
 from nbconvert.preprocessors import ExecutePreprocessor
 
 nbdirs = [
-    os.path.join("docs/00tutorials"),
-    os.path.join("docs/03examples"),
-    os.path.join("docs/04xsections"),
+    os.path.join("docs/00userguide"),
+    os.path.join("docs/02examples"),
+    os.path.join("docs/03xsections"),
     os.path.join("notebooks"),
 ]
 
