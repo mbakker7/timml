@@ -16,6 +16,7 @@ to visualization and can serve as templates for your own models.
 - :doc:`circular_area_sink`
 - :doc:`collector_wells`
 - :doc:`connected_wells`
+- :doc:`vertical_anisotropy`
 
 .. toctree::
     :maxdepth: 3
@@ -32,3 +33,4 @@ to visualization and can serve as templates for your own models.
     circular_area_sink
     collector_wells
     connected_wells
+    vertical_anisotropy
