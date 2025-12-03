@@ -74,7 +74,7 @@ def create_model(
     ):
         # loop over both dewatering locations
         for dewatering_xy in dewatering_xys:
-            # loop over the modelled wells, in pratice a lot of more wells are used.
+            # loop over the modelled wells, in practice a lot of more wells are used.
             # Current model has focus on regional effect, therefore limited number
             # of wells are considered sufficient
 
