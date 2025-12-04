@@ -435,7 +435,14 @@ class PlotTim:
             np.linspace(y1 + nudge, y2 - nudge, n),
         )
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-        xg = np.linspace(0, L, n)
+        # if x, or y are all zero use geographic coordinates
+        if y1 == 0 and y2 == 0:
+            r0 = np.min([x1, x2])
+        elif x1 == 0 and x2 == 0:
+            r0 = np.min([y1, y2])
+        else:
+            r0 = 0.0  # else use distance along cross-section
+        xg = np.linspace(r0, r0 + L, n)
         if vinterp:
             zg = 0.5 * (self._ml.aq.zaqbot + self._ml.aq.zaqtop)
             zg = np.hstack((self._ml.aq.zaqtop[0], zg, self._ml.aq.zaqbot[-1]))
