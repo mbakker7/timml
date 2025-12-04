@@ -17,7 +17,7 @@ testdir = tempfile.mkdtemp()
 
 
 def get_notebooks():
-    skip = ["benchmarking_besselaes.ipynb", "anisotropy_pap_posted.ipynb"]
+    skip = ["benchmarking_besselaes.ipynb", "vertical_anisotropy.ipynb"]
     nblist = []
     for nbdir in nbdirs:
         nblist += [
