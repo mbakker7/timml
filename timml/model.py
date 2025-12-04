@@ -435,8 +435,6 @@ class Model:
         self.initialize()
         # Compute number of equations
         self.neq = np.sum([e.nunknowns for e in self.elementlist])
-        if self.neq == 0:
-            return
         if silent is False:
             print(
                 "Number of elements, Number of equations:",
