@@ -1,3 +1,12 @@
+"""1D line-sink elements.
+
+Implements simplified line-sinks for cross-section (1D) models.
+
+Example::
+
+    HeadLineSink1D(ml, xls=0, hls=1, layers=0)
+"""
+
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -156,6 +165,7 @@ class LineSink1D(LineSink1DBase, MscreenWellEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
+
     """
 
     def __init__(self, model, xls=0, sigls=1, layers=0, label=None):
@@ -212,6 +222,7 @@ class HeadLineSink1D(LineSink1DBase, HeadEquation):
         if list or array: element is placed in all these layers
     label: str or None
         label of element
+
     """
 
     def __init__(self, model, xls=0, hls=1, res=0, wh=1, layers=0, label=None):

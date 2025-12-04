@@ -1,7 +1,5 @@
 ![image](/docs/_static/tim_logo_small.png)
-
 [![timml](https://github.com/mbakker7/timml/actions/workflows/ci.yml/badge.svg)](https://github.com/mbakker7/timml/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/mbakker7/timml/badge.svg?branch=master)](https://coveralls.io/github/mbakker7/timml?branch=master)
 ![PyPI](https://img.shields.io/pypi/v/timml?color=green)
 
 # TimML, A Multi-Layer, Analytic Element Model
@@ -21,7 +19,8 @@ TimML is coded in Python and uses numba to speed up evaluation of the bessel lin
 **Dependencies:**
 
 TimML requires:
-* numpy 
+
+* numpy
 * scipy
 * matplotlib
 * numba
@@ -40,12 +39,10 @@ To uninstall TimML type:
 
     pip uninstall timml
 
-
 ## Documentation
 
 * The documentation is hosted on [readthedocs](https://timml.readthedocs.io/).
 * Example Notebooks are also available from the docs directory on github.
-
 
 ## Citation
 

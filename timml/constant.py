@@ -1,3 +1,13 @@
+"""Constant elements.
+
+Provides `Constant` to fix head at a point and `ConstantStar` for
+semi-confined aquifers.
+
+Example::
+
+    Constant(ml, xr=0, yr=0, hr=10.0, layer=0)
+"""
+
 import inspect  # Used for storing the input
 
 import numpy as np
@@ -5,7 +15,7 @@ import numpy as np
 from .element import Element
 from .equation import PotentialEquation
 
-__all__ = ["Constant", "ConstantStar"]
+__all__ = ["Constant", "ConstantStar", "ConstantInside"]
 
 
 class ConstantBase(Element, PotentialEquation):
@@ -172,6 +182,11 @@ class ConstantInside(Element):
 # class ConstantStar(Element, PotentialEquation):
 # I don't think we need the equation
 class ConstantStar(Element):
+    """Constant representing the particular solution inside a semi-confined aquifer.
+
+    Used for setting a reference head (hstar) within a specific aquifer.
+    """
+
     def __init__(self, model, hstar=0.0, label=None, aq=None):
         Element.__init__(
             self,

@@ -1,3 +1,13 @@
+"""1D line-doublet elements.
+
+Doublet features for modeling barriers in a cross-section.
+
+Example::
+
+    ImpLineDoublet1D(ml, xld=0, layers=0)
+
+"""
+
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt

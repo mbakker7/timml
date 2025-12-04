@@ -1,7 +1,31 @@
+"""Equation assembly helpers.
+
+Defines mixins to build linear systems of equations.
+"""
+
 import numpy as np
+
+__all__ = [
+    "PotentialEquation",
+    "HeadEquation",
+    "MscreenWellEquation",
+    "MscreenWellHeadEquation",
+    "MscreenWellNoflowEquation",
+    "DisvecEquation",
+    "DisvecEquationOut",
+    "LeakyWallEquation",
+    "HeadDiffEquation",
+    "HeadDiffEquation2",
+    "DisvecDiffEquation",
+    "DisvecDiffEquation2",
+    "IntDisVecEquation",
+    "IntLeakyWallEquation",
+]
 
 
 class PotentialEquation:
+    """Mix-in class for potential-specified boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for potential-specified conditions.
 
@@ -37,6 +61,8 @@ class PotentialEquation:
 
 
 class HeadEquation:
+    """Mix-in class for head-specified boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for head-specified conditions.
 
@@ -77,7 +103,7 @@ class HeadEquation:
         return mat, rhs
 
 
-# This class can be deleted when HeadEquation works with zero resistance:
+# TODO: This class can be deleted when HeadEquation works with zero resistance:
 class HeadEquationNoRes:
     def equation(self):
         """Mix-in class that returns matrix rows for head-specified conditions.
@@ -113,6 +139,8 @@ class HeadEquationNoRes:
 
 
 class MscreenWellEquation:
+    """Mix-in class for multi-screen well boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for mscreen condition.
 
@@ -134,7 +162,7 @@ class MscreenWellEquation:
         for e in self.model.elementlist:
             if e.nunknowns > 0:
                 head = (
-                    e.potinflayers(self.xc, self.yc, self.layers)
+                    e.potinflayers(self.xc[0], self.yc[0], self.layers)
                     / self.aq.Tcol[self.layers, :]
                 )
                 mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = (
@@ -148,14 +176,63 @@ class MscreenWellEquation:
                 ieq += e.nunknowns
             else:
                 head = (
-                    e.potentiallayers(self.xc, self.yc, self.layers)
+                    e.potentiallayers(self.xc[0], self.yc[0], self.layers)
                     / self.aq.T[self.layers]
                 )
                 rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
         return mat, rhs
 
 
+class MscreenWellHeadEquation:
+    """Mix-in class for multi-screen well with head-specified boundary conditions."""
+
+    def equation(self):
+        """Mix-in class that returns matrix rows for mscreen condition.
+
+        Mscreen condition applied at one control point.
+
+        Returns
+        -------
+        matrix
+            (nunknowns,neq)
+        rhs
+            (nunknowns)
+        """
+        mat = np.zeros((self.nunknowns, self.model.neq))
+        rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
+        rhs[0 : self.nlayers - 1] = 0.0
+        rhs[self.nlayers - 1] = self.hw
+        ieq = 0
+        for e in self.model.elementlist:
+            if e.nunknowns > 0:
+                head = (
+                    e.potinflayers(self.xc[0], self.yc[0], self.layers)
+                    / self.aq.Tcol[self.layers, :]
+                )
+                mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = (
+                    head[:-1] - head[1:]
+                )
+                # last equation
+                mat[self.nlayers - 1, ieq : ieq + e.nunknowns] = head[0]
+                if e == self:
+                    for i in range(self.nlayers - 1):
+                        mat[i, ieq + i] -= self.resfac[i]
+                        mat[i, ieq + i + 1] += self.resfac[i + 1]
+                    mat[self.nlayers - 1, ieq] -= self.resfac[0]
+                ieq += e.nunknowns
+            else:
+                head = (
+                    e.potentiallayers(self.xc[0], self.yc[0], self.layers)
+                    / self.aq.T[self.layers]
+                )
+                rhs[0 : self.nlayers - 1] -= head[:-1] - head[1:]
+                rhs[self.nlayers - 1] -= head[0]
+        return mat, rhs
+
+
 class MscreenWellNoflowEquation:
+    """Mix-in class for multi-screen well with no-flow in non-screened layers."""
+
     def equation(self):
         """Matrix rows for mscreen condition with no flow in the non-screened layers.
 
@@ -205,6 +282,8 @@ class MscreenWellNoflowEquation:
 
 
 class DisvecEquation:
+    """Mix-in class for zero normal flux boundary conditions, impermeable boundaries."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for zero normal flux conditions.
 
@@ -236,6 +315,8 @@ class DisvecEquation:
 
 
 class DisvecEquationOut:
+    """Mix-in class for zero normal flux using outside control points."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for zero normal flux condition.
 
@@ -275,6 +356,8 @@ class DisvecEquationOut:
 
 
 class LeakyWallEquation:
+    """Mix-in class for leaky wall boundary conditions."""
+
     def equation(self):
         """Mix-in class that returns matrix rows for leaky wall condition.
 
@@ -338,6 +421,8 @@ class LeakyWallEquation:
 
 
 class HeadDiffEquation:
+    """Mix-in class for head difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -381,6 +466,8 @@ class HeadDiffEquation:
 
 
 class HeadDiffEquation2:
+    """Mix-in class for integrated head difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -460,6 +547,8 @@ class HeadDiffEquation2:
 
 
 class DisvecDiffEquation:
+    """Mix-in class for discharge vector difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -501,6 +590,8 @@ class DisvecDiffEquation:
 
 
 class DisvecDiffEquation2:
+    """Mix-in class for alternative discharge vector difference boundary conditions."""
+
     def equation(self):
         """Matrix rows for difference in head between inside and outside equals zeros.
 
@@ -564,6 +655,8 @@ class DisvecDiffEquation2:
 
 
 class IntDisVecEquation:
+    """Mix-in class for integrated discharge vector boundary conditions."""
+
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero
@@ -599,6 +692,8 @@ class IntDisVecEquation:
 
 
 class IntLeakyWallEquation:
+    """Mix-in class for integrated leaky wall boundary conditions."""
+
     def equation(self):
         mat = np.empty((self.nunknowns, self.model.neq))
         rhs = np.zeros(self.nunknowns)  # Needs to be initialized to zero

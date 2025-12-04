@@ -19,6 +19,7 @@ class CircleInhom(Element):
     Attributes
     ----------
     All attributes from element.
+
     """
 
     Rconvsq = 7 * 7
