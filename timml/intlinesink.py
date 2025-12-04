@@ -17,6 +17,37 @@ from .linesink import LineSinkHoBase
 
 
 class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
+    """Line-sink to set integrated head difference along linesink to zero.
+
+    Used by inhomogeneities.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x1 : float
+        x-coordinate of the start of the line-sink
+    y1 : float
+        y-coordinate of the start of the line-sink
+    x2 : float
+        x-coordinate of the end of the line-sink
+    y2 : float
+        y-coordinate of the end of the line-sink
+    order : int
+        order of the line-sink element
+    ndeg : int
+        number of Gauss points for numerical integration
+    layers : list or array
+        layers in which the element is placed
+    label : string or None (default: None)
+        label of the element
+    addtomodel : bool (default: True)
+        if True, element is added to the model upon creation
+    aq : AquiferData object or None (default: None)
+        aquifer data to which the element is added. If None, aquifer data is
+        determined based on element location.
+    """
+
     def __init__(
         self,
         model,
@@ -105,6 +136,37 @@ class IntHeadDiffLineSink(LineSinkHoBase, HeadDiffEquation2):
 
 
 class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
+    """Line-sink to set integrated flux difference along linesink to zero.
+
+    Used by inhomogeneities.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x1 : float
+        x-coordinate of the start of the line-sink
+    y1 : float
+        y-coordinate of the start of the line-sink
+    x2 : float
+        x-coordinate of the end of the line-sink
+    y2 : float
+        y-coordinate of the end of the line-sink
+    order : int
+        order of the line-sink element
+    ndeg : int
+        number of Gauss points for numerical integration
+    layers : list or array
+        layers in which the element is placed
+    label : string or None (default: None)
+        label of the element
+    addtomodel : bool (default: True)
+        if True, element is added to the model upon creation
+    aq : AquiferData object or None (default: None)
+        aquifer data to which the element is added. If None, aquifer data is
+        determined based on element location.
+    """
+
     def __init__(
         self,
         model,
@@ -194,9 +256,35 @@ class IntFluxDiffLineSink(LineSinkHoBase, DisvecDiffEquation2):
 
 
 class IntFluxLineSink(LineSinkHoBase, IntDisVecEquation):
-    """Element to set numerically integrated flux along linesink to 0.
+    """Element to set numerically integrated flux along linesink to zero.
 
-    Used in BuildingPit element.
+    Used by inhomogeneities.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x1 : float
+        x-coordinate of the start of the line-sink
+    y1 : float
+        y-coordinate of the start of the line-sink
+    x2 : float
+        x-coordinate of the end of the line-sink
+    y2 : float
+        y-coordinate of the end of the line-sink
+    order : int
+        order of the line-sink element
+    ndeg : int
+        number of Gauss points for numerical integration
+    layers : list or array
+        layers in which the element is placed
+    label : string or None (default: None)
+        label of the element
+    addtomodel : bool (default: True)
+        if True, element is added to the model upon creation
+    aq : AquiferData object or None (default: None)
+        aquifer data to which the element is added. If None, aquifer data is
+        determined based on element location.
     """
 
     def __init__(
@@ -275,6 +363,32 @@ class LeakyIntHeadDiffLineSink(LineSinkHoBase, IntLeakyWallEquation):
         Qnormal = H * (headin - headout) / res
 
     Used in LeakyBuildingPit element.
+
+    Parameters
+    ----------
+    model : Model object
+        model to which the element is added
+    x1 : float
+        x-coordinate of the start of the line-sink
+    y1 : float
+        y-coordinate of the start of the line-sink
+    x2 : float
+        x-coordinate of the end of the line-sink
+    y2 : float
+        y-coordinate of the end of the line-sink
+    order : int
+        order of the line-sink element
+    ndeg : int
+        number of Gauss points for numerical integration
+    layers : list or array
+        layers in which the element is placed
+    label : string or None (default: None)
+        label of the element
+    addtomodel : bool (default: True)
+        if True, element is added to the model upon creation
+    aq : AquiferData object or None (default: None)
+        aquifer data to which the element is added. If None, aquifer data is
+        determined based on element location.
     """
 
     def __init__(
