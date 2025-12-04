@@ -64,6 +64,8 @@ class Model:
 
         self.plots = PlotTim(self)
 
+        self.plots = PlotTim(self)
+
     def initialize(self):
         # remove inhomogeneity elements (they are added again)
         self.elementlist = [e for e in self.elementlist if not e.inhomelement]
