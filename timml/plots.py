@@ -140,6 +140,7 @@ class PlotTim:
         ax=None,
         fmt=None,
         units=None,
+        geographic_coordinates=True,
     ):
         """Plot cross-section of model.
 
@@ -161,6 +162,9 @@ class PlotTim:
             format string for parameter values, e.g. '.2f' for 2 decimals
         units : dict, optional
             dictionary with units for parameters, e.g. {'k': 'm/d', 'c': 'd'}
+        geographic_coordinates : bool
+            if True, and if x1 and x2, or y1 and y2 are equal, use geographic
+            coordinates on x-axes, otherwise use distance along cross-section.
 
         Returns
         -------
@@ -192,12 +196,16 @@ class PlotTim:
         if xy is not None:
             (x0, y0), (x1, y1) = xy
             r = np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
-            if y0 == 0 and y1 == 0:
-                r0 = np.min([x0, x1])
-                ax.set_xlim(np.min([x0, x1]), np.max([x0, x1]))
-            elif x0 == 0 and x1 == 0:
-                ax.set_xlim(np.min([y0, y1]), np.max([y0, y1]))
-                r0 = np.min([y0, y1])
+            if geographic_coordinates:
+                if y0 == y1:
+                    r0 = np.min([x0, x1])
+                    ax.set_xlim(np.min([x0, x1]), np.max([x0, x1]))
+                elif x0 == x1:
+                    ax.set_xlim(np.min([y0, y1]), np.max([y0, y1]))
+                    r0 = np.min([y0, y1])
+                else:
+                    ax.set_xlim(0, r)
+                    r0 = 0.0
             else:
                 ax.set_xlim(0, r)
                 r0 = 0.0
@@ -396,6 +404,7 @@ class PlotTim:
         newfig=True,
         figsize=None,
         layout=True,
+        geographic_coordinates=True,
     ):
         """Head contour plot in vertical cross-section.
 
@@ -424,6 +433,9 @@ class PlotTim:
             size of figure
         layout : boolean
             plot layout if True
+        geographic_coordinates : bool
+            if x1 and x2, or y1 and y2 are equal, use geographic coordinates on x-axes,
+            otherwise use distance along cross-section. Default is True.
 
         Returns
         -------
@@ -435,11 +447,14 @@ class PlotTim:
             np.linspace(y1 + nudge, y2 - nudge, n),
         )
         L = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-        # if x, or y are all zero use geographic coordinates
-        if y1 == 0 and y2 == 0:
-            r0 = np.min([x1, x2])
-        elif x1 == 0 and x2 == 0:
-            r0 = np.min([y1, y2])
+        if geographic_coordinates:
+            # if x, or y are equal use geographic coordinates
+            if y1 == y2:
+                r0 = np.min([x1, x2])
+            elif x1 == y2:
+                r0 = np.min([y1, y2])
+            else:
+                r0 = 0.0  # else use distance along cross-section
         else:
             r0 = 0.0  # else use distance along cross-section
         xg = np.linspace(r0, r0 + L, n)
@@ -456,7 +471,12 @@ class PlotTim:
         if newfig:
             _, ax = plt.subplots(figsize=figsize)
         if layout:
-            self.xsection(xy=[(x1, y1), (x2, y2)], labels=False, ax=ax)
+            self.xsection(
+                xy=[(x1, y1), (x2, y2)],
+                labels=False,
+                ax=ax,
+                geographic_coordinates=geographic_coordinates,
+            )
         cs = ax.contour(xg, zg, h, levels, colors=color)
         if labels:
             fmt = "%1." + str(decimals) + "f"
