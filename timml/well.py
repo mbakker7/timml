@@ -1,3 +1,13 @@
+"""Well elements for TimML.
+
+Provides classes to model wells with specified discharge or head, including
+multi-well strings.
+
+Example::
+
+    Well(ml, xw=100, yw=200, Qw=1000, layers=[0])
+"""
+
 import inspect  # Used for storing the input
 
 import matplotlib.pyplot as plt
@@ -8,7 +18,14 @@ from .element import Element
 from .equation import HeadEquation, MscreenWellNoflowEquation
 from .trace import timtracelines
 
-__all__ = ["WellBase", "Well", "HeadWell"]
+__all__ = [
+    "Well",
+    "HeadWell",
+    "TargetHeadWell",
+    "WellString",
+    "HeadWellString",
+    "TargetHeadWellString",
+]
 
 
 class WellBase(Element):
@@ -355,8 +372,11 @@ class Well(WellBase):
 
     Examples
     --------
-    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+    Create a well in multiple layers::
+
+        ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+        Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+
     """
 
     def __init__(
@@ -602,6 +622,11 @@ class TargetHeadWell(WellBase):
 class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
     """Experimental class for radial flow to large diameter well.
 
+    Note
+    ----
+    The LargeDiamaterWell is experimental and can only be used in models with
+    radial flow, i.e. the LargeDiameterWell as the only element.
+
     Parameters
     ----------
     model : Model object
@@ -627,8 +652,11 @@ class LargeDiameterWell(WellBase, MscreenWellNoflowEquation):
 
     Examples
     --------
-    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
-    >>> Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+    Create a large diameter well in multiple layers::
+
+        ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+        Well(ml, 100, 200, 1000, layers=[0, 1, 2, 3])
+
     """
 
     def __init__(
@@ -738,6 +766,7 @@ class WellStringBase(Element):
         label of the well string
     aq : AquiferData object or None
         aquifer data object or None (default is None)
+
     """
 
     def __init__(self, model, xy, layers=0, name="WellStringBase", label=None, aq=None):

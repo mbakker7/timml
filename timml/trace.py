@@ -1,8 +1,11 @@
+"""Particle tracing utilities.
+
+Implements pathline tracing for capture zone visualization.
+"""
+
 import warnings
 
 import numpy as np
-
-__all__ = ["timtraceline", "timtracelines"]
 
 _future_warning_metadata = (
     "In a future version traces will be returned as a dictionary containing "
@@ -54,7 +57,7 @@ def timtraceline(
         if True, return layers numbers
     metadata: boolean
         if False, return xyzt array or xyzt array plus layer array
-        if True, return list of result dicionaries with three entries:
+        if True, return list of result dictionaries with three entries:
         - "trace": np.array(xyzt)
         - "message": termination message
         - "complete": True if terminated correctly
@@ -141,7 +144,7 @@ def timtraceline(
                 terminate = True
                 break
             if vh * tvstep > hstepmax:
-                # max horizonal step smaller than max vertical step
+                # max horizontal step smaller than max vertical step
                 thstep = hstepmax / vh
                 z1 = z0 + thstep * vz
             else:
@@ -179,7 +182,7 @@ def timtraceline(
                 else:  # vz=0
                     tvstep = np.inf
                 if vh * tvstep > hstepmax:
-                    # max horizonal step smaller than vertical step
+                    # max horizontal step smaller than vertical step
                     thstep = hstepmax / vh
                     x1 = x0 + thstep * vx
                     y1 = y0 + thstep * vy
@@ -322,7 +325,7 @@ def timtracelines(
         list with [xmin, xmax, ymin, ymax]
     metadata: boolean
         if False, return list of xyzt arrays
-        if True, return list of result dicionaries
+        if True, return list of result dictionaries
     """
     if win is None:
         win = [-1e30, 1e30, -1e30, 1e30]

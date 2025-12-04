@@ -1,3 +1,15 @@
+"""1D inhomogeneities.
+
+Cross-section inhomogeneity elements. Used to build cross-section models with
+varying aquifer properties or top boundary conditions along a cross-section.
+
+Example::
+
+    XsectionMaq(ml, x1=-np.inf, x2=0, kaq=[10, 1], z=[10, 5, 0], c=[100])
+    XsectionMaq(ml, x1=0, x2=np.inf, kaq=[1, 10], z=[10, 5, 0], c=[50])
+
+"""
+
 import inspect  # user for storing the input
 import warnings
 
@@ -10,7 +22,7 @@ from timml.constant import ConstantStar
 from timml.linesink1d import FluxDiffLineSink1D, HeadDiffLineSink1D
 from timml.stripareasink import XsectionAreaSinkInhom
 
-__all__ = ["XsectionMaq", "Xsection3D"]
+__all__ = ["XsectionMaq", "Xsection3D", "Xsection"]
 
 
 class Xsection(AquiferData):
@@ -41,6 +53,7 @@ class Xsection(AquiferData):
         infiltration rate, only read if topboundary='conf'
     name : string, optional
         name of the inhomogeneity
+
     """
 
     tiny = 1e-12

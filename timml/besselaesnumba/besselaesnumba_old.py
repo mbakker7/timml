@@ -420,7 +420,7 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     zbar = np.conj(z)
 
     # Coefficients gamma(n,m), Eq. 21
-    # Store coefficents in matrix.
+    # Store coefficients in matrix.
     for n in range(0, NTERMS + 1):
         czmzbarp[n] = (z - zbar) ** n
 
@@ -503,7 +503,7 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     zbar = np.conj(z)
 
     # Coefficients gamma(n,m), Eq. 21
-    # Store coefficents in matrix.
+    # Store coefficients in matrix.
     for n in range(0, NTERMS + 1):
         czmzbarp[n] = (z - zbar) ** n
 

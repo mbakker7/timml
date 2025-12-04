@@ -1,3 +1,12 @@
+"""Plot helpers for TimML.
+
+Provides top-view, contours, and tracing visualization functions.
+
+Example::
+
+    ml.plots.topview()
+"""
+
 from typing import Optional
 
 import matplotlib.pyplot as plt
@@ -9,8 +18,16 @@ from timml.trace import timtraceline
 
 plt.rcParams["contour.negative_linestyle"] = "solid"
 
+__all__ = ["PlotTim"]
+
 
 class PlotTim:
+    """Plotting functionality for TimML models.
+
+    Provides methods for visualizing model layouts, contours, pathlines,
+    and other model results.
+    """
+
     def __init__(self, ml):
         self._ml = ml
 
@@ -81,13 +98,13 @@ class PlotTim:
                 ax1 = fig.axes[0]
                 ax2 = fig.axes[1]
             elif orientation[:3] == "hor":
-                fig = plt.gcf()
-                ax1 = fig.axes[0]
+                ax1 = plt.gca()
                 ax2 = None
+                fig = ax1.figure
             elif orientation[:3] == "ver":
-                fig = plt.gcf()
                 ax1 = None
-                ax2 = fig.axes[0]
+                ax2 = plt.gca()
+                fig = ax2.figure
         if ax1 is not None:
             plt.sca(ax1)
             for e in self._ml.elementlist:
@@ -122,6 +139,7 @@ class PlotTim:
         params=False,
         ax=None,
         fmt=None,
+        units=None,
     ):
         """Plot cross-section of model.
 
@@ -141,6 +159,8 @@ class PlotTim:
             axes to plot on, default is None which creates a new figure
         fmt : str, optional
             format string for parameter values, e.g. '.2f' for 2 decimals
+        units : dict, optional
+            dictionary with units for parameters, e.g. {'k': 'm/d', 'c': 'd'}
 
         Returns
         -------
@@ -184,10 +204,14 @@ class PlotTim:
         else:
             r0 = 0.0
             r = 1.0
+            ax.set_xticks([])
 
         # get values for layer and aquifer numbering
         if labels:
-            lli = 1 if self._ml.aq.ltype[0] == "a" else 0
+            if self._ml.name == "Model":
+                lli = 0
+            else:
+                lli = 1 if self._ml.aq.ltype[0] == "a" else 0
             aqi = 0
         else:
             lli = None
@@ -211,15 +235,24 @@ class PlotTim:
                         va="center",
                     )
                 if params:
+                    if units is not None:
+                        unitstr = f" {units['c']}" if "c" in units else ""
+                    else:
+                        unitstr = ""
                     ax.text(
                         r0 + 0.75 * r if labels else r0 + 0.5 * r,
                         np.mean(self._ml.aq.z[i : i + 2]),
-                        (f"$c$ = {self._ml.aq.c[lli]:{fmt}}"),
+                        (f"$c$ = {self._ml.aq.c[lli]:{fmt}}" + unitstr),
                         ha="center",
                         va="center",
                     )
                 if labels or params:
                     lli += 1
+
+            # for Model class, k_h and c have to be supplied always,
+            # even for zero-thickness aquitards.
+            if self._ml.name == "Model" and aqi % 2 == 0:
+                lli += 1
 
             # aquifers
             if labels and self._ml.aq.ltype[i] == "a":
@@ -231,7 +264,11 @@ class PlotTim:
                     va="center",
                 )
             if params and self._ml.aq.ltype[i] == "a":
-                paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]:{fmt}}"
+                if units is not None:
+                    unitstr = f" {units['k']}" if "k" in units else ""
+                else:
+                    unitstr = ""
+                paramtxt = f"$k_h$ = {self._ml.aq.kaq[aqi]:{fmt}}" + unitstr
                 ax.text(
                     r0 + 0.75 * r if labels else r0 + 0.5 * r,
                     np.mean(self._ml.aq.z[i : i + 2]),
@@ -474,7 +511,7 @@ class PlotTim:
             return traces if True
         metadata: boolean
             if False, return list of xyzt arrays
-            if True, return list of result dicionaries
+            if True, return list of result dictionaries
 
         Returns
         -------

@@ -9,7 +9,7 @@
 # import sys
 
 project = "TimML"
-copyright = "2023, Mark Bakker"
+copyright = "2025, Mark Bakker"
 author = "Mark Bakker"
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -22,7 +22,6 @@ author = "Mark Bakker"
 
 extensions = [
     "autoapi.extension",
-    "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinx.ext.mathjax",
@@ -56,14 +55,15 @@ html_theme_options = {
     "github_url": "https://github.com/mbakker7/timml",
     "use_edit_page_button": True,
     "header_links_before_dropdown": 7,
-    # "icon_links": [
-    #     {
-    #         "name": "GitHub",  # Label for this link
-    #         "url": "https://github.com/mbakker7/timml",  # required
-    #         "icon": "fab fa-github-square",
-    #         "type": "fontawesome",  # Default is fontawesome
-    #     }
-    # ],
+    "icon_links": [
+        {
+            "name": "GitHub",  # Label for this link
+            "url": "https://github.com/mbakker7/timml",  # required
+            "icon": "fab fa-github-square",
+            "type": "fontawesome",  # Default is fontawesome
+        }
+    ],
+    "show_nav_level": 2,
 }
 
 html_context = {
@@ -79,17 +79,20 @@ napoleon_include_init_with_doc = False
 napoleon_use_param = True
 napoleon_type_aliases = {"ml": "timml.Model"}
 
-# -- Autodoc, autosummary, and autosectionlabel settings ------------------------------
+# -- Autosectionlabel settings --------------------------------------------------------
 
-autodoc_typehints = "description"
-autodoc_typehints_format = "short"
-# autosummary_generate = True
-# autoclass_content = "class"
 autosectionlabel_prefix_document = True
 
 # -- AutoAPI settings -----------------------------------------------------------------
 autoapi_dirs = ["../timml"]
 autoapi_root = "05api"
+autoapi_options = [
+    "show-module-summary",
+    "inherited-members",
+    "show-inheritance",
+]
+autoapi_own_page_level = "method"
+autoapi_template_dir = "_templates/autoapi"
 
 # -- Numpydoc settings ----------------------------------------------------------------
 
@@ -111,8 +114,24 @@ intersphinx_mapping = {
 nb_execution_allow_errors = True  # Allow errors in notebooks, to see the error online
 nb_execution_mode = "auto"
 nb_merge_streams = True
+
 myst_enable_extensions = ["dollarmath", "amsmath"]
 myst_dmath_double_inline = True
+nb_render_markdown_format = "myst"  # Enable MyST markdown parsing in notebooks
+nb_render_text_lexer = "myst-ansi"  # Better rendering of ANSI output
+nb_render_priority = {
+    "html": (
+        "application/vnd.jupyter.widget-view+json",
+        "application/javascript",
+        "text/html",
+        "image/svg+xml",
+        "image/png",
+        "image/jpeg",
+        "text/markdown",
+        "text/latex",
+        "text/plain",
+    )
+}
 
 # -- bibtex options ------------------------------------------------------------------
 
