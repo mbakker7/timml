@@ -32,13 +32,13 @@ from timml.linedoublet import (
 from timml.linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
 from timml.linesink import (
     CollectorWell,
+    Ditch,
+    DitchString,
     HeadLineSink,
     # HeadLineSinkContainer,
     HeadLineSinkString,
     # HeadLineSinkZero,
     LineSinkBase,
-    Ditch,
-    DitchString,
     RadialCollectorWell,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
