@@ -34,14 +34,16 @@ from timml.linesink import (
     CollectorWell,
     Ditch,
     DitchString,
-    HeadLineSink,
+    HeadLineSink,  # Deprecated alias for River
     # HeadLineSinkContainer,
-    HeadLineSinkString,
+    HeadLineSinkString,  # Deprecated alias for RiverString
     # HeadLineSinkZero,
     LineSinkBase,
     LineSinkDitch,  # Deprecated alias for Ditch
     LineSinkDitchString,  # Deprecated alias for DitchString
     RadialCollectorWell,
+    River,
+    RiverString,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
 from timml.model import Model, Model3D, ModelMaq, ModelXsection

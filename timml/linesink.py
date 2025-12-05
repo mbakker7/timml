@@ -4,7 +4,7 @@ Implements line-sinks and line-sink strings for head- or discharge-specified fea
 
 Example::
 
-    HeadLineSink(ml, x1=-10, y1=0, x2=10, y2=0, hls=5, layers=0)
+    River(ml, x1=-10, y1=0, x2=10, y2=0, hls=5, layers=0)
 """
 
 import inspect  # Used for storing the input
@@ -19,10 +19,12 @@ from .element import Element
 from .equation import HeadEquation
 
 __all__ = [
-    "HeadLineSink",
-    "HeadLineSinkString",
+    "River",
+    "RiverString",
     "Ditch",
     "DitchString",
+    "HeadLineSink",  # Deprecated alias for River
+    "HeadLineSinkString",  # Deprecated alias for RiverString
     "LineSinkDitch",  # Deprecated alias for Ditch
     "LineSinkDitchString",  # Deprecated alias for DitchString
     "CollectorWell",
@@ -299,7 +301,7 @@ class HeadLineSinkZero(LineSinkBase, HeadEquation):
             res=res,
             wh=wh,
             layers=layers,
-            name="HeadLineSink",
+            name="River",
             label=label,
             addtomodel=addtomodel,
         )
@@ -500,7 +502,7 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         return hinside
 
 
-class HeadLineSink(LineSinkHoBase, HeadEquation):
+class River(LineSinkHoBase, HeadEquation):
     """Head-specified line-sink which may optionally have a width and resistance.
 
     Parameters
@@ -542,7 +544,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
 
     See Also
     --------
-    :class:`.HeadLineSinkString`
+    :class:`.RiverString`
 
     """
 
@@ -609,7 +611,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         self.parameters[:, 0] = sol
 
 
-class Ditch(HeadLineSink):
+class Ditch(River):
     """Line-sink with specified total discharge, and uniform but unknown head.
 
     Parameters
@@ -669,7 +671,7 @@ class Ditch(HeadLineSink):
         addtomodel=True,
     ):
         self.storeinput(inspect.currentframe())
-        HeadLineSink.__init__(
+        River.__init__(
             self,
             model,
             x1,
@@ -689,10 +691,10 @@ class Ditch(HeadLineSink):
         self.Qls = Qls
 
     def initialize(self):
-        HeadLineSink.initialize(self)
+        River.initialize(self)
 
     def equation(self):
-        mat, rhs = HeadLineSink.equation(self)
+        mat, rhs = River.equation(self)
         for i in range(1, self.nunknowns):
             mat[i] -= mat[0]
             rhs[i] -= rhs[0]
@@ -869,7 +871,7 @@ class LineSinkStringBase2(Element):
             ls.plot(layer=layer, **kwargs)
 
 
-class HeadLineSinkString(LineSinkStringBase2):
+class RiverString(LineSinkStringBase2):
     """String of head-specified line-sinks with optional width and resistance.
 
     Parameters
@@ -907,7 +909,7 @@ class HeadLineSinkString(LineSinkStringBase2):
 
     See Also
     --------
-    :class:`.HeadLineSink`
+    :class:`.River`
     """
 
     def __init__(
@@ -921,7 +923,7 @@ class HeadLineSinkString(LineSinkStringBase2):
         layers=0,
         dely=0,
         label=None,
-        name="HeadLineSinkString",
+        name="RiverString",
     ):
         if xy is None:
             xy = [(-1, 0), (1, 0)]
@@ -963,7 +965,7 @@ class HeadLineSinkString(LineSinkStringBase2):
                     s, s[~np.isnan(self.hls)], self.hls[~np.isnan(self.hls)]
                 )
         else:
-            print("Error: hls entry not supported in HeadLineSinkString")
+            print("Error: hls entry not supported in RiverString")
         self.lslist = []  # start with empty list
         for i in range(self.nls):
             if self.label is not None:
@@ -976,7 +978,7 @@ class HeadLineSinkString(LineSinkStringBase2):
             elif self.xy.shape[1] == 4:
                 x1, y1, x2, y2 = self.xy[i]
             self.lslist.append(
-                HeadLineSink(
+                River(
                     self.model,
                     x1=x1,
                     y1=y1,
@@ -1027,7 +1029,7 @@ class HeadLineSinkString(LineSinkStringBase2):
         return mat, rhs
 
 
-class DitchString(HeadLineSinkString):
+class DitchString(RiverString):
     """String of Ditches with specified discharge and uniform unknown head.
 
     Parameters
@@ -1079,7 +1081,7 @@ class DitchString(HeadLineSinkString):
         if xy is None:
             xy = [(-1, 0), (1, 0)]
         self.storeinput(inspect.currentframe())
-        HeadLineSinkString.__init__(
+        RiverString.__init__(
             self,
             model,
             xy=xy,
@@ -1095,10 +1097,10 @@ class DitchString(HeadLineSinkString):
         self.Qls = Qls
 
     def initialize(self):
-        HeadLineSinkString.initialize(self)
+        RiverString.initialize(self)
 
     def equation(self):
-        mat, rhs = HeadLineSinkString.equation(self)
+        mat, rhs = RiverString.equation(self)
         for i in range(1, self.nunknowns):
             mat[i] -= mat[0]
             rhs[i] -= rhs[0]
@@ -1142,6 +1144,40 @@ class LineSinkDitchString(DitchString):
     def __init__(self, *args, **kwargs):
         warnings.warn(
             "LineSinkDitchString is deprecated. Use DitchString instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+
+class HeadLineSink(River):
+    """Deprecated alias for :class:`.River`.
+
+    .. deprecated::
+        Use :class:`.River` instead. This alias will be removed in a
+        future version.
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "HeadLineSink is deprecated. Use River instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+
+class HeadLineSinkString(RiverString):
+    """Deprecated alias for :class:`.RiverString`.
+
+    .. deprecated::
+        Use :class:`.RiverString` instead. This alias will be removed in a
+        future version.
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "HeadLineSinkString is deprecated. Use RiverString instead.",
             DeprecationWarning,
             stacklevel=2,
         )
