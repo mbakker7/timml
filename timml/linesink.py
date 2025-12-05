@@ -8,6 +8,7 @@ Example::
 """
 
 import inspect  # Used for storing the input
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,6 +23,8 @@ __all__ = [
     "HeadLineSinkString",
     "Ditch",
     "DitchString",
+    "LineSinkDitch",  # Deprecated alias for Ditch
+    "LineSinkDitchString",  # Deprecated alias for DitchString
     "CollectorWell",
     "RadialCollectorWell",
 ]
@@ -1110,6 +1113,38 @@ class DitchString(HeadLineSinkString):
                 ieq += e.nunknowns
         rhs[0] = self.Qls
         return mat, rhs
+
+
+class LineSinkDitch(Ditch):
+    """Deprecated alias for :class:`.Ditch`.
+    
+    .. deprecated:: 
+        Use :class:`.Ditch` instead. This alias will be removed in a future version.
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "LineSinkDitch is deprecated. Use Ditch instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+
+class LineSinkDitchString(DitchString):
+    """Deprecated alias for :class:`.DitchString`.
+    
+    .. deprecated:: 
+        Use :class:`.DitchString` instead. This alias will be removed in a future version.
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "LineSinkDitchString is deprecated. Use DitchString instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
 
 
 class CollectorWell(DitchString):

@@ -39,6 +39,8 @@ from timml.linesink import (
     HeadLineSinkString,
     # HeadLineSinkZero,
     LineSinkBase,
+    LineSinkDitch,  # Deprecated alias for Ditch
+    LineSinkDitchString,  # Deprecated alias for DitchString
     RadialCollectorWell,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
