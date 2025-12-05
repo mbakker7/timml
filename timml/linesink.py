@@ -1117,8 +1117,8 @@ class DitchString(HeadLineSinkString):
 
 class LineSinkDitch(Ditch):
     """Deprecated alias for :class:`.Ditch`.
-    
-    .. deprecated:: 
+
+    .. deprecated::
         Use :class:`.Ditch` instead. This alias will be removed in a future version.
     """
 
@@ -1133,9 +1133,10 @@ class LineSinkDitch(Ditch):
 
 class LineSinkDitchString(DitchString):
     """Deprecated alias for :class:`.DitchString`.
-    
-    .. deprecated:: 
-        Use :class:`.DitchString` instead. This alias will be removed in a future version.
+
+    .. deprecated::
+        Use :class:`.DitchString` instead. This alias will be removed in a
+        future version.
     """
 
     def __init__(self, *args, **kwargs):
