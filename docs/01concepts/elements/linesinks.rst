@@ -37,10 +37,10 @@ value.
 
 2. :class:`~timml.linesink.HeadLineSinkString` is a string of head-specified line-sinks
 
-3. :class:`~timml.linesink.LineSinkDitch` is a line-sink for which the head is unknown
+3. :class:`~timml.linesink.Ditch` is a line-sink for which the head is unknown
    and uniform and the total discharge is specified
 
-4. :class:`~timml.linesink.LineSinkDitchString` is a string of line-sink ditch elements.
+4. :class:`~timml.linesink.DitchString` is a string of line-sink ditch elements.
 
 5. :class:`~timml.linesink.CollectorWell` is a special line-sink representing a collector
    well with an arbitrary number of connected arms.

@@ -37,8 +37,8 @@ from timml.linesink import (
     HeadLineSinkString,
     # HeadLineSinkZero,
     LineSinkBase,
-    LineSinkDitch,
-    LineSinkDitchString,
+    Ditch,
+    DitchString,
     RadialCollectorWell,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D

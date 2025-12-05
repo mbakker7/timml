@@ -20,8 +20,8 @@ from .equation import HeadEquation
 __all__ = [
     "HeadLineSink",
     "HeadLineSinkString",
-    "LineSinkDitch",
-    "LineSinkDitchString",
+    "Ditch",
+    "DitchString",
     "CollectorWell",
     "RadialCollectorWell",
 ]
@@ -606,7 +606,7 @@ class HeadLineSink(LineSinkHoBase, HeadEquation):
         self.parameters[:, 0] = sol
 
 
-class LineSinkDitch(HeadLineSink):
+class Ditch(HeadLineSink):
     """Line-sink with specified total discharge, and uniform but unknown head.
 
     Parameters
@@ -645,7 +645,7 @@ class LineSinkDitch(HeadLineSink):
 
     See Also
     --------
-    :class:`.LineSinkDitchString`
+    :class:`.DitchString`
 
     """
 
@@ -1024,8 +1024,8 @@ class HeadLineSinkString(LineSinkStringBase2):
         return mat, rhs
 
 
-class LineSinkDitchString(HeadLineSinkString):
-    """String of LineSinkDitches with specified discharge and uniform unknown head.
+class DitchString(HeadLineSinkString):
+    """String of Ditches with specified discharge and uniform unknown head.
 
     Parameters
     ----------
@@ -1058,7 +1058,7 @@ class LineSinkDitchString(HeadLineSinkString):
 
     See Also
     --------
-    :class:`.LineSinkDitch`
+    :class:`.Ditch`
     """
 
     def __init__(
@@ -1087,7 +1087,7 @@ class LineSinkDitchString(HeadLineSinkString):
             dely=dely,
             layers=layers,
             label=label,
-            name="LineSinkDitchString",
+            name="DitchString",
         )
         self.Qls = Qls
 
@@ -1112,7 +1112,7 @@ class LineSinkDitchString(HeadLineSinkString):
         return mat, rhs
 
 
-class CollectorWell(LineSinkDitchString):
+class CollectorWell(DitchString):
     """Collector well: collection of line sinks with a specified total discharge.
 
     Collection of (discontinuous) line sinks with specified total discharge
