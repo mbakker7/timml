@@ -11,7 +11,8 @@ from nbconvert.preprocessors import (
 )
 
 nbdirs = [
-    os.path.join("docs/00userguide"),
+    os.path.join("docs/00userguide/tutorials"),
+    os.path.join("docs/00userguide/howtos"),
     os.path.join("docs/02examples"),
     os.path.join("docs/03xsections"),
     os.path.join("docs/04tests"),
@@ -55,6 +56,7 @@ if __name__ == "__main__":
     clear_metadata = ClearMetadataPreprocessor()
 
     for notebook in get_notebooks():
+        print("Clearing notebook:", notebook)
         with open(notebook, "r", encoding="utf-8") as f:
             nb = nbformat.read(f, as_version=4)
 
