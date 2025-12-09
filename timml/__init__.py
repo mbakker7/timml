@@ -32,14 +32,18 @@ from timml.linedoublet import (
 from timml.linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
 from timml.linesink import (
     CollectorWell,
-    HeadLineSink,
+    Ditch,
+    DitchString,
+    HeadLineSink,  # Deprecated alias for River
     # HeadLineSinkContainer,
-    HeadLineSinkString,
+    HeadLineSinkString,  # Deprecated alias for RiverString
     # HeadLineSinkZero,
     LineSinkBase,
-    LineSinkDitch,
-    LineSinkDitchString,
+    LineSinkDitch,  # Deprecated alias for Ditch
+    LineSinkDitchString,  # Deprecated alias for DitchString
     RadialCollectorWell,
+    River,
+    RiverString,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
 from timml.model import Model, Model3D, ModelMaq, ModelXsection
