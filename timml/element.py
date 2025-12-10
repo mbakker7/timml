@@ -1,9 +1,28 @@
+"""Base element interfaces used by TimML.
+
+Defines the `Element` base class that other elements derive from.
+
+Example::
+
+    class MyElem(Element):
+        def initialize(self):
+            pass
+"""
+
 import inspect  # Used for storing the input
 
 import numpy as np
 
+__all__ = ["Element"]
+
 
 class Element:
+    """Base class for all TimML elements.
+
+    Elements represent physical features in the aquifer system such as wells,
+    line-sinks, etc.
+    """
+
     def __init__(self, model, nparam, nunknowns, layers, name, label):
         self.model = model
         self.aq = None  # Set in the initialization function

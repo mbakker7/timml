@@ -6,41 +6,43 @@ with analytic elements.
 
 TimML may be applied to an arbitrary number of layers and an arbitrary sequence of
 aquifers and leaky layers. The head, flow, and leakage between aquifer layers may be
-computed analytically at any point in the aquifer system. The Dupuit approximation is applied to flow in aquifer layers (i.e., the resistance to flow in the vertical direction is neglected), while flow in leaky layers is approximated as vertical.
+computed analytically at any point in the aquifer system. The Dupuit approximation is
+applied to flow in aquifer layers (i.e., the resistance to flow in the vertical
+direction is neglected), while flow in leaky layers is approximated as vertical.
 
 .. grid::
 
-    .. grid-item-card:: Tutorials
-        :link: 00tutorials/index
+    .. grid-item-card:: User-guide
+        :link: 00userguide/index
         :link-type: doc
 
-        Tutorials for getting started with TimML.
-
-    .. grid-item-card:: How-to guides
-        :link: 01howto/index
-        :link-type: doc
-
-        How-to guides for more advanced modeling with TimML.
+        Tutorials and how-to guides for getting started with TimML.
 
     .. grid-item-card:: Concepts
-        :link: 02concepts/index
+        :link: 01concepts/index
         :link-type: doc
 
-        TimML basic concepts explained.
-
-.. grid::
+        TimML fundamental concepts explained.
 
     .. grid-item-card:: Examples
-        :link: 03examples/index
+        :link: 02examples/index
         :link-type: doc
 
         TimML example notebooks.
 
+.. grid::
+
     .. grid-item-card:: Cross-sections
-        :link: 04xsections/index
+        :link: 03xsections/index
         :link-type: doc
 
         Cross-sectional models explained.
+
+    .. grid-item-card:: Benchmarks
+        :link: 04tests/index
+        :link-type: doc
+
+        Notebooks testing/benchmarking TimML implementations.
 
     .. grid-item-card:: Code reference
         :link: 05api/index
@@ -79,7 +81,7 @@ Quick Example
             ml.solve()
 
             # plot head contours
-            ml.contour(win=[-30, 55, -30, 30], ngr=40, labels=True, decimals=1)
+            ml.plots.contour(win=[-30, 55, -30, 30], ngr=40, labels=True, decimals=1)
             
 
     .. tab-item:: Result
@@ -94,10 +96,10 @@ Quick Example
    :maxdepth: 2
    :hidden:
 
-    Tutorials <00tutorials/index>
-    How-to guides <01howto/index>
-    Concepts <02concepts/index>
-    Examples <03examples/index>
-    Cross-sections <04xsections/index>
+    User-guide <00userguide/index>
+    Concepts <01concepts/index>
+    Examples <02examples/index>
+    Cross-sections <03xsections/index>
+    Benchmarks <04tests/index>
     Code reference <05api/index>
     Cite <06about/index>

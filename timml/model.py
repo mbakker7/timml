@@ -1,10 +1,21 @@
-"""Model classes."""
+"""TimML Models.
+
+Defines `Model`, `ModelMaq`, and `Model3D` to construct aquifer systems
+and solve for heads and flows.
+
+Example::
+
+    ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=[1000])
+    # ... add elements
+    ml.solve()
+"""
 
 import inspect  # Used for storing the input
 import multiprocessing as mp
 import warnings
 
 import numpy as np
+import pandas as pd
 from scipy.integrate import quad_vec
 
 from .aquifer import Aquifer, SimpleAquifer
@@ -49,6 +60,9 @@ class Model:
         self.elementdict = {}  # only elements that have a label
         self.aq = Aquifer(self, kaq, c, z, npor, ltype)
         self.modelname = "ml"  # Used for writing out input
+        self.name = "Model"
+
+        self.plots = PlotTim(self)
 
         self.plots = PlotTim(self)
 
@@ -92,6 +106,7 @@ class Model:
         -------
         qxqy : array size (2, naq)
             first row is Qx in each aquifer layer, second row is Qy
+
         """
         if aq is None:
             aq = self.aq.find_aquifer_data(x, y)
@@ -363,7 +378,7 @@ class Model:
         Qx = np.zeros((nlayers, nx))
         Qy = np.zeros((nlayers, nx))
         for i in range(nx):
-            Qx[:, i], Qy[:, 1] = self.disvec(xg[i], yg[i], layers)
+            Qx[:, i], Qy[:, i] = self.disvec(xg[i], yg[i], layers)
         return Qx, Qy
 
     #    def disvec_direction(self, s, x1, y1, cdirection):
@@ -420,8 +435,6 @@ class Model:
         self.initialize()
         # Compute number of equations
         self.neq = np.sum([e.nunknowns for e in self.elementlist])
-        if self.neq == 0:
-            return
         if silent is False:
             print(
                 "Number of elements, Number of equations:",
@@ -569,6 +582,22 @@ class Model:
             f.write(e.write())
         f.close()
 
+    def aquifer_summary(self):
+        """Return DataFrame with summary of aquifer(s) parameters in model.
+
+        Returns
+        -------
+        pandas.DataFrame
+            dataframe with summary of aquifer(s) parameters
+        """
+        aqs = {}
+        if not isinstance(self.aq, SimpleAquifer):
+            aqs["background"] = self.aq.summary()
+        for i, iaq in enumerate(self.aq.inhomlist):
+            aqs[f"inhom{i}"] = iaq.summary()
+        if aqs:
+            return pd.concat(aqs, axis=0)
+
     def plot(self, *args, **kwargs):
         warnings.warn(
             "The 'ml.plot' method is deprecated. Use 'ml.plots.topview' instead.",
@@ -644,7 +673,10 @@ class ModelMaq(Model):
 
     Examples
     --------
-    >>> ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+    Build a model::
+
+        ml = ModelMaq(kaq=[10, 20], z=[20, 12, 10, 0], c=1000)
+
     """
 
     def __init__(self, kaq=1, z=None, c=None, npor=0.3, topboundary="conf", hstar=None):
@@ -705,7 +737,10 @@ class Model3D(Model):
 
     Examples
     --------
-    >>> ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+    Create a 3D model with 10 layers::
+
+        ml = Model3D(kaq=10, z=np.arange(20, -1, -2), kzoverkh=0.1)
+
     """
 
     def __init__(
@@ -739,6 +774,12 @@ class Model3D(Model):
 
 
 class ModelXsection(Model):
+    """Model for cross-section (2D vertical slice) problems.
+
+    A cross-section model represents flow in a vertical plane, typically used
+    for analyzing flow patterns in aquifers along a transect.
+    """
+
     def __init__(self, naq=1):
         self.elementlist = []
         self.elementdict = {}  # only elements that have a label

@@ -31,13 +31,19 @@ from timml.linedoublet import (
 )
 from timml.linedoublet1d import ImpLineDoublet1D, LeakyLineDoublet1D
 from timml.linesink import (
-    HeadLineSink,
-    HeadLineSinkContainer,
-    HeadLineSinkString,
-    HeadLineSinkZero,
+    CollectorWell,
+    Ditch,
+    DitchString,
+    HeadLineSink,  # Deprecated alias for River
+    # HeadLineSinkContainer,
+    HeadLineSinkString,  # Deprecated alias for RiverString
+    # HeadLineSinkZero,
     LineSinkBase,
-    LineSinkDitch,
-    LineSinkDitchString,
+    LineSinkDitch,  # Deprecated alias for Ditch
+    LineSinkDitchString,  # Deprecated alias for DitchString
+    RadialCollectorWell,
+    River,
+    RiverString,
 )
 from timml.linesink1d import HeadLineSink1D, LineSink1D
 from timml.model import Model, Model3D, ModelMaq, ModelXsection
@@ -45,7 +51,17 @@ from timml.stripareasink import XsectionAreaSink
 from timml.trace import timtraceline, timtracelines
 from timml.uflow import Uflow
 from timml.version import __version__, show_versions
-from timml.well import HeadWell, LargeDiameterWell, Well, WellBase
+from timml.well import (
+    HeadWell,
+    HeadWellString,
+    LargeDiameterWell,
+    TargetHeadWell,
+    TargetHeadWellString,
+    Well,
+    WellBase,
+    WellString,
+    WellStringBase,
+)
 
 # default bessel module is numba
 bessel.set_bessel_method(method="numba")
