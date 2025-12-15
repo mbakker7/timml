@@ -72,7 +72,7 @@ Quick Example
             # add a river with a fixed water level
             yls = np.arange(-100, 101, 20) # 20 points, so 19 segments
             xls = 50 * np.ones_like(yls)
-            river = timml.HeadLineSinkString(ml, xy=list(zip(xls, yls)), hls=0.0)
+            river = timml.RiverString(ml, xy=list(zip(xls, yls)), hls=0.0)
             
             # add a well
             well = timml.Well(ml, 0, 0, rw=0.3, Qw=1000)
