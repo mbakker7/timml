@@ -55,14 +55,6 @@ html_theme_options = {
     "github_url": "https://github.com/mbakker7/timml",
     "use_edit_page_button": True,
     "header_links_before_dropdown": 7,
-    "icon_links": [
-        {
-            "name": "GitHub",  # Label for this link
-            "url": "https://github.com/mbakker7/timml",  # required
-            "icon": "fab fa-github-square",
-            "type": "fontawesome",  # Default is fontawesome
-        }
-    ],
     "show_nav_level": 2,
 }
 
