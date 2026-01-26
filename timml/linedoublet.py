@@ -74,9 +74,7 @@ class LineDoubletHoBase(Element):
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
-        self.thetaNormOut = (
-            np.arctan2(self.y2 - self.y1, self.x2 - self.x1) - np.pi / 2.0
-        )
+        self.thetaNormOut = np.arctan2(self.y2 - self.y1, self.x2 - self.x1) - np.pi / 2.0
         self.cosnorm = np.cos(self.thetaNormOut) * np.ones(self.ncp)
         self.sinnorm = np.sin(self.thetaNormOut) * np.ones(self.ncp)
         #
@@ -90,9 +88,7 @@ class LineDoubletHoBase(Element):
             )
         else:
             self.xcin, self.ycin = controlpoints(self.ncp, self.z1, self.z2, eps=1e-6)
-            self.xcout, self.ycout = controlpoints(
-                self.ncp, self.z1, self.z2, eps=-1e-6
-            )
+            self.xcout, self.ycout = controlpoints(self.ncp, self.z1, self.z2, eps=-1e-6)
         if self.aq is None:
             self.aq = self.model.aq.find_aquifer_data(self.xc[0], self.yc[0])
         self.resfac = self.aq.Haq[self.layers] / self.res
@@ -371,9 +367,7 @@ class LineDoubletStringBase(Element):
     def initialize(self):
         for ld in self.ldlist:
             ld.initialize()
-        self.ncp = (
-            self.Nld * self.ldlist[0].ncp
-        )  # Same order for all elements in string
+        self.ncp = self.Nld * self.ldlist[0].ncp  # Same order for all elements in string
         self.nparam = self.Nld * self.ldlist[0].nparam
         self.nunknowns = self.nparam
         self.xld = np.empty((self.Nld, 2))

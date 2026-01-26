@@ -129,9 +129,7 @@ def param_3d(kaq, z, kzoverkh, npor, top="conf", topres=0):
         )
     H = z[:-1] - z[1:]
     assert np.all(H >= 0), "Error: Not all layers thicknesses are non-negative" + str(H)
-    c = 0.5 * H[:-1] / (kzoverkh[:-1] * kaq[:-1]) + 0.5 * H[1:] / (
-        kzoverkh[1:] * kaq[1:]
-    )
+    c = 0.5 * H[:-1] / (kzoverkh[:-1] * kaq[:-1]) + 0.5 * H[1:] / (kzoverkh[1:] * kaq[1:])
     if top == "conf":
         c = np.hstack((1e100, c))
     elif top == "semi":

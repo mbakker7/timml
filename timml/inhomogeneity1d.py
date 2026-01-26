@@ -140,9 +140,7 @@ class Xsection(AquiferData):
             c = ConstantStar(self.model, self.hstar, aq=aqin)
             c.inhomelement = True
 
-    def plot(
-        self, ax=None, labels=False, params=False, names=False, fmt=None, **kwargs
-    ):
+    def plot(self, ax=None, labels=False, params=False, names=False, fmt=None, **kwargs):
         """Plot the cross-section.
 
         Parameters
@@ -267,9 +265,7 @@ class Xsection(AquiferData):
 
         # if hstar is not None, N is taken care of by the AreaSinkInhom element.
         if self.hstar is not None:
-            ax.plot(
-                [r0, r0 + r], [self.hstar, self.hstar], color="C0", lw=2.0, zorder=5
-            )
+            ax.plot([r0, r0 + r], [self.hstar, self.hstar], color="C0", lw=2.0, zorder=5)
 
         ax.set_ylabel("elevation")
         return ax

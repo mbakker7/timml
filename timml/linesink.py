@@ -220,9 +220,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
-        self.theta_norm_out = (
-            np.arctan2(self.y2 - self.y1, self.x2 - self.x1) + np.pi / 2
-        )
+        self.theta_norm_out = np.arctan2(self.y2 - self.y1, self.x2 - self.x1) + np.pi / 2
         self.order = 0  # This is for uniform strength only
         self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
         if self.addtomodel:
@@ -947,9 +945,7 @@ class RiverString(LineSinkStringBase2):
         if len(self.hls) == 1:  # one value
             self.hls = self.hls * np.ones(self.nls + 1)  # at all nodes
         elif len(self.hls) == 2:  # values at beginning and end
-            L = np.sqrt(
-                (self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2
-            )
+            L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
             s = np.hstack((0, np.cumsum(L)))
             self.hls = np.interp(s, [0, s[-1]], self.hls)
         elif len(self.hls) == len(self.x):  # nodes may contain nan values

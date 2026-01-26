@@ -269,12 +269,8 @@ def bessells_int(x, y, z1, z2, lab):
     for n in range(41):
         term1 = term1 * d1minzeta
         term2 = term2 * d2minzeta
-        omega = omega + (alpha[n] * log2 - alpha[n] / (n + 1) + beta[n]) * term2 / (
-            n + 1
-        )
-        omega = omega - (alpha[n] * log1 - alpha[n] / (n + 1) + beta[n]) * term1 / (
-            n + 1
-        )
+        omega = omega + (alpha[n] * log2 - alpha[n] / (n + 1) + beta[n]) * term2 / (n + 1)
+        omega = omega - (alpha[n] * log1 - alpha[n] / (n + 1) + beta[n]) * term1 / (n + 1)
         omega = omega + (alpha2[n] * np.conj(log2) - alpha2[n] / (n + 1)) * np.conj(
             term2
         ) / (n + 1)
@@ -1287,8 +1283,7 @@ def besselld_gauss_ho_qxqy(x, y, z1, z2, lab, order):
                 r[n] * k0[n] / biglab + 2.0 * k1[n]
             )
             qy[p] = qy[p] + wg[n] * xg[n] ** p * (
-                k1[n] / r[n]
-                - bigy**2 / r[n] ** 3 * (r[n] * k0[n] / biglab + 2.0 * k1[n])
+                k1[n] / r[n] - bigy**2 / r[n] ** 3 * (r[n] * k0[n] / biglab + 2.0 * k1[n])
             )
 
     qx = -qx / (2 * np.pi * biglab) * 2 / L

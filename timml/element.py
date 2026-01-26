@@ -33,9 +33,7 @@ class Element:
         self.ncp = 0
         self.name = name
         self.label = label
-        self.inhomelement = (
-            False  # elements used as part of an inhom boundary are tagged
-        )
+        self.inhomelement = False  # elements used as part of an inhom boundary are tagged
         if self.label is not None:
             assert self.label not in list(self.model.elementdict.keys()), (
                 "timml error: label " + self.label + " already exists"

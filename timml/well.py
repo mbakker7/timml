@@ -610,9 +610,7 @@ class TargetHeadWell(WellBase):
                 )
                 ieq += e.nunknowns
             else:
-                rhs[0] -= (
-                    e.potentiallayers(self.xcp, self.ycp, self.lcp) / aq.T[self.lcp]
-                )
+                rhs[0] -= e.potentiallayers(self.xcp, self.ycp, self.lcp) / aq.T[self.lcp]
         return mat, rhs
 
     def setparams(self, sol):
@@ -1164,9 +1162,7 @@ class TargetHeadWellString(WellStringBase):
                     )
                     ieq += e.nunknowns
             else:
-                rhs[0] -= (
-                    e.potentiallayers(self.xcp, self.ycp, self.lcp) / aq.T[self.lcp]
-                )
+                rhs[0] -= e.potentiallayers(self.xcp, self.ycp, self.lcp) / aq.T[self.lcp]
         return mat, rhs
 
     def setparams(self, sol):

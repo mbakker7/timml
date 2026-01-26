@@ -49,9 +49,9 @@ class PotentialEquation:
                         e.potinflayers(self.xc[icp], self.yc[icp], self.layers)
                     )
                     if e == self:
-                        mat[
-                            istart : istart + self.nlayers, ieq : ieq + e.nunknowns
-                        ] -= self.resfac[icp]
+                        mat[istart : istart + self.nlayers, ieq : ieq + e.nunknowns] -= (
+                            self.resfac[icp]
+                        )
                     ieq += e.nunknowns
                 else:
                     rhs[istart : istart + self.nlayers] -= e.potentiallayers(
@@ -91,9 +91,9 @@ class HeadEquation:
                         / self.aq.Tcol[self.layers]
                     )
                     if e == self:
-                        mat[
-                            istart : istart + self.nlayers, ieq : ieq + e.nunknowns
-                        ] -= self.resfac[icp]
+                        mat[istart : istart + self.nlayers, ieq : ieq + e.nunknowns] -= (
+                            self.resfac[icp]
+                        )
                     ieq += e.nunknowns
                 else:
                     rhs[istart : istart + self.nlayers] -= (
@@ -165,9 +165,7 @@ class MscreenWellEquation:
                     e.potinflayers(self.xc[0], self.yc[0], self.layers)
                     / self.aq.Tcol[self.layers, :]
                 )
-                mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = (
-                    head[:-1] - head[1:]
-                )
+                mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = head[:-1] - head[1:]
                 if e == self:
                     for i in range(self.nlayers - 1):
                         mat[i, ieq + i] -= self.resfac[i]
@@ -209,9 +207,7 @@ class MscreenWellHeadEquation:
                     e.potinflayers(self.xc[0], self.yc[0], self.layers)
                     / self.aq.Tcol[self.layers, :]
                 )
-                mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = (
-                    head[:-1] - head[1:]
-                )
+                mat[0 : self.nlayers - 1, ieq : ieq + e.nunknowns] = head[:-1] - head[1:]
                 # last equation
                 mat[self.nlayers - 1, ieq : ieq + e.nunknowns] = head[0]
                 if e == self:
@@ -346,9 +342,7 @@ class DisvecEquationOut:
                     )
                     ieq += e.nunknowns
                 else:
-                    qx, qy = e.disveclayers(
-                        self.xcout[icp], self.ycout[icp], self.layers
-                    )
+                    qx, qy = e.disveclayers(self.xcout[icp], self.ycout[icp], self.layers)
                     rhs[istart : istart + self.nlayers] -= (
                         qx * self.cosnorm[icp] + qy * self.sinnorm[icp]
                     )
@@ -583,9 +577,9 @@ class DisvecDiffEquation:
                     qxout, qyout = e.disveclayers(
                         self.xcout[icp], self.ycout[icp], self.layers, aq=self.aqout
                     )
-                    rhs[istart : istart + self.nlayers] -= (
-                        qxin - qxout
-                    ) * self.cosnorm[icp] + (qyin - qyout) * self.sinnorm[icp]
+                    rhs[istart : istart + self.nlayers] -= (qxin - qxout) * self.cosnorm[
+                        icp
+                    ] + (qyin - qyout) * self.sinnorm[icp]
         return mat, rhs
 
 
