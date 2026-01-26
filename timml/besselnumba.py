@@ -1706,33 +1706,31 @@ def besselld_int_ho_qxqy(x, y, z1, z2, lab, order, d1, d2):
 
 
 @numba.njit(nogil=True, cache=True)
-def potbeslsv(x, y, z1, z2, lab, order, ilap, naq):
+def potbeslsv(x, y, z1, z2, lab, order, ilap, naq, R=8):
     """Potential of line-sink for use in timml."""
+    z = x + y * 1j
     pot = np.zeros((order + 1, naq))
     if ilap:
         pot[:, 0] = lapls_int_ho(x, y, z1, z2, order).real
-        for n in range(1, len(lab)):
-            pot[:, n] = bessells(x, y, z1, z2, lab[n], order, -1, 1).real
-    else:
-        for n in range(0, len(lab)):
-            pot[:, n] = bessells(x, y, z1, z2, lab[n], order, -1, 1).real
+    for n in range(ilap, len(lab)):
+        if isinside(z1, z2, z, R * lab[n]):
+            d1, d2 = find_d1d2(z1, z2, z, R * lab[n])
+            pot[:, n] = bessells(x, y, z1, z2, lab[n], order, d1, d2).real
     return pot
 
 
 @numba.njit(nogil=True, cache=True)
-def disbeslsv(x, y, z1, z2, lab, order, ilap, naq):
+def disbeslsv(x, y, z1, z2, lab, order, ilap, naq, R=8):
+    z = x + y * 1j
     qxqy = np.zeros((2 * (order + 1), naq))
     if ilap:
         wdis = lapls_int_ho_wdis(x, y, z1, z2, order)
         qxqy[: order + 1, 0] = wdis.real
         qxqy[order + 1 :, 0] = -wdis.imag
-        for n in range(1, len(lab)):
-            qxqylab = bessellsqxqy(x, y, z1, z2, lab[n], order, -1, 1).real
-            qxqy[: order + 1, n] = qxqylab[0 : order + 1]
-            qxqy[order + 1 :, n] = qxqylab[order + 1 :]
-    else:
-        for n in range(0, len(lab)):
-            qxqylab = bessellsqxqy(x, y, z1, z2, lab[n], order, -1, 1).real
+    for n in range(ilap, len(lab)):
+        if isinside(z1, z2, z, R * lab[n]):
+            d1, d2 = find_d1d2(z1, z2, z, R * lab[n])
+            qxqylab = bessellsqxqy(x, y, z1, z2, lab[n], order, d1, d2).real
             qxqy[: order + 1, n] = qxqylab[0 : order + 1]
             qxqy[order + 1 :, n] = qxqylab[order + 1 :]
     return qxqy
