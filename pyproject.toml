@@ -61,7 +61,7 @@ packages = ["timml", "timml.besselaesnumba"]
 version = { attr = "timml.version.__version__" }
 
 [tool.ruff]
-line-length = 88
+line-length = 90
 extend-include = ["*.ipynb"]
 
 [tool.ruff.lint]
