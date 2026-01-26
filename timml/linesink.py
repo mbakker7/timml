@@ -14,8 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # from . import bessel
-from besselnumba import disbeslsv, potbeslsv
-
+from .besselnumba import disbeslsv, potbeslsv
 from .controlpoints import controlpoints, strengthinf_controlpoints
 from .element import Element
 from .equation import HeadEquation
