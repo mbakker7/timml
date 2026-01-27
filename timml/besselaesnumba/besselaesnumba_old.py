@@ -467,12 +467,12 @@ def IntegralF(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     cln1 = np.log(cd1minz)
     cln2 = np.log(cd2minz)
     for n in range(0, 2 * NTERMS + order + 1):
-        cInt = cInt + (
-            2.0 * calpha[n] * cln2 - 2.0 * calpha[n] / (n + 1) + cbeta[n]
-        ) * (cd2minz) ** (n + 1) / float(n + 1)
-        cInt = cInt - (
-            2.0 * calpha[n] * cln1 - 2.0 * calpha[n] / (n + 1) + cbeta[n]
-        ) * (cd1minz) ** (n + 1) / float(n + 1)
+        cInt = cInt + (2.0 * calpha[n] * cln2 - 2.0 * calpha[n] / (n + 1) + cbeta[n]) * (
+            cd2minz
+        ) ** (n + 1) / float(n + 1)
+        cInt = cInt - (2.0 * calpha[n] * cln1 - 2.0 * calpha[n] / (n + 1) + cbeta[n]) * (
+            cd1minz
+        ) ** (n + 1) / float(n + 1)
     pot = np.real(cInt) * biglab / (2.0 * np.pi)
     return pot
 
@@ -612,12 +612,12 @@ def IntegralG(zin, z1in, z2in, Lin, labda, order, Rconv, lstype):
     cln1 = np.conj(cln1)
     cln2 = np.conj(cln2)
     for n in range(0, 2 * NTERMS + order):
-        g3 = g3 - (calpha[n] * cln2 - calpha[n] / (n + 1)) * (cd2minz) ** (
+        g3 = g3 - (calpha[n] * cln2 - calpha[n] / (n + 1)) * (cd2minz) ** (n + 1) / float(
             n + 1
-        ) / float(n + 1)
-        g3 = g3 + (calpha[n] * cln1 - calpha[n] / (n + 1)) * (cd1minz) ** (
+        )
+        g3 = g3 + (calpha[n] * cln1 - calpha[n] / (n + 1)) * (cd1minz) ** (n + 1) / float(
             n + 1
-        ) / float(n + 1)
+        )
     g3 = biglabin * g3 / (2.0 * np.pi)
     wdis = g1 + g2 + g3
     return wdis

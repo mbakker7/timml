@@ -20,9 +20,7 @@ def controlpoints(Ncp, z1, z2, eps=0, include_ends=False, dely=0):
         # thetacp = np.arange(np.pi, 0, -np.pi/Ncp) - 0.5 * np.pi/Ncp
         Zcp = np.zeros(Ncp, "D")
         Zcp.real = np.cos(thetacp)
-    Zcp.imag = (
-        eps + delY
-    )  # control point just on positive side (this is handy later on)
+    Zcp.imag = eps + delY  # control point just on positive side (this is handy later on)
     zcp = Zcp * (z2 - z1) / 2.0 + 0.5 * (z1 + z2)
     return zcp.real, zcp.imag
 
