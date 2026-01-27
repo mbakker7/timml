@@ -557,7 +557,7 @@ class River(LineSinkHoBase, HeadEquation):
         layers=0,
         dely=0,
         label=None,
-        name="HeadLineSink",
+        name="River",
         addtomodel=True,
     ):
         self.storeinput(inspect.currentframe())
