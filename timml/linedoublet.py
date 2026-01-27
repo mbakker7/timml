@@ -12,7 +12,8 @@ import inspect  # Used for storing the input
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import bessel
+# from . import bessel
+from .besselnumba import disbesldv, potbesldv
 from .controlpoints import controlpoints
 from .element import Element
 from .equation import DisvecEquation, LeakyWallEquation
@@ -120,7 +121,7 @@ class LineDoubletHoBase(Element):
                 (self.order + 1, self.nlayers, aq.naq)
             )  # clever way of using a reshaped rv here
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = bessel.bessel.potbesldv(
+            pot[:, :] = potbesldv(
                 float(x),
                 float(y),
                 self.z1,
@@ -155,7 +156,7 @@ class LineDoubletHoBase(Element):
                 (2, self.order + 1, self.nlayers, aq.naq)
             )  # clever way of using a reshaped rv here
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = bessel.bessel.disbesldv(
+            qxqy[:, :] = disbesldv(
                 float(x),
                 float(y),
                 self.z1,
