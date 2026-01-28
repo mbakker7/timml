@@ -71,9 +71,7 @@ class CircleInhom(Element):
                 )  # other values are Ip(R/lab)
         elif self.aqin.type == self.aqin.semi:
             for p in range(self.order + 1):
-                self.matRin[p, :] = scipy.special.iv(
-                    p, rolab
-                )  # all values are Ip(R/lab)
+                self.matRin[p, :] = scipy.special.iv(p, rolab)  # all values are Ip(R/lab)
         self.matRin = 1.0 / self.matRin
         # values on outside edge
         self.matRout = np.zeros((self.order + 1, self.aqout.Naquifers), "d")
@@ -533,9 +531,9 @@ class CircleInhom(Element):
                     ),
                 )
                 if np.size(rowqxqy) > 0:
-                    rowpart = rowqxqy[0] * np.cos(self.thetacp[i]) + rowqxqy[
-                        1
-                    ] * np.sin(self.thetacp[i])
+                    rowpart = rowqxqy[0] * np.cos(self.thetacp[i]) + rowqxqy[1] * np.sin(
+                        self.thetacp[i]
+                    )
                     rowin = np.hstack((rowin, rowpart))
             for e in elementList:
                 rowqxqy = e.getMatrixCoefficients(
@@ -548,9 +546,9 @@ class CircleInhom(Element):
                     ),
                 )
                 if np.size(rowqxqy) > 0:
-                    rowpart = rowqxqy[0] * np.cos(self.thetacp[i]) + rowqxqy[
-                        1
-                    ] * np.sin(self.thetacp[i])
+                    rowpart = rowqxqy[0] * np.cos(self.thetacp[i]) + rowqxqy[1] * np.sin(
+                        self.thetacp[i]
+                    )
                     rowout = np.hstack((rowout, rowpart))
             row = rowin - rowout
             row = np.hstack(
@@ -623,9 +621,7 @@ class CircleInhom(Element):
         xyznew = np.zeros(3, "d")
         r1sq = (xyz1[0] - self.xc) ** 2 + (xyz1[1] - self.yc) ** 2
         r2sq = (xyz2[0] - self.xc) ** 2 + (xyz2[1] - self.yc) ** 2
-        if (r1sq < self.Rsq and r2sq > self.Rsq) or (
-            r1sq > self.Rsq and r2sq < self.Rsq
-        ):
+        if (r1sq < self.Rsq and r2sq > self.Rsq) or (r1sq > self.Rsq and r2sq < self.Rsq):
             (x1, y1) = xyz1[0:2]
             (x2, y2) = xyz2[0:2]
             a = (x2 - x1) ** 2 + (y2 - y1) ** 2

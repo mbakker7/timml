@@ -230,9 +230,7 @@ class Model:
         for i in range(len(xy) - 1):
             x0, y0 = xy[i]
             x1, y1 = xy[i + 1]
-            Qn[:, i] += self.intnormflux_segment(
-                x0, y0, x1, y1, method=method, ndeg=ndeg
-            )
+            Qn[:, i] += self.intnormflux_segment(x0, y0, x1, y1, method=method, ndeg=ndeg)
         return Qn
 
     def qztop(self, x, y, aq=None):
@@ -796,9 +794,7 @@ class ModelXsection(Model):
             naqs[inhom.name] = inhom.naq
         check = np.array(list(naqs.values())) == self.aq.naq
         if not check.all():
-            raise ValueError(
-                f"Number of aquifers does not match {self.aq.naq}:\n{naqs}"
-            )
+            raise ValueError(f"Number of aquifers does not match {self.aq.naq}:\n{naqs}")
         # # shared boundary check
         # # NOTE: does not deal with nested inhoms
         # xcoords = np.concatenate(

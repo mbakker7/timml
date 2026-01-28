@@ -104,3 +104,5 @@ ENV/
 # docs
 _build/
 docs/05api/generated
+
+coverage/

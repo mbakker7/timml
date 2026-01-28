@@ -13,7 +13,8 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import bessel
+# from . import bessel
+from .besselnumba import disbeslsv, potbeslsv
 from .controlpoints import controlpoints, strengthinf_controlpoints
 from .element import Element
 from .equation import HeadEquation
@@ -219,9 +220,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         self.z1 = self.x1 + 1j * self.y1
         self.z2 = self.x2 + 1j * self.y2
         self.L = np.abs(self.z1 - self.z2)
-        self.theta_norm_out = (
-            np.arctan2(self.y2 - self.y1, self.x2 - self.x1) + np.pi / 2
-        )
+        self.theta_norm_out = np.arctan2(self.y2 - self.y1, self.x2 - self.x1) + np.pi / 2
         self.order = 0  # This is for uniform strength only
         self.aq = self.model.aq.find_aquifer_data(self.xc, self.yc)
         if self.addtomodel:
@@ -243,9 +242,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((self.nparam, aq.naq))
         if aq == self.aq:
             pot = np.zeros(aq.naq)
-            pot[:] = bessel.bessel.potbeslsho(
-                float(x), float(y), self.z1, self.z2, aq.lab, 0, aq.ilap, aq.naq
-            )
+            pot[:] = potbeslsv(x, y, self.z1, self.z2, aq.lab, 0, aq.ilap, aq.naq)
             rv[:] = self.aq.coef[self.layers] * pot
         return rv
 
@@ -256,9 +253,7 @@ class LineSinkBase(LineSinkChangeTrace, Element):
         rv = np.zeros((2, self.nparam, aq.naq))
         if aq == self.aq:
             qxqy = np.zeros((2, aq.naq))
-            qxqy[:, :] = bessel.bessel.disbeslsho(
-                float(x), float(y), self.z1, self.z2, aq.lab, 0, aq.ilap, aq.naq
-            )
+            qxqy[:, :] = disbeslsv(x, y, self.z1, self.z2, aq.lab, 0, aq.ilap, aq.naq)
             rv[0] = self.aq.coef[self.layers] * qxqy[0]
             rv[1] = self.aq.coef[self.layers] * qxqy[1]
         return rv
@@ -424,9 +419,9 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
             # clever way of using a reshaped rv here
             potrv = rv.reshape((self.order + 1, self.nlayers, aq.naq))
             pot = np.zeros((self.order + 1, aq.naq))
-            pot[:, :] = bessel.bessel.potbeslsv(
-                float(x),
-                float(y),
+            pot[:, :] = potbeslsv(
+                x,
+                y,
                 self.z1,
                 self.z2,
                 aq.lab,
@@ -457,9 +452,9 @@ class LineSinkHoBase(LineSinkChangeTrace, Element):
         if aq == self.aq:
             qxqyrv = rv.reshape((2, self.order + 1, self.nlayers, aq.naq))
             qxqy = np.zeros((2 * (self.order + 1), aq.naq))
-            qxqy[:, :] = bessel.bessel.disbeslsv(
-                float(x),
-                float(y),
+            qxqy[:, :] = disbeslsv(
+                x,
+                y,
                 self.z1,
                 self.z2,
                 aq.lab,
@@ -562,7 +557,7 @@ class River(LineSinkHoBase, HeadEquation):
         layers=0,
         dely=0,
         label=None,
-        name="HeadLineSink",
+        name="River",
         addtomodel=True,
     ):
         self.storeinput(inspect.currentframe())
@@ -950,9 +945,7 @@ class RiverString(LineSinkStringBase2):
         if len(self.hls) == 1:  # one value
             self.hls = self.hls * np.ones(self.nls + 1)  # at all nodes
         elif len(self.hls) == 2:  # values at beginning and end
-            L = np.sqrt(
-                (self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2
-            )
+            L = np.sqrt((self.x[1:] - self.x[:-1]) ** 2 + (self.y[1:] - self.y[:-1]) ** 2)
             s = np.hstack((0, np.cumsum(L)))
             self.hls = np.interp(s, [0, s[-1]], self.hls)
         elif len(self.hls) == len(self.x):  # nodes may contain nan values

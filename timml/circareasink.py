@@ -235,9 +235,7 @@ class CircAreaSink(Element):
         eps = 1e-8
         r1sq = (xyzt1[0] - self.xc) ** 2 + (xyzt1[1] - self.yc) ** 2
         r2sq = (xyzt2[0] - self.xc) ** 2 + (xyzt2[1] - self.yc) ** 2
-        if (r1sq < self.Rsq and r2sq > self.Rsq) or (
-            r1sq > self.Rsq and r2sq < self.Rsq
-        ):
+        if (r1sq < self.Rsq and r2sq > self.Rsq) or (r1sq > self.Rsq and r2sq < self.Rsq):
             changed = True
             x1, y1 = xyzt1[0:2]
             x2, y2 = xyzt2[0:2]
