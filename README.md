@@ -2,6 +2,9 @@
 [![timml](https://github.com/mbakker7/timml/actions/workflows/ci.yml/badge.svg)](https://github.com/mbakker7/timml/actions/workflows/ci.yml)
 ![PyPI](https://img.shields.io/pypi/v/timml?color=green)
 
+> [!IMPORTANT]  
+> TimML has moved! See [timflow](https://github.com/timflow-org/timflow). TimML is available through `timflow.steady`. `TimML` will no longer be developed. It will be maintained for the time being. All future development will focus on `timflow`.
+
 # TimML, A Multi-Layer, Analytic Element Model
 
 ## Introduction
