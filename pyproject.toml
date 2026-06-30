@@ -1,13 +1,13 @@
 [build-system]
-# Minimum requirements for the build system to execute
-requires = ["setuptools>64"]
+requires = ["setuptools>77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "timml"
 dynamic = ["version"]
 description = "Steady multi-layer AEM Model"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
 authors = [{ name = "Mark Bakker" }]
 maintainers = [
@@ -22,7 +22,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Other Audience",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX",
     "Operating System :: Unix",
@@ -41,10 +40,23 @@ homepage = "https://github.com/mbakker7/timml"
 repository = "https://github.com/mbakker7/timml"
 documentation = "http://mbakker7.github.io/timml/docs/builddocs/html/index.html"
 
-[project.optional-dependencies]
-ci = ["pytest", "pytest-cov", "pytest-xdist", "nbval", "jupyter", "shapely", "ruff"]
+[dependency-groups]
+dev = [
+    {include-group = "lint"},
+    {include-group = "tests"},
+]
+lint = [
+    "ruff",
+]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "nbval",
+    "jupyter",
+    "shapely",
+]
 docs = [
-    "timml[ci]",
     "sphinx",
     "sphinx-design",
     "pydata-sphinx-theme",
@@ -52,6 +64,7 @@ docs = [
     "myst_nb",
     "sphinxcontrib-bibtex",
     "sphinx-autoapi",
+    {include-group = "tests"},
 ]
 
 [tool.setuptools]
@@ -59,6 +72,20 @@ packages = ["timml", "timml.besselaesnumba"]
 
 [tool.setuptools.dynamic]
 version = { attr = "timml.version.__version__" }
+
+[tool.pytest]
+addopts = [
+    "--durations=0",
+    "--cov=timml",
+    "--cov-config=.coveragerc",
+    "--cov-report=lcov:./coverage/lcov.info",
+    "--cov-report=term",
+    "--ignore=docs/02examples/vertical_anisotropy.ipynb",
+    "--ignore=docs/04tests/benchmarking_besselaes.ipynb",
+]
+markers = [
+    "notebooks: run notebooks",
+]
 
 [tool.ruff]
 line-length = 90

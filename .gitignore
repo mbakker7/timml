@@ -88,6 +88,9 @@ celerybeat-schedule
 venv/
 ENV/
 
+# lock files, e.g. uv, pixi
+*.lock
+
 # Spyder project settings
 .spyderproject
 
